@@ -1,0 +1,210 @@
+﻿@model PPCP07302018.Models.Member.MemberDetails
+@using System.Web.Mvc.Html
+@using Kendo.Mvc.UI
+@using System.Web.Mvc
+@{
+    ViewBag.Title = "AvailablePlans";
+    Layout = "~/Views/Shared/BaseMaster.cshtml";
+    var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
+
+}
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/KendoScripts")
+@Scripts.Render("~/bundles/custom-validator")
+@Styles.Render("~/bundles/Kendocss")
+@Scripts.Render("~/bundles/MemberScriptFiles")
+@Styles.Render("~/bundles/Membercssfiles")
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        BindOrganizations('@ServiceUrl');
+        BindProviderNames(0);
+        BindPlanNames(0, 0, 0,'@ServiceUrl');
+        var PlanID = 0; var MemberID = 0; var OrganizationID = 0; var ProviderID = 0;
+        BindPlansGrid(PlanID, MemberID, OrganizationID, ProviderID,'@ServiceUrl');       //To bind Plans Grid by Gayathri
+    });
+    function ChangeSearchPlan() {
+        $("#PlansGrid").data("kendoGrid").dataSource.data("");
+        $("#OrganizationNames").data("kendoAutoComplete").destroy();
+        $("#PlanNames").data("kendoAutoComplete").destroy();
+        $("#ProviderNames").data("kendoAutoComplete").destroy();
+        BindOrganizations('@ServiceUrl');
+        BindProviderNames(0);
+        BindPlanNames(0, 0, 0, '@ServiceUrl');
+        var PlanID = 0; var MemberID = 0; var OrganizationID = 0; var ProviderID = 0;
+        BindPlansGrid(PlanID, MemberID, OrganizationID, ProviderID,'@ServiceUrl');       //To bind Plans Grid by Gayathri
+    }
+    function SearchPlan() {
+        if ($('#searchforplan').css('display') == 'none') {
+            $("#searchforplan").show();
+            return false;
+        }
+        else {
+            $("#searchforplan").hide();
+            return false;
+        }
+
+    }
+    function BindPlansGrid(PlanID, MemberID, OrganizationID, ProviderID) {
+        var PlanID = 0; var MemberID = 0; var OrganizationID = 0; var ProviderID = 0;
+        BindPlansGrids(PlanID, MemberID, OrganizationID, ProviderID,'@ServiceUrl');
+    }
+    function BindingPlansGrid(OrganizationID, ProviderID, PlanID) {
+        BindingPlansGrids(OrganizationID, ProviderID, PlanID, '@ServiceUrl');
+    }
+</script>
+<div id="divAvailablePlans">
+    <div class="pageheading_bar" align="center">
+        <b>Available Plans</b>
+    </div>
+    <div class="Panel_bg">
+        <div class="row">
+            <div class="row">
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                    <a href="" onclick='return SearchPlan();' style="font-size:16px;font-weight:bold;">Search for plan</a>
+                </div>
+            </div>
+            <div id="searchforplan" style="display:none;">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                            <br />
+                            <div class="row">
+                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                    @Html.Label("Organization Name", new { style = "font-weight:normal;", @class = "" })<br />
+                                    @(Html.Kendo().AutoCompleteFor(model => model.OrganizationName)
+                                                    .Name("OrganizationNames")
+                                                    .Placeholder("Select Organization...")
+                                                    .HtmlAttributes(new { style = "width:100%;" })
+                                                    .DataTextField("OrganizationName")
+                                                    .Events(events =>
+                                                    {
+                                                        events.Select("OnOrganizationSelectChange");
+                                                    })
+                                                    .DataSource(source =>
+                                                    {
+                                                        source.Read(read =>
+                                                        {
+                                                        });
+                                                    }))
+                                    <br />
+                                    @Html.Hidden("OrganizationID")
+                                    <script type="text/javascript">
+                                        function OnOrganizationSelectChange(e) {
+                                            $("#OrganizationName").val(dataItem.OrganizationName);
+                                            $("#OrganizationID").val(dataItem.OrganizationID);
+                                            var OrganizationID = $("#OrganizationID").val();
+                                            var ProviderID = $("#ProviderID").val();
+                                            var PlanID = $("#PlanID").val();
+                                            BindingPlansGrid(OrganizationID, ProviderID, PlanID);
+                                        }
+                                    </script>
+                                </div>
+                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                    @Html.Label("Provider Name", new { style = "font-weight:normal;", @class = "" })<br />
+                                    @(Html.Kendo().AutoCompleteFor(model => model.ProviderName)
+                                                    .Name("ProviderNames")
+                                                    .Placeholder("Select Provider...")
+                                                    .HtmlAttributes(new { style = "width:100%;" })
+                                                    .DataTextField("ProviderName")
+                                                    .Events(events =>
+                                                    {
+                                                        events.Select("OnProviderSelectChange");
+                                                    })
+                                                    .DataSource(source =>
+                                                    {
+                                                        source.Read(read =>
+                                                        {
+                                                        });
+                                                    }))
+                                    <br />
+                                    @Html.Hidden("ProviderID")
+                                    <script type="text/javascript">
+                                        function OnProviderSelectChange(e) {
+                                            var dataItem = this.dataItem(e.item.index());
+                                            $("#ProviderName").val(dataItem.ProviderName);
+                                            $("#ProviderID").val(dataItem.ProviderID);
+                                            var OrganizationID = $("#OrganizationID").val();
+                                            var ProviderID = $("#ProviderID").val();
+                                            var PlanID = $("#PlanID").val();
+                                            BindingPlansGrid(OrganizationID, ProviderID, PlanID);
+                                        }
+                                    </script>
+                                </div>
+                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                    @Html.Label("Plan Name", new { style = "font-weight:normal;", @class = "" })<br />
+                                    @(Html.Kendo().AutoCompleteFor(model => model.PlanName)
+                                                    .Name("PlanNames")
+                                                    .Placeholder("Select Plan...")
+                                                    .HtmlAttributes(new { style = "width:100%;" })
+                                                    .DataTextField("PlanName")
+                                                    .Events(events =>
+                                                    {
+                                                        events.Select("OnPlanSelectChange");
+                                                    })
+                                                    .DataSource(source =>
+                                                    {
+                                                        source.Read(read =>
+                                                        {
+                                                        });
+                                                    }))
+                                    <br />
+                                    @Html.Hidden("PlanID")
+                                    <script type="text/javascript">
+                                        function OnPlanSelectChange(e) {
+                                            var dataItem = this.dataItem(e.item.index());
+                                            $("#PlanName").val(dataItem.PlanName);
+                                            $("#PlanID").val(dataItem.PlanID);
+                                            var OrganizationID = $("#OrganizationID").val();
+                                            var ProviderID = $("#ProviderID").val();
+                                            var PlanID = $("#PlanID").val();
+                                            BindingPlansGrid(OrganizationID, ProviderID, PlanID);
+                                            //OnPlanSelectChanges(e);
+                                        }
+                                    </script>
+                                </div>
+                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                    <br /><br />
+                                    <a href="" onclick='return ChangeSearchPlan();' style="font-size:16px;font-weight:bold;">Change search</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="form-group" id="divSelectPlan">
+            <div class="row Panel_bg_Sub">
+                <div class="table-responsive">
+                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" style="width:100%;">
+                        @(Html.Kendo().Grid<PPCP07302018.Models.Member.MemberDetails>()
+                                                .Name("PlansGrid")
+                                                .Columns(columns =>
+                                                {
+                                                    columns.Bound(p => p.PlanID).Title("PlanID").Filterable(false).Visible(false);
+                                                    columns.Bound(p => p.PlanName).Title("Plan Name").Filterable(true).Width(150);
+                                                    columns.Bound(p => p.OrganizationName).Title("Organization Name").Filterable(true).Width(150);
+                                                    columns.Bound(p => p.ProviderName).Title("Provider Name").Filterable(true).Width(150);
+                                                    columns.Bound(p => p.TotalAmount).Title("Plan Amount").Filterable(true).Width(150);
+                                                })
+                                                .Scrollable()
+                                                .AutoBind(false)
+                                                .Pageable()
+                                                .HtmlAttributes(new { })
+                                                .Selectable()
+                                                .Filterable()
+                                                .DataSource(dataSource => dataSource
+                                                .Ajax()
+                                                .PageSize(5)
+                                                .ServerOperation(false)))
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

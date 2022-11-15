@@ -1,0 +1,288 @@
+﻿@model PPCP07302018.Models.Organization.MemberLoginDetails
+@using System.Web.Optimization
+@using Kendo.Mvc.UI
+@{
+    ViewBag.Title = "Organizationlogin";
+    Layout = "";
+    var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
+    var CaptchaDataSitekey = (System.Configuration.ConfigurationManager.AppSettings["CaptchaDataSitekey"].ToString());
+}
+
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+<script type="text/javascript" src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="~/Scripts/bootstrap.min.js"></script>
+<link href="~/Content/bootstrap.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/Content/bootstrap-leftmenu.css" />
+<script src='https://www.google.com/recaptcha/api.js'></script>
+<link href="~/Content/login.css" rel="stylesheet" />
+<!DOCTYPE html>
+
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Organizationlogin</title>
+</head>
+<body>
+    <section class="web-top-header xs-display-none" style="display:none">
+        <div class="container">
+            <div class="web-top-header col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 xs-text-center text-right">
+                    <div class="">
+                        FREE ONE MONTH TRIAL: <a class="web-top-header-link text-white mr-lg-20 mr-md-20 mr-sm-20" href="https://login.ihealthpay.co/iHealthPaySubscription.aspx" target="_blank">SIGN UP</a> Text: 732-360-5252
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <header class="web-header-section"style="display:block">
+        <div class="container">
+            <div class="web-header-section col-lg-12 col-md-12 col-sm-12 col-xs-12 pt-10 pb-10 xs-display-none sm-display-none">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 sm-text-center xs-text-center text-left">
+                    <input type="image" id="left-button" class="button" src="~/Images/Innerpages-Logo.png" width="250" height="100" />
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 sm-text-center xs-text-center text-right pl-0 pr-0" style="display:block">
+
+                    <ul class="web-menu-items" >
+                        <li class="web-menu-items">
+                            @*<a class="web-menu-links ml-20" href="https://test.myphysicianplan.com/Authenticate/PracticeLogin.aspx" style="text-decoration: underline">&nbsp;Old Users&nbsp;&nbsp;</a>*@
+                            @*<a class="web-menu-links ml-20" href="http://login.ihealthpay.co">&nbsp;&nbsp;Sign In&nbsp;&nbsp;</a>
+                            <a class="web-menu-links ml-20" href="https://login.ihealthpay.co/iHealthPaySubscription.aspx">&nbsp;&nbsp;Create Account&nbsp;&nbsp;</a>*@
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="container" style="margin-top:0%">
+        <div class="container" style="margin: 0px auto;">
+            <div class="login-data" id="dvLoginData" style="display: block; margin: 5px; padding-bottom: 6px; width: 99%; float: left; border: solid 2px #8B4513; border-radius: 10px; -moz-border-radius: 10px; -webkit-border-radius: 10px; -o-border-radius: 10px; -ms-border-radius: 10px;">
+                <div class="modalContainer">
+                    <br />
+                    <div class="Login-formbg" style="width: 99.6%; height: auto; float: left;">
+                        @*<asp:HiddenField ID="hfStripeTokennId"  OnValueChanged="hfStripeTokennId_ValueChanged" />*@
+                        <div style="width: 100%; height: auto; margin: 0px auto;">
+                            <div ID="Panel2" DefaultButton="btnLogin">
+                                <div style="width: 100%; margin: 0px; float: left;">
+                                    <div class="col-xs-12 col-md-7 col-sm-7 mobile-View">
+                                        <div id="dv1" style="width: 100%; margin: 0px auto; height: 440px; margin-top: 10px; background-color: White;">
+                                            @*<input type="image" id="left-button" class="button" src="~/Images/Innerpages-Logo.png" width="100" height="60" />*@
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-md-5 col-sm-5">
+                                        <div style="width: 100%; margin: 0px auto; border: solid 1px #8B4513; border-radius: 9px; height: auto; background-color: White;">
+                                            <div class="alert-infonew" style="border-radius: 7px 7px 0px 0px;">
+                                                <b style="font-size: 18px">Health Care Facility / Provider Login </b>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-xs-0 col-md-1 col-sm-1">
+                                                </div>
+                                                <div class="col-xs-12 col-md-11 col-sm-11">
+                                                    <div class="form-group">
+                                                        <div class="row">
+                                                            <div id="Div4" class="col-xs-9 col-md-9 col-sm-9">
+                                                                <label class="form-label" for="user_name"> Username:</label>
+                                                                @Html.TextBoxFor(model => model.UserName, new { @Class = "user_name form-control", PlaceHolder = "Username", style = "width:100%;", maxlength = 20 })<br />
+                                                                @Html.ValidationMessageFor(model => model.UserName, "", new { @style = "color:red" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="row">
+                                                            <div class="col-xs-9 col-md-9 col-sm-9">
+                                                                <label class="form-label" for="user_password"> Password:</label>
+                                                                @Html.TextBoxFor(model => model.Password, new { @Class = "user_name form-control", PlaceHolder = "Password", type = "password", autocomplete = "off", style = "width:100%;", maxlength = 15 })<br />
+                                                                @Html.ValidationMessageFor(model => model.Password, "", new { @style = "color:red" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="row">
+                                                            <div class="col-xs-10 col-md-10 col-sm-10">
+                                                                <div style="width: 70%; float: left;">
+                                                                    <div style="width: 98%; margin: 0px auto;">
+                                                                        <span style="color:white;display:none">Security Code</span>
+                                                                        <div class="form-group">
+                                                                            <div class="g-recaptcha" data-sitekey="@CaptchaDataSitekey"></div>
+                                                                            <br />
+                                                                            <span id="CapchtaMsg" style="color:red"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                            <div class="form-group">
+                                                                <div align="center">
+                                                                    <span id="spnInvalidUser" style="color:red ;font-size:small"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
+                                                            <input class="button_blue" type="button" name="submit" value="Login" onclick="OrgvalidateCredentials()">
+                                                            <br />
+                                                            <a href='@Url.Action("OrganizationCredentials", "Organization")' style="text-align:center;color:saddlebrown;">Forgot Credentials?</a><br />
+                                                            <span style="color:saddlebrown;">Don't have an account?</span><a style="color:saddlebrown;" href='@Url.Action("OrgnizationRegistration", "Organization")'> Register</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="web-footer-section" style="line-height:36px">
+        <div class="container" style="bottom:0px">
+            <div class="web-header-section col-lg-12 col-md-12 col-sm-12 col-xs-12 pt-10 pb-10">
+                <div class="col-lg-4 col-md-3 col-sm-12 col-xs-12 text-center">
+                    Copyright &copy; 2022 <a class="web-footer-link" href="https://myphysicianplan.com/" target="_blank">MyPhysicianPlan, Inc.</a>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 text-center">
+                    <a class="web-footer-link" href="https://myphysicianplan.com/TermsofUse" target="_blank">Terms & Conditions</a>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 text-center">
+                    <a class="web-footer-link" href="https://myphysicianplan.com/PrivacyPolicy" target="_blank">Privacy Policy</a>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 text-center">
+                    <a class="web-footer-link" href="mailto:support@myphysicianplan.com" NavigateUrl="mailto:support@myphysicianplan.com" target="_blank">support@myphysicianplan.com </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script type="text/javascript">
+        function divPopUpSuccessClose()
+        {
+            $.ajax({
+                url: '@Url.Action("VerifyOrgOTP", "Organization")',
+                data: {otp:$("#OTP").val()},
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (result) {
+                    if (result == "1") {
+                        var getUrl = '@Url.Action("ViewProviders", "Organization")';
+                        window.location = getUrl;
+                    }
+                    else
+                    {
+                        $("#lblUserMessag").html("Invalid OTP");
+                        return false;
+                    }
+                },
+                error: function (ex) {
+                    alert(ex.error());
+                    location.reload();
+                }
+            });
+        }
+
+        function OrgvalidateCredentials(){
+            var username=$("#UserName").val();
+            var password=$("#Password").val();
+
+            var captcha_response = grecaptcha.getResponse();
+            if(username=="" && password=="" && captcha_response.length == "0"){
+                document.getElementById("spnInvalidUser").innerHTML = "";
+                $("#spnInvalidUser").html("Please enter Username.");
+                return false;
+            }
+            else if (username == "") {
+                document.getElementById("spnInvalidUser").innerHTML = "";
+                $("#spnInvalidUser").html("Please enter Username.");
+                return false;
+            }
+            else if(password==""){
+                document.getElementById("spnInvalidUser").innerHTML = "";
+                $("#spnInvalidUser").html("Please enter Password.");
+                return false;
+            }
+            else if (captcha_response.length == "0") {
+                document.getElementById("spnInvalidUser").innerHTML = "";
+                $("#spnInvalidUser").html("Please check the checkbox");
+                return false;
+            }
+            else {
+                document.getElementById("spnInvalidUser").innerHTML = "";
+            }
+            jsModel = {};
+            jsModel.UserName = username
+            jsModel.Password = password;
+
+            $.ajax({
+                url: '@Url.Action("VerifyOrganization", "Organization")',
+                data: jsModel,
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (result) {
+                    if (result == "1") {
+                        @*var getUrl = '@Url.Action("OrganizationProfileDetails", "Organization")';*@
+                        var getUrl = '@Url.Action("ViewPaymentDetails", "Organization")';
+                        window.location = getUrl;
+                    }
+                    else if(result == "0")
+                    {
+                        $("#divOTPAfterLogin").show();
+                    }
+                    else if(result == "2")
+                    {
+                        $("#spnInvalidUser").html("Your username or password is incorrect.");
+                    }
+                    else if (result == "4") {
+                        var getUrl = '@Url.Action("ViewPaymentDetails", "Organization")';
+                        @*var getUrl = '@Url.Action("OrganizationTermsAndConditions", "Organization")';*@
+                        window.location = getUrl;
+                    }
+                    else
+                    {
+                        document.getElementById("spnInvalidUser").innerHTML = "Invalid credentials";
+                    }
+                },
+                error: function (ex) {
+                    alert(ex.error());
+                    //location.reload();
+                }
+            });
+        }
+    </script>
+    <div id="divOTPAfterLogin" style="display: none; position: relative" align="center">
+        <div class="Page_Dimmer">
+        </div>
+        <div class="PopupHolder" style="top: 30%;">
+            <div class="pageheading_bar" style="width: 100%; height: 70%;">
+                <div style="vertical-align: middle">
+                    <div style="vertical-align: middle">
+                        Physician Primary Care Plan<span style="float: right; color: Red;
+                            margin-right: 5px;"></span>
+                    </div>
+                </div>
+            </div>
+            <div style="border: Solid 1px #33CCEE; width: 100%;">
+                <div align="center">
+                    Please Enter Sign In Code<br />
+                    @Html.TextBoxFor(m => m.OTP, new { @Class = "user_name form-control", PlaceHolder = "OTP", type = "text", autocomplete = "off", style = "width:40%;", maxlength = 10 })
+                    <span id="lblUserMessagee" style="color: Green; font-family: Verdana,Tahoma; font-size: 15px;
+                        font-weight: bold; text-align: center; margin-top: 8px; margin-left: 3px; display: none;">
+                    </span><span id="lblUserMessag" style="color: red; font-family: Verdana,Tahoma; font-size: 15px;
+                        font-weight: bold; text-align: center; margin-top: 8px; margin-left: 3px; display: none;">
+                    </span>
+                </div>
+                <div align="center">
+                    <br />
+                    <button id="btnClose" title="Close" style="width: 80px" class="button_blue" onclick="divPopUpSuccessClose();">
+                        OK
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

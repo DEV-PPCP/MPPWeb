@@ -1,0 +1,54 @@
+﻿@model PPCP07302018.Models.Member.LoginHistory
+@using System.Web.Mvc.Html
+@using Kendo.Mvc.UI
+@using System.Web.Mvc
+@{
+    ViewBag.Title = "LoginHistory";
+    Layout = "~/Views/Shared/BaseMaster.cshtml";
+}
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/KendoScripts")
+@Scripts.Render("~/bundles/custom-validator")
+@Styles.Render("~/bundles/Kendocss")
+@Scripts.Render("~/bundles/MemberScriptFiles")   @*For member script files*@
+@Styles.Render("~/bundles/Membercssfiles")       @*For member css files*@
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var MemberID = 1@*'@Session["MemberID"]'*@;
+        BindLoginHistroy(MemberID);
+    });
+</script>
+<div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" id="divMain" style="margin-top:0px;">
+    <fieldset id="fsMain" style="margin:0px;width:100%;">
+        <br />
+        <div class="form-group">
+            <div class="row">
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                    @(Html.Kendo().Grid<PPCP07302018.Models.Member.LoginHistory>()
+                                                .Name("LoginHistory")
+                                                .Columns(columns =>
+                                                {
+                                                    columns.Bound(p => p.IpAddress).Title("IpAddress").Filterable(true).Width(120);
+                                                    columns.Bound(p => p.LoginDate).Title("LoginDate").Width(100);
+                                                    columns.Bound(p => p.LogoutDate).Title("LogoutDate").Width(100);
+                                                })
+                                                .Scrollable()
+                                                .AutoBind(false)
+                                                .Pageable()
+                                                .HtmlAttributes(new { })
+                                                .Selectable()
+                                                .Filterable()
+                                                .DataSource(dataSource => dataSource
+                                                .Ajax()
+                                                .PageSize(10)
+                                                .ServerOperation(false)))
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</div>

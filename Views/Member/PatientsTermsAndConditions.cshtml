@@ -1,0 +1,150 @@
+﻿@model PPCP07302018.Models.Admin.TermsConditions
+@using System.Web.Mvc.Html
+@using Kendo.Mvc.UI
+@using System.Web.Mvc
+@using PPCP07302018.Utils;
+
+@{
+    ViewBag.Title = "PatientsTermsAndConditions";
+    Layout = "~/Views/Shared/BaseMaster.cshtml";
+    var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
+    var AttachedLink = (System.Configuration.ConfigurationManager.AppSettings["AttachedLink"].ToString());
+
+}
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/KendoScripts")
+@Scripts.Render("~/bundles/custom-validator")
+@Styles.Render("~/bundles/Kendocss")
+@Scripts.Render("~/bundles/TermsAndConditionScriptFiles")
+
+@Html.Hidden("hdnPatientTAndConditions")
+@Html.Hidden("RedirectTo", Url.Action("ViewProviders", "Member"));
+
+<style type="text/css">
+    .loadingSpinner {
+        position: absolute;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background: rgba( 255, 255, 255, .8 ) url('../../Images/loading-spinner-red.gif') 50% 50% no-repeat;
+    }
+   
+</style>
+<script>
+    $(document).ready(function () {
+        $("#divGrid").show();
+        var Type = @Convert.ToInt32(GlobalFunctions.TermsAndConditons.Patient);
+        GetUpdatedLink(Type,"@ServiceUrl");
+        document.getElementById("chkAccept").disabled = true;
+    });
+    function Onclick() {
+        if ($('#chkAccept').is(":checked")) {
+            $("#spnCheckErrorMessages").hide();
+        }
+    }
+
+    function btnSubmit(MemberID) {
+        if ($('#chkAccept').is(":checked") == true) {
+            UpdateTermsAndCondition(MemberID,"@ServiceUrl");
+           
+          }
+        else {
+            $("#spnCheckErrorMessages").show();
+
+        }
+    }
+      function ErrorOK() {
+        $("#divErrMessagePopup").hide();
+    }
+    function UpdatedTC() {
+        document.getElementById("chkAccept").disabled = false;
+        var tempfilePath = $("#hdnOrganizationTAndConditions").val();
+        var Url = @*'@AttachedLink' + "" + tempfilePath;*@  "http://stageservices.labscore.co/AppFileDownload/FileDownload.aspx?FP=D:/SitesData/StageLabScore/Attachments/90/13092019013049Income Report - Complete snapshot (4).pdf";
+        window.open(Url, "_newtab");
+        window.open(Url, "_newtab").focus();
+
+    }
+</script>
+
+
+
+<div class="Page_Dimmer">
+</div>
+<div class="PopupHolder">
+    
+    <div class="row" id="divErrMessagePopup" style="display: none; position: relative" align="center">
+        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+            <div class="Page_Dimmer">
+            </div>
+            <div class="PopupHolder" style="top: 17%;">
+                <div class="Bgheader" width="100%">
+                    <div align="center">
+                        <span id="SpanErrMsgTitle" style="color: White; font-family: Verdana,Tahoma; font-size: 15px;
+                        font-weight: bold;">Physician Primary Care Plan</span>
+                    </div>
+                </div>
+                <div style="border: Solid 1px #33CCEE; width: 100%;">
+                    <div align="left">
+                        <img alt="!" id="Img1" src="~/Images/Error.png" style="height: 25px; width: 25px;
+                        border-width: 0px;" />
+                    </div>
+                    <div align="center">
+                        <span id="spnPopupErrMessage" style="color: red; font-family: Verdana,Tahoma; font-size: 14px;
+                                font-weight: bold;">
+                        </span>
+                    </div>
+                    <div align="center">
+                        <br />
+                        <button type="button" id="btnErrPopup" onclick="ErrorOK();"
+                                style="width: 70px;">
+                            Ok
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="pageheading_bar" id="divHeader" align="center">
+        <b>Terms & Conditions</b>
+    </div>
+    <div class="form-group" id="divGrid" style="display:none;">
+        <div class="Panel_bg">
+            <div class="Panel_bg_Sub">
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" id="divSearch" style="display:block">
+                    <div class="row">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" align="center">
+                                <span id="spnImprt" style="color:red !important"><span class="k-icon k-warning"> </span><b> Please Read and Accept Updated Terms & Conditions</b></span>
+                            </div>
+                            <br />
+                            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" id="divCheckBoxList">
+                                <br />
+                                @Html.CheckBox("chkAccept", new { onclick = "Onclick();" })<span>I Accept the <a  onclick="UpdatedTC();"><span id="spnPatientTCName" style="color:blue;text-decoration:underline;cursor:pointer;"></span></a> for Member</span>
+                              
+                                
+                                 <br />
+                            </div>
+                            <div class="col-xs-12 col-md-12 col-sm-12">
+                                <span id="spnCheckErrorMessages" style="display:none; color:red !important;">Check Terms and Condition</span>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                            <div align="center">
+                                <br />
+                                <button type="submit" class="button_blue" value="@Session["MemberID"]" id="btnSubmit" title="Submit" style="width: 100px;" onclick="btnSubmit(this.value);">
+                                    Accept
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

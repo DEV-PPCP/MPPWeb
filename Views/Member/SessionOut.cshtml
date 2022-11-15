@@ -1,0 +1,194 @@
+﻿@using Kendo.Mvc.UI
+@using System.Web.Mvc.Html
+@using System.Web.Mvc
+@{
+    ViewBag.Title = "SessionOut";
+
+}
+@Scripts.Render("~/bundles/MemberScriptFiles")
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+<script type="text/javascript" src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="~/Scripts/bootstrap.min.js"></script>
+<link href="~/Content/bootstrap.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/Content/bootstrap-leftmenu.css" />
+<script src='https://www.google.com/recaptcha/api.js'></script>
+<link href="~/Content/login.css" rel="stylesheet" />
+
+<style>
+    #Relationship_validationMessage {
+        display: none !important;
+    }
+
+    .loadingSpinner {
+        position: absolute;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        height: 50%;
+        width: 100%;
+        background: rgba( 255, 255, 255, .8 ) url('../../Images/loading-spinner-red.gif') 50% 50% no-repeat;
+    }
+
+    #RelationshipList_validationMessage {
+        position: inherit;
+        display: inline-block;
+        border-width: 2px;
+        height: 35px;
+        padding: 2px 5px 1px 6px;
+        border-color: #fff4c9;
+        font-family: Verdana;
+        font-size: 14px;
+    }
+
+    #Salutation_validationMessage {
+        display: none !important;
+    }
+
+    #CountryName_validationMessage {
+        display: none !important;
+    }
+
+    #StateName_validationMessage {
+        display: none !important;
+    }
+
+    #CityName_validationMessage {
+        display: none !important;
+    }
+
+    #SalutationList_validationMessage {
+        position: inherit;
+        display: inline-block;
+        border-width: 2px;
+        height: 35px;
+        padding: 2px 5px 1px 6px;
+        border-color: #fff4c9;
+        font-family: Verdana;
+        font-size: 14px;
+    }
+
+    #CityNameList_validationMessage {
+        position: inherit;
+        display: inline-block;
+        border-width: 2px;
+        height: 35px;
+        padding: 2px 5px 1px 6px;
+        border-color: #fff4c9;
+        font-family: Verdana;
+        font-size: 14px;
+    }
+
+    #StateNameList_validationMessage {
+        position: inherit;
+        display: inline-block;
+        border-width: 2px;
+        height: 35px;
+        padding: 2px 5px 1px 6px;
+        border-color: #fff4c9;
+        font-family: Verdana;
+        font-size: 14px;
+    }
+
+    #CountryNameList_validationMessage {
+        position: inherit;
+        display: inline-block;
+        border-width: 2px;
+        height: 35px;
+        padding: 2px 5px 1px 6px;
+        border-color: #fff4c9;
+        font-family: Verdana;
+        font-size: 14px;
+    }
+</style>
+
+
+<script type="text/javascript" language="javascript">
+
+    function LogOut_MsgBox_Yes() {
+        debugger;
+        @*var getUrl = '@Url.Action("MemberLogin", "Member")';
+        window.location = getUrl;*@
+
+        var url = window.location.href;
+
+        var KeyID = getParamFromQueryString("key", url);
+
+        if (KeyID != null) {
+            if (KeyID == "1") {
+                var getUrl = '@Url.Action("MemberLogin", "Member")';
+                window.location = getUrl;
+            }
+            else if (KeyID == "2") {
+                var getUrl = '@Url.Action("OrganizationLogin", "Organization")';
+                window.location = getUrl;
+            } else if (KeyID == "3") {
+                var getUrl = '@Url.Action("AdminLogin", "Admin")';
+                window.location = getUrl;
+            }
+            else if (KeyID == "4") {
+                var getUrl = '@Url.Action("ProviderLogin", "Provider")';
+                window.location = getUrl;
+            }
+        }
+    }
+    function getParamFromQueryString(name, url) {
+        var regexString = "[\\?&]" + name + "=([^&#]*)";
+        var regex = new RegExp(regexString);
+        var results = regex.exec(url);
+
+        var result = null;
+
+        if (results != null && results.length >= 2 && results[1] != null) {
+            var result = results[1].replace("?" + name);
+        }
+
+        return result;
+    }
+</script>
+
+
+
+<div style="width: 100%; float: left; padding: 0px;margin-top:0px;padding: 0px 15px 15px 15px;">
+    <div class="pageheading_bar" style="margin-left: 0px;" align="center">
+        <b>Session out</b>
+    </div>
+    <div style="padding: 10px 15px 15px 15px; border: solid 1px black; text-align: justify;
+            margin-top: 20px;">
+        <b>
+            To protect the safety of your account, you have been logged out. This may be due
+            to the following reasons:
+        </b>
+        <div style="margin: 50px;">
+            <ol type="disc">
+                <li>You might have used Back/Forward/Refresh button of your browser.</li>
+                <li>Multiple clicks on an option or a button.</li>
+                <li>Long inactive period after login.</li>
+                <li>Login from multiple browsers at the same time.</li>
+
+                <li>
+                    If the problem persists, please clear the temporary files from your browser and
+                    try again; or contact us at <a href="info@myphysicianplan.com" style="text-decoration:none;">info@myphysicianplan.com</a>
+                </li>
+            </ol>
+        </div>
+        <div>
+            Please contact us at
+            <a href="mailto:wecare@myphysicianplan.com"
+               Style="text-decoration: none;color:#AD1105;">wecare@myphysicianplan.com</a>
+            <br />
+            You may start another session by clicking
+            @*<asp:LinkButton ID="lnkbtnLogin" OnClick="lnkbtnLogin_OnClick">Login</asp:LinkButton>*@
+            @*<a id="LoginUrl" href='@Url.Action("MemberLogin", "Member", new { })'></a>*@
+            @*<a href="" onclick="javascript:LogOut_MsgBox_Yes(); return false; " style="color:#AD1105;
+                        text-decoration: none;">
+                    Login
+                </a>*@
+            <a href="" onclick="javascript:LogOut_MsgBox_Yes(); return false; " style="color:#AD1105;
+                    text-decoration: none;">
+                Login
+            </a>
+        </div>
+    </div>
+</div>
+
+

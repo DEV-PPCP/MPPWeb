@@ -1,0 +1,64 @@
+﻿@model PPCP07302018.Models.Member.PaymentDetails
+@using System.Web.Mvc.Html
+@using Kendo.Mvc.UI
+@using System.Web.Mvc
+@{
+    ViewBag.Title = "PaymentDetails";
+    Layout = "~/Views/Shared/BaseMaster.cshtml";
+    var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
+}
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/KendoScripts")
+@Scripts.Render("~/bundles/custom-validator")
+@Styles.Render("~/bundles/Kendocss")
+@Scripts.Render("~/bundles/PaymentDetailsFiles")   @*For PaymentDetails script files*@
+@Styles.Render("~/bundles/Membercssfiles")       @*For member css files*@
+<script type="text/javascript">
+    $(document).ready(function () {
+        BindPaymentDetails('@Session["MemberParentID"]', '@ServiceUrl');
+    });
+</script>
+<div id="divOrganizationPayments">
+    <div class="pageheading_bar" align="center">
+        <b>Payments Details</b>
+    </div>
+    <div class="Panel_bg" id="divMain">
+        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" id="divMain" style="margin-top:0px;">
+            <fieldset id="fsMain" style="margin:0px;width:100%;">
+                <br />
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                            @(Html.Kendo().Grid<PPCP07302018.Models.Member.PaymentDetails>()
+                                                .Name("PaymentsGrid")
+                                                .Columns(columns =>
+                                                {
+                                                    columns.Bound(p => p.Membername).Title("Member Name").Filterable(true).Width(100);
+                                                    columns.Bound(p => p.PlanName).Title("Plan Name").Filterable(true).Width(100);
+                                                    columns.Bound(p => p.PaidAmount).Title("Amount Paid").Filterable(true).Width(120);
+                                                    columns.Bound(m => m.CreatedDate).Title("Date Of Payment").Width(120).Encoded(true).ClientTemplate("#= kendo.toString(kendo.parseDate(CreatedDate,'yyyy-MM-ddTHH:mm:ss'), '" + "MM/dd/yyyy HH:mm:ss" + "') #");
+                                                    columns.Bound(p => p.TransactionID).Title("TransactionID").Filterable(true).Width(150);
+                                                })
+                                                .Scrollable()
+                                                .AutoBind(false)
+                                                .Pageable()
+                                                .HtmlAttributes(new { })
+                                                .Selectable()
+                                                .Filterable()
+                                                .DataSource(dataSource => dataSource
+                                                .Ajax()
+                                                .PageSize(5)
+                                                .ServerOperation(false)))
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+
+</div>
+
+

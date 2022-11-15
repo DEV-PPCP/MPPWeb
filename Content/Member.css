@@ -1,0 +1,90 @@
+﻿body {
+}
+    .Initial {
+        display: block;
+        padding: 5px 10px;
+        float: left;
+        color: Black;
+        font-weight: bold;
+        background-color: White;
+        width: 200px;
+        margin-right: 5px;
+        border: solid 1px #000;
+    }
+
+    .Clicked {
+        float: left;
+        display: block; /*  background: url("Images/SelectedButton.png") no-repeat right top;*/
+        padding: 5px 10px;
+        color: Black;
+        font-weight: bold;
+        color: Black;
+        background-color: #DEB887;
+        width: 200px; /*border-radius: 50px;*/
+        margin-right: 5px;
+        border: solid 1px #000;
+    }
+
+    .CurrentPage {
+        float: left;
+        display: block; /*  background: url("Images/SelectedButton.png") no-repeat right top;*/
+        padding: 5px 10px;
+        color: White;
+        font-weight: bold;
+        color: White;
+        background-color: Gray;
+        width: 200px; /*border-radius: 50px;*/
+        margin-right: 5px;
+        border: solid 1px #000;
+    }
+
+    .Legendtxtcolor {
+        font-weight: bold;
+        color: #003264;
+        margin-left: 3px;
+    }
+
+    .strength0 {
+        width: 200px;
+        color: #B20E37;
+        text-align: center;
+    }
+
+    .strength1 {
+        width: 200px;
+        color: #D32847;
+        text-align: center;
+    }
+
+    .strength2 {
+        width: 200px;
+        color: #ff5f5f;
+        text-align: center;
+    }
+
+    .strength3 {
+        width: 200px;
+        color: #83D680;
+        text-align: center;
+    }
+
+    .strength4 {
+        color: #4dcd00;
+        width: 200px;
+        text-align: center;
+    }
+
+    .strength5 {
+        color: #399800;
+        width: 200px;
+        text-align: center;
+    }
+     .loadingSpinner {
+        position: absolute;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        height: 175%;
+        width: 100%;
+        background: rgba( 255, 255, 255, .8 ) url('~/Images/loading-spinner-red.gif') 50% 50% no-repeat;
+    }

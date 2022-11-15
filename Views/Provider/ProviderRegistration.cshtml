@@ -1,0 +1,733 @@
+﻿@model PPCP07302018.Models.Provider.AddDoctor
+@using System.Web.Mvc.Html
+@using Kendo.Mvc.UI
+@using System.Web.Mvc
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+<script type="text/javascript" src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="~/Scripts/bootstrap.min.js"></script>
+<link href="~/Content/bootstrap.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/Content/bootstrap-leftmenu.css" />
+
+@{
+    ViewBag.Title = "ProviderRegistration";
+    Layout = "";
+    var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
+
+}
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/KendoScripts")
+@Scripts.Render("~/bundles/custom-validator")
+@Styles.Render("~/bundles/Kendocss")
+@Scripts.Render("~/bundles/ProviderRegistrationScriptFiles")
+@Styles.Render("~/bundles/Membercssfiles")
+
+<style type="text/css">
+    .Page_Dimmer {
+        position: fixed;
+        height: 100%;
+        width: 100%;
+        top: 0px;
+        left: 0px;
+        background-color: #CCCCFF;
+        filter: alpha(opacity=50);
+        -moz-opacity: 0.5;
+        opacity: 0.5;
+        z-index: 50;
+    }
+
+    .PopupHolder {
+        position: fixed;
+        /* overflow: auto; */
+        background-color: #fff;
+        z-index: 50;
+        left: 20%;
+        right: 20%;
+        top: 17%;
+        margin: 0px;
+    }
+
+    .button_blue {
+        cursor: pointer;
+        font-family: Arial;
+        color: #ffffff;
+        font-size: 14px;
+        padding: 0px; /*width: 100px;*/
+        height: 30px;
+        text-decoration: none;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        padding: 0 10px 0 10px;
+        border-radius: 9px;
+        border: solid #cd853f 2px;
+        border-color: #cd853f #cd853f #cd853f #cd853f;
+        background: #718ca1; /* Old browsers */
+        background: -moz-linear-gradient(top, #cd853f 14%, #cd853f 47%, #cd853f 79%); /* FF3.6+ */
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(14%,#cd853f), color-stop(47%,#cd853f), color-stop(79%,#cd853f)); /* Chrome,Safari4+ */
+        background: -webkit-linear-gradient(top, #cd853f 14%,#cd853f 47%,#cd853f 79%); /* Chrome10+,Safari5.1+ */
+        background: -o-linear-gradient(top, #cd853f 14%,#cd853f 47%,#cd853f 79%); /* Opera 11.10+ */
+        background: -ms-linear-gradient(top, #cd853f 14%,#cd853f 47%,#cd853f 79%); /* IE10+ */
+        background: linear-gradient(to bottom, #cd853f 14%,#cd853f 47%,#cd853f 79%); /* W3C */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#8b4513', endColorstr='#cd853f',GradientType=0 ); /* IE6-9 */
+    }
+
+    .Bgheader {
+        background: #8B4513; /* old browsers */
+        background: -moz-linear-gradient(top, #8B4513 14%, #8B4513 47%, #8B4513 79%); /* ff3.6+ */
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(14%,#8B4513), color-stop(47%,#8B4513), color-stop(79%,#8B4513)); /* chrome,safari4+ */
+        background: -webkit-linear-gradient(top, #8B4513 14%,#8B4513 47%,#8B4513 79%); /* chrome10+,safari5.1+ */
+        background: -o-linear-gradient(top, #8B4513 14%,#8B4513 47%,#8B4513 79%); /* opera 11.10+ */
+        background: -ms-linear-gradient(top, #8B4513 14%,#8B4513 47%,#8B4513 79%); /* ie10+ */
+        background: linear-gradient(to bottom, #8B4513 14%,#8B4513 47%,#8B4513 79%); /* w3c */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#8B4513', endColorstr='#8B4513',GradientType=0 ); /* ie6-9 */
+        height: 10px;
+    }
+
+    .loadingSpinner {
+        position: absolute;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        height: 50%;
+        width: 100%;
+        background: rgba( 255, 255, 255, .8 ) url('../../Images/loading-spinner-red.gif') 50% 50% no-repeat;
+    }
+
+    .pageheading_bar {
+        font-family: Verdana;
+        color: #ffffff;
+        font-size: 14px;
+        padding: 0px;
+        width: 100%;
+        margin-left: -1px;
+        height: 25px;
+        float: left;
+        text-decoration: none;
+        -webkit-border-radius: 0px;
+        -moz-border-radius: 0px;
+        border-radius: 0px;
+        border: solid #8B4513 2px;
+        border-color: #8B4513 #8B4513 #8B4513 #8B4513;
+        background: -moz-linear-gradient(top, #8B4513 14%, #8B4513 47%, #8B4513 79%);
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(14%,#8B4513), color-stop(47%,#8B4513), color-stop(79%,#8B4513));
+        background: -webkit-linear-gradient(top, #8B4513 14%,#8B4513 47%,#8B4513 79%);
+        background: -o-linear-gradient(top, #8B4513 14%,#8B4513 47%,#8B4513 79%);
+        background: -ms-linear-gradient(top, #8B4513 14%,#8B4513 47%,#8B4513 79%);
+        background: linear-gradient(to bottom, #8B4513 14%,#8B4513 47%,#8B4513 79%);
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#8B4513', endColorstr='#8B4513',GradientType=0 );
+    }
+
+    .table {
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .Panel_bg {
+        font-family: Verdana;
+        color: #000000;
+        font-size: 14px;
+        width: 100%;
+        height: auto;
+        text-decoration: none;
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        border-radius: 2px;
+        background-color: #f9eeea;
+        -webkit-box-shadow: 1px 1px 3px #1e5799;
+        -moz-box-shadow: 1px 1px 3px #1e5799;
+        box-shadow: 1px 1px 3px #1e5799;
+        border: solid #8B4513 1px; /*background: #F7F7F7;  Old browsers */
+        float: left;
+        margin: 0px 0px 4px 0px;
+        text-align: left;
+        padding: 5px 0px 5px 10px;
+    }
+
+    .Panel_bg_Sub {
+        font-family: Verdana;
+        color: #000000;
+        font-size: 14px;
+        width: 99%;
+        height: auto;
+        text-decoration: none;
+        -moz-border-radius: 5px;
+        background-color: #fbf5e2;
+        -webkit-box-shadow: 1px 1px 3px #1e5799;
+        -moz-box-shadow: 1px 1px 3px #1e5799;
+        box-shadow: 1px 1px 3px #1e5799;
+        border: solid #8B4513 1px;
+        float: left;
+        margin: 5px 5px 5px 0px;
+        text-align: left;
+        padding: 10px 5px 15px 10px;
+    }
+
+    .contact-formbg {
+        width: 100%;
+        float: left;
+        margin: 0px;
+        padding: 5px;
+        background: #fcfcfc;
+        padding: 0px 0px 20px 0px;
+        box-shadow: rgba(187, 187, 187, 1) 0 0px 5px -1px;
+        -webkit-box-shadow: rgba(187, 187, 187, 1) 0 0px 5px -1px;
+        font: 13px;
+        color: #666;
+        /* border-radius: 10px;
+            -webkit-border-radius: 10px;*/
+    }
+
+    img {
+        border: 0;
+        width: 100%;
+    }
+
+    #Salutation_validationMessage {
+        display: none !important;
+    }
+
+    #CountryName_validationMessage {
+        display: none !important;
+    }
+
+    #StateName_validationMessage {
+        display: none !important;
+    }
+
+    #CityName_validationMessage {
+        display: none !important;
+    }
+
+    #SalutationList_validationMessage {
+        position: inherit;
+        display: block;
+        border-width: 2px;
+        height: 35px;
+        padding: 2px 5px 1px 6px;
+        border-color: #fff4c9;
+        font-family: Verdana;
+        font-size: 14px;
+    }
+
+    #CountryNameList_validationMessage {
+        position: inherit;
+        display: block;
+        border-width: 2px;
+        height: 35px;
+        padding: 2px 5px 1px 6px;
+        border-color: #fff4c9;
+        font-family: Verdana;
+        font-size: 14px;
+    }
+
+    #StateNameList_validationMessage {
+        position: inherit;
+        display: block;
+        border-width: 2px;
+        height: 35px;
+        padding: 2px 5px 1px 6px;
+        border-color: #fff4c9;
+        font-family: Verdana;
+        font-size: 14px;
+    }
+
+    #CityNameList_validationMessage {
+        position: inherit;
+        display: block;
+        border-width: 2px;
+        height: 35px;
+        padding: 2px 5px 1px 6px;
+        border-color: #fff4c9;
+        font-family: Verdana;
+        font-size: 14px;
+    }
+
+    /*.web-footer-section {
+        background-color: rgba(33,33,33,0.97);
+        color: #fff;
+        font-family: "Open Sans",'Trebuchet MS', Helvetica, sans-serif;
+        line-height: 22px;
+        letter-spacing: 0.5px;
+        font-weight: 400;
+        font-style: normal;
+        font-size: 15px;
+    }
+
+    .web-footer-link:visited {
+        color: rgba(255, 255, 255, 0.85);
+        opacity: 1;*/
+    }
+</style>
+
+@Html.Hidden("CountryId")
+@Html.Hidden("TempCountryName")
+@Html.Hidden("StateID")
+@Html.Hidden("TempStateName")
+@Html.Hidden("CityId")
+@Html.Hidden("TempCityName")
+@Html.HiddenFor(model => model.SalutationID)
+@Html.HiddenFor(model => model.Salutation)
+@Html.Hidden("SalutationId")
+
+
+
+<script>
+    $(document).ready(function () {
+        debugger;
+        BindOrganizations("@ServiceUrl");
+        var countryID = 1;
+        BindCountries("@ServiceUrl");
+        BindStates(1, "@ServiceUrl", "1");
+        BindCities(1, "@ServiceUrl", "1")
+        BindSalutation("@ServiceUrl");
+        BindDegree();
+        var code = $("#CountryCode").val("1");
+        GetSpecilization("@ServiceUrl");
+        document.getElementById("OneTime").disabled = true;
+        $("#chk2factor").click(function () {
+            if ($("#chk2factor").is(":checked") == true) {
+                $("#divEnableFactor").show();
+            }
+            else if ($("#chk2factor").is(":checked") == false) {
+                $("#divEnableFactor").hide();
+            }
+
+        });
+        var DoctorValidator = $("#divMainAddDoctors").kendoValidator().data("kendoValidator");
+        $("#btnSubmitDetails").click(function (e) {
+
+            GenderValidation();
+            SpecializationValidation();
+            if (DoctorValidator.validate()) {
+                if ($('#OneTime').is(":checked") == true) {
+                    $("#spnCheckErrorMessages").hide();
+
+                    btnSaveProviderDetails();
+                }
+                else {
+                    $("#spnCheckErrorMessages").show();
+                    return false;
+                }
+            }
+            else {
+                $("#spnCheckErrorMessages").show();
+                return false;
+            }
+        });
+
+    });
+
+
+    function ChckOneTime() {
+        if ($('#OneTime').is(":checked") == true) {
+            $("#spnCheckErrorMessages").hide();
+        }
+        else {
+            $("#spnCheckErrorMessages").show();
+        }
+    }
+
+
+    function GenderValidation() {
+        var rbtnMale = $('input[id=rbtnGenderMale]:checked').val();
+        var rbtnFEM = $('input[id=rbtnGenderFemale]:checked').val();
+
+        if (rbtnMale == 1 || rbtnFEM == 2) {
+            document.getElementById("divGenderValidator").style.display = "none";
+        }
+        else {
+            document.getElementById("divGenderValidator").style.display = "block";
+            return false;
+        }
+    }
+    function SpecializationValidation() {
+
+        var array = []
+        var checkboxes = document.querySelectorAll('input[name="SPList"]:checked')
+
+        for (var i = 0; i < checkboxes.length; i++) {
+            array.push(checkboxes[i].value)
+        }
+        if (array == "") {
+
+            document.getElementById("divSpecializationValidator").style.display = "block";
+            return false;
+        }
+        else {
+            document.getElementById("divSpecializationValidator").style.display = "none";
+        }
+
+    }
+    function TermsCondition() {
+        document.getElementById("OneTime").disabled = false;
+        var Url = "http://stageservices.labscore.co/AppFileDownload/FileDownload.aspx?FP=D:/SitesData/StageLabScore/Attachments/90/13092019013049Income Report - Complete snapshot (4).pdf";
+        window.open(Url, "_newtab");
+        window.open(Url, "_newtab").focus();
+
+    }
+    function ValidateuserNames(UserName) {
+        ValidateuserName(UserName, "@ServiceUrl");
+
+    }
+
+    function DateSelectionChanged(e) {
+        var birthDate = $("#DOB").val();
+        $.ajax({
+            url: "/Master/GetAge/",
+            data: { birthDate: birthDate },
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (result) {
+                var rs = result.split(';');
+                var year = rs[0];
+                $("#Age").val(year);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+            },
+        });
+    }
+
+    function CreateJosn(array) {
+        jsonObj = [];
+        var tempPayment = array.toString().split(',');
+        for (i = 0; i < tempPayment.length; i++) {
+            var temp = tempPayment[i].split(';');
+            item = {};
+            item["SpecilizationID"] = temp[0];
+            item["SpecializationName"] = temp[1];
+
+            jsonObj.push(item);
+        }
+        return jsonObj;
+    }
+
+    function btnSaveProviderDetails() {
+        debugger;
+        var jsModel = {};
+        jsModel.OrganizationID = $("#hdnOrgId").val();
+        jsModel.OrganizationName = $("#hdnOrgName").val();
+        jsModel.FirstName = $("#FirstName").val();
+        jsModel.LastName = $("#LastName").val();
+        jsModel.Salutation = $("#Salutation").val();
+        jsModel.SalutationID = $("#SalutationId").val();
+        jsModel.Degree = $("#Degree").val();
+        jsModel.DOB = $("#DOB").val();
+        var rbtnMale = $('input[id=rbtnGenderMale]:checked').val();
+        if (rbtnMale == 1)
+            jsModel.Gender = rbtnMale;
+        var rbtnFEM = $('input[id=rbtnGenderFemale]:checked').val();
+        if (rbtnFEM == 2)
+            jsModel.Gender = rbtnFEM;
+        jsModel.CountryCode = $("#CountryCode").val();
+        jsModel.MobileNumber = $("#MobileNumber").val();
+        jsModel.Email = $("#Email").val();
+        jsModel.CityID = $("#CityId").val();
+        jsModel.CityName = $("#TempCityName").val();
+        jsModel.StateName = $("#TempStateName").val();
+        jsModel.StateID = $("#StateID").val();
+        jsModel.CountryID = $("#CountryId").val();
+        jsModel.CountryName = $("#TempCountryName").val();
+        jsModel.NPI = $("#NPI").val();
+        if ($("#ZipCode").val() == "") {
+            jsModel.Zip = $("#Zip").val();
+        }
+        else {
+            jsModel.Zip = $("#Zip").val() + "-" + $("#ZipCode").val();
+        }
+
+        jsModel.UserName = $("#UserName").val();
+        jsModel.Password = $("#Password").val();
+        jsModel.ConfirmPassword = $("#ConfirmPassword").val();
+        jsModel.Address = $("#Address").val();
+        jsModel.Fax = $("#Fax").val();
+
+        var SpecilizationID = "", SpecilizationName = "";
+        var checkboxes = document.querySelectorAll('input[name="SPList"]:checked');
+        for (var i = 0; i < checkboxes.length; i++) {
+
+            var tempSplit = checkboxes[i].value.split(";");
+            SpecilizationID = SpecilizationID + "" + tempSplit[0] + ",";
+            SpecilizationName = SpecilizationName + "" + tempSplit[1] + ",";
+
+        }
+
+        var array = [];
+        var checkboxes = document.querySelectorAll('input[name="SPList"]:checked')
+        for (var i = 0; i < checkboxes.length; i++) {
+            array.push(checkboxes[i].value);
+        }
+        jsModel.SpecializationID = SpecilizationID;
+        jsModel.SpecializationName = SpecilizationName.substring(0, SpecilizationName.length - 1);
+        var obj = CreateJosn(array);
+        jsModel.Specialization = JSON.stringify(obj);
+
+        if ($('#chk2factor').is(":checked") == true) {
+            jsModel.IsTwofactorAuthentication = true;
+            jsModel.PreferredIP = '@Session["SystemIPAddress"]';
+            var rbtnEvery = $('input[id=rbtnEverytime]:checked').val();
+            if (rbtnEvery == 1)
+                jsModel.TwoFactorType = rbtnEvery;
+            var rbtnSystem = $('input[id=rbtnOnlySysChange]:checked').val();
+            if (rbtnSystem == 2)
+                jsModel.TwoFactorType = rbtnSystem;
+        }
+        else {
+            jsModel.IsTwofactorAuthentication = false;
+            jsModel.TwoFactorType = "0";
+            jsModel.PreferredIP = "";
+        }
+
+        SaveDoctorDetails(jsModel, "@ServiceUrl");
+    }
+</script>
+<div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" id="divMain" style="margin-top:0px; background-color: #eae6e6;">
+    <section class="web-top-header xs-display-none" style="display:none">
+        <div class="container">
+            <div class="web-top-header col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 xs-text-center text-right">
+                    <div class="">
+                        FREE ONE MONTH TRIAL: <a class="web-top-header-link text-white mr-lg-20 mr-md-20 mr-sm-20" href="https://login.ihealthpay.co/iHealthPaySubscription.aspx" target="_blank">SIGN UP</a> Text: 732-360-5252
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <header class="web-header-section" style="display:none">
+        <div class="container">
+            <div class="web-header-section col-lg-12 col-md-12 col-sm-12 col-xs-12 pt-10 pb-10 xs-display-none sm-display-none">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 sm-text-center xs-text-center text-left">
+                    <input type="image" id="left-button" class="button" src="~/Images/Innerpages-Logo.png" width="250" height="100" />
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 sm-text-center xs-text-center text-right pl-0 pr-0">
+                    <ul class="web-menu-items">
+                        <li class="web-menu-items">
+                            <a class="web-menu-links ml-20" href="https://ihealthpay.co/">&nbsp;Home&nbsp;&nbsp;</a>
+                            <a class="web-menu-links ml-20" href="http://login.ihealthpay.co">&nbsp;&nbsp;Sign In&nbsp;&nbsp;</a>
+                            <a class="web-menu-links ml-20" href="https://login.ihealthpay.co/iHealthPaySubscription.aspx">&nbsp;&nbsp;Create Account&nbsp;&nbsp;</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <div class="pageheading_bar" align="center">
+        <b>Provider Registration</b>
+    </div>
+
+    <div class="Panel_bg" id="divMainAddDoctors">
+        <div class="row" id="divSignupPopup" style="display: none; align-content:center;">
+            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                <div class="Page_Dimmer">
+                </div>
+                <div class="PopupHolder" style="top:17%;">
+                    <div class="Bgheader" width="100%">
+                        <div>
+                            <span id="SpnPopUpTitle" style="color: White; font-family: Verdana,Tahoma;
+                                font-size: 15px; font-weight: bold;"></span>
+                            @*Physician Primary Care Plan*@
+                        </div>
+                    </div>
+                    <div style="border: Solid 1px #33CCEE; width: 100%;">
+                        <div align="left">
+                            <img alt="!" id="imgIcon" src="~/Images/Success.png"
+                                 style="height: 25px; width: 25px; border-width: 0px;" />
+                        </div>
+                        <div align="center">
+                            <span id="spnPopupMessage" style="color: green; font-family: Verdana,Tahoma; font-size: 14px;
+                                font-weight: bold;">
+                            </span>
+                        </div>
+                        <div align="center">
+                            <br />
+                            <button type="button" id="btnSuccess" onclick="document.location.href = $('#loginUrl').attr('href');" class="button_blue"
+                                    style="width: 70px;">
+                                Ok
+                            </button>
+                            <a id="loginUrl" href="@Html.AttributeEncode(Url.Action("ProviderLogin", "Provider" ))">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="divErrMessagePopup" style="display: none; position: relative" align="center">
+            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                <div class="Page_Dimmer">
+                </div>
+                <div class="PopupHolder" style="top: 17%;">
+                    <div class="Bgheader" width="100%">
+                        <div align="center">
+                            <span id="SpanErrMsgTitle" style="color: White; font-family: Verdana,Tahoma; font-size: 15px;
+                        font-weight: bold;">Physician Primary Care Plan</span>
+                        </div>
+                    </div>
+                    <div style="border: Solid 1px #33CCEE; width: 100%;">
+                        <div align="left">
+                            <img alt="!" id="Img1" src="~/Images/Error.png" style="height: 25px; width: 25px;
+                        border-width: 0px;" />
+                        </div>
+                        <div align="center">
+                            <span id="spnPopupErrMessage" style="color: red; font-family: Verdana,Tahoma; font-size: 14px;
+                                font-weight: bold;">
+                            </span>
+                        </div>
+                        <div align="center">
+                            <br />
+                            <button type="button" id="btnErrPopup" onclick="document.location.href = $('#errorUrl').attr('href');" class="button_blue"
+                                    style="width: 70px;">
+                                Ok
+                            </button>
+                            <a id="errorUrl" href="@Html.AttributeEncode(Url.Action("PlanMapping", "Admin" ))">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="row Panel_bg_Sub">
+            <fieldset id="fsAddDoctors" class="Panel_bg_Sub">
+                <div>
+                    &nbsp;
+                </div>
+                <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Personal Information</b>:</legend>
+                <div class="row">
+                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                        @Html.Label("Organization Name", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
+                        @(Html.Kendo().DropDownListFor(m => m.OrganizationName)
+                                    .Name("OrganizationName").HtmlAttributes(new { style = "width:100%;" })
+                                    .OptionLabel("--Select--")
+                                    .Events(events =>
+                                    {
+                                        events.Select("onSelectOrganization");
+                                    })
+                                    .DataValueField("OrganizationID")
+                                    .DataTextField("OrganizationName")
+
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                        });
+                                    }))
+                        <br />
+
+                        @*@Html.HiddenFor(model => model.OrganizationID)*@
+                        @Html.Hidden("hdnOrgName")
+                        @Html.Hidden("hdnOrgId")
+                        <script type="text/javascript">
+                            //Salutation change event to get SalutationID and Salutation
+                            function onSelectOrganization(e) {
+                                $("#hdnOrgName").val("");
+                                $("#hdnOrgId").val("");
+                                var dataItem = this.dataItem(e.item.index());
+                                $("#hdnOrgId").val(dataItem.OrganizationID);
+                                $("#OrganizationName").val(dataItem.OrganizationName);
+                                $("#hdnOrgName").val(dataItem.OrganizationName);
+                            }
+                        </script>
+                        @Html.ValidationMessageFor(model => model.OrganizationName, "", new { @style = "color:red" })
+                    </div>
+                </div>
+                <div>
+                    @Html.Partial("_ProviderRegistration")
+                </div>
+
+            </fieldset>
+
+
+            <fieldset id="fsAddDoctorsLogin" class="Panel_bg_Sub" ">
+                <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Login Credentials</b>:</legend>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12 ">
+                            <div class="row">
+                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                    @Html.Label("Username", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                    @Html.TextBoxFor(model => model.UserName, null, new { style = "width:100%;", maxlength = 25, onchange = "ValidateuserNames(this.value);" })
+                                    @Html.ValidationMessageFor(model => model.UserName, "", new { @style = "color:red" })
+                                    <span id="spnUserName" style="color:red"></span>
+                                </div>
+                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                    @Html.Label("Password", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                    @Html.TextBoxFor(model => model.Password, null, new { style = "width:100%;", maxlength = 20, type = "password", onkeyup = "chkPasswordStrength(this.value,document.getElementById('strength'),document.getElementById('error'))", onpaste = "return false;", oncopy = "return false", oncut = "return false" })
+                                    @Html.ValidationMessageFor(model => model.Password, "", new { @style = "color:red" })
+                                    <span id="strength" class="strength5"></span>
+                                </div>
+                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                    @Html.Label("Confirm Password", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                    @Html.TextBoxFor(model => model.ConfirmPassword, null, new { style = "width:100%;", maxlength = 20, type = "password", onchange = "validatePassword()", onpaste = "return false;", oncopy = "return false", oncut = "return false" })
+                                    @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @style = "color:red" })
+                                    <span id="PasswordErrorMsg" style="color:red"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <legend class="Legendtxtcolor" style="float: left; font-size: 14px;">@Html.CheckBox("chk2factor", false)<b>Enable 2-factor authentication</b>:</legend>
+                <div class="row" id="divEnableFactor" style="display:none;">
+                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12 ">
+                        <label style="font-weight: normal;">
+                            @(Html.RadioButton("ChkList", 1, new
+                        {
+                            id = "rbtnEverytime",
+                        }))
+                            Everytime
+                        </label>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <label style="font-weight: normal;">
+                            @(Html.RadioButton("ChkList", 2, new
+                        {
+                            id = "rbtnOnlySysChange"
+                        }))
+                            Only when system change
+                        </label>
+                        <br />
+                    </div>
+                    <br />
+                </div>
+                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-8">
+                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-8" style="display:block">
+                        @Html.CheckBox("OneTime", new { onclick = "ChckOneTime();" })<span>
+                            I Accept the  <a onclick="TermsCondition();">Terms & Conditions</a> for Organization Registration
+                        </span>
+                        <br />
+                        <div class="col-xs-12 col-md-12 col-sm-12">
+                            <span id="spnCheckErrorMessages" style="display:none; color:red !important; text-align:center;">Check Terms and Condition</span>
+                        </div>
+                    </div>
+            </fieldset>
+
+            <div class="row">
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                    <div align="center">
+                        <button type="submit" class="button_blue" id="btnSubmitDetails" title="Submit" style="width: 100px;" value="AddDoctors">
+                            Submit
+                        </button>
+                        <button type="reset" class="button_blue" id="btnClear" title="Clear" value="addUser" style="width: 100px;" onclick="@("window.location.href='" + @Url.Action("AddDoctor", "Organization") + "'");">
+                            Clear
+                        </button>
+                        <button type="button" class="button_blue" id="btnCancel" title="Cancel" value="addUser" style="width: 100px;" onclick="@("window.location.href='" + @Url.Action("AddDoctor", "Organization") + "'");">
+                            Cancel
+                        </button>
+                    </div>
+                    <br />
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+</div>

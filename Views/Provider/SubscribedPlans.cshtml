@@ -1,0 +1,554 @@
+﻿@model PPCP07302018.Models.Organization.OrganizationPlansDetails
+@using System.Web.Mvc.Html
+@using Kendo.Mvc.UI
+@using System.Web.Mvc
+
+@{
+    ViewBag.Title = "SubscribePlans";
+    Layout = "~/Views/Shared/WUCProviderLeftMenu.cshtml";
+    var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
+    var AttachedLink = (System.Configuration.ConfigurationManager.AppSettings["AttachedLink"].ToString());
+}
+<style type="text/css">
+    .loadingSpinner {
+        position: absolute;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background: rgba( 255, 255, 255, .8 ) url('../../Images/loading-spinner-red.gif') 50% 50% no-repeat;
+    }
+</style>
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/KendoScripts")
+@Scripts.Render("~/bundles/custom-validator")
+@Styles.Render("~/bundles/Kendocss")
+@Scripts.Render("~/bundles/SubscribePlanScriptFiles")   @*For Subscribe script files*@
+@Styles.Render("~/bundles/Organizationcssfiles")       @*For member css files*@
+@Html.Hidden("hdnOrganizationID")
+@Html.Hidden("hdnPlanID")
+@Html.Hidden("hdnPlanName")
+@Html.Hidden("hdnPlanId")
+@Html.Hidden("hdnOrganizationTAndConditions")
+@Html.Hidden("hdnProviderTAndConditions")
+<script>
+    $(document).ready(function () {
+        debugger;
+        //$("#divPlanDetails").show();
+        $("#divSubscribeGrid").hide();
+        $("#divdisplayProviderPlans").show();
+        $("#divProviderSearchPlans").show();
+        OrganizationplanProviders("@Session["ProviderID"]", "@Session["OrganizationID"]", "2", "@ServiceUrl");
+     //   BindSubscribeDetails("@ServiceUrl", '@Session["OrganizationID"]',"1");//1 is for getting Subscribed plans
+        @*BindPlanDetails("@ServiceUrl");*@
+
+
+        $("#btnSubmit").hide();
+        document.getElementById("OneTime").disabled = true;
+        document.getElementById("TwoTime").disabled = true;
+    });
+    function EditOptions(PlanID, PaymentIntervals, FromAge, ToAge, PlanName, EnrollFee, Amount, VisitFee, EffectiveDate, GenderID, PlanTermName, PlanDescription, PlanType, OrganizationID) {
+        debugger;
+        $("#divSubscribeGrid").hide();
+        $("#divSearchPlans").hide();
+        //$("#ViewSubscribePlanDetailsGrid").hide();
+        $("#divPlanDetails").hide();
+        $("#divPlanEnrollDetails").show();
+        if (PlanType == 0) {
+            PlanType = "Individual Plan";
+        }
+        else {
+            PlanType = "Family plan";
+        }
+        var jsonResults = [];
+        for (var r in PaymentIntervals) {
+            debugger;
+            jsonResults += "<label for='" + PaymentIntervals[r].Paymentschedule + "'>" + PaymentIntervals[r].Paymentschedule + "</label>" + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+            $("#divPaymentSchedule").html(jsonResults);
+        }
+
+        document.getElementById("spnSelectedPlanName").innerHTML = PlanName;
+        document.getElementById("spnSelectedPlanType").innerHTML = PlanType;
+        document.getElementById("spnEligibility").innerHTML = FromAge + "Y " + "-" + ToAge + "Y";
+        document.getElementById("spnEnrollFee").innerHTML = EnrollFee;
+        document.getElementById("spnVisitFee").innerHTML = VisitFee;
+        document.getElementById("spnAmount").innerHTML = Amount;
+        document.getElementById("spnDuration").innerHTML = PlanTermName;
+        //document.getElementById("spnAvailable").innerHTML = GenderID;
+        document.getElementById("spnEffectiveDate").innerHTML = kendo.toString(kendo.parseDate(EffectiveDate, 'yyyy-MM-dd'), "MM-dd-yyyy");
+        document.getElementById("spnPlanDecription").innerHTML = PlanDescription;
+
+        $("#hdnPlanID").val(PlanID);
+        $("#divProviderStartDate").hide();
+        $("#divOrgStartDate").show();
+        $("#divOnetime").show();
+        $("#divCheckTwoTime").hide();
+        $("#btnProviderSubmit").hide();
+        $("#btnOrgSubscribePlans").show();
+     //   $("#hdnOrganizationTAndConditions").val(OrganizationTAndConditions);
+        $("#hdnOrganizationTAndConditions").val("90/13092019013049Income Report - Complete snapshot (4).pdf");
+        //
+    }
+    function GetOrganizationPlans() {
+        debugger;
+        var PlanID = $("#hdnPlanID").val();
+        var OrgPlanStartDate = $("#PlanStartDate").val();
+        if (OrgPlanStartDate == "") {
+            document.getElementById("spnOrgPlanStartDate").innerHTML = "Please Select PlanStartDate";
+            return false;
+        }
+        else {
+            document.getElementById("spnOrgPlanStartDate").innerHTML = "";
+        }
+        if ($('#OneTime').is(":checked") == true) {
+
+            $("#spnCheckErrorMessages").hide();
+            SaveEnrollPlans("@Session["OrganizationID"]", PlanID, OrgPlanStartDate, "@ServiceUrl");
+        }
+        else {
+            $("#spnCheckErrorMessages").show();
+        }
+    }
+    function divClose() {
+
+        var getUrl = '@Url.Action("SubscribedPlans", "Provider")';
+        window.location = getUrl;
+
+    }
+
+
+</script>
+
+<script type="text/javascript">
+    function Subscribe() {
+        debugger;
+        if ($("#rbtnProvider").is(":checked")) {
+            $("#divSubscribeGrid").hide();
+            $("#divPlanEnrollDetails").hide();
+            $("#divProviderSubscription").show();
+            $("#divSearchPlans").hide();
+            BindProviderNames('@Session["OrganizationID"]', "@ServiceUrl");
+        }
+        else {
+            $("#divSubscribeGrid").show();
+            $("#btnSubmit").hide();
+            $("#btnCancel").hide();
+            $("#divPlanEnrollDetails").hide();
+            $("#divProviderSubscription").hide();
+            $("#divSearchPlans").show();
+        }
+    }
+    function OrgTermsCondition() {
+        debugger;
+        document.getElementById("OneTime").disabled = false;
+        var tempfilePath = $("#hdnOrganizationTAndConditions").val();
+        //// var Url = "http://stageservices.labscore.co/AppFileDownload/FileDownload.aspx?FP=D:/SitesData/StageLabScore/Attachments/90/13092019013049Income Report - Complete snapshot (4).pdf";
+        //var Url = "http://stageservices.labscore.co/AppFileDownload/FileDownload.aspx?FP=D:/SitesData/StageLabScore/Attachments/";
+        var Url = '@AttachedLink' + "" + tempfilePath;
+        window.open(Url, "_newtab");
+        window.open(Url, "_newtab").focus();
+        $("#spnerrorMessage").hide();
+    }
+    function ProviderTermsCondition() {
+        document.getElementById("TwoTime").disabled = false;
+        var tempfilePath = $("#hdnProviderTAndConditions").val();
+        //var Url = "http://stageservices.labscore.co/AppFileDownload/FileDownload.aspx?FP=D:/SitesData/StageLabScore/Attachments/90/13092019013049Income Report - Complete snapshot (4).pdf";
+        var Url = '@AttachedLink' + "" + tempfilePath;
+        window.open(Url, "_newtab");
+        window.open(Url, "_newtab").focus();
+        $("#spnerrorMessages").hide();
+    }
+
+    function GetSubscribePlan() {
+        debugger;
+        var PlanID = $("#hdnPlanId").val();
+        var PlanStartDate = $("#ProviderPlanStartDate").val();
+        if (PlanStartDate == "") {
+            document.getElementById("spnProviderPlanStartDate").innerHTML = "Please Select PlanStartDate";
+            return false;
+        }
+        else {
+            document.getElementById("spnProviderPlanStartDate").innerHTML = "";
+        }
+        if ($('#TwoTime').is(":checked") == true) {
+            $("#spnCheckErrorMessages").hide();
+            GetSubscribePlans('@Session["OrganizationID"]', '@Session["OrganizationName"]', PlanID, $("#hdnPlanName").val(), PlanStartDate, '@Session["ProviderID"]', '@Session["ProviderName"]', "@ServiceUrl");
+
+        }
+        else {
+            $("#spnCheckErrorMessages").show();
+        }
+
+
+    }
+    function ProviderPlan(PlanID, PaymentIntervals, FromAge, ToAge, PlanName, EnrollFee, Amount, VisitFee, EffectiveDate, GenderID, PlanTermName, PlanDescription, PlanType, OrganizationID,ProviderTAndC) {
+        debugger;
+        $("#divSubscribeGrid").hide();
+        $("#divProviderSubscription").hide();
+        //$("#ViewSubscribePlanDetailsGrid").hide();
+        $("#divPlanDetails").hide();
+        $("#divPlanEnrollDetails").show();
+        $("#hdnPlanName").val(PlanName);
+        if (PlanType == 0) {
+            PlanType = "Individual Plan";
+        }
+        else {
+            PlanType = "Family plan";
+        }
+        var jsonResults = [];
+        for (var r in PaymentIntervals) {
+            debugger;
+            jsonResults += "<label for='" + PaymentIntervals[r].Paymentschedule + "'>" + PaymentIntervals[r].Paymentschedule + "</label>" + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+            $("#divPaymentSchedule").html(jsonResults);
+        }
+
+        document.getElementById("spnSelectedPlanName").innerHTML = PlanName;
+        document.getElementById("spnSelectedPlanType").innerHTML = PlanType;
+        document.getElementById("spnEligibility").innerHTML = FromAge + "Y " + "-" + ToAge + "Y";
+        document.getElementById("spnEnrollFee").innerHTML = EnrollFee;
+        document.getElementById("spnVisitFee").innerHTML = VisitFee;
+        document.getElementById("spnAmount").innerHTML = Amount;
+        document.getElementById("spnDuration").innerHTML = PlanTermName;
+        //document.getElementById("spnAvailable").innerHTML = GenderID;
+        document.getElementById("spnEffectiveDate").innerHTML = kendo.toString(kendo.parseDate(EffectiveDate, 'yyyy-MM-dd'), "MM-dd-yyyy");
+        document.getElementById("spnPlanDecription").innerHTML = PlanDescription;
+
+        $("#hdnPlanId").val(PlanID);
+        $("#divOrgStartDate").hide();
+        $("#divProviderStartDate").show();
+        $("#divOnetime").hide();
+        $("#divCheckTwoTime").show();
+        $("#btnOrgSubscribePlans").hide();
+        $("#btnProviderSubmit").show();
+        $("#hdnProviderTAndConditions").val(ProviderTAndC);
+
+    }
+    function CancelData() {
+        var getUrl = '@Url.Action("SubscribePlans", "Organization")';
+        window.location = getUrl;
+    }
+
+    function OrgSearchPlans() {
+        debugger;
+        if ($("#rbtnSubscribed").is(":checked")) {
+            BindSubscribeDetails("@ServiceUrl", '@Session["OrganizationID"]',"1");
+        }
+        else if ($("#rbtnUnSubscribed").is(":checked")) {
+            BindSubscribeDetails("@ServiceUrl", '@Session["OrganizationID"]',"2");
+        }
+        else {
+            BindSubscribeDetails("@ServiceUrl", '@Session["OrganizationID"]',"3");
+        }
+    }
+
+    function ProviderSearchPlans() {
+        debugger;
+        if ($("#rbtnProviderSubscribed").is(":checked")) {
+            OrganizationplanProviders("@Session["ProviderID"]", "@Session["OrganizationID"]", "2", "@ServiceUrl");
+        }
+        else if ($("#rbtnProviderUnSubscribed").is(":checked")) {
+            OrganizationplanProviders("@Session["ProviderID"]", "@Session["OrganizationID"]", "1", "@ServiceUrl");
+        }
+        else {
+            OrganizationplanProviders("@Session["ProviderID"]", "@Session["OrganizationID"]", "3", "@ServiceUrl");
+        }
+    }
+
+</script>
+<div class="pageheading_bar" align="center">
+    <b>Subscribe Plans</b>
+</div>
+<div id="divSuccess" style="display: none; position: relative" align="center">
+    <div class="Page_Dimmer">
+    </div>
+    <div class="PopupHolder" style="top: 30%;">
+        <div class="pageheading_bar" style="width: 100%; height: 70%;">
+            <div style="vertical-align: middle">
+                <div style="vertical-align: middle">
+                    Physician Primary Care Plan<span style="float: right; color: Red;
+                            margin-right: 5px;"></span>
+                </div>
+            </div>
+        </div>
+        <div style="border: Solid 1px #33CCEE; width: 100%;">
+            <div align="center">
+                <span id="lblMsg" style="color: Green; font-family: Verdana,Tahoma; font-size: 15px;
+                        font-weight: bold; text-align: center; margin-top: 8px; margin-left: 3px; display: none;">
+                </span>
+                <span id="lblErrorMsg" style="color:red; font-family: Verdana,Tahoma; font-size: 15px;
+                        font-weight: bold; text-align: center; margin-top: 8px; margin-left: 3px; display: none;">
+                </span>
+
+            </div>
+            <div align="center">
+                <br />
+                <button id="btnClose" title="Close" style="width: 80px" class="button_blue" onclick="divClose();">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="Panel_bg" id="divMainPlan">
+    <div id="divSubscribePlan" style="display:block;">
+        <div class="row Panel_bg_Sub">
+
+            @*Provider Subscription*@
+
+            <div class="form-group" id="divProviderSubscription" style="display:block">
+               
+                <div class="col-xs-12 col-md-12 col-sm-12" id="divProviderSearchPlans" align="left" style="display:block">
+                    <label style="font-weight: normal;">
+                        @(Html.RadioButton("ProviderSearchPlans", 1, true, new
+                    {
+                        id = "rbtnProviderSubscribed",
+                        onchange = "ProviderSearchPlans()"
+
+                    }))
+                        Subscribed
+                    </label>
+                    <label style="font-weight: normal; margin-left:20px">
+                        @(Html.RadioButton("ProviderSearchPlans", 2, new
+                    {
+                        id = "rbtnProviderUnSubscribed",
+                        onchange = "ProviderSearchPlans()"
+                    }))
+                        UnSubscribed
+                    </label>
+                    <label style="font-weight: normal; margin-left:20px">
+                        @(Html.RadioButton("ProviderSearchPlans", 3, new
+                    {
+                        id = "rbtnProviderAll",
+                        onchange = "ProviderSearchPlans()"
+                    }))
+                        All
+                    </label>
+                    <br />
+                </div>
+                <div id="divdisplayProviderPlans" style="display:block">
+                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+
+                        @(Html.Kendo().Grid<PPCP07302018.Models.Organization.OrganizationPlansDetails>
+                                                    ()
+                                                    .Name("ViewProviderPlanGrid")
+                                                    .Columns(columns =>
+                                                    {
+                                                        // columns.Bound(p => p).ClientTemplate(
+                                                        // "# if (OrgID== 1) { #" + "<a onclick='ProviderPlan(\"#=PlanID#\",\"#=PlanName#\")'; <span style='cursor:pointer'><input type='checkbox' value='#= PlanID #' id='check'></a>" + "# } else { #" + "<span style='cursor:pointer'><input type='checkbox' disabled='disabled' value='#= PlanID #' id='check'>" + "# } #").Title("Select").Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(150);
+
+
+                                                        // columns.Bound(p => p).ClientTemplate("<a onclick='ProviderPlan(\"#=PlanID#\",\"#=PlanName#\")'; <span style='cursor:pointer'><input type='checkbox' value='#= PlanID #' id='check'></a>").Title("Select").Width(60).Filterable(false);
+                                                        columns.Bound(p => p.PlanName).Title("Plan Name").Filterable(false).Width(150);
+                                                        columns.Bound(p => p.FromAge).ClientTemplate("#: FromAge #" + "Y " + "-" + " #: ToAge #" + "Y").Title("Eligibility").Filterable(false).Width(100);
+                                                        columns.Bound(p => p.EnrollFee).Title("Enrollment Fee").Filterable(false).Width(100);
+                                                        columns.Bound(p => p.MonthlyFee).Title("Monthly Fee").Filterable(false).Width(100);
+                                                        columns.Bound(p => p.VisitFee).Title("Visit Fee").Filterable(false).Width(100);
+                                                        columns.Bound(p => p.EffectiveDate).Title("Effective Date").Filterable(false).Width(130).Encoded(true).ClientTemplate("#= kendo.toString(kendo.parseDate(EffectiveDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') #");
+                                                        columns.Bound(p => p.GenderID).ClientTemplate("#if(GenderID==1){ #Male#}else if(GenderID==2){ #Female#}else{ #Male,Female #}#").Title("Available To").Filterable(false).Width(100);
+                                                        columns.Bound(p => p.ProviderTAndCPath).Title("ProviderTAndCPath").Filterable(false).Visible(false);
+                                                        columns.Bound(p => p).ClientTemplate(
+                                                   "# if (OrgID== 0)   { #" + "UnSubscribed" + "# } else { #" + "<a onclick='ProviderPlan(#=PlanID#,#=PaymentIntervals#,\"#=FromAge#\",\"#=ToAge#\",\"#=PlanName#\",\"#=EnrollFee#\",\"#=MonthlyFee#\",\"#=VisitFee#\",\"#=EffectiveDate#\",\"#=GenderID#\",\"#=PlanTermName#\",\"#=PlanDescription#\",\"#=PlanType#\",\"#=OrgID#\",\"#=ProviderTAndCPath#\");' <span style='cursor:pointer'>Subscribe</a>" + "# }  #").Title("Action").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(150);
+
+                                                    })
+                                                    .Scrollable()
+                                                    .Pageable()
+                                                    .Filterable()
+                                                    .AutoBind(false)
+                                                    .HtmlAttributes(new { })
+                                                    .Selectable()
+                                                    .DataSource(dataSource => dataSource
+                                                    .Ajax()
+                                                    .PageSize(6)
+                                                    .ServerOperation(false)))
+                    </div>
+                </div>
+
+            </div>
+
+
+            <br />
+            <div class="row">
+                <div class="col-xs-12 col-md-12 col-sm-12" align="center">
+                    <span id="spnerrorMessage" style="display:none; color:red !important; text-align:center;">Check Atleast one checkbox</span>
+                </div>
+                <div class="col-xs-12 col-md-12 col-sm-12" align="center">
+                    <span id="spnCheckErrorMessage" style="display:none; color:red !important; text-align:center;">Check Terms and Condition</span>
+                </div>
+            </div>
+            <br />
+
+
+            <div class="col-xs-12 col-md-12 col-sm-12" align="center">
+                @*<button class="button_blue" type="submit" id="btnCancel" title="Cancel" style="width: 100px; display:none;" value="Cancel" onclick="CancelData();">
+                        Cancel
+                    </button>*@
+
+            </div>
+
+
+
+
+
+            <div id="divPlanEnrollDetails" style="display:none">
+
+                @*<div class="Panel_bg" id="divMainPlan">*@
+                <div id="divEnrollPlan" style="display:block;">
+
+                    <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Plan Information</b>:</legend>
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12 ">
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                        <span><b>Plan Name</b></span>
+                                        <br />
+                                        <span id="spnSelectedPlanName"></span>
+                                    </div>
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
+                                        <span><b>Plan Type</b></span>
+                                        <br />
+                                        <span id="spnSelectedPlanType"></span>
+                                    </div>
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                        <span><b>Eligibility</b></span>
+                                        <br />
+                                        <span id="spnEligibility"></span>
+                                    </div>
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
+                                        <span><b>Enrollment Fee</b></span>
+                                        <br />
+                                        <span id="spnEnrollFee"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                        <span><b>Visit Fee (Co-Pay)</b></span>
+                                        <br />
+                                        <span id="spnVisitFee"></span>
+                                    </div>
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                        <span><b>Plan Amount</b></span>
+                                        <br />
+                                        <span id="spnAmount"></span>
+                                    </div>
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                        <span><b>Plan Duration</b></span>
+                                        <br />
+                                        <span id="spnDuration"></span>
+                                    </div>
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
+                                        <span><b>Available To</b></span>
+                                        <br />
+                                        <span id="spnAvailable"></span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                        <span><b>Effective Date</b></span>
+                                        <br />
+                                        <span id="spnEffectiveDate"></span>
+                                    </div>
+
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-4">
+                                        <span><b>Plan Description</b></span>
+                                        <br />
+                                        <span id="spnPlanDecription"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="form-group">
+                        <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"></legend>
+
+                        <div class="row" id="divOrgStartDate" style="display:none;">
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-2">
+                                @Html.Label("Plan Start Date", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-4">
+                                @( Html.Kendo().DatePickerFor(model => model.OrgPlanStartDate).Format("MM/dd/yyyy").Name("PlanStartDate").Value("")
+                                                    .HtmlAttributes(new { PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text" })
+                                )
+                                @Html.ValidationMessageFor(model => model.OrgPlanStartDate, "", new { @style = "color:red" })
+                                <span id="spnOrgPlanStartDate" style="color: red; font-family: Verdana,Tahoma; font-size: 14px;
+                                font-weight: bold;"></span>
+                            </div>
+                        </div>
+                        <div class="row" id="divProviderStartDate" style="display:none;">
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-2">
+                                @Html.Label("Plan Start Date", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-4">
+                                @( Html.Kendo().DatePickerFor(model => model.ProviderPlanStartDate).Format("MM/dd/yyyy").Name("ProviderPlanStartDate").Value("")
+                                                    .HtmlAttributes(new { PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text" })
+                                )
+                                @Html.ValidationMessageFor(model => model.ProviderPlanStartDate, "", new { @style = "color:red" })
+                                <span id="spnProviderPlanStartDate" style="color: red; font-family: Verdana,Tahoma; font-size: 14px;
+                                font-weight: bold;"></span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Allow Member Payment Schedules</b></legend>
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-12" id="divPaymentSchedule">
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-8" id="divOnetime" style="display:none;">
+                        @Html.CheckBox("OneTime")<span>I Accept the <a onclick="OrgTermsCondition();">Terms & Conditions</a> for Organization Subscription</span>
+                        <br />
+                    </div>
+                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-8" id="divCheckTwoTime" style="display:none;">
+                        @Html.CheckBox("TwoTime")<span>I Accept the <a onclick="ProviderTermsCondition();">Terms & Conditions</a> for Provider Subscription</span>
+                        <br />
+                    </div>
+                    <div class="col-xs-12 col-md-12 col-sm-12" align="center">
+                        <span id="spnCheckErrorMessages" style="display:none; color:red !important; text-align:center;">Check Terms and Condition</span>
+                    </div>
+
+                </div>
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" align="center">
+                    <button class="button_blue" type="submit" id="btnOrgSubscribePlans" style="display:none;" title="Submit" value="Submit" onclick="GetOrganizationPlans();">
+                        Submit
+                    </button>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-md-12 col-sm-12" align="center">
+                        <button class="button_blue" type="submit" id="btnProviderSubmit" title="Submit" style="width: 100px; display:none;" value="Submit" onclick="GetSubscribePlan();">
+                            Subscribe
+                        </button>
+                        <button class="button_blue" type="submit" id="btnCancel" title="Cancel" style="width: 100px; display:none;" value="Cancel" onclick="CancelData();">
+                            Cancel
+                        </button>
+                    </div>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+

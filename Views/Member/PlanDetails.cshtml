@@ -1,0 +1,706 @@
+﻿@model PPCP07302018.Models.Member.MemberDetails
+@using System.Web.Mvc.Html
+@using Kendo.Mvc.UI
+@using System.Web.Mvc
+@{
+    ViewBag.Title = "MemberRegistration";
+    Layout = "~/Views/Shared/BaseMaster.cshtml";
+    var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
+
+}
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/KendoScripts")
+@Scripts.Render("~/bundles/custom-validator")
+@Styles.Render("~/bundles/Kendocss")
+@Scripts.Render("~/bundles/PlanDetailsScriptFiles")
+@Styles.Render("~/bundles/Membercssfiles")
+@Html.Hidden("TempMemberID")
+@Html.Hidden("TempPlanCode")
+
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+        debugger;
+        GetMemberFamilyPlanDetails('@ServiceUrl','@Session["MemberParentID"]',1);
+        @*BindOrganizations('@ServiceUrl');
+        BindProviderNames(0,'@ServiceUrl');
+        BindPlanNames(0, 0, 0,'@ServiceUrl');
+        var PlanID = 0; var MemberID = 0; var OrganizationID = 0; var ProviderID = 0;
+        BindPlansGrid(PlanID, MemberID, OrganizationID, ProviderID,'@ServiceUrl');*@
+
+        var PaymentValidator = $("#divMakePayment").kendoValidator().data("kendoValidator");
+        $("#btnPaymentSubmit").click(function (e) {
+            if (PaymentValidator.validate()){
+                e.preventDefault();
+                var MemberRegistrationDetails =@Html.Raw(Json.Encode(@Model));
+                MemberRegistrationDetails.MemberID='@Session["MemberID"]';
+                MemberRegistrationDetails.MemberName='@Session["MemberName"]';
+                MemberRegistrationDetails.CountryCode= 91;@*'@Session["MemberName"]';*@
+                MemberRegistrationDetails.MobileNumber='@Session["MemberPrimaryPhone"]';
+                MemberRegistrationDetails.MemberPlanID=document.getElementById("spnMemberPlanID").innerText;
+                MemberRegistrationDetails.TotalAmount=document.getElementById("spnTotalAmount").innerText;
+                MemberRegistrationDetails.AmountPaid=document.getElementById("spnAmountPaid").innerText;
+                MemberRegistrationDetails.PlanID=document.getElementById("spnPlanID").innerText;
+                MemberRegistrationDetails.PlanName=document.getElementById("spnPlanName").innerText;
+                MemberRegistrationDetails.Amount=$("#Amount").val();
+                MemberRegistrationDetails.CardNumber=$("#CardNumber").val();
+                MemberRegistrationDetails.NameOnCard=$("#NameOnCard").val();
+                MemberRegistrationDetails.MM=$("#MM").val();
+                MemberRegistrationDetails.YY=$("#YY").val();
+                MemberRegistrationDetails.CVV=$("#CVV").val();
+                if (MemberRegistrationDetails != null) {
+                    MakePlanPayment(MemberRegistrationDetails,'@ServiceUrl');
+                }
+                else {
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+        });
+
+        var validator = $("#divMakePayment").kendoValidator().data("kendoValidator");
+        $("#btnPaymentClear").click(function (e) {
+            PaymentClear();
+            validator.hideMessages();
+        });
+        $("#btnPaymentCancel").click(function (e) {
+            PaymentClear();
+            $("#divMakePayment").hide();
+        });
+    });
+    function ChangeSearchPlan() {
+        $("#PlansGrid").data("kendoGrid").dataSource.data("");
+        $("#OrganizationNames").data("kendoAutoComplete").destroy();
+        $("#PlanNames").data("kendoAutoComplete").destroy();
+        $("#ProviderNames").data("kendoAutoComplete").destroy();
+        BindOrganizations();
+        BindProviderNames(0);
+        BindPlanNames(0,0,0);
+        var PlanID = 0; var MemberID = 0; var OrganizationID = 0; var ProviderID = 0;
+        BindPlansGrids(PlanID, MemberID, OrganizationID, ProviderID);
+    }
+    function OnPlanSelectChange(e) {
+        var dataItem = this.dataItem(e.item.index());
+        $("#PlanName").val(dataItem.PlanName);
+        $("#PlanId").val(dataItem.PlanId);
+        $("#divSearchPlanNext").show();
+        var OrganizationID = $("#OrganizationId").val();
+        var ProviderID = $("#ProviderId").val();
+        var PlanID = $("#PlanId").val(); var MemberID = 0;
+        BindPlansGrid(PlanID, MemberID, OrganizationID, ProviderID);
+    }
+
+    function PaymentClear(){                                                      //To clear fields  by Gayathri
+        $("#Amount").val("");
+        $("#CardNumber").val("");
+        $("#NameOnCard").val("");
+        $("#MM").data("kendoDropDownList").value(-1);
+        $("#YY").data("kendoDropDownList").value(-1);
+        $("#CVV").val("");
+        document.getElementById("spnAmountPaidValidation").innerHTML = "";
+    }
+    function CancelMemberPlan(MemberID,PlanID,OrgID){
+        var getUrl = '@Url.Action("CancelPlans", "Member")';
+        var uurl = getUrl + "?MemberPlanID=" + PlanID;
+        window.location = uurl;
+    }
+    function ViewPaymentReport(MemberID, PlanID, OrganizationID) {
+        ViewPaymentReports(MemberID, PlanID, OrganizationID,'@ServiceUrl');
+
+    }
+    function ViewMemberCard(MemberID, PlanCode, OrganizationID,MemberPlanID){
+        debugger;
+        //  var encrypted = CryptoJS.AES.encrypt("Message", "Secret Passphrase");
+
+
+        if ($("#rbtnIndividual").is(":checked")) {
+            @*var getUrl = '@Url.Action("GenerateMemberCard", "Member")';*@
+            var getUrl = '@Url.Action("MemberPlanCardReport", "Master")';
+            var uurl = getUrl + "?MemberID=" + MemberID +"&PlanID="+PlanCode;
+            window.location = uurl;
+
+        }
+        else if ($("#rbtnFamily").is(":checked")) {
+            debugger;
+            $("#TempPlanCode").val(PlanCode);
+            GetFamilyPlanMemberDetails('@ServiceUrl',MemberPlanID);
+        }
+
+        //window.open(uurl, "_newtab");
+        //window.open(uurl, "_newtab").focus();
+        //window.open(uurl, "_newtab").print();
+
+        @*$.ajax({
+            url: '@Url.Action("GenerateMemberCard", "Member")',
+            dataType: "json",
+            data: { MemberID: MemberID,PlanID:PlanID,OrganizationID:OrganizationID },
+            contentType: 'application/json',
+            success: function (result) {
+
+            },
+            error: function (ex) {
+            }
+        });*@
+    }
+
+    function SearchPlan() {
+        if ($('#searchforplan').css('display') == 'none') {
+            BindOrganizations();
+            $("#searchforplan").show();
+            return false;
+        }
+        else {
+            $("#searchforplan").hide();
+            return false;
+        }
+    }
+
+    function MakePayment(PlanCode,MemberPlanID) {              //Plans grid payment click by Gayathri
+        debugger;
+        var getUrl = '@Url.Action("PartialPayments", "Member")';
+        var uurl = getUrl + "?MemberPlanID=" + PlanCode+"&MemberPlanIDs="+MemberPlanID;
+        window.location = uurl;
+
+        //document.getElementById("spnMemberPlanID").innerHTML = MemberPlanID;
+        //document.getElementById("spnPlanID").innerHTML = PlanID;
+        //document.getElementById("spnPlanName").innerHTML = PlanName;
+        //document.getElementById("spnTotalAmount").innerHTML = TotalAmount;
+        //document.getElementById("spnAmountPaid").innerHTML = AmountPaid;
+        //$("#divMakePayment").show();
+    }
+
+
+    function ValidateAmountPaid(AmountPaid) {                                                    //Amount validation function by Gayathri
+        if (AmountPaid == "") {
+            document.getElementById("spnAmountPaidValidation").innerHTML = "Please enter amount"; return false;
+        }
+        else {
+            var totalamount = document.getElementById("spnTotalAmount").innerText;
+            if (totalamount == AmountPaid || totalamount > AmountPaid) {
+                document.getElementById("spnAmountPaidValidation").innerHTML = "";
+            }
+            else {
+                document.getElementById("spnAmountPaidValidation").innerHTML = "Please check your amount"; return false;
+            }
+        }
+    }
+
+    function SearchEnrollPlans(){
+        debugger;
+        if ($("#rbtnFamily").is(":checked")) {
+            GetMemberFamilyPlanDetails('@ServiceUrl','@Session["MemberParentID"]',2);
+        }
+        else if ($("#rbtnIndividual").is(":checked")) {
+            GetMemberFamilyPlanDetails('@ServiceUrl','@Session["MemberParentID"]',1);
+        }
+        else {
+            GetMemberFamilyPlanDetails('@ServiceUrl','@Session["MemberParentID"]',0);
+        }
+    }
+
+    function bindReport(result) {
+
+        var jsModel = {};
+        jsModel.MemberName = result[0].MemberName;
+        jsModel.DOB = result[0].DOB;
+        jsModel.Gender = result[0].Gender;
+        jsModel.Email = result[0].Email;
+        jsModel.Address = result[0].Address;
+        jsModel.City = result[0].CityName;
+        jsModel.State = result[0].StateName;
+        jsModel.Zip = result[0].Zip;
+        jsModel.TotalAmount = result[0].TotalAmount;
+        jsModel.Status = result[0].Status;
+        jsModel.PlanStartDate = result[0].PlanStartDate;
+        jsModel.PlanEnddate = result[0].PlanEnddate;
+        jsModel.AmountPaid = result[0].AmountPaid;
+        jsModel.DueAmount = result[0].DueAmount;
+
+        var obj = jQuery.parseJSON(result[0].PaymentInterval);
+        jsModel.InstallmentFee = obj[0].InstallmentFee;
+        jsModel.Paymentschedule = obj[0].Paymentschedule;
+        jsModel.NoofInstallments = obj[0].NoofInstallments;
+        jsModel.InstallmentAmount = obj[0].InstallmentAmount;
+        jsModel.Saving = obj[0].Saving;
+
+        $.ajax({
+            url: '@Url.Action("GetPaymentValues", "Master")',
+            data: jsModel,
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (result) {
+
+            },
+            error: function (ex) {
+            }
+        });
+    }
+
+
+
+    function GetMemberID(MemberID) {
+        debugger;
+
+        $("#TempMemberID").val(MemberID);
+
+        //$("#AccountType").val(CardsList);
+        //alert($("#AccountType").val());
+    }
+
+    function GenerateCard(){
+        debugger;
+        @*var getUrl = '@Url.Action("GenerateMemberCard", "Member")';*@
+        var getUrl = '@Url.Action("MemberPlanCardReport", "Master")';
+        var uurl = getUrl + "?MemberID=" +  $("#TempMemberID").val() +"&PlanID="+$("#TempPlanCode").val();
+        window.location = uurl;
+        document.getElementById("divPaymentPopup").style.display = "none";
+    }
+
+</script>
+
+<div id="divOrganizationPayments">
+    <div class="pageheading_bar" align="center">
+        <b>Plan Details</b>
+    </div>
+
+    <div class="Panel_bg" id="divMain">
+
+        <div align="right">
+            <div class="row">
+                @*<div class="col-xs-0 col-md-10 col-sm-0 col-lg-9"></div>*@
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                    <button class="button_blue" type="submit" id="btnEnrollPlan" title="Enroll Plan" style="width: 100px;" value="EnrollPlan" onclick="@("window.location.href='" + @Url.Action("PlanEnroll", "Member") + "'");">
+                        Enroll Plan
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div class="form-group" style="margin-top:10px;">
+            <div class="row">
+                <div class="col-xs-12 col-md-12 col-sm-12" id="divSearchPlans" align="left" style="display:bock">
+                    <label style="font-weight: normal;">
+                        @(Html.RadioButton("GetTypePlans", 1, true, new
+                    {
+                        id = "rbtnIndividual",
+                        onchange = "SearchEnrollPlans()"
+
+                    }))
+                        Individual
+                    </label>
+                    <label style="font-weight: normal; margin-left:20px">
+                        @(Html.RadioButton("GetTypePlans", 2, new
+                    {
+                        id = "rbtnFamily",
+                        onchange = "SearchEnrollPlans()"
+                    }))
+                        Family Members
+                    </label>
+
+                    <br />
+                </div>
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                    @(Html.Kendo().Grid<PPCP07302018.Models.Member.MemberPlan>
+                                                    ()
+                                                    .Name("PlansGrid")
+                                                    .Columns(columns =>
+                                                    {
+                                                        columns.Bound(p => p.MemberPlanID).Title("MemPlanID").Filterable(false).Visible(false);
+                                                        columns.Bound(p => p.MemberID).Title("MemID").Filterable(false).Visible(false);
+                                                        columns.Bound(p => p.PlanID).Title("PlanID").Filterable(false).Visible(false);
+                                                        columns.Bound(p => p.OrganizationID).Title("OrganizationID").Filterable(false).Visible(false);
+                                                        columns.Bound(p => p.MemberName).Title("Member Name").Filterable(false).Width(130);
+                                                        columns.Bound(p => p.PlanName).Title("Plan Name").Filterable(false).Width(100);
+                                                        columns.Bound(p => p.Duration).Title("Duration(in months)").Filterable(false).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                        columns.Bound(p => p.ProviderName).Title("Provider Name").Filterable(false).Width(150);
+                                                        columns.Bound(p => p.TotalAmount).Title("Plan Fee").Filterable(false).Width(70).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                        columns.Bound(p => p.Status).Title("Payment Status").Filterable(false).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                        columns.Bound(p => p.AmountPaid).Title("Amount Paid").Filterable(false).Width(70).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                        columns.Bound(p => p.Plan_Code).Title("Amount Paid").Filterable(false).Width(100).Visible(false);
+                                                        columns.Bound(p => p).ClientTemplate("# if (TotalAmount != AmountPaid) { #" + "<a onclick='MakePayment(#=Plan_Code#,\"#=MemberPlanID#\");' <span style='cursor:pointer'>Make Payment</a>" + "# } else { #" + "" + "# } #").Title("Payment").Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(80); ;
+                                                        columns.Bound(p => p).ClientTemplate(
+                                                           "<a onclick='ViewMemberCard(#=MemberID#,#=Plan_Code#,\"#=OrganizationID#\",\"#=MemberPlanID#\");' <span style='cursor:pointer'>Download</a>").Title("ID Card").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(80);
+
+                                                        columns.Bound(p => p).ClientTemplate(
+                                                           "<a onclick='CancelMemberPlan(#=MemberID#,#=Plan_Code#,\"#=OrganizationID#\");' <span style='cursor:pointer'>Cancel Plan</a>").Title("Cancel Plan").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(100).Visible(false);
+                                                    })
+                                                    .Scrollable()
+                                                    .Pageable()
+                                                    .Filterable()
+                                                    .AutoBind(false)
+                                                    .HtmlAttributes(new { })
+                                                    .Selectable()
+                                                    .DataSource(dataSource => dataSource
+                                                    .Ajax()
+                                                    .PageSize(5)
+                                                    .ServerOperation(false)))
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row" id="divPaymentPopup" style="display: none; align-content:center;">
+    <div class="col-xs-12 col-md-4 col-sm-6 col-lg-4">
+        <div class="Page_Dimmer">
+        </div>
+        <div class="PopupHolder" style="top:17%;">
+            <div class="Bgheader" width="100%">
+                <div>
+                    <span id="SpnPopUpTitle" style="color: White; font-family: Verdana,Tahoma;
+                                font-size: 15px; font-weight: bold;">Member Details</span>
+                </div>
+            </div>
+            <div style="border: Solid 1px #33CCEE; width: 100%;">
+
+                <div class="row" align="center">
+                    <div class="col-xs-12 col-md-4 col-sm-6 col-lg-4" id="divMemberDetails"></div>
+                </div>
+                <div class="row" align="center">
+                    <br />
+                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                        <button class="button_blue" type="submit" id="btnEnrollPlan" title="Enroll Plan" style="width: 138px;" value="EnrollPlan" onclick="GenerateCard();">
+                            Generate Card
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*<div class="pageheading_bar" align="center">
+    <b>Plans Details</b>
+
+    <div class="Panel_bg" id="divMain" style="display:none">
+        <div class="row Panel_bg_Sub">
+            <div class="row" id="divMakePayment" style="display: none; align-content:center;">
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                    <div class="Page_Dimmer">
+                    </div>
+                    <div class="PopupHolder" style="top:17%;">
+                        <div class="Bgheader" width="100%">
+                            <div>
+                                <span id="SpnPopUpTitle" style="color: White; font-family: Verdana,Tahoma;
+                                font-size: 15px; font-weight: bold;">Make Payment</span>
+                            </div>
+                        </div>
+                        <div style="border: Solid 1px #33CCEE; width: 100%;">
+                            <div class="form-group">
+                                <div class="row" id="divCarddetails">
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                            <span style="font-weight:bold; font-size:15px">Card Details :</span>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="row">
+                                            <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
+                                                @Html.Label("Amount ", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;"> * </span>
+                                                @Html.TextBoxFor(model => model.Amount, null, new { PlaceHolder = "", maxlength = 20, onchange = "ValidateAmountPaid(this.value);" })
+                                                @Html.ValidationMessageFor(model => model.Amount, "", new { @style = "color:red" })
+                                            </div>
+                                            <div class="col-xs-0 col-md-6 col-sm-6 col-lg-6 col-md-pull-2 col-lg-pull-2">
+                                                <span id="spnAmountPaidValidation" style="color:red"></span>
+                                                <span id="spnMemberPlanID" style="display:none;"></span>
+                                                <span id="spnPlanID" style="display:none;"></span>
+                                                <span id="spnPlanName" style="display:none;"></span>
+                                                <span id="spnTotalAmount" style="display:none;"></span>
+                                                <span id="spnAmountPaid" style="display:none;"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+                                            @Html.Label("Card Number", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
+                                            @Html.TextBoxFor(model => model.CardNumber, null, new { PlaceHolder = "", style = "width:100%;", maxlength = 16 })
+                                            @Html.ValidationMessageFor(model => model.CardNumber, "", new { @style = "color:red" })
+                                        </div>
+                                        <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+                                            @Html.Label("Name On Card", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
+                                            @Html.TextBoxFor(model => model.NameOnCard, null, new { PlaceHolder = "", style = "width:100%;", maxlength = 50 })
+                                            @Html.ValidationMessageFor(model => model.NameOnCard, "", new { @style = "color:red" })
+
+                                        </div>
+                                        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                                            @Html.Label("Expiry Date (MM/YY)", new { style = "font-weight:normal;", @class = "labelColor" })<span style="color: Red;">*</span><br />
+                                            @(Html.Kendo().DropDownListFor(m => m.MM)
+                                                .Name("MM").HtmlAttributes(new { style = "width:30%;" })
+                                                .HtmlAttributes(new { style = "width:30%;" })
+                                                //.OptionLabel("--Select--")
+                                                .DataTextField("Text")
+                                                .DataValueField("Value")
+                                                .Events(events =>
+                                                {
+                                                    events.Select("OnMonth");
+                                                })
+                                                .DataSource(source =>
+                                                {
+                                                    source.Read(read =>
+                                                    {
+                                                        read.Action("BindMonths", "Member");
+                                                    });
+                                                }))
+                                            @(Html.Kendo().DropDownListFor(m => m.YY)
+                                                .Name("YY").HtmlAttributes(new { style = "width:30%;" })
+                                                .HtmlAttributes(new { style = "width:30%;" })
+                                                //.OptionLabel("--Select--")
+                                                .DataTextField("Text")
+                                                .DataValueField("Value")
+                                                .Events(events =>
+                                                {
+                                                    events.Select("OnYear");
+                                                })
+                                                .DataSource(source =>
+                                                {
+                                                    source.Read(read =>
+                                                    {
+                                                        read.Action("BindYears", "Member");
+                                                    });
+                                                }))
+                                            @Html.Hidden("MM")
+                                            @Html.Hidden("YY")
+                                            <script type="text/javascript">
+                                            function OnMonth(e) {
+                                                var dataItem = this.dataItem(e.item.index());
+                                                $("#MM").val(dataItem.Text);
+                                            }
+                                            function OnYear(e) {
+                                                var dataItem = this.dataItem(e.item.index());
+                                                $("#YY").val(dataItem.Text);
+                                            }
+                                            </script>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2 col-lg-pull-1">
+                                            @Html.Label("CVV", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
+                                            @Html.TextBoxFor(model => model.CVV, null, new { PlaceHolder = "", style = "width:30%;", maxlength = 3 })
+                                            @Html.ValidationMessageFor(model => model.CVV, "", new { @style = "color:red" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12 col-md-12 col-sm-12" align="center">
+                                    <button class="button_blue" type="submit" id="btnPaymentSubmit" title="Submit" style="width: 100px;" value="Submit">
+                                        Submit
+                                    </button>
+                                    <button class="button_blue" type="button" id="btnPaymentClear" title="Clear" style="width: 100px;" value="Clear">
+                                        Clear
+                                    </button>
+                                    <button class="button_blue" type="button" id="btnPaymentCancel" title="Cancel" value="Cancel" style="width: 100px;">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                            <br />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" id="divPaymentPopup" style="display: none; align-content:center;">
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                    <div class="Page_Dimmer">
+                    </div>
+                    <div class="PopupHolder" style="top:17%;">
+                        <div class="Bgheader" width="100%">
+                            <div>
+                                <span id="SpnPopUpTitle" style="color: White; font-family: Verdana,Tahoma;
+                                font-size: 15px; font-weight: bold;">Physician Primary Care Plan</span>
+                            </div>
+                        </div>
+                        <div style="border: Solid 1px #33CCEE; width: 100%;">
+                            <div align="left">
+                                <img alt="!" id="imgIcon" src="~/Images/Success.png"
+                                     style="height: 25px; width: 25px; border-width: 0px;" />
+                            </div>
+                            <div align="center">
+                                <span id="spnPopupMessage" style="color: Orange; font-family: Verdana,Tahoma; font-size: 14px;
+                                font-weight: bold;">
+                                </span>
+                            </div>
+                            <div align="center">
+                                <br />
+                                <button type="button" id="btnSuccess" onclick="document.location.href = $('#loginUrl').attr('href');" class="button_blue"
+                                        style="width: 70px;">
+                                    Ok
+                                </button>
+                                <a id="loginUrl" href="@Html.AttributeEncode(Url.Action("PlanDetails", "Member" ))">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" id="divErrMessagePopup" style="display: none; position: relative" align="center">
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                    <div class="Page_Dimmer">
+                    </div>
+                    <div class="PopupHolder" style="top: 17%;">
+                        <div class="Bgheader" width="100%">
+                            <div align="center">
+                                <span id="SpanErrMsgTitle" style="color: White; font-family: Verdana,Tahoma; font-size: 15px;
+                        font-weight: bold;">Physician Primary Care Plan</span>
+                            </div>
+                        </div>
+                        <div style="border: Solid 1px #33CCEE; width: 100%;">
+                            <div align="left">
+                                <img alt="!" id="Img1" src="~/Images/Error.png" style="height: 25px; width: 25px;
+                        border-width: 0px;" />
+                            </div>
+                            <div align="center">
+                                <span id="spnPopupErrMessage" style="color: Orange; font-family: Verdana,Tahoma; font-size: 14px;
+                                font-weight: bold;">
+                                </span>
+                            </div>
+                            <div align="center">
+                                <br />
+                                <button type="button" id="btnErrPopup" onclick="document.location.href = $('#errorUrl').attr('href');" class="button_blue"
+                                        style="width: 70px;">
+                                    Ok
+                                </button>
+                                <a id="errorUrl" href="@Html.AttributeEncode(Url.Action("PlanDetails", "Member" ))">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="divSearchandPlanGrid" style="display:block">
+                <div class="row">
+                    <div class="row" style="display:none">
+                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                            <a href="" onclick='return SearchPlan();' style="font-size:16px;font-weight:bold;">Search for plan</a>
+                        </div>
+                    </div>
+                    <div id="searchforplan" style="display:none;">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                    <br />
+                                    <div class="row">
+                                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                            @Html.Label("Organization Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                            @(Html.Kendo().AutoCompleteFor(model => model.OrganizationName)
+                                                    .Name("OrganizationNames")
+                                                    .Placeholder("Select Organization...")
+                                                    .HtmlAttributes(new { style = "width:100%;" })
+                                                    .DataTextField("OrganizationName")
+                                                    .Events(events =>
+                                                    {
+                                                        events.Select("OnOrganizationSelectChange");
+                                                    })
+                                                    .DataSource(source =>
+                                                    {
+                                                        source.Read(read =>
+                                                        {
+                                                        });
+                                                    }))
+                                            <br />
+                                            @Html.Hidden("OrganizationID")
+                                            <script type="text/javascript">
+                                            function OnOrganizationSelectChange(e) {
+                                                var dataItem = this.dataItem(e.item.index());
+                                                $("#OrganizationName").val(dataItem.OrganizationName);
+                                                $("#OrganizationID").val(dataItem.OrganizationID);
+                                                var OrganizationID = $("#OrganizationID").val();
+                                                var ProviderID = $("#ProviderID").val();
+                                                var PlanID = $("#PlanID").val();
+                                                BindingPlansGrid(OrganizationID, ProviderID, PlanID);
+                                            }
+                                            </script>
+                                        </div>
+                                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                            @Html.Label("Provider Name", new { style = "font-weight:normal;", @class = "" })<br />
+                                            @(Html.Kendo().AutoCompleteFor(model => model.ProviderName)
+                                                    .Name("ProviderNames")
+                                                    .Placeholder("Select Provider...")
+                                                    .HtmlAttributes(new { style = "width:100%;" })
+                                                    .DataTextField("ProviderName")
+                                                    .Events(events =>
+                                                    {
+                                                        events.Select("OnProviderSelectChange");
+                                                    })
+                                                    .DataSource(source =>
+                                                    {
+                                                        source.Read(read =>
+                                                        {
+                                                        });
+                                                    }))
+                                            <br />
+                                            @Html.Hidden("ProviderID")
+                                            <script type="text/javascript">
+                                            function OnProviderSelectChange(e) {
+                                                var dataItem = this.dataItem(e.item.index());
+                                                $("#ProviderName").val(dataItem.ProviderName);
+                                                $("#ProviderID").val(dataItem.ProviderID);
+                                                var OrganizationID = $("#OrganizationID").val();
+                                                var ProviderID = $("#ProviderID").val();
+                                                var PlanID = $("#PlanID").val();
+                                                BindingPlansGrid(OrganizationID, ProviderID, PlanID);
+                                            }
+                                            </script>
+                                        </div>
+                                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                            @Html.Label("Plan Name", new { style = "font-weight:normal;", @class = "" })<br />
+                                            @(Html.Kendo().AutoCompleteFor(model => model.PlanName)
+                                                    .Name("PlanNames")
+                                                    .Placeholder("Select Plan...")
+                                                    .HtmlAttributes(new { style = "width:100%;" })
+                                                    .DataTextField("PlanName")
+                                                    .Events(events =>
+                                                    {
+                                                        events.Select("OnPlanSelectChange");
+                                                    })
+                                                    .DataSource(source =>
+                                                    {
+                                                        source.Read(read =>
+                                                        {
+                                                        });
+                                                    }))
+                                            <br />
+                                            @Html.Hidden("PlanID")
+                                            <script type="text/javascript">
+                                            function OnPlanSelectChange(e) {
+                                                var dataItem = this.dataItem(e.item.index());
+                                                $("#PlanName").val(dataItem.PlanName);
+                                                $("#PlanID").val(dataItem.PlanID);
+                                                var OrganizationID = $("#OrganizationID").val();
+                                                var ProviderID = $("#ProviderID").val();
+                                                var PlanID = $("#PlanID").val();
+                                                BindingPlansGrid(OrganizationID, ProviderID, PlanID);
+                                            }
+                                            </script>
+                                        </div>
+                                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                            <br /><br />
+                                            <a href="" onclick='return ChangeSearchPlan();' style="font-size:16px;font-weight:bold;">Change search</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <br />
+
+
+
+
+
+
+            </div>
+        </div>
+    </div>*@
+
+
+

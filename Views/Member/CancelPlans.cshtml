@@ -1,0 +1,248 @@
+﻿@model PPCP07302018.Models.Member.MakePayment
+@using System.Web.Mvc.Html
+@using Kendo.Mvc.UI
+@using System.Web.Mvc
+@{
+    ViewBag.Title = "CancelPlan";
+    Layout = "~/Views/Shared/BaseMaster.cshtml";
+    var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
+}
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/KendoScripts")
+@Scripts.Render("~/bundles/custom-validator")
+@Styles.Render("~/bundles/Kendocss")
+@Styles.Render("~/bundles/Membercssfiles")
+@Scripts.Render("~/bundles/PartialPaymentsScriptFiles")
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+       var myModel =@Html.Raw(Json.Encode(@Model));
+        var MemberPlanCode=myModel.Plan_Code;
+        GetPlanDetails(MemberPlanCode,'@ServiceUrl');
+
+   });
+    function btnCancel(){
+        var jModel={};//get the jquery values(not binded)
+        jModel.MemberParentID=$("#MemberParentID").val();
+        jModel.MemberID=$("#MemberID").val();
+        jModel.TotalAmount=$("#TotalAmount").val();
+        jModel.MemberName=$("#MemberName").val();
+        jModel.AmountPaid=$("#lblPlanAmount").val();
+        jModel.PlanID=$("#PlanID").val();
+        jModel.PlanName=$("#PlanName").val();
+        jModel.OrganizationID="@Session["OrganizationID"]";
+        jModel.OrganizationName=$("#PlanName").val();
+        jModel.AmountPaid=$("#lbl_PaidAmount").val();
+        jModel.DueAmount=$("#lblPendingAmount").val();
+        CancelPlans(jModel,"@ServiceUrl");
+        
+    }
+</script>
+
+<div id="divFamilyMember">
+    <div class="pageheading_bar" align="center">
+        <b>Family Member</b>
+    </div>
+    <div class="Panel_bg" id="divMainPlanEnroll">
+        <div id="divSelectPlan" style="display:block;">
+            <div class="row Panel_bg_Sub">
+                <br />
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                    @(Html.Kendo().Grid<PPCP07302018.Models.Member.MemberDetails>()
+                                                        .Name("MemberPlans")
+                                                        .Columns(columns =>
+                                                        {
+                                                            columns.Bound(p => p.MemberName).Title("Member Name").Filterable(false).Width(150);
+                                                            columns.Bound(p => p.OrganizationName).Title("Practice Name").Filterable(false).Width(150);
+                                                            columns.Bound(p => p.ProviderName).Title("Provider Name").Filterable(false).Width(150);
+                                                        })
+
+                    )
+                </div>
+                <br />
+                <br />
+
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                    <div class="subheading_small_bg">
+                        <br />
+                        <span class="subheading_small"><b><u>Plan Details</u></b></span>
+                        <br />
+                    </div>
+                    <table border="1" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td id="TdPlanName" style="width: 150Px">
+                                Plan Name
+                            </td>
+                            <td style="width: 325Px">
+                                <span ID="lblPlanName" Font-Bold="True"></span>
+                            </td>
+                            <td id="TdPlanType" style="width: 150Px">
+                                Plan Type
+
+                            </td>
+                            <td style="width: 325Px">
+                                <span ID="lbl_PlanType" Font-Bold="true"></span>
+                            </td>
+                        </tr>
+                        <tr style="display:none;">
+                            <td id="Td1">
+                                Plan Duration
+
+                            </td>
+                            <td id="Td2">
+                                <span ID="lblPlanTenure" Font-Bold="True"></span>
+                            </td>
+                            <td id="Td3">
+                                Plan Description
+                            </td>
+                            <td id="Td4">
+                                <span ID="lblPlanDescription" Font-Bold="True"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td id="Td5">
+                                Payment Schedule
+
+                            </td>
+                            <td id="Td6">
+                                <span ID="lblFrequency" Font-Bold="True"></span>
+                            </td>
+                            <td id="Td7">
+                                Term(No.of Payment(s))
+                            </td>
+                            <td id="Td8">
+                                <span ID="lblTerm" Font-Bold="True"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td id="Td9">
+                                Plan Start Date
+
+                                <br />
+
+                            </td>
+                            <td id="Td10">
+                                <span ID="lblPlanStartDate" Font-Bold="True"></span>
+                            </td>
+                            <td>
+                                Plan End Date
+                                <br />
+
+                            </td>
+                            <td>
+                                <span ID="lbl_PlanEndDateValue" Font-Bold="True"></span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                    <div class="subheading_small_bg">
+                        <br />
+                        <span class="subheading_small"><b><u>Plan Payment Summary</u></b></span>
+                        <br />
+
+                        <table border="1" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td id="Td15" style="width: 150Px">
+                                    Visit Fee
+
+                                </td>
+                                <td id="Td16" style="width: 200Px">
+                                    <span ID="lblVisitFee" Font-Bold="True"></span>
+                                </td>
+                                <td id="Td11" style="width: 150Px">
+                                    Enrollment Fee
+
+                                </td>
+                                <td id="Td12" style="width: 200Px">
+                                    <span ID="lblEnrollFee" Font-Bold="True"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td id="Td13">
+                                    Installment Amount
+
+                                </td>
+                                <td id="Td14">
+                                    <span ID="lblMonthlyFee" Font-Bold="True"></span>
+                                </td>
+                                <td>
+                                    Additional Member Installment Amount
+
+                                </td>
+                                <td>
+                                    <span ID="lbl_AddMemInstAmt" Font-Bold="true"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Number of Additional members
+
+                                </td>
+                                <td>
+                                    <span ID="lbl_NoOfAddMem" Font-Bold="true"></span>
+                                </td>
+                                <td id="Td19" width="35%">
+                                    Plan Amount
+
+                                </td>
+                                <td id="Td20">
+                                    <span ID="lblPlanAmount" Font-Bold="True"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Paid Amount
+
+                                </td>
+                                <td>
+                                    <span ID="lbl_PaidAmount" Font-Bold="true"></span>
+                                </td>
+                                <td id="Td19" width="35%">
+                                    DueAmount
+
+                                </td>
+                                <td id="Td20">
+                                    <span ID="lblPendingAmount" Font-Bold="True"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td id="Td17">
+                                    Installment Fee
+
+                                </td>
+                                <td id="Td18">
+                                    <span ID="lblTransactionFee" Font-Bold="True"></span>
+                                </td>
+                                <td id="Td21" width="35%">
+                                    Tax (%)
+
+                                </td>
+                                <td id="Td22">
+                                    <span ID="lblTaxPERC" Font-Bold="True"></span>
+                                    <span ID="lblTaxAmount" Font-Bold="True" style="display:none;"></span>
+                                    <span ID="spnPlan_code" Font-Bold="True" style="display:none;"></span>
+                                    <span ID="spnPlanID" Font-Bold="True" style="display:none;"></span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" align="center">
+                        <br />
+                        <button type="button" id="btnCancel" title="Search" style="width: 200px;" class="button_blue" value="Search" onclick="btnCancel()">
+                            Cancel Plan
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

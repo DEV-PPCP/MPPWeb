@@ -1,0 +1,226 @@
+﻿@model PPCP07302018.Models.Organization.OrganizationDetails
+@using System.Web.Mvc.Html
+@using Kendo.Mvc.UI
+@using System.Web.Mvc
+@{
+    ViewBag.Title = "ViewProviders";
+    Layout = "~/Views/Shared/WUCAdminLeftMenu.cshtml";
+    var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
+}
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/KendoScripts")
+@Scripts.Render("~/bundles/custom-validator")
+@Styles.Render("~/bundles/Kendocss")
+@Scripts.Render("~/bundles/OrganizationScriptFiles")
+@Styles.Render("~/bundles/Organizationcssfiles")
+@Scripts.Render("~/bundles/ViewOrganizationScriptFiles")
+<style>
+    .PanelTopBar {
+        font-family: Arial;
+        color: #02BFB9;
+        font-size: 18px;
+        padding: 5px 10px;
+        width: 100%;
+        border-bottom: solid 1px #000000;
+        background-color: #02BFB9;
+    }
+
+    .ArrowClose {
+        background-image: url(../../Images/collapse_blue.jpg);
+        width: 13px;
+        height: 13px;
+        float: right;
+        margin-top: 7px;
+        margin-right: 5px;
+    }
+
+    .ArrowExpand {
+        background-image: url(../../Images/expand_blue.jpg);
+        width: 13px;
+        height: 13px;
+        float: right;
+        margin-top: 7px;
+        margin-right: 5px;
+    }
+
+    .loadingSpinner {
+        position: absolute;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background: rgba( 255, 255, 255, .8 ) url('../../Images/loading-spinner-red.gif') 50% 50% no-repeat;
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#fsLabOrderSearch").show();
+        GetOrganizationDetails('0', '@ServiceUrl');
+         BindOrganizations("@ServiceUrl");
+        BindStates("1", "StateName", '@ServiceUrl', "1");
+    });
+    function setCollapsePanel(dvSearchFilterHeader, dvSearchFilter) {
+        $(dvSearchFilter).slideToggle('slow');
+        $(dvSearchFilterHeader).find(".ArrowClose:first").remove();
+        $("<div class='ArrowExpand'></div>").appendTo(dvSearchFilterHeader);
+        isCollapse = 1;
+    }
+    var isCollapse = 0;
+    function CollapsiblePanels() {
+        $('#dvSearchFilter').slideToggle('slow');
+        if (isCollapse == 0) {
+            $("#dvSearchFilterHeader").find(".ArrowClose:first").remove();
+            $("<div class='ArrowExpand'></div>").appendTo($("#dvSearchFilterHeader"));
+            isCollapse = 1;
+        }
+        else {
+            $("#dvSearchFilterHeader").find(".ArrowExpand:first").remove();
+            $("<div class='ArrowClose'></div>").appendTo($("#dvSearchFilterHeader"));
+            isCollapse = 0;
+        }
+        $("#arrow").hide();
+    }
+    function btnSearch() {
+        //BindOrganizations('@ServiceUrl', $("#OrganizationID").val());
+        GetOrganizationDetails($("#OrganizationID").val(), '@ServiceUrl');
+    }
+</script>
+<div class="pageheading_bar" align="center">
+    <b>Organization Details</b>
+</div>
+<div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" id="divMainRegistration" style="margin-top:0px;">
+    <div class="Panel_bg">
+
+        <div class="form-group" id="divproviderGrid">
+            <div class="row">
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" >
+                    <div class="pageheading_bar" style="display:none">
+                        Search Organization
+                    </div>
+                    <fieldset id="fsLabOrderSearch" style="display:none">
+                        <div class="form-group"  style="display:none">
+                            <div id="dvSearchFilterHeader" style="cursor: pointer;" onclick="CollapsiblePanels(document.getElementById('dvSearchFilterHeader'),document.getElementById('dvSearchFilter'));"
+                                 class="PanelTopBar">
+                                <span id="4_lblSearchPat" style="font-size:15px;font-weight:normal;color: White;">Search</span>
+                                <div style="float: right; margin-top: -5px; color: White; padding: 5px 5px 0 0">
+                                </div>
+                                <div id="arrow" class="ArrowClose"></div>
+                            </div>
+                        </div>
+                        <div id="dvSearchFilter" style="display: block;" >
+                            <div class="Page_Dimmer1">
+                            </div>
+                            <div class="PopupHolder2" style="height:auto;">
+
+                                <div class="Panel_bg_Sub" style="padding-left:300px">
+                                    <div style="width: 100%;height:auto;">
+                                        
+                                            @*<div class="row" >*@
+                                                
+                                                    @*<div class="col-xs-12 col-md-3 col-sm-6 col-lg-3" align="center">*@
+                                                <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6" >
+                                                   
+
+                                                   @(Html.Kendo().AutoCompleteFor(model => model.OrganizationName)
+                                                    .Name("OrganizationName")
+                                                    .MinLength(3)
+                                                    .Placeholder("Enter OrganizationName")
+                                                    .HtmlAttributes(new { style = "width:100%;" })
+                                                    .DataTextField("OrganizationName")
+                                                    .Events(events =>
+                                                    {
+                                                        events.Select("OnOrganizationSelectChange");
+                                                        events.Change("OnOrganizationchangeEvent");
+                                                    })
+                                                    .DataSource(source =>
+                                                    {
+                                                        source.Read(read =>
+                                                        {
+                                                            read.Action("OrganizationSearchAutoComplete", "Admin").Data("onOrgAdditionalData");
+                                                        }).ServerFiltering(true);
+                                                    }))
+                                                    </div>
+                                        <br />
+                                        <br />
+                                                    <div class="col-xs-12 col-md-6 col-sm-6 col-lg-10" style="padding-left:70px">
+                                                        <button type="button" id="btnSearch" title="Search" style="width: 100px;" class="button_blue" value="Search" onclick="btnSearch()">
+                                                            Search
+                                                        </button>
+                                                        <button type="button" id="btnClear" title="Search" style="width: 100px;" class="button_blue" value="Clear" onclick="@("window.location.href='" + @Url.Action("ViewOrganizations", "Admin") + "'");">
+                                                            Clear
+                                                        </button>
+                                                    </div>
+                                                    <br />
+                                                    @Html.ValidationMessageFor(model => model.OrganizationName)
+                                                    @Html.HiddenFor(m => m.OrganizationID)
+                                                    <script type="text/javascript">
+                                                        
+                                                        function OnOrganizationSelectChange(e) {
+                                                            $("#OrganizationId").val("");
+                                                            var dataItem = this.dataItem(e.item.index());
+                                                            $("#OrganizationName").val(dataItem.OrganizationName);
+                                                            $("#OrganizationID").val(dataItem.OrganizationID);
+                                                            var OrganizationID = $("#OrganizationID").val();
+
+                                                        }
+                                                        function onOrgAdditionalData() {
+                                                            return {
+                                                                text: $("#OrganizationName").val()
+                                                            }
+                                                        }
+                                                        function OnOrganizationchangeEvent() {
+
+                                                        }
+                                                    </script>
+
+
+                                                    </div>
+                                                @*</div>*@
+
+                                        @*</div>*@
+
+                                    @*</div>*@
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>   
+
+                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                            @(Html.Kendo().Grid<PPCP07302018.Models.Organization.OrganizationDetails>()
+                                                .Name("gvOrganizationGrid")
+                                                .Columns(columns =>
+                                                {
+                                                    columns.Bound(p => p.OrganizationName).Title("OrganizationName").Filterable(false).Width(100);
+                                                    columns.Bound(p => p.Email).Title("Email").Filterable(false).Width(130).Visible(true);
+                                                    columns.Bound(p => p.CountryCode).Title("CountryCode").Filterable(false).Width(120).Visible(false);
+                                                    columns.Bound(p => p.MobileNumber).Title("MobileNumber").Filterable(false).Width(120);
+                                                    columns.Bound(p => p.CountryName).Title("CountryName").Filterable(false).Width(120).Visible(false);
+                                                    columns.Bound(p => p.StateName).Title("StateName").Filterable(false).Width(130).Visible(true);
+                                                    columns.Bound(p => p.CityName).Title("CityName").Filterable(false).Width(120).Visible(true);
+                                                    columns.Bound(p => p.Zip).Title("Zip").Filterable(false).Width(120).Visible(true);
+
+                                                    //columns.Bound(p => p).ClientTemplate(
+                                                    //    "<a onclick='EditOptions(#=ProviderID#,\"#=FirstName#\",\"#=LastName#\",\"#=CountryCode#\",\"#=MobileNumber#\",\"#=DOB#\",\"#=Gender#\",\"#=Email#\",\"#=CountryName#\",\"#=StateName#\",\"#=CityName#\",\"#=Zip#\",\"#=Salutation#\",\"#=NPI#\");' <span style='cursor:pointer'>View</a>").Title("Action").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(50);
+                                                })
+                                                .Scrollable()
+                                                .AutoBind(false)
+                                                .Pageable()
+                                                .HtmlAttributes(new { })
+                                                .Selectable()
+                                                .Filterable()
+                                                .DataSource(dataSource => dataSource
+                                                .Ajax()
+                                                .PageSize(5)
+                                                .ServerOperation(false)))
+                        </div>
+                    </div>
+                
+            </div>
+        </div>
+    </div>
+</div>

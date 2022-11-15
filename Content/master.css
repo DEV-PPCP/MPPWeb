@@ -1,0 +1,495 @@
+﻿body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background: #fafafa;
+}
+
+#sidebar123 {
+    background: #e6e5e5;
+    color: #fff;
+    transition: all 0.6s cubic-bezier(0.945, 0.020, 0.270, 0.665);
+    transform-origin: bottom left;
+    height: 100%;
+    margin-top: 5px;
+}
+
+    #sidebar123 ul li a {
+        padding: 10px;
+        font-size: 1.1em;
+        display: block;
+    }
+
+#sidebar12 {
+    background: #e6e5e5;
+    color: #fff;
+    transition: all 0.6s cubic-bezier(0.945, 0.020, 0.270, 0.665);
+    transform-origin: bottom left;
+    height: 100%;
+    margin-top: 5px;
+}
+
+    #sidebar12 ul li a {
+        padding: 10px;
+        font-size: 1.1em;
+        display: block;
+    }
+
+.w3-bar .w3-bar-item {
+    padding: 8px 16px;
+    float: left;
+    width: auto;
+    border: none;
+    display: block;
+    outline: 0;
+}
+
+
+.glyphicons {
+    position: relative;
+    top: 50%;
+    display: inline-block;
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    vertical-align: top;
+    speak: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: "\E035";
+    text-decoration: none;
+    position: absolute;
+    z-index: 51;
+    background-color: #e6e5e5;
+    height: auto;
+    width: 190px;
+    margin-top: 0px;
+    margin-left: 20px;
+}
+
+.divgreyColorThemes {
+    background-color: #636363;
+    height: 20px;
+}
+
+.divblueColorThemes {
+    background-color: #43576b;
+    height: 20px;
+}
+
+.divDefaultColorThemes {
+    background-color: #8b4513;
+    height: 20px;
+}
+
+.divtealColorThemes {
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin-left: 5px;
+    padding: 0px;
+    background-color: #009379;
+    cursor: pointer;
+}
+
+.divindigoColorThemes {
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin-left: 5px;
+    padding: 0px;
+    background-color: #039be5;
+    cursor: pointer;
+}
+
+.divredColorThemes {
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin-left: 5px;
+    padding: 0px;
+    background-color: #B71C1C;
+    cursor: pointer;
+}
+
+.divgreenColorThemes {
+    background-color: #03846d;
+    height: 20px;
+}
+
+.divpurpleColorThemes {
+    background-color: #9C27B0;
+    height: 20px;
+}
+
+.divbrownColorThemes {
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin-left: 5px;
+    padding: 0px;
+    background-color: #8D6E63;
+    cursor: pointer;
+}
+
+.divcyanColorThemes {
+    background-color: #0097A7;
+    height: 20px;
+}
+
+.divlimeColorThemes {
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin-left: 5px;
+    padding: 0px;
+    background-color: #9E9D24;
+    cursor: pointer;
+}
+
+.divyellowColorThemes {
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin-left: 5px;
+    padding: 0px;
+    background-color: #DB9E22;
+    cursor: pointer;
+}
+
+.divPinkColorThemes {
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin-left: 5px;
+    padding: 0px;
+    background-color: #932657;
+    cursor: pointer;
+}
+
+.buttonCss1 {
+    cursor: pointer;
+    font-family: Arial;
+    color: #ffffff;
+    font-size: 14px;
+    padding: 0px;
+    height: 35px;
+    text-decoration: none;
+    -moz-border-radius: 10px;
+    padding: 0 10px 0 10px;
+    border-color: transparent;
+    background: #03846d;
+    background: linear-gradient(to bottom, #05b797 14%,#03846d 47%,#03846d 79%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#03846d', endColorstr='#03846d',GradientType=0 );
+}
+
+.footer-wrap_New {
+    height: auto;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    color: #242424;
+    width: 100%;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    float: left;
+}
+
+.tm-header-overlay header .thememount-topbar {
+    background-color: rgba( 12,0,0, 0.5);
+}
+
+.site-header .thememount-topbar.thememount-topbar-bgcolor-skincolor {
+    background-color: #e13e20;
+}
+
+@media only screen and (min-device-width:320px) and (max-device-width:480px) and (orientation:portrait) /*style for mobile view*/ {
+    .thememount-topbar {
+        background-color: #242424;
+        height: 65px;
+    }
+}
+
+@media only screen and (min-device-width:320px) and (max-device-width:480px) and (orientation:landscape) /*style for mobile view*/ {
+    .thememount-topbar {
+        background-color: #242424;
+        height: 65px;
+    }
+}
+
+@media only screen and (min-width:480px) and (max-width:2024px) /*style for desktop view*/ {
+    .thememount-topbar {
+        background-color: #242424;
+        height: 45px;
+    }
+}
+
+@media only screen and (min-width:1024px) and (max-width:768px) /*style for desktop view*/ {
+    .thememount-topbar {
+        background-color: #242424;
+        height: 45px;
+    }
+}
+
+@media only screen and (min-width:768px) /*style for desktop view*/ {
+    .thememount-topbar {
+        background-color: #242424;
+        height: 45px;
+    }
+}
+
+@import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
+
+p {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 1.1em;
+    font-weight: 300;
+    line-height: 1.7em;
+    color: #999;
+}
+
+a, a:hover, a:focus {
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.navbar {
+    padding: 15px 10px;
+    background: #fff;
+    border: none;
+    border-radius: 0;
+    margin-bottom: 40px;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-btn {
+    box-shadow: none;
+    outline: none !important;
+    border: none;
+}
+
+.line {
+    width: 100%;
+    height: 1px;
+    border-bottom: 1px dashed #ddd;
+    margin: 40px 0;
+}
+
+/* ---------------------------------------------------
+            SIDEBAR STYLE
+        ----------------------------------------------------- */
+.wrapper {
+    display: flex;
+    align-items: stretch;
+    perspective: 1500px;
+}
+
+#sidebar.active {
+    margin-left: -200px;
+    transform: rotateY(100deg);
+}
+
+#sidebar ul.components {
+    padding: 0px 0;
+    border-bottom: none;
+}
+
+#sidebar a:hover, a:focus {
+    color: #fff;
+    text-decoration: underline;
+}
+
+#sidebar ul p {
+    color: #fff;
+    padding: 10px;
+}
+
+#sidebar ul li a {
+    padding: 10px;
+    font-size: 1.1em;
+    display: block;
+}
+
+a[data-toggle="collapse"] {
+    position: relative;
+}
+
+ul.CTAs {
+    padding: 20px;
+}
+
+    ul.CTAs a {
+        text-align: center;
+        font-size: 0.9em !important;
+        display: block;
+        border-radius: 5px;
+        margin-bottom: 5px;
+    }
+
+a.download {
+    background: #fff;
+    color: #7386D5;
+}
+
+/* ---------------------------------------------------
+            CONTENT STYLE
+        ----------------------------------------------------- */
+#content {
+    padding: 5px;
+    min-height: 100vh;
+    transition: all 0.3s;
+    width: 98%;
+}
+
+#sidebarCollapse span {
+    width: 80%;
+    height: 2px;
+    margin: 0 auto;
+    display: block;
+    background: #555;
+    transition: all 0.8s cubic-bezier(0.810, -0.330, 0.345, 1.375);
+    transition-delay: 0.2s;
+}
+
+    #sidebarCollapse span:first-of-type {
+        transform: rotate(45deg) translate(2px, 2px);
+    }
+
+    #sidebarCollapse span:nth-of-type(2) {
+        opacity: 0;
+    }
+
+    #sidebarCollapse span:last-of-type {
+        transform: rotate(-45deg) translate(1px, -1px);
+    }
+
+#sidebarCollapse.active span {
+    transform: none;
+    opacity: 1;
+    margin: 5px auto;
+}
+
+/* ---------------------------------------------------
+            MEDIAQUERIES
+        ----------------------------------------------------- */
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: -250px;
+        transform: rotateY(90deg);
+    }
+
+        #sidebar.active {
+            margin-left: 0;
+            transform: none;
+        }
+
+    #sidebarCollapse span:first-of-type,
+    #sidebarCollapse span:nth-of-type(2),
+    #sidebarCollapse span:last-of-type {
+        transform: none;
+        opacity: 1;
+        margin: 5px auto;
+    }
+
+    #sidebarCollapse.active span {
+        margin: 0 auto;
+    }
+
+        #sidebarCollapse.active span:first-of-type {
+            transform: rotate(45deg) translate(2px, 2px);
+        }
+
+        #sidebarCollapse.active span:nth-of-type(2) {
+            opacity: 0;
+        }
+
+        #sidebarCollapse.active span:last-of-type {
+            transform: rotate(-45deg) translate(1px, -1px);
+        }
+}
+
+.container_fluid1 {
+    padding-right: 5px;
+    padding-left: 5px;
+    margin-right: 1px;
+    margin-left: 1px;
+}
+
+/* Custom CSS*/
+
+.pdflink:after {
+    background-image: url('/Images/ihealthpayLogo.png');
+    background-size: 20px 20px;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    content: "";
+}
+
+#sidebar.active .sidebar-header h3, #sidebar.active .CTAs {
+    display: none;
+}
+
+#sidebar.active .sidebar-header strong {
+    display: block;
+}
+
+#sidebar .sidebar-header {
+    padding: 20px;
+    background: #6d7fcc;
+}
+
+    #sidebar .sidebar-header strong {
+        display: none;
+        font-size: 1.8em;
+    }
+
+#sidebar .sidebar-header {
+    padding: 20px;
+    background: #6d7fcc;
+}
+
+    #sidebar .sidebar-header strong {
+        display: none;
+        font-size: 1.8em;
+    }
+
+.active {
+    font-weight: normal;
+}
+
+@media (max-width:767px) {
+    nav1 {
+        background: url(images/menu.jpg) repeat-x;
+        height: 50px;
+        line-height: 50px;
+        width: 8%;
+        display: block;
+        float: left;
+        margin: 0px 0 0 0;
+        padding: 10px 0px 0px 0px;
+        clear: right;
+    }
+}
+
+@media (min-width:768px) and (max-width:991px) {
+    nav1 {
+        background: url(images/menu.jpg) repeat-x;
+        height: 50px;
+        line-height: 50px;
+        width: 8%;
+        display: block;
+        float: left;
+        margin: 0px 0 0 0;
+        padding: 10px 0px 0px 0px;
+        clear: right;
+    }
+}
+
+#sidebarCollapse {
+    width: 40px;
+    height: 40px;
+}
+
+/* Date Picker Calender Icon stop rotating on mouse hover */
+.RadPicker_Default a.rcCalPopup:hover, .RadPicker_Default a.rcCalPopup:focus, .RadPicker_Default a.rcCalPopup:active {
+    background-position: 0 0px !important;
+}

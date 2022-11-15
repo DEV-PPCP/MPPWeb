@@ -1,0 +1,543 @@
+﻿@*#region Description
+    /******************************************************************************************************
+    * PROJECT:PPCP VERSION:1.0
+    *
+    * MODULE : Admin
+    *
+    * ITEM NAME :ViewPayments.cshtml
+    *
+    * DEVELOPED BY: Veena.A
+    *
+    * REVIEWED BY:
+    *
+    * MODULE DISCRIPTION:
+    *
+    * CONTROL DESCRIPTION : used to View Payment details of admin in Grid
+
+    ****************************************************************************************************
+    DATE CHANGE LOG DESCRIPTION CHANGED BY
+    Date:               Description:                Author:
+    *****************************************************************************************************/
+    #endregion*@
+@model PPCP07302018.Models.Admin.ViewPaymentDetails
+@using Kendo.Mvc.UI
+@{
+    ViewBag.Title = "ViewPayments";
+    Layout = "~/Views/Shared/WUCAdminLeftMenu.cshtml";
+    var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
+}
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/KendoScripts")
+@Scripts.Render("~/bundles/custom-validator")
+@Styles.Render("~/bundles/Kendocss")
+@Scripts.Render("~/bundles/ViewPaymentDetailsScriptFiles")   @*For ViewPaymentDetails script files*@
+@Styles.Render("~/bundles/Membercssfiles")       @*For member css files*@
+<style type="text/css">
+    .PanelTopBar {
+        font-family: Arial;--
+        color: #02BFB9;
+        font-size: 18px;
+        padding: 5px 10px;
+        width: 100%;
+        border-bottom: solid 1px #000000;
+        background-color: #02BFB9;
+    }
+
+    .ArrowClose {
+        background-image: url(../../Images/collapse_blue.jpg);
+        width: 13px;
+        height: 13px;
+        float: right;
+        margin-top: 7px;
+        margin-right: 5px;
+    }
+
+    .ArrowExpand {
+        background-image: url(../../Images/expand_blue.jpg);
+        width: 13px;
+        height: 13px;
+        float: right;
+        margin-top: 7px;
+        margin-right: 5px;
+    }
+      .loadingSpinner {
+        position: absolute;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background: rgba( 255, 255, 255, .8 ) url('../../Images/loading-spinner-red.gif') 50% 50% no-repeat;
+    }
+</style>
+
+<div class="pageheading_bar" align="center">
+    <b>Payments</b>
+</div>
+<div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" id="divMainRegistration" style="margin-top:0px;">
+    <div class="Panel_bg">
+        <div class="form-group">
+            <fieldset id="fsLabOrderSearch" style="display:none">
+                <div class="form-group" style="display:none">
+                    <div id="dvSearchFilterHeader" style="cursor: pointer;" onclick="CollapsiblePanels(document.getElementById('dvSearchFilterHeader'),document.getElementById('dvSearchFilter'));"
+                         class="PanelTopBar">
+                        <span id="4_lblSearchPat" style="font-size:15px;font-weight:normal;color: White;">Search</span>
+                        <div style="float: right; margin-top: -5px; color: White; padding: 5px 5px 0 0">
+                        </div>
+                        <div id="arrow" class="ArrowClose"></div>
+                    </div>
+                </div>
+                <div id="dvSearchFilter" style="display: block;">
+                    <div class="Page_Dimmer1">
+                    </div>
+                    <div class="PopupHolder2" style="height:auto;">
+
+                        <div class="Panel_bg_Sub">
+                            <div style="width: 100%;height:auto;">
+                                <div class="col-xs-0 col-md-3 col-sm-0 col-lg-3"></div>
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                        @( Html.Label("From", new { style = "font-weight:normal;" }))<span style="color: Red;">*</span><br />
+                                        @( Html.Kendo().DatePicker().Format("MM/dd/yyyy").Name("FromDate").Events(e => e.Change("startChange")).Value("").Max(DateTime.Today).HtmlAttributes(new { PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text" }))<br />
+
+
+                                        <span style="color: Red"><span id="Span3"></span></span>
+                                    </div>
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                        @( Html.Label("To", new { style = "font-weight:normal;" }))<span style="color: Red;">*</span><br />
+                                        @( Html.Kendo().DatePicker().Format("MM/dd/yyyy").Name("ToDate").Events(e => e.Change("endChange")).Value("").Max(DateTime.Today).HtmlAttributes(new { PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text" }))<br />
+
+
+                                        <span style="color: Red">
+                                            <span id="Span7"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                                @*veena*@                             
+                                <div class="row">
+                                    <div class="col-xs-6 col-md-6 col-sm-6 col-lg-3">
+                                    </div>
+                                    <div class="col-xs-6 col-md-6 col-sm-6 col-lg-3">
+                                        @Html.Label("Organization Name", new { style = "font-weight:normal;", @class = "" })<br />
+                                        @(Html.Kendo().AutoCompleteFor(m => m.OrganizationName)
+                                                            .Name("OrganizationNames")
+                                                            .Placeholder("Select Organization...")
+                                                            .HtmlAttributes(new { style = "width:100%;" })
+                                                            .DataTextField("OrganizationName")
+                                                            .Events(events =>
+                                                            {
+                                                                events.Select("OnOrganizationSelectChange");
+                                                            })
+                                                            .DataSource(source =>
+                                                            {
+                                                                source.Read(read =>
+                                                                {
+                                                                });
+
+                                                            }))
+                                        <br />
+
+                                        @Html.HiddenFor(m => m.OrganizationID)
+                                        @Html.Hidden("TxtOrgId")
+                                        <script type="text/javascript">
+                                                    function OnOrganizationSelectChange(e) {
+                                                        $("#TxtOrgId").val("")
+                                                        var dataItem = this.dataItem(e.item.index());
+                                                        $("#OrganizationName").val(dataItem.OrganizationName);
+                                                        $("#OrganizationID").val(dataItem.OrganizationID);
+                                                        $("#TxtOrgId").val(dataItem.OrganizationID);
+                                                        var OrganizationID = $("#OrganizationID").val();
+                                                        var ProviderID = 0;
+                                                        var PlanID = 0;
+                                                        BindProviderNames(OrganizationID, "@ServiceUrl");
+                                                    }
+                                        </script>
+                                    </div>
+                                    <div class="col-xs-6 col-md-6 col-sm-6 col-lg-3">
+                                        @Html.Label("Provider Name", new { style = "font-weight:normal;", @class = "" })<br />
+                                        @(Html.Kendo().AutoCompleteFor(m => m.ProviderName)
+                                                        .Name("ProviderNames")
+                                                        .Placeholder("Select Provider...")
+                                                        .HtmlAttributes(new { style = "width:100%;" })
+                                                        .DataTextField("FirstName")
+                                                        .Events(events =>
+                                                        {
+                                                            events.Select("OnProviderSelectChange");
+                                                            events.Change("OnOrganizationchangeEvent");
+                                                        })
+                                                        .DataSource(source =>
+                                                        {
+                                                            source.Read(read =>
+                                                            {
+                                                            });
+                                                        }))
+
+                                        @Html.ValidationMessageFor(model => model.ProviderName)
+                                        @Html.Hidden("ProviderId")
+                                        @Html.Hidden("TxtProviderId")
+                                        <script type="text/javascript">
+                                            function OnProviderSelectChange(e) {
+                                                $("#ProviderId").val("");
+                                                $("#TxtProviderId").val("");
+                                                var dataItem = this.dataItem(e.item.index());
+                                                $("#ProviderName").val(dataItem.FirstName);
+                                                $("#ProviderId").val(dataItem.ProviderID);
+                                                var ProviderID = $("#ProviderId").val();
+                                                var OrganizationID = $("#OrganizationID").val();
+                                                //$("#TxtProviderId").val(dataItem.ProviderID);
+                                                var PlanID = 0;
+                                                BindPlanNames(OrganizationID, ProviderID, PlanID, '@ServiceUrl');
+                                            }
+                                            function OnOrganizationchangeEvent() {
+                                              
+                                            }
+                                        </script>
+                                    </div>
+
+                                </div>
+                                <div class="col-xs-0 col-md-3 col-sm-0 col-lg-3"></div>
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                        @Html.Label("Plan Name", new { style = "font-weight:normal;", @class = "" })<br />
+                                        @(Html.Kendo().AutoCompleteFor(model => model.PlanName)
+                                                    .Name("PlanNameList")
+                                                    .Placeholder("Select Plan...")
+                                                    .HtmlAttributes(new { style = "width:100%;" })
+                                                    .DataTextField("PlanName")
+                                                    .Events(events =>
+                                                    {
+                                                        events.Select("OnPlanSelectChange");
+                                                    })
+                                                    .DataSource(source =>
+                                                    {
+                                                        source.Read(read =>
+                                                        {
+                                                        });
+                                                    }))
+                                        <br />
+                                        @Html.Hidden("PlanID")
+                                        <script type="text/javascript">
+                                                function OnPlanSelectChange(e) {
+                                                    var dataItem = this.dataItem(e.item.index());
+                                                    $("#PlanName").val(dataItem.PlanName);
+                                                    $("#PlanID").val(dataItem.PlanID);
+                                                    var OrganizationID = $("#OrganizationID").val();
+                                                    var ProviderID = $("#ProviderId").val();
+                                                    var PlanID=$("#PlanID").val();
+                                                    BindPlanNames(OrganizationID, ProviderID, PlanID, '@ServiceUrl');
+                                                }
+                                        </script>
+                                    </div>
+                                </div>
+                                </div>
+                               
+                                        @*end*@
+                                        <div class="col-xs-0 col-md-3 col-sm-0 col-lg-3"></div>
+                                        <div class="row">
+                                            <div align="center">
+                                                <span id="DateValidationMessage" style="color: Red"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div align="center">
+                                                <span style="color: Red"><span id="spnSearch"></span></span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div align="center">
+                                                <div class="col-xs-0 col-md-3 col-sm-3 col-lg-3"></div>
+                                                <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
+                                                    <br />
+                                                    <span id="lblErrorMsgSearch" style="color:red; font-family: Verdana,Tahoma; font-size: 15px;
+                        font-weight: bold; text-align: center; margin-top: 8px; margin-left: 3px; ">
+                                                    </span>
+                                                    <br />
+                                                    <button type="button" id="btnSearch" title="Search" style="width: 100px;" class="button_blue" value="Search" onclick="btnSearch()">
+                                                        Search
+                                                    </button>
+                                                    <button type="button" id="btnClear" title="Clear" value="Clear" style="width: 100px;" class="button_blue" onclick="btnClear()">
+                                                        Clear
+                                                    </button>
+                                                    <button type="button" id="btnClosed" title="Close" value="Close" style="width: 100px;display:none" class="button_blue">
+                                                        Close
+                                                    </button>
+                                                </div>
+                                                <div class="col-xs-0 col-md-3 col-sm-3 col-lg-3"></div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                </fieldset>
+                </div>
+
+                @*DISPLAY  AMOUNT DETAILS*@
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12 " id="divAmountDetails">
+                            <div class="row">
+                                <div class="col-xs-12 col-md-4 col-sm-4 col-lg-4">
+                                    <span><b>Total Plan Amount</b></span>
+                                    : $
+                                    <span id="spnSelectedTotalAmount"></span>
+                                </div>
+                                <div class="col-xs-12 col-md-4 col-sm-4 col-lg-4 ">
+                                    <span><b>Paid Amount</b></span>
+                                    : $
+                                    <span id="spnSelectedPaidAmount"></span>
+                                </div>
+                                <div class="col-xs-12 col-md-4 col-sm-4 col-lg-4 ">
+                                    <span><b>Due Amount</b></span>
+                                    : $
+                                    <span id="spnSelectedDueAmount"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+          
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                        @(Html.Kendo().Grid<PPCP07302018.Models.Member.MemberPlan>
+                                                    ()
+                                                    .Name("PaymentsGrid")
+                                                    .Columns(columns =>
+                                                    {
+                                                        columns.Bound(p => p.MemberPlanID).Title("MemPlanID").Filterable(false).Visible(false);
+                                                        columns.Bound(p => p.MemberID).Title("MemID").Filterable(false).Visible(false);
+                                                        columns.Bound(p => p.PlanID).Title("PlanID").Filterable(false).Visible(false);
+                                                        columns.Bound(p => p.MemberName).Title("Member Name").Filterable(false).Width(100);
+                                                        columns.Bound(p => p.ProviderName).Title("Provider Name").Filterable(false).Width(100);
+                                                        columns.Bound(p => p.PlanName).Title("Plan Name").Filterable(false).Width(100);
+                                                        columns.Bound(p => p.OrganizationName).Title("Organization Name").Filterable(false).Width(100);
+                                                        columns.Bound(p => p.OrganizationID).Title("Organization ID").Filterable(false).Width(100).Visible(false);
+                                                        columns.Bound(p => p.TotalAmount).Title("Total Amount").Filterable(false).Width(80);
+                                                        columns.Bound(p => p.AmountPaid).Title("Paid Amount").Filterable(false).Width(80);
+                                                        columns.Bound(p => p.DueAmount).Title("Due Amount").Filterable(false).Width(80);
+                                                        // columns.Bound(p => p.ModifiedDate).Title("PaymentDate").Filterable(false).Width(100).Encoded(true).ClientTemplate("#= kendo.toString(kendo.parseDate(ModifiedDate,'yyyy-MM-dd'), '" + "MM-dd-yyyy h:mm tt" + "') #");
+                                                        columns.Bound(p => p.ModifiedDate).Title("PaymentDate").Filterable(false).Width(100).Encoded(true).ClientTemplate("#= kendo.toString(kendo.parseDate(ModifiedDate,'yyyy-MM-dd'), '" + "MM-dd-yyyy" + "') #");
+                                                        columns.Bound(p => p.Plan_Code).Title("Plan_Code").Filterable(false).Width(100).Visible(false);
+                                                        columns.Bound(p => p).ClientTemplate(
+                                                           "<a onclick='EditOptions(#=MemberPlanID#,\"#=MemberID#\",\"#=Plan_Code#\",\"#=PlanName#\",\"#=TotalAmount#\",\"#=AmountPaid#\",\"#=DueAmount#\",\"#=ModifiedDate#\");' <span style='cursor:pointer'>View</a>").Title("Action").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(50);
+                                                    })
+                                                    .Scrollable()
+                                                    .Pageable()
+                                                    .Filterable()
+                                                    .AutoBind(false)
+                                                    .HtmlAttributes(new { })
+                                                    .Selectable()
+                                                    .DataSource(dataSource => dataSource
+                                                    .Ajax()
+                                                    .PageSize(5)
+                                                    .ServerOperation(false)))
+                    </div>
+                </div>            
+            </div>
+            
+        </div>
+    </div>
+
+
+
+    <div id="divViewPaymentDetails" style="display:none;">
+
+        <fieldset id="fsPlanInfo" class="Panel_bg_Sub" style="width:95%;margin-left:20px;border: 1px solid silver;padding: 11px 10px 0px 10px;">
+            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Payment Details</b>:</legend>
+
+           
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                        @(Html.Kendo().Grid<PPCP07302018.Models.Member.MemberPaymentsDetails>
+                                                    ()
+                                                    .Name("ViewPaymentsGrid")
+                                                    .Columns(columns =>
+                                                    {
+                                                        columns.Bound(p => p.ProviderName).Title("Provider Name").Filterable(false).Width(100).Visible(false);
+                                                        columns.Bound(p => p.PlanName).Title("Plan Name").Filterable(false).Width(100).Visible(false);
+                                                        columns.Bound(p => p.TotalAmount).Title("Total Amount").Filterable(false).Width(80);
+                                                        columns.Bound(p => p.AmountPaid).Title("Paid Amount").Filterable(false).Width(80);
+                                                        columns.Bound(p => p.DueAmount).Title("Due Amount").Filterable(false).Width(80);
+                                                        //columns.Bound(p => p.PaymentDate).Title("PaymentDate").Filterable(false).Width(100).Encoded(true).ClientTemplate("#= kendo.toString(kendo.parseDate(PaymentDate,'yyyy-MM-dd'), '" + "MM-dd-yyyy h:mm tt" + "') #");
+                                                        columns.Bound(p => p.PaymentDate).Title("PaymentDate").Filterable(false).Width(100).Encoded(true).ClientTemplate("#= kendo.toString(kendo.parseDate(PaymentDate,'yyyy-MM-dd'), '" + "MM-dd-yyyy" + "') #");
+                                                        columns.Bound(p => p.TransactionID).Title("Transaction ID").Filterable(false).Width(100);
+                                                    })
+                                                    .Scrollable()
+                                                    .Pageable()
+                                                    .Filterable()
+                                                    .AutoBind(false)
+                                                    .HtmlAttributes(new { })
+                                                    .Selectable()
+                                                    .DataSource(dataSource => dataSource
+                                                    .Ajax()
+                                                    .PageSize(5)
+                                                    .ServerOperation(false)))
+                    </div>
+                </div>
+                <div class="row">
+                    <div align="center">
+                        <div class="col-xs-0 col-md-3 col-sm-3 col-lg-3"></div>
+                        <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
+
+                            <button type="button" id="btnClea" title="Clear" value="Clear" style="width: 100px;" class="button_blue" onclick="@("window.location.href='" + @Url.Action("ViewPayments", "Admin") + "'");">
+                                Clear
+                            </button>
+
+                        </div>
+                        <div class="col-xs-0 col-md-3 col-sm-3 col-lg-3"></div>
+                    </div>
+                </div>
+            </div>
+            </fieldset>
+        </div>
+ 
+
+                        <script type="text/javascript">
+                            function setCollapsePanel(dvSearchFilterHeader, dvSearchFilter) {
+                                $(dvSearchFilter).slideToggle('slow');
+                                $(dvSearchFilterHeader).find(".ArrowClose:first").remove();
+                                $("<div class='ArrowExpand'></div>").appendTo(dvSearchFilterHeader);
+                                isCollapse = 1;
+                            }
+                            var isCollapse = 0;
+                            function CollapsiblePanels() {
+
+                                $('#dvSearchFilter').slideToggle('slow');
+                                if (isCollapse == 0) {
+                                    $("#dvSearchFilterHeader").find(".ArrowClose:first").remove();
+                                    $("<div class='ArrowExpand'></div>").appendTo($("#dvSearchFilterHeader"));
+                                    isCollapse = 1;
+                                }
+                                else {
+                                    $("#dvSearchFilterHeader").find(".ArrowExpand:first").remove();
+                                    $("<div class='ArrowClose'></div>").appendTo($("#dvSearchFilterHeader"));
+                                    isCollapse = 0;
+                                }
+                                $("#arrow").hide();
+                            }
+                            function startChange() {
+                                document.getElementById("Span3").innerHTML = "";
+                                var endPicker = $("#ToDate").data("kendoDatePicker");
+                                startDate = this.value();
+                                if (startDate) {
+                                    startDate = new Date(startDate);
+                                    startDate.setDate(startDate.getDate());
+                                    endPicker.min(startDate);
+                                }
+                                dateselection();
+                            }
+
+                            function endChange() {
+
+                                document.getElementById("Span7").innerHTML = "";
+                                dateselection();
+                            }
+
+                            function dateselection() {
+                                var FromDate = $("#FromDate").val();
+                                var ToDate = $("#ToDate").val();
+                                var d1 = FromDate.split('/');
+                                d1 = new Date(d1);
+                                var FromYear = d1.getYear();
+                                var d2 = ToDate.split('/');
+                                d2 = new Date(d2);
+                                var ToYear = d2.getYear();
+                                if (ToYear < FromYear) {
+                                    document.getElementById("DateValidationMessage").innerHTML = "From Date should be less than To Date";
+                                } else {
+                                    if (d2 < d1) {
+                                        document.getElementById("DateValidationMessage").innerHTML = "Invalid From Date and To Date";
+                                    }
+                                    else {
+                                        document.getElementById("DateValidationMessage").innerHTML = "";
+                                    }
+                                }
+                                var timeDiff = Math.abs(d2.getTime() - d1.getTime());
+                                var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+                            }
+
+                            function btnSearch() {
+                                var ToDate = $("#ToDate").val();
+                                var FromDate = $("#FromDate").val();
+
+                                var OrganizationID = $("#OrganizationID").val();
+                                var ProviderID = $("#ProviderId").val();
+                                var PlanID = $("#PlanID").val();
+
+                                if (OrganizationID=="" &&  ProviderID == "" && PlanID == "")
+                                {
+                                    BindAdminViewPaymentDetails(ToDate, FromDate,"0","0","0" ,'@ServiceUrl');
+                                }
+                               else if (OrganizationID == OrganizationID && ProviderID == "" && PlanID == "") {
+                                    BindAdminViewPaymentDetails(ToDate, FromDate, OrganizationID, "0", "0", '@ServiceUrl');
+                               }
+                               else if (OrganizationID == "" && ProviderID == ProviderID && PlanID == "") {
+                                   BindAdminViewPaymentDetails(ToDate, FromDate, "0", ProviderID, "0", '@ServiceUrl');
+                               }
+                               else if (OrganizationID == "" && ProviderID == "" && PlanID == PlanID) {
+                                   BindAdminViewPaymentDetails(ToDate, FromDate, "0", "0", PlanID, '@ServiceUrl');
+                               }
+                               else if (OrganizationID == OrganizationID && ProviderID == ProviderID && PlanID == "") {
+                                   BindAdminViewPaymentDetails(ToDate, FromDate, OrganizationID, ProviderID, "0", '@ServiceUrl');
+                               }
+                               else if (OrganizationID == OrganizationID && ProviderID == "" && PlanID == PlanID) {
+                                   BindAdminViewPaymentDetails(ToDate, FromDate, OrganizationID,  "0",PlanID, '@ServiceUrl');
+                               }
+                               else if (OrganizationID == "" && ProviderID == ProviderID && PlanID == PlanID) {
+                                   BindAdminViewPaymentDetails(ToDate, FromDate, "0", ProviderID, PlanID, '@ServiceUrl');
+                               }
+                               else {
+                                   BindAdminViewPaymentDetails(ToDate, FromDate, OrganizationID, ProviderID, PlanID, '@ServiceUrl');
+
+                               }
+                                  //  BindAdminViewPaymentDetails(ToDate, FromDate, "0", "0", "0", '@ServiceUrl');
+                            }
+                            function btnClear() {
+                                document.getElementById('OrganizationNames').value = '';
+                                document.getElementById('ProviderNames').value = '';
+                                document.getElementById('PlanNameList').value = '';
+                                //to clear grid
+                                var ToDate = $("#ToDate").val();
+                                var FromDate = $("#FromDate").val();
+                                var OrganizationID = $("#OrganizationID").val();
+                                var ProviderID = $("#ProviderID").val();
+                                var PlanID = $("#PlanID").val();
+                                BindAdminViewPaymentDetails(ToDate, FromDate, "0", "0", "0", '@ServiceUrl');
+                            }
+                            $(document).ready(function () {
+                                $("#fsLabOrderSearch").show();
+                                var ToDate = kendo.toString(kendo.parseDate(new Date()), 'MM/dd/yyyy');
+                                $("#ToDate").data("kendoDatePicker").value(ToDate);
+                                var date = new Date(ToDate);
+                                var newdate = new Date(date);
+                                var dd = newdate.getDate();
+                                var mm = newdate.getMonth();
+                                var y = newdate.getFullYear();
+                                var FromDate = mm + '/' + dd + '/' + y;
+                                document.getElementById('FromDate').value = FromDate;
+                                BindOrganizations('@ServiceUrl');
+                                BindProviderNames("0", '@ServiceUrl');
+                                // BindPlanDetails("@ServiceUrl", "3");
+                                BindPlanNames(0, 0, 0, '@ServiceUrl');
+                                BindAdminViewPaymentDetails(ToDate, FromDate,"0","0","0" ,'@ServiceUrl');
+                               
+
+                            });
+                            function EditOptions(MemberPlanID, MemberID, PlanCode, PlanName, TotalAmount, AmountPaid,DueAmount,ModifiedDate) {
+
+                                $("#fsLabOrderSearch").hide();
+                                $("#divMainRegistration").hide();
+                                $("#divViewPaymentDetails").show();
+                                BindAdminViewPaymentsGridDetails(PlanCode,'@ServiceUrl');
+
+                            }
+                        </script>
+

@@ -1,0 +1,102 @@
+﻿@model PPCP07302018.Models.Member.MemberDetails
+@using System.Web.Mvc.Html
+@using Kendo.Mvc.UI
+@using System.Web.Mvc
+@{
+    ViewBag.Title = "FamilyMember";
+    Layout = "~/Views/Shared/BaseMaster.cshtml";
+    var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
+}
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/KendoScripts")
+@Scripts.Render("~/bundles/custom-validator")
+@Styles.Render("~/bundles/Kendocss")
+@Scripts.Render("~/bundles/FamilyMeberScriptFiles")
+@Styles.Render("~/bundles/Membercssfiles")
+
+<script type="text/javascript">
+    $(document).ready(function () {
+       
+        GetFamilyDetails('@Session["MemberParentID"]', '@ServiceUrl');
+        debugger;
+      
+    });
+  
+
+   
+
+    function EditOptions(MemberID) {
+
+        $("#MemberID").val(MemberID);
+        var getUrl = '@Url.Action("ViewMember", "Member")';
+        var uurl = getUrl + "?MemberID=" + MemberID;
+        window.location = uurl;
+
+
+        //var url = $("#RedirectTo").val();
+        //location.href = url;
+    }
+
+</script>
+
+<div id="divFamilyMember">
+    <div class="pageheading_bar" align="center">
+        <b>Family Member</b>
+    </div>
+    <div class="Panel_bg" id="divMainPlanEnroll">
+        <div id="divSelectPlan" style="display:block;">
+            <div class="row Panel_bg_Sub">
+                <br />
+                <div align="right">
+                    <div class="row">
+                        @*<div class="col-xs-0 col-md-10 col-sm-0 col-lg-9"></div>*@
+                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                            <button class="button_blue" type="submit" id="btnAddFamilyMembers" title="Family Member" style="width: 250px;" value="FamilyMember" onclick="@("window.location.href='" + @Url.Action("FamilyRegistration", "Member") + "'");">
+                                Add Family Members
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                            @Html.Hidden("RedirectTo", Url.Action("ViewMember", "Member"))
+                            @(Html.Kendo().Grid<PPCP07302018.Models.Member.MemberDetails>
+                                                    ()
+                                                    .Name("FamilyMemberGrid")
+                                                    //.Events(e => e.DataBound("onDataBound"))
+                                                    .Columns(columns =>
+                                                    {
+                                                        //columns.Bound(p => p.FirstName+""+p.LastName).ClientTemplate("<input type='radio' name='PlanID' value='#= PlanID #' />").Title("Select").Filterable(false).Width(50);
+                                                        //columns.Bound(p => p.Specialization).Title("Specialization").Filterable(true).Visible(false);
+                                                        columns.Bound(p => p.FirstName).Title("Name").ClientTemplate(" #: LastName # #: FirstName # ").Filterable(false).Width(150);
+                                                        // columns.Bound(p => p.FirstName).Title("Name").Filterable(true).Width(100);
+                                                        columns.Bound(p => p.RelationshipName).Title("Relation").Filterable(false).Width(100);
+                                                        columns.Bound(p => p.Email).Title("Email").Filterable(false).Width(100);
+                                                        //  columns.Bound(p => p).ClientTemplate("<a onclick=\"EditOptions('#= MemberID #')\"> <span style='cursor:pointer'> View/Edit </a>").Title("Action").Width(40).Filterable(false);
+                                                        columns.Bound(p => p).ClientTemplate(
+                                "<a onclick='EditOptions(#=MemberID#);' <span style='cursor:pointer'>View</a>").Title("Action").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(50);
+                                                    })
+                                                    .Scrollable()
+                                                    .Pageable()
+                                                    .Filterable()
+                                                    .AutoBind(false)
+                                                    .HtmlAttributes(new { })
+                                                    .Selectable()
+                                                    .DataSource(dataSource => dataSource
+                                                    .Ajax()
+                                                    .PageSize(5)
+                                                    .ServerOperation(false)))
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>

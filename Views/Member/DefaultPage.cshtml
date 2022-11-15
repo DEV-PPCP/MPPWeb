@@ -1,0 +1,24 @@
+﻿@using System.Web.Mvc.Html
+@using Kendo.Mvc.UI
+@using System.Web.Mvc
+@{
+    ViewBag.Title = "DefaultPage";
+    Layout = "~/Views/Shared/BaseMaster.cshtml";
+}
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/KendoScripts")
+@Scripts.Render("~/bundles/custom-validator")
+@Styles.Render("~/bundles/Kendocss")
+<h2>DefaultPage</h2>
+@Html.Kendo().DropDownList().Name("Salutation").HtmlAttributes(new { style = "width:80%" }).DataTextField("Text").DataValueField("Value").Events(events =>
+{
+}).DataSource(source =>
+{
+    source.Read(read =>
+    {
+        read.Action("", "");
+    });
+})

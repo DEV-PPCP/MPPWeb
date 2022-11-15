@@ -1,0 +1,919 @@
+﻿@model PPCP07302018.Models.Admin.AddPlans
+@using System.Web.Mvc.Html
+@using Kendo.Mvc.UI
+@using System.Web.Mvc
+@{
+    ViewBag.Title = "AddPlans";
+    Layout = "~/Views/Shared/WUCAdminLeftMenu.cshtml";
+    var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
+
+}
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/KendoScripts")
+@Scripts.Render("~/bundles/custom-validator")
+@Styles.Render("~/bundles/Kendocss")
+@Scripts.Render("~/bundles/AddPlansScriptFiles")
+@Styles.Render("~/bundles/Organizationcssfiles")       @*For member css files*@
+
+<style>
+    #OrganizationID_validationMessage {
+        display: none !important;
+    }
+
+    #PlanMemberType_validationMessage {
+        display: none !important;
+    }
+
+    #PlanTypeList_validationMessage {
+        position: static;
+        display: inline-block;
+        border-width: 1px;
+        padding: 2px 5px 1px 6px;
+        width: 230px;
+        height: 20px;
+        font-size: 14px;
+    }
+
+    #MemberPlanTypeList_validationMessage {
+        position: static;
+        display: inline-block;
+        border-width: 1px;
+        padding: 2px 5px 1px 6px;
+        width: 230px;
+        height: 20px;
+        font-size: 14px;
+    }
+
+    #TenureList_validationMessage {
+        position: static;
+        display: inline-block;
+        border-width: 1px;
+        padding: 2px 5px 1px 6px;
+        width: 230px;
+        height: 20px;
+        font-size: 14px;
+    }
+
+    .loadingSpinner {
+        position: absolute;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        height: 50%;
+        width: 100%;
+        background: rgba( 255, 255, 255, .8 ) url('../../Images/loading-spinner-red.gif') 50% 50% no-repeat;
+    }
+
+    .k-header {
+        background-color: #f9f4e0 !important;
+    }
+</style>
+
+@Html.Hidden("hdnTenureId")
+@Html.HiddenFor(model => model.PlanTermName)
+@Html.Hidden("hdnPlanTypeId")
+@Html.Hidden("MemberPlanTypeId")
+@Html.HiddenFor(model => model.OrganizationID)
+@Html.Hidden("hdnOrganizationName")
+
+
+<script>
+    $(document).ready(function () {
+       
+        BindPPCPOrganizations("@ServiceUrl");
+        BindTenure();
+        BindPlanType();
+        BindMemberPlanType();
+        GetPaymentSchedule("12");
+
+        $("#chkThirdParty").click(function () {
+
+            if ($('#chkThirdParty').is(":checked") == true) {
+                $("#divOrganizationDetails").show();
+            } else if ($('#chkThirdParty').is(":checked") == false) {
+                $("#divOrganizationDetails").show();
+            }
+        });
+
+
+        $("#btnSubmit").click(function (e) {
+            debugger;
+            var PlanValidator = $("#divSelectPlan").kendoValidator().data("kendoValidator");
+            if ($("#MemberPlanTypeId").val() == "2") {
+                PlanValidator.validate();
+                $("#divAdditionalMemberValidator").hide();
+                $("#divPlanFeeAddMemberValidator").hide();
+                if ($("#CommAdditionalMember").val() == "") {
+                    $("#divAdditionalMemberValidator").show();
+                }
+                //if ($("#PlanFeeAddMember").val() == "") {
+                //    $("#divPlanFeeAddMemberValidator").show();
+                //}
+                if ($("#CommAdditionalMember").val() == "") {//|| $("#PlanFeeAddMember").val() == ""
+                    return false;
+                }
+
+            }
+
+            else {
+                $("#divAdditionalMemberValidator").hide();
+                $("#divPlanFeeAddMemberValidator").hide();
+            }
+            debugger;
+            if ($('#chkCustimized').is(":checked") == true) {
+                if ($("#OrganizationID").val() == "") {
+                    $("#divOrgValidator").show();
+                    return false;
+                }
+            }
+            else {
+                $("#divOrgValidator").hide();
+            }
+
+            if ($("#hdnPlanTypeId").val() == "") {
+                $("#divPlanTypeValidator").show();
+            }
+            else {
+                $("#divPlanTypeValidator").hide();
+            }
+            if ($("#MemberPlanTypeId").val() == "") {
+                $("#divMemberPlanTypeValidator").show();
+
+            }
+            else {
+                $("#divMemberPlanTypeValidator").hide();
+            }
+            var rbtnBoth = $('input[id=rbtnGenderBoth]:checked').val();
+            var rbtnMale = $('input[id=rbtnGenderMale]:checked').val();
+            var rbtnFEM = $('input[id=rbtnGenderFemale]:checked').val();
+
+
+            if (rbtnBoth == 3 || rbtnMale == 1 || rbtnFEM == 2) {
+                document.getElementById("divGenderValidator").style.display = "none";
+            }
+            else {
+                document.getElementById("divGenderValidator").style.display = "block";
+            }
+            var array = [];
+            var checkboxes = document.querySelectorAll('input[name="TypeList"]:checked');
+            for (var i = 0; i < checkboxes.length; i++) {
+                array.push(checkboxes[i].value);
+            }
+            if (array == "") {
+                document.getElementById("divPaymentScheduleValidator").style.display = "block";
+            }
+            else {
+                document.getElementById("divPaymentScheduleValidator").style.display = "none";
+
+            }
+            //Validate Patient Terms and Conditions
+            //var PateintTermsAndConditions = $("#PateintTermsAndConditions").kendoValidator({
+            //    rules: {
+            //        upload: function (input) {
+            //            if (input[0].type === "file") {
+            //                return input.closest(".k-upload").find(".k-file").length;
+            //            }
+            //            return true;
+            //        }
+            //    }
+            //}).data("kendoValidator");
+
+            //if (!PateintTermsAndConditions.validate()) {
+
+            //    $("#spnValidatePatient").show();
+            //    PlanValidator.validate();
+            //    return false;              
+            //}
+            //Validate Organization Terms and Conditions
+            //var OrganizationTermsaAndConditions = $("#OrganizationTermsaAndConditions").kendoValidator({
+            //    rules: {
+            //        upload: function (input) {
+            //            if (input[0].type === "file") {
+            //                return input.closest(".k-upload").find(".k-file").length;
+            //            }
+            //            return true;
+            //        }
+            //    }
+            //}).data("kendoValidator");
+            //if (!OrganizationTermsaAndConditions.validate()) {
+
+            //    $("#spnValidatePatient").show();
+            //    PlanValidator.validate();
+            //    return false;
+            //}
+            //Validate Provider Terms and Conditions
+            //var PoviderTermsAndConditions = $("#PoviderTermsAndConditions").kendoValidator({
+            //    rules: {
+            //        upload: function (input) {
+            //            if (input[0].type === "file") {
+            //                return input.closest(".k-upload").find(".k-file").length;
+            //            }
+            //            return true;
+            //        }
+            //    }
+            //}).data("kendoValidator");
+            //if (!PoviderTermsAndConditions.validate()) {
+            //    $("#spnValidatePatient").show();
+            //    PlanValidator.validate();
+            //    return false;
+            //}
+            $("#spnValidatePatient").hide();
+            if (PlanValidator.validate()) {
+                GenderValidation();
+                btnSaveAddPlans();
+            }
+
+            else {
+
+                return false;
+            }
+            //}
+        });
+    });
+    function divPopUpClose() {
+        var getUrl = '@Url.Action("AddPlans", "Admin")';
+        window.location = getUrl;
+    }
+    function TenureValidation() {
+        var array = [];
+        var checkboxes = document.querySelectorAll('input[name="TypeList"]:checked');
+        for (var i = 0; i < checkboxes.length; i++) {
+            array.push(checkboxes[i].value);
+        }
+        if (array == "") {
+            document.getElementById("divPaymentScheduleValidator").style.display = "block";
+        }
+        else {
+            $("#divPaymentScheduleValidator").hide = true;
+
+        }
+    }
+    function GenderValidation() {
+      
+
+        var rbtnBoth = $('input[id=rbtnGenderBoth]:checked').val();
+        var rbtnMale = $('input[id=rbtnGenderMale]:checked').val();
+        var rbtnFEM = $('input[id=rbtnGenderFemale]:checked').val();
+
+
+        if (rbtnBoth == 3 || rbtnMale == 1 || rbtnFEM == 2) {
+            document.getElementById("divGenderValidator").style.display = "none";
+        }
+        else {
+            document.getElementById("divGenderValidator").style.display = "block";
+        }
+    }
+
+    function CreateJosn(Amount, paymentSchedule, PlanTermMonths) {
+        debugger;
+        jsonObj = [];
+        var tempPayment = paymentSchedule.toString().split(',');
+        // $("input[class=email]").each(function () {
+        for (i = 0; i < tempPayment.length; i++) {
+            var temp = tempPayment[i].split(';');
+            var instalmentAmount = Amount / temp[1];
+            instalmentAmount = Math.round(instalmentAmount * 100) / 100;
+            item = {}
+            if (temp[1] == 1) {
+                savings = PlanTermMonths * $("#InstalmentFee").val();
+                item["InstallmentFee"] = 0;
+            } else {
+                savings = PlanTermMonths * $("#InstalmentFee").val() - temp[1] * $("#InstalmentFee").val();
+                item["InstallmentFee"] = $("#InstalmentFee").val();
+            }           
+            item["Paymentschedule"] = temp[0];
+            item["TotalAmount"] = Amount;
+            item["NoofInstallments"] = temp[1];
+            item["InstallmentAmount"] = instalmentAmount;        
+            item["Savings"] = savings;
+            jsonObj.push(item);
+        }
+        //console.log(jsonObj);
+        return jsonObj;
+    }
+    function ValidatePlanName(PlanName) {
+        
+        ValidateplanName(PlanName, "@ServiceUrl");
+    }
+
+
+    function btnSaveAddPlans() {
+        debugger;
+        var jsModel = {};
+        jsModel.PlanName = $("#PlanName").val();
+        jsModel.PlanCode = $("#PlanCode").val();
+        jsModel.FromAge = $("#FromAge").val();
+        jsModel.ToAge = $("#ToAge").val();
+        jsModel.EnrollFee = $("#EnrollFee").val();
+        jsModel.MonthlyFee = $("#MonthlyFee").val();
+        jsModel.VisitFee = $("#VisitFee").val();
+        jsModel.InstalmentFee = $("#InstalmentFee").val();
+        jsModel.CommPPCP = $("#CommPPCP").val();
+
+        jsModel.EffectiveDate = $("#EffectiveDate").val();
+        var rbtnBoth = $('input[id=rbtnGenderBoth]:checked').val();
+        if (rbtnBoth == 3)
+            jsModel.GenderID = rbtnBoth;
+        var rbtnMale = $('input[id=rbtnGenderMale]:checked').val();
+        if (rbtnMale == 1)
+            jsModel.GenderID = rbtnMale;
+        var rbtnFEM = $('input[id=rbtnGenderFemale]:checked').val();
+        if (rbtnFEM == 2)
+            jsModel.GenderID = rbtnFEM;
+
+        jsModel.PlanTermMonths = $("#hdnTenureId").val();
+        jsModel.PlanTermName = $("#PlanTermName").val();
+        jsModel.PlanType = $("#hdnPlanTypeId").val();
+        jsModel.PlanMemberType = $("#MemberPlanTypeId").val();
+        jsModel.PlanFeeAddMember = $("#PlanFeeAddMember").val();
+        jsModel.Features = $("#Features").val();
+        jsModel.PlanDescription = $("#PlanDescription").val();
+        jsModel.Patient_Features = $("#Patient_Features").val();
+        jsModel.CommPrimaryMember = $("#CommPrimaryMember").val();
+        if ($("#CommAdditionalMember").val() == "" || $("#CommAdditionalMember").val() == null) {
+            jsModel.CommAdditionalMember = "0";
+        }
+        else { jsModel.CommAdditionalMember = $("#CommAdditionalMember").val(); }
+        var PaymentList = $('input[name="TypeList"]:checked').serialize();
+        var array = [];
+        var checkboxes = document.querySelectorAll('input[name="TypeList"]:checked')
+        for (var i = 0; i < checkboxes.length; i++) {
+            array.push(checkboxes[i].value);
+        }
+        var obj = CreateJosn(jsModel.MonthlyFee, array, jsModel.PlanTermMonths);
+        var PaymentIntervalList = JSON.stringify(obj);
+        jsModel.PaymentIntervals = PaymentIntervalList;
+        jsModel.OrganizationID = $("#OrganizationID").val();
+        jsModel.OrganizationName = $("#hdnOrganizationName").val();
+        if ($('#chkCustimized').is(":checked") == true) {
+            jsModel.IsThirdParty = true;
+        }
+        else {
+            jsModel.IsThirdParty = false;
+        }
+       SaveAddPlans(jsModel, "@ServiceUrl");
+    }
+    function Stadard() {
+        debugger;
+        document.getElementById('chkCustimized').checked = false;
+        $("#divOrganizationDetails").hide();
+        $("#OrganizationID").val("");
+        $("#hdnOrganizationName").val("");
+    }
+    function Custimized() {
+        debugger;
+        document.getElementById('chkStadard').checked = false;
+        $("#divOrganizationDetails").show();
+
+    }
+</script>
+
+
+<div id="divAddPlans">
+    <div class="pageheading_bar" align="center">
+        <b>Add Plans</b>
+    </div>
+    <div class="Panel_bg" id="divMainAddPlans">
+        <div id="divSelectPlan" style="display:block;">
+
+            <fieldset id="fsPlanDetails" style="margin:0px;width:100%;">
+                <div class="row Panel_bg_Sub">
+                    <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Plan Information</b>:</legend>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3"></div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                <input type="radio" id="chkStadard" checked="checked" onclick="Stadard()" /> Standard Plan
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+
+                                <input type="radio" id="chkCustimized" onclick="Custimized()" />Customised plan 
+                            </div>
+                        </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="row">
+                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-4" id="divOrganizationDetails" style="display:none;">
+                                    @Html.Label("Organization Name", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
+                                    @(Html.Kendo().DropDownListFor(m => m.OrganizationName)
+                                        .Name("OrganizationName").HtmlAttributes(new { style = "width:100%;" })
+                                        .OptionLabel("--Select--")
+                                        .Events(events =>
+                                        {
+                                            events.Select("onSelectOrganization");
+                                        })
+                                        .DataValueField("OrganizationID")
+                                        .DataTextField("OrganizationName")
+
+                                        .DataSource(source =>
+                                        {
+                                            source.Read(read =>
+                                            {
+                                            });
+                                        }))
+                                    <br />
+                                    @Html.ValidationMessageFor(model => model.OrganizationName)
+
+
+
+                                    <script type="text/javascript">
+                                            function onSelectOrganization(e) {
+
+                                                $("#OrganizationID").val("");
+                                                var dataItem = this.dataItem(e.item.index());
+                                                $("#OrganizationID").val(dataItem.OrganizationID);
+                                                $("#OrganizationName").val(dataItem.OrganizationName);
+                                                $("#hdnOrganizationName").val(dataItem.OrganizationName);
+                                                if ($("#OrganizationName").val() == "") {
+                                                    $("#divOrgValidator").show();
+                                                }
+                                                else {
+                                                    $("#divOrgValidator").hide();
+                                                }
+
+                                            }
+                                    </script>
+                                </div>
+
+                            </div>
+                            <div id="divOrgValidator" style="display:none">
+                                <span style="color:red !important" id="PaymentIntervals_validationMessage"> This Information is Requried</span>
+                            </div>
+                            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                        @Html.Label("Plan Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                        @Html.TextBoxFor(model => model.PlanName, null, new { style = "width:100%;", maxlength = 50, onchange = "ValidatePlanName(this.value);" }) <span id="spnPlanNamevalidator" style="color:red !important;display:none;">Plan Name Already Exists</span>
+                                        @Html.ValidationMessageFor(model => model.PlanName, "", new { @style = "color:red" })
+                                    </div>
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                        @Html.Label("Plan Code", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                        @Html.TextBoxFor(model => model.PlanCode, null, new { style = "width:100%;", maxlength = 50 })
+                                        @Html.ValidationMessageFor(model => model.PlanCode, "", new { @style = "color:red" })
+                                    </div>
+
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                        @Html.Label("Minimum Age(Years)", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                        @Html.TextBoxFor(model => model.FromAge, null, new { style = "width:100%;", maxlength = 50 })
+                                        @Html.ValidationMessageFor(model => model.FromAge, "", new { @style = "color:red" })
+                                    </div>
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
+                                        @Html.Label("Maximum Age(Years)", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                        @Html.TextBoxFor(model => model.ToAge, null, new { style = "width:100%;", maxlength = 50 })
+                                        @Html.ValidationMessageFor(model => model.ToAge, "", new { @style = "color:red" })
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                        @Html.Label("Enrollment Fee($)", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                        @Html.TextBoxFor(model => model.EnrollFee, null, new { style = "width:100%;", maxlength = 50 })
+                                        @Html.ValidationMessageFor(model => model.EnrollFee, "", new { @style = "color:red" })
+                                    </div>
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
+                                        @Html.Label("Plan Amount($)", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                        @Html.TextBoxFor(model => model.MonthlyFee, null, new { style = "width:100%;", maxlength = 50 })
+                                        @Html.ValidationMessageFor(model => model.MonthlyFee, "", new { @style = "color:red" })
+                                    </div>
+
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                        @Html.Label("Co pay($)", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                        @Html.TextBoxFor(model => model.VisitFee, null, new { style = "width:100%;", maxlength = 50 })
+                                        @Html.ValidationMessageFor(model => model.VisitFee, "", new { @style = "color:red" })
+                                    </div>
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                        @Html.Label("Installment Fee($)", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                        @Html.TextBoxFor(model => model.InstalmentFee, null, new { style = "width:100%;", maxlength = 10 })
+                                        @Html.ValidationMessageFor(model => model.InstalmentFee, "", new { @style = "color:red" })
+                                    </div>
+                                    
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
+                                        @Html.Label("Effective Date", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                        @( Html.Kendo().DatePickerFor(model => model.EffectiveDate).Format("MM/dd/yyyy").Name("EffectiveDate").Value("")
+                            .HtmlAttributes(new { PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text", onkeydown = "return false;" })
+                                        )
+                                        @Html.ValidationMessageFor(model => model.EffectiveDate, "", new { @style = "color:red" })
+                                    </div>
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                        @Html.Label("Available to", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                        <label style="font-weight: normal;">
+                                            @(Html.RadioButton("Gender", 1, new
+                                        {
+                                            id = "rbtnGenderMale",
+                                            @onclick = "GenderValidation();"
+                                        }))
+                                            Male
+                                        </label>
+                                        <label style="font-weight: normal; margin-left:20px">
+                                            @(Html.RadioButton("Gender", 2, new
+                                        {
+                                            id = "rbtnGenderFemale",
+                                            @onclick = "GenderValidation();"
+                                        }))
+                                            Female
+                                        </label>
+                                        <label style="font-weight: normal; margin-left:20px">
+                                            @(Html.RadioButton("Gender", 3, new
+                                        {
+                                            id = "rbtnGenderBoth",
+                                            @onclick = "GenderValidation();",
+                                            @checked=true
+                                        }))
+                                            Both
+                                        </label>
+                                        <br />
+                                        <div id="divGenderValidator" style="display:none">
+                                            <span style="color:red !important" id="AvailableGender_validationMessage"> This Information is Requried</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
+                                        @Html.Label("Plan Duration(Months)", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                        @(Html.Kendo().DropDownListFor(m => m.PlanTermMonths)
+            .Name("TenureList").HtmlAttributes(new { style = "width:100%;" })
+            .OptionLabel("--Select--")
+            .Events(events =>
+            {
+                events.Select("onSelectTenure");
+            })
+            .DataValueField("Value")
+            .DataTextField("Text")
+            .DataSource(source =>
+            {
+                source.Read(read =>
+                {
+                });
+            }))
+                                        <br />
+
+
+                                        @Html.ValidationMessageFor(m => m.PlanTermMonths)
+                                        <script type="text/javascript">
+                                            function onSelectTenure(e) {
+                                                
+                                                $("#hdnTenureId").val("");
+                                                var dataItem = this.dataItem(e.item.index());
+                                                $("#TenureList").val(dataItem.Text);
+                                                $("#hdnTenureId").val(dataItem.Value);
+                                                $("#PlanTermName").val(dataItem.Text);
+                                                GetPaymentSchedule($("#hdnTenureId").val());
+                                            }
+                                        </script>
+                                    </div>
+
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                        @Html.Label("Plan Type", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
+                                        @(Html.Kendo().DropDownListFor(m => m.PlanType)
+            .Name("PlanTypeList").HtmlAttributes(new { style = "width:100%;" })
+            .OptionLabel("--Select--")
+            .Events(events =>
+            {
+                events.Select("onSelectPlanType");
+            })
+            .DataValueField("Value")
+            .DataTextField("Text")
+
+            .DataSource(source =>
+            {
+                source.Read(read =>
+                {
+                });
+            }))
+                                        <br />
+                                        @*@Html.ValidationMessageFor(model => model.PlanType)*@
+                                        @Html.HiddenFor(model => model.PlanType)
+
+                                        <script type="text/javascript">
+                                            //Salutation change event to get SalutationID and Salutation
+                                            function onSelectPlanType(e) {
+                                               
+
+                                                $("#hdnPlanTypeId").val("");
+                                                var dataItem = this.dataItem(e.item.index());
+                                                $("#hdnPlanTypeId").val(dataItem.Value);
+                                                if ($("#hdnPlanTypeId").val() != "") {
+
+                                                    $("#divPlanTypeValidator").hide();
+                                                }
+                                            }
+                                        </script>
+                                        <div id="divPlanTypeValidator" style="display:none">
+                                            <span style="color:red !important" id="PlanType_validationMessage"> This Information is Requried</span>
+                                        </div>
+                                    </div>
+
+                                   
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
+                                        @Html.Label("Member Plan Type", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
+
+                                        @(Html.Kendo().DropDownListFor(m => m.PlanMemberType)
+            .Name("MemberPlanTypeList").HtmlAttributes(new { style = "width:100%;" })
+            .OptionLabel("--Select--")
+            .Events(events =>
+            {
+                events.Select("onSelectMemberPlanType");
+            })
+            .DataValueField("Value")
+            .DataTextField("Text")
+
+            .DataSource(source =>
+            {
+                source.Read(read =>
+                {
+                });
+            }))
+                                        <br />
+                                        @*@Html.ValidationMessageFor(model => model.PlanMemberType)*@
+                                        @Html.HiddenFor(model => model.PlanMemberType)
+
+
+                                        <script type="text/javascript">
+                                            //Salutation change event to get SalutationID and Salutation
+                                            function onSelectMemberPlanType(e) {
+
+                                                $("#MemberPlanTypeId").val("");
+                                                var dataItem = this.dataItem(e.item.index());
+                                                $("#MemberPlanTypeId").val(dataItem.Value);
+                                                var MemberPlanid = $("#MemberPlanTypeId").val();
+                                                if (MemberPlanid == 2) {
+                                                    $("#divAdditionalMemberAmt").show();
+                                                    $("#divPlanMemberFee").hide();
+
+                                                }
+                                                else {
+                                                    $("#divAdditionalMemberAmt").hide();
+                                                    $("#divPlanMemberFee").hide();
+                                                }
+                                            }
+                                        </script>
+                                        <div id="divMemberPlanTypeValidator" style="display:none">
+                                            <span style="color:red !important" id="PlanType_validationMessage"> This Information is Requried</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                        @Html.Label("Amount for Practice($)", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                        @Html.TextBoxFor(model => model.CommPrimaryMember, null, new { style = "width:100%;", maxlength = 50 })
+                                        @Html.ValidationMessageFor(model => model.CommPrimaryMember, "", new { @style = "color:red" })
+
+                                    </div>
+                                    
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                        @Html.Label("Amount for PPCP($)", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                        @Html.TextBoxFor(model => model.CommPPCP, null, new { style = "width:100%;", maxlength = 50 })
+                                        @Html.ValidationMessageFor(model => model.CommPPCP, "", new { @style = "color:red" })
+
+                                    </div>
+                                   
+                                </div>
+                                <div class="row" id="divMemberPlan">
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-4 " id="divAdditionalMemberAmt" style="display:none">
+                                        @Html.Label("Amount for Practice(Additional Member) $", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                        @Html.TextBoxFor(model => model.CommAdditionalMember, null, new { style = "width:100%;", maxlength = 50 })
+                                        <div id="divAdditionalMemberValidator" style="display:none">
+                                            <span style="color:red !important" id="CommAdditionalMember_validationMessage">This Information is Requried</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 " id="divPlanMemberFee" style="display:none">
+                                        @Html.Label("Amount for Member Plan Fee($)", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                        @Html.TextBoxFor(model => model.PlanFeeAddMember, null, new { style = "width:100%;", maxlength = 50 })
+                                        <div id="divPlanFeeAddMemberValidator" style="display:none">
+                                            <span style="color:red !important" id="PlanFeeAddMember_validationMessage"> This Information is Requried</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-4" style="display:none">
+                                        <input type="checkbox" id="chkThirdParty" />Is Third Party Plan
+                                    </div>
+
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-4" style="display:none">
+                                        @Html.Label("Primary Url", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                        @Html.TextBoxFor(model => model.PrimaryUrl, null, new { style = "width:100%;", maxlength = 50 })
+                                        @Html.ValidationMessageFor(model => model.PrimaryUrl, "", new { @style = "color:red" })
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </fieldset>
+            <div id="divSuccess" style="display: none; position: relative" align="center">
+                <div class="Page_Dimmer">
+                </div>
+                <div class="PopupHolder" style="top: 30%;">
+                    <div class="pageheading_bar" style="width: 100%; height: 70%;">
+                        <div style="vertical-align: middle">
+                            <div style="vertical-align: middle">
+                                Physician Primary Care Plan<span style="float: right; color: Red;
+                            margin-right: 5px;"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="border: Solid 1px #33CCEE; width: 100%;">
+                        <div align="center">
+                            <span id="lblUserMsg" style="color: Green; font-family: Verdana,Tahoma; font-size: 15px;
+                        font-weight: bold; text-align: center; margin-top: 8px; margin-left: 3px; display: none;">
+                            </span>
+                        </div>
+                        <div align="center">
+                            <br />
+                            <button id="btnClose" title="Close" style="width: 80px" class="button_blue" onclick="divPopUpClose();">
+                                OK
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="divError" style="display: none; position: relative" align="center">
+                <div class="Page_Dimmer">
+                </div>
+                <div class="PopupHolder" style="top: 30%;">
+                    <div class="pageheading_bar" style="width: 100%; height: 70%;">
+                        <div style="vertical-align: middle">
+                            <div style="vertical-align: middle">
+                                Physician Primary Care Plan<span style="float: right; color: Red;
+                            margin-right: 5px;"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="border: Solid 1px #33CCEE; width: 100%;">
+                        <div align="center">
+                            <span id="lblErrorUserMsg" style="color:Red; font-family: Verdana,Tahoma; font-size: 15px;
+                        font-weight: bold; text-align: center; margin-top: 8px; margin-left: 3px; display: none;">
+                            </span>
+                        </div>
+                        <div align="center">
+                            <br />
+                            <button id="btnClose" title="Close" style="width: 80px" class="button_blue" onclick="divPopUpClose();">
+                                OK
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="divInvalid" style="display: none; position: relative" align="center">
+                <div class="Page_Dimmer">
+                </div>
+                <div class="PopupHolder" style="top: 30%;">
+                    <div class="pageheading_bar" style="width: 100%; height: 70%;">
+                        <div style="vertical-align: middle">
+                            <div style="vertical-align: middle">
+                                Physician Primary Care Plan<span style="float: right; color: Red;
+                            margin-right: 5px;"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="border: Solid 1px #33CCEE; width: 100%;">
+                        <div align="center">
+                            <span id="lblInvalidUserMsg" style="color:orange; font-family: Verdana,Tahoma; font-size: 15px;
+                        font-weight: bold; text-align: center; margin-top: 8px; margin-left: 3px; display: none;">
+                            </span>
+                        </div>
+                        <div align="center">
+                            <br />
+                            <button id="btnClose" title="Close" style="width: 80px" class="button_blue" onclick="divPopUpClose();">
+                                OK
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <fieldset id="fsPaymentSchedule">
+                <div class="row Panel_bg_Sub">
+                    <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Payment Schedule</b><span style="color: Red;">*</span>:</legend>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-12" id="divPaymentSchedule">
+                            </div>
+                            <div id="divPaymentScheduleValidator" style="display:none">
+                                <span style="color:red !important" id="PaymentIntervals_validationMessage"><span class="k-icon k-warning"> </span> This Information is Requried</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <div style="display:none;">
+                <legend class="Legendtxtcolor" style="float: left; font-size: 14px; "><b>Discount</b>:</legend>
+                <div class="row" id="divDiscount" style="display:block;">
+                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-4">
+                        <label style="font-weight: normal;">
+                            @(Html.CheckBox("PracticeAllowed", new
+                        {
+                            id = "chkPractice",
+                        }))
+                            Practice Allowed <br />
+
+                        </label>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <label style="font-weight: normal;">
+
+                            @(Html.CheckBox("EmployersAllowed", new
+                        {
+                            id = "chkEmployees"
+                        }))
+                            Employers Allowed <br />
+
+                        </label>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <label style="font-weight: normal;">
+
+                            @(Html.CheckBox("BrokerAllowed", new
+                        {
+                            id = "chkBroker"
+                        }))
+                            Broker/Agent Allowed <br />
+                        </label>
+                        <br />
+                    </div>
+                    <br />
+                </div>
+            </div>
+
+            <div class="row Panel_bg_Sub">
+                <div>
+                    <label class="lbltxtcolor" style="float: left; font-size: 14px;"><b>Plan Description</b>:</label>
+                    @Html.TextAreaFor(m => m.PlanDescription, new { @class = "form-control" })<br />
+                </div>
+                <div>
+                    <label class="lbltxtcolor" style="float: left; font-size: 14px;display:none"><b>Plan </b>:</label>
+                    <div>
+                        <b>Plan Features:</b>
+                        @Html.TextAreaFor(m => m.Patient_Features, new { @class = "form-control" })
+                    </div><br />
+                </div>
+                <div>
+                    <label class="lbltxtcolor" style="float: left; font-size: 14px;display:none"><b>Member </b>:</label>
+                    <div>
+                       <b> Member Features:</b>
+                        @Html.TextAreaFor(m => m.Features, new { @class = "form-control" })
+
+                    </div><br />
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                        @Html.Label("Patient Terms and Conditions", new { style = "font-weight:normal;", @class = "" })<br />
+                        @( Html.Kendo().Upload().Multiple(false).Name("PateintTermsAndConditions").Async(a => a.Save("PatientTandCUploadedFiles", "Admin").Remove("RemoveUploadedPatientTandC", "Admin").AutoUpload(true)))
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                        @Html.Label("Organization Terms and Conditions", new { style = "font-weight:normal;", @class = "" })<br />
+                        @( Html.Kendo().Upload().Multiple(false).Name("OrganizationTermsaAndConditions").Async(a => a.Save("OrganizationTandCUploadedFiles", "Admin").Remove("RemoveUploadedOrganizationTandC", "Admin").AutoUpload(true)))
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                        @Html.Label("Provider Terms and Conditions", new { style = "font-weight:normal;", @class = "" })<br />
+                        @( Html.Kendo().Upload().Multiple(false).Name("PoviderTermsAndConditions").Async(a => a.Save("ProviderTandCUploadedFiles", "Admin").Remove("RemoveUploadedProviderTandC", "Admin").AutoUpload(true)))
+                    </div>
+                </div>
+                <span id="spnValidatePatient" style="display:none;color:red !important"><span class="k-icon k-warning"></span>Please Upload all Terms and Conditions </span>
+
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                    <div align="center">
+                        <button type="submit" class="button_blue" id="btnSubmit" title="Submit" style="width: 100px;" value="addUser">
+                            Submit
+                        </button>
+                        <button type="reset" class="button_blue" id="btnClear" title="Clear" value="addUser" style="width: 100px;" onclick="@("window.location.href='" + Url.Action("AddPlans", "Admin") + "'");">
+                            Clear
+                        </button>
+                        <button type="button" class="button_blue" id="btnCancel" title="Cancel" value="addUser" style="width: 100px;" onclick="@("window.location.href='" + @Url.Action("AddPlans", "Admin") + "'");">
+                            Cancel
+                        </button>
+                    </div>
+                    <br />
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+@*<div class="pageheading_bar" align="center">
+        <b>Add Plans</b>
+    </div>
+
+    <div class="Panel_bg" id="divMainAddPlans" style="margin-right:5px;">
+
+        <div id="row Panel_bg_Sub">
+
+        </div>
+    </div>*@
+

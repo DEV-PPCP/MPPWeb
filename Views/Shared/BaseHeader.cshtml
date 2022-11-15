@@ -1,0 +1,248 @@
+﻿<link id="original" href="" rel="stylesheet" type="text/css" />
+<div class="InnerHeadear2" style="width: 100%; height: auto;">
+    <div class="row">
+        <div class="col-xs-6 col-md-3 col-sm-4 col-lg-3">
+            <div class="col-xs-0 col-md-12 col-sm-7 col-lg-12">
+                <a href="http://www.myphysicianplan.com" target="_blank">
+                    <input type="image" id="left-button" class="button" src="~/Images/Innerpages-Logo.png" width="100" height="60" />
+                </a>
+            </div>
+        </div>
+        <div align="center" class="col-xs-12 col-md-6 col-sm-4 col-lg-6" style="margin-top: 1px;">
+            <b class="Organization_Color">
+                <span id="SpnPopUpTitle" style="font-size: 20px; padding-right: 10px">
+                   
+                    @*@Html.Label("Physician Primary Care Plan", new { style = "font-weight:normal;" })*@
+                    <br />
+                </span>
+            </b>
+        </div>
+    </div>
+    <div id="dvHeaderStrips" class="row stripThemes" style="margin-top: 5px;">
+        <div class="col-xs-12 col-md-7 col-sm-8 col-lg-7">
+
+        </div>
+        <div class="col-xs-12 col-md-1 col-sm-2 col-lg-1 col-md-push-4 col-lg-push-4" style="margin-top: 10px;">
+            <div class="col-xs-12 col-md-12 col-sm-3 col-lg-12">
+                <div class="col-xs-12 col-md-4 col-sm-3 col-lg-4" style="width: 50%; color: Green; margin-top: -8px;">
+                    <input type="image" id="imgSettings" onclick="lnkOpensDiv();" class="button" src="~/Images/001-settings.png" height="30" width="30" />
+                </div>
+                <div class="col-xs-12 col-md-4 col-sm-3 col-lg-4" style="width: 50%; color: Green; margin-top: -8px;">
+                    <input type="image" id="imgSettings" onclick="LogOut();" class="button" src="~/Images/Logout.png" height="30" width="30" />
+                </div>
+            </div>
+            <div class="col-xs-6 col-md-3 col-sm-6 col-lg-3">
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-md-2 col-sm-4 col-lg-2 col-md-push-10 col-sm-push-8 col-lg-push-10">
+            <div id="log" class="glyphicons" style="display: none;">
+                <div class="row navy">
+                    <div class="col-xs-10 col-md-5 col-sm-10 col-lg-5">
+                        @Html.Label("Settings", new { style = "font-weight:normal;" })
+                    </div>
+                    <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2 col-md-push-5 col-lg-push-5">
+                        <input type="image" id="imgSettingsClose" onclick="lnkClosesDiv();" class="button" src="~/Images/Crossmark.gif" />
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                    <br />
+                    @Html.Label("Theme", new { style = "font-weight:normal;" })
+                    <br />
+                    <div class="col-xs-10 col-md-2 col-sm-2 col-lg-2">
+                        <button id="btnBrown" title="Brown (Default)" style="width: 25px;" type="button" class="divDefaultColorThemes"
+                                onclick="btnCss2_Click();"></button>
+                    </div>
+                    <div class="col-xs-10 col-md-2 col-sm-2 col-lg-2">
+                        <button id="btnGrey" title="Grey" style="width: 25px;" type="button" class="divgreyColorThemes"
+                                onclick="btnCss3_Click();"></button>
+                    </div>
+                    <div class="col-xs-10 col-md-2 col-sm-2 col-lg-2">
+                        <button id="btnBlue" title="Blue" style="width: 25px;" type="button" class="divblueColorThemes"
+                                onclick="btnCss1_Click();"></button>
+                    </div>
+                    <div class="col-xs-10 col-md-2 col-sm-2 col-lg-2">
+                        <button id="btnGreen" title="Green" style="width: 25px;" type="button" class="divgreenColorThemes"
+                                onclick="btnCss4_Click();"></button>
+                    </div>
+                    <div class="col-xs-10 col-md-2 col-sm-2 col-lg-2">
+                        <button id="btnPurple" title="Purple" style="width: 25px;" type="button" class="divpurpleColorThemes"
+                                onclick="btnCss5_Click();"></button>
+                    </div>
+                    <div class="col-xs-10 col-md-2 col-sm-2 col-lg-2">
+                        <button id="btnCyan" title="Cyan" style="width: 25px;" type="button" class="divcyanColorThemes"
+                                onclick="btnCss6_Click();"></button>
+                    </div>
+                </div>
+                <div class="panel-group">
+                    <div class="row col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                        <nav id="sidebar123">
+                            <ul class="list-unstyled components" style="margin-bottom: 0px;"></ul>
+                        </nav>
+                    </div>
+                    <div id="dvFacilityMenu" class="row col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                        <nav id="sidebar12">
+                            <ul class="list-unstyled components" style="margin-bottom: 0px;"></ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    //veena OrganizationName
+    $(document).ready(function () {
+        debugger;
+        var TitleOrganizationName = "@Session["HeaderDisplayName"]";
+        document.getElementById("SpnPopUpTitle").innerHTML = TitleOrganizationName;
+    });
+    function LogOut() {
+        $("#divOTPAfterLogin").show();
+    }
+
+    function lnkOpensDiv() {
+        document.getElementById("log").style.display = "block";
+        return false;
+    }
+
+    function lnkClosesDiv() {
+        document.getElementById("log").style.display = "none";
+        return false;
+    }
+
+    var theme = '@Session["Theme"]';
+
+    function btnCss1_Click() {
+        var strtxt = '@Url.Content("~/Content/Blue.css")';
+        $(function () {
+            $.post('/Master/SetVariable',
+           { key: "Theme", value: strtxt }, function (data) {
+               location.reload();
+           });
+        });
+        theme = strtxt;
+    }
+
+    function btnCss2_Click() {
+        var strtxt = '@Url.Content("~/Content/Brown.css")';
+        $(function () {
+            $.post('/Master/SetVariable',
+           { key: "Theme", value: strtxt }, function (data) {
+               location.reload();
+           });
+        });
+        theme = strtxt;
+    }
+
+    function btnCss3_Click() {
+        var strtxt = '@Url.Content("~/Content/Grey.css")';
+        $(function () {
+            $.post('/Master/SetVariable',
+           { key: "Theme", value: strtxt }, function (data) {
+               location.reload();
+           });
+        });
+        theme = strtxt;
+    }
+
+    function btnCss4_Click() {
+        var strtxt = '@Url.Content("~/Content/Green.css")';
+        $(function () {
+            $.post('/Master/SetVariable',
+           { key: "Theme", value: strtxt }, function (data) {
+               location.reload();
+           });
+        });
+        theme = strtxt;
+    }
+
+    function btnCss5_Click() {
+        var strtxt = '@Url.Content("~/Content/Purple.css")';
+        $(function () {
+            $.post('/Master/SetVariable',
+           { key: "Theme", value: strtxt }, function (data) {
+               location.reload();
+           });
+        });
+        theme = strtxt;
+    }
+
+    function btnCss6_Click() {
+        var strtxt = '@Url.Content("~/Content/Cyan.css")';
+        $(function () {
+            $.post('/Master/SetVariable',
+           { key: "Theme", value: strtxt }, function (data) {
+               location.reload();
+           });
+        });
+        theme = strtxt;
+    }
+
+    function divPopUpYes() {
+        debugger;
+        var url = window.location.href;
+        var n = url.includes("/Member/");
+        if (url.includes("/Member/")) {
+            var getUrl = '@Url.Action("MemberLogin", "Member")';
+        } else if(url.includes("/Organization/")){
+            var getUrl = '@Url.Action("OrganizationLogin", "Organization")';
+        } else if (url.includes("/Provider/")) {
+            var getUrl = '@Url.Action("ProviderLogin", "Provider")';
+        }
+        else if (url.includes("/Admin/")) {
+            var getUrl = '@Url.Action("AdminLogin", "Admin")';
+        }
+
+        window.location = getUrl;
+    }
+
+    function divPopUpNo() {
+        $("#divOTPAfterLogin").hide();
+    }
+
+    function colortheme(theme) {
+        if (theme == "" || theme == null) {
+            document.getElementById("original").href = '@Url.Content("~/Content/Brown.css")';
+        }
+        else {
+            document.getElementById("original").href = theme;
+        }
+    }
+    window.onload = colortheme(theme);
+</script>
+<div id="divOTPAfterLogin" style="display: none; position: relative" align="center">
+    <div class="Page_Dimmer">
+    </div>
+    <div class="PopupHolder" style="top: 30%;">
+        <div class="pageheading_bar" style="width: 100%; height: 70%;">
+            <div style="vertical-align: middle">
+                <div style="vertical-align: middle">
+                    Physician Primary Care Plan<span style="float: right; color: Red;
+                            margin-right: 5px;"></span>
+                </div>
+            </div>
+        </div>
+        <div style="border: Solid 1px #33CCEE; width: 100%;">
+            <div align="center">
+                Do you want to Logout<br />
+                <span id="lblUserMessagee" style="color: Green; font-family: Verdana,Tahoma; font-size: 15px;
+                        font-weight: bold; text-align: center; margin-top: 8px; margin-left: 3px; display: none;">
+                </span><span id="lblUserMessag" style="color: red; font-family: Verdana,Tahoma; font-size: 15px;
+                        font-weight: bold; text-align: center; margin-top: 8px; margin-left: 3px; display: none;">
+                </span>
+            </div>
+            <div align="center">
+                <br />
+                <button id="btnClose" title="Close" style="width: 80px" class="button_blue" onclick="divPopUpYes();">
+                    Yes
+                </button>
+                <button id="btnClose" title="Close" style="width: 80px" class="button_blue" onclick="divPopUpNo();">
+                    No
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

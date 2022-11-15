@@ -1,0 +1,448 @@
+﻿@model PPCP07302018.Models.Organization.AddDoctor
+@using System.Web.Mvc.Html
+@using Kendo.Mvc.UI
+@using System.Web.Mvc
+@{
+    ViewBag.Title = "AddPlans";
+    Layout = "~/Views/Shared/WUCAdminLeftMenu.cshtml";
+    var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
+}
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/KendoScripts")
+@Scripts.Render("~/bundles/custom-validator")
+@Styles.Render("~/bundles/Kendocss")
+@Scripts.Render("~/bundles/AddDoctorsScriptFiles")
+@Styles.Render("~/bundles/Organizationcssfiles")
+
+<style>
+    @*By:Ragini on 16-09-2019*@ #SalutationID_validationMessage {
+        display: none !important;
+    }
+
+    #Salutation_validationMessage {
+        display: none !important;
+    }
+
+    #SalutationList_validationMessage {
+        position: static;
+        display: inline-block;
+        border-width: 1px;
+        padding: 2px 5px 1px 6px;
+        width: 230px;
+        height: 20px;
+        font-size: 14px;
+    }
+
+    .loadingSpinner {
+        position: absolute;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        height: 50%;
+        width: 100%;
+        background: rgba( 255, 255, 255, .8 ) url('../../Images/loading-spinner-red.gif') 50% 50% no-repeat;
+    }
+
+    .k-header {
+        background-color: #f9f4e0 !important;
+    }
+</style>
+
+<script>
+    $(document).ready(function () {
+        var TitleOrganizationName = "@Session["OrganizationName"]";
+        document.getElementById("SpnPopUpTitle").innerHTML = TitleOrganizationName;
+        var countryID = 1;
+        BindCountries("@ServiceUrl");
+        BindStates(1, "@ServiceUrl", "1");
+        BindCities(1, "@ServiceUrl", "1")
+        BindSalutation("@ServiceUrl");
+        BindDegree();
+        var code = $("#CountryCode").val("1");
+        GetSpecilization("@ServiceUrl");
+        $("#chk2factor").click(function () {
+            if ($("#chk2factor").is(":checked") == true) {
+                $("#divEnableFactor").show();
+            }
+            else if ($("#chk2factor").is(":checked") == false) {
+                $("#divEnableFactor").hide();
+            }
+        });
+        var DoctorValidator = $("#divMainAddDoctors").kendoValidator().data("kendoValidator");
+        $("#btnSubmit").click(function (e) {
+            GenderValidation();
+            SpecializationValidation();
+            if (DoctorValidator.validate()) {
+                btnSaveDoctorDetails();
+            }
+            else {
+                return false;
+            }
+        });
+
+    });
+    function GenderValidation() {
+        var rbtnMale = $('input[id=rbtnGenderMale]:checked').val();
+        var rbtnFEM = $('input[id=rbtnGenderFemale]:checked').val();
+
+        if (rbtnMale == 1 || rbtnFEM == 2) {
+            document.getElementById("divGenderValidator").style.display = "none";
+        }
+        else {
+            document.getElementById("divGenderValidator").style.display = "block";
+        }
+    }
+    function SpecializationValidation() {
+        var array = []
+        var checkboxes = document.querySelectorAll('input[name="SPList"]:checked')
+
+        for (var i = 0; i < checkboxes.length; i++) {
+            array.push(checkboxes[i].value)
+        }
+        if (array == "") {
+
+            document.getElementById("divSpecializationValidator").style.display = "block";
+        }
+        else {
+            document.getElementById("divSpecializationValidator").style.display = "none";
+        }
+
+    }
+
+    function ValidateuserNames(UserName) {
+        ValidateuserName(UserName, "@ServiceUrl");
+
+    }
+
+    function DateSelectionChanged(e) {
+        var birthDate = $("#DOB").val();
+        $.ajax({
+            url: "/Master/GetAge/",
+            data: { birthDate: birthDate },
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (result) {
+                var rs = result.split(';');
+                var year = rs[0];
+                $("#Age").val(year);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+            },
+        });
+    }
+
+    function CreateJosn(array) {
+        jsonObj = [];
+        var tempPayment = array.toString().split(',');
+        for (i = 0; i < tempPayment.length; i++) {
+            var temp = tempPayment[i].split(';');
+            item = {};
+            item["SpecilizationID"] = temp[0];
+            item["SpecializationName"] = temp[1];
+
+           jsonObj.push(item);
+        }
+        return jsonObj;
+    }
+
+
+    function btnSaveDoctorDetails() {
+        debugger;
+        var jsModel = {};
+        jsModel.OrganizationID = $("#OrganizationID").val();
+        jsModel.OrganizationName = $("#OrganizationName").val();
+        jsModel.FirstName = $("#FirstName").val();
+        jsModel.LastName = $("#LastName").val();
+        jsModel.Salutation = $("#Salutation").val();
+        jsModel.SalutationID = $("#SalutationId").val();
+        jsModel.Degree = $("#Degree").val();
+        jsModel.DOB = $("#DOB").val();
+        var rbtnMale = $('input[id=rbtnGenderMale]:checked').val();
+        if (rbtnMale == 1)
+            jsModel.Gender = rbtnMale;
+        var rbtnFEM = $('input[id=rbtnGenderFemale]:checked').val();
+        if (rbtnFEM == 2)
+            jsModel.Gender = rbtnFEM;
+        jsModel.CountryCode = $("#CountryCode").val();
+        jsModel.MobileNumber = $("#MobileNumber").val();
+        jsModel.Email = $("#Email").val();
+        jsModel.CityID = $("#CityId").val();
+        jsModel.CityName = $("#TempCityName").val();
+        jsModel.StateName = $("#TempStateName").val();
+        jsModel.StateID = $("#StateID").val();
+        jsModel.CountryID = $("#CountryId").val();
+        jsModel.CountryName = $("#TempCountryName").val();
+        jsModel.NPI = $("#NPI").val();
+        if ($("#ZipCode").val() == "")
+        {
+            jsModel.Zip = $("#Zip").val();
+        }
+        else {
+           jsModel.Zip = $("#Zip").val()+ "-"+ $("#ZipCode").val();
+        }
+
+        jsModel.Address = $("#Address").val();
+        jsModel.Fax = $("#Fax").val();
+
+
+        jsModel.UserName = $("#UserName").val();
+        jsModel.Password = $("#Password").val();
+        jsModel.ConfirmPassword = $("#ConfirmPassword").val();
+
+
+        var SpecilizationID = "", SpecilizationName = "";
+        var checkboxes = document.querySelectorAll('input[name="SPList"]:checked');
+        for (var i = 0; i < checkboxes.length; i++) {
+
+            var tempSplit = checkboxes[i].value.split(";");
+            SpecilizationID = SpecilizationID + "" + tempSplit[0] + ",";
+            SpecilizationName = SpecilizationName + "" + tempSplit[1] + ",";
+
+        }
+
+        var array = [];
+        var checkboxes = document.querySelectorAll('input[name="SPList"]:checked')
+        for (var i = 0; i < checkboxes.length; i++) {
+            array.push(checkboxes[i].value);
+        }
+        jsModel.SpecializationID = SpecilizationID;
+        jsModel.SpecializationName = SpecilizationName.substring(0, SpecilizationName.length - 1);
+        var obj = CreateJosn(array);
+        jsModel.Specialization = JSON.stringify(obj);
+
+        if ($('#chk2factor').is(":checked") == true) {
+            jsModel.IsTwofactorAuthentication = true;
+            jsModel.PreferredIP = '@Session["SystemIPAddress"]';
+            var rbtnEvery = $('input[id=rbtnEverytime]:checked').val();
+            if (rbtnEvery == 1)
+                jsModel.TwoFactorType = rbtnEvery;
+            var rbtnSystem = $('input[id=rbtnOnlySysChange]:checked').val();
+            if (rbtnSystem == 2)
+                jsModel.TwoFactorType = rbtnSystem;
+        }
+        else {
+            jsModel.IsTwofactorAuthentication = false;
+            jsModel.TwoFactorType = "0";
+            jsModel.PreferredIP = "";
+        }
+
+        SaveDoctorDetails(jsModel, "@ServiceUrl");
+    }
+
+    function Clear() {
+
+    }
+
+</script>
+
+
+<div class="pageheading_bar" align="center">
+    <b>Add Doctors</b>
+</div>
+
+<div class="Panel_bg" id="divMainAddDoctors">
+    <div class="row" id="divSignupPopup" style="display: none; align-content:center;">
+        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+            <div class="Page_Dimmer">
+            </div>
+            <div class="PopupHolder" style="top:17%;">
+                <div class="Bgheader" width="100%">
+                    <div>
+                        <span id="SpnPopUpTitle" style="color: White; font-family: Verdana,Tahoma;
+                                font-size: 15px; font-weight: bold;"></span>
+                        @*Physician Primary Care Plan*@
+                    </div>
+                </div>
+                <div style="border: Solid 1px #33CCEE; width: 100%;">
+                    <div align="left">
+                        <img alt="!" id="imgIcon" src="~/Images/Success.png"
+                             style="height: 25px; width: 25px; border-width: 0px;" />
+                    </div>
+                    <div align="center">
+                        <span id="spnPopupMessage" style="color: green; font-family: Verdana,Tahoma; font-size: 14px;
+                                font-weight: bold;">
+                        </span>
+                    </div>
+                    <div align="center">
+                        <br />
+                        <button type="button" id="btnSuccess" onclick="document.location.href = $('#loginUrl').attr('href');" class="button_blue"
+                                style="width: 70px;">
+                            Ok
+                        </button>
+                        <a id="loginUrl" href="@Html.AttributeEncode(Url.Action("ViewProviders", "Admin" ))">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" id="divErrMessagePopup" style="display: none; position: relative" align="center">
+        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+            <div class="Page_Dimmer">
+            </div>
+            <div class="PopupHolder" style="top: 17%;">
+                <div class="Bgheader" width="100%">
+                    <div align="center">
+                        <span id="SpanErrMsgTitle" style="color: White; font-family: Verdana,Tahoma; font-size: 15px;
+                        font-weight: bold;">Physician Primary Care Plan</span>
+                    </div>
+                </div>
+                <div style="border: Solid 1px #33CCEE; width: 100%;">
+                    <div align="left">
+                        <img alt="!" id="Img1" src="~/Images/Error.png" style="height: 25px; width: 25px;
+                        border-width: 0px;" />
+                    </div>
+                    <div align="center">
+                        <span id="spnPopupErrMessage" style="color: red; font-family: Verdana,Tahoma; font-size: 14px;
+                                font-weight: bold;">
+                        </span>
+                    </div>
+                    <div align="center">
+                        <br />
+                        <button type="button" id="btnErrPopup" onclick="document.location.href = $('#errorUrl').attr('href');" class="button_blue"
+                                style="width: 70px;">
+                            Ok
+                        </button>
+                        <a id="errorUrl" href="@Html.AttributeEncode(Url.Action("PlanMapping", "Admin" ))">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="row Panel_bg_Sub">
+        <fieldset id="fsAddDoctors" class="Panel_bg_Sub">
+            <div>
+                &nbsp;
+            </div>
+            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Personal Information</b>:</legend>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-6 col-md-6 col-sm-6 col-lg-3">
+                        @Html.Label("Organization Name", new { style = "font-weight:normal;", @class = "" })<br />
+                        @(Html.Kendo().AutoCompleteFor(model => model.OrganizationName)
+                                                    .Name("OrganizationName")
+                                                    .MinLength(3)
+                                                    .Placeholder("Select Organization...")
+                                                    .HtmlAttributes(new { style = "width:100%;" })
+                                                    .DataTextField("OrganizationName")
+                                                    .Events(events =>
+                                                    {
+                                                        events.Select("OnOrganizationSelectChange");
+                                                        events.Change("OnOrganizationchangeEvent");
+                                                    })
+                                                    .DataSource(source =>
+                                                    {
+                                                        source.Read(read =>
+                                                        {
+                                                            read.Action("OrganizationSearchAutoComplete", "Admin").Data("onOrgAdditionalData");
+                                                        }).ServerFiltering(true);
+                                                    }))
+                        <br />
+
+                        @Html.HiddenFor(m => m.OrganizationID)
+                        @Html.Hidden("TxtOrgId")
+                        <script type="text/javascript">
+                                            function OnOrganizationSelectChange(e) {
+                                                $("#TxtOrgId").val("")
+                                                var dataItem = this.dataItem(e.item.index());
+                                                $("#OrganizationName").val(dataItem.OrganizationName);
+                                                $("#OrganizationID").val(dataItem.OrganizationID);
+                                                $("#TxtOrgId").val(dataItem.OrganizationID);
+                                                var OrganizationID = $("#OrganizationID").val();
+                                               
+                                                
+                                            }
+                                            function onOrgAdditionalData() {
+                                                return {
+                                                    text: $("#OrganizationName").val()
+                                                }
+                                            }
+                                            function OnOrganizationchangeEvent() {
+
+                                            }
+                        </script>
+                    </div>
+                </div>
+                <div class="row">
+                    @Html.Partial("_ProviderRegistration")
+                </div>
+            </div>
+        </fieldset>
+
+
+        <fieldset id="fsAddDoctorsLogin" class="Panel_bg_Sub" ">
+            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Login Credentials</b>:</legend>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12 ">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                @Html.Label("Username", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                @Html.TextBoxFor(model => model.UserName, null, new { style = "width:100%;", maxlength = 25, onchange = "ValidateuserNames(this.value);" })
+                                @Html.ValidationMessageFor(model => model.UserName, "", new { @style = "color:red" })
+                                <span id="spnUserName" style="color:red"></span>
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                @Html.Label("Password", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                @Html.TextBoxFor(model => model.Password, null, new { style = "width:100%;", maxlength = 20, type = "password", onkeyup = "chkPasswordStrength(this.value,document.getElementById('strength'),document.getElementById('error'))", onpaste = "return false;", oncopy = "return false", oncut = "return false" })
+                                @Html.ValidationMessageFor(model => model.Password, "", new { @style = "color:red" })
+                                <span id="strength" class="strength5"></span>
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                @Html.Label("Confirm Password", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                @Html.TextBoxFor(model => model.ConfirmPassword, null, new { style = "width:100%;", maxlength = 20, type = "password", onchange = "validatePassword()", onpaste = "return false;", oncopy = "return false", oncut = "return false" })
+                                @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @style = "color:red" })
+                                <span id="PasswordErrorMsg" style="color:red"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;">@Html.CheckBox("chk2factor", false)<b>Enable 2-factor authentication</b>:</legend>
+            <div class="row" id="divEnableFactor" style="display:none;">
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12 ">
+                    <label style="font-weight: normal;">
+                        @(Html.RadioButton("ChkList", 1, new
+                    {
+                        id = "rbtnEverytime",
+                    }))
+                        Everytime
+                    </label>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <label style="font-weight: normal;">
+                        @(Html.RadioButton("ChkList", 2, new
+                    {
+                        id = "rbtnOnlySysChange"
+                    }))
+                        Only when system change
+                    </label>
+                    <br />
+                </div>
+                <br />
+            </div>
+
+        </fieldset>
+
+        <div class="row">
+            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                <div align="center">
+                    <button type="submit" class="button_blue" id="btnSubmit" title="Submit" style="width: 100px;" value="addUser">
+                        Submit
+                    </button>
+                    <button type="reset" class="button_blue" id="btnClear" title="Clear" value="addUser" style="width: 100px;" onclick="@("window.location.href='" + @Url.Action("AddDoctor", "Admin") + "'");">
+                        Clear
+                    </button>
+                    <button type="button" class="button_blue" id="btnCancel" title="Cancel" value="addUser" style="width: 100px;" onclick="@("window.location.href='" + @Url.Action("ViewProviders", "Admin") + "'");">
+                        Cancel
+                    </button>
+                </div>
+                <br />
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,543 @@
+﻿@model PPCP07302018.Models.Admin.TermsConditions
+@using System.Web.Mvc.Html
+@using Kendo.Mvc.UI
+@using System.Web.Mvc
+@using PPCP07302018.Utils;
+
+
+@{
+    ViewBag.Title = "TermsConditions";
+    Layout = "~/Views/Shared/WUCAdminLeftMenu.cshtml";
+    var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
+}
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/KendoScripts")
+@Scripts.Render("~/bundles/custom-validator")
+@Styles.Render("~/bundles/Kendocss")
+@Scripts.Render("~/bundles/TermsAndConditionScriptFiles")
+
+
+<style>
+    .PanelTopBarTC {
+        font-family: Arial;
+        color: #02BFB9;
+        font-size: 18px;
+        padding: 5px 10px;
+        width: 100%;
+        border-bottom: solid 1px #000000;
+        background-color: #1f5606;
+    }
+
+
+    .ArrowClose {
+        background-image: url(../../Images/collapse_blue.jpg);
+        width: 13px;
+        height: 13px;
+        float: right;
+        margin-top: 7px;
+        margin-right: 5px;
+    }
+
+    .ArrowExpand {
+        background-image: url(../../Images/expand_blue.jpg);
+        width: 13px;
+        height: 13px;
+        float: right;
+        margin-top: 7px;
+        margin-right: 5px;
+    }
+
+    .loadingSpinner {
+        position: absolute;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background: rgba( 255, 255, 255, .8 ) url('../../Images/loading-spinner-red.gif') 50% 50% no-repeat;
+    }
+</style>
+
+
+<script>
+    function ErrorOK() {
+       
+        $("#divErrMessagePopup").hide();
+    }
+    //Patients
+    function setCollapsePanel(dvSearchFilterHeader, dvSearchFilter) {
+        $(dvSearchFilter).slideToggle('slow');
+        $(dvSearchFilterHeader).find(".ArrowClose:first").remove();
+        $("<div class='ArrowExpand'></div>").appendTo(dvSearchFilterHeader);
+        isCollapse = 1;
+    }
+    var isCollapse = 0;
+    function CollapsiblePanels() {
+        $('#dvSearchFilter').slideToggle('slow');
+        if (isCollapse == 0) {
+            $("#dvSearchFilterHeader").find(".ArrowClose:first").remove();
+            $("<div class='ArrowExpand'></div>").appendTo($("#dvSearchFilterHeader"));
+            isCollapse = 1;
+        }
+        else {
+            $("#dvSearchFilterHeader").find(".ArrowExpand:first").remove();
+            $("<div class='ArrowClose'></div>").appendTo($("#dvSearchFilterHeader"));
+            isCollapse = 0;
+        }
+        $("#arrow").hide();
+    }
+
+    //Organization
+    function setCollapsePanel(dvSearchOrgFilterHeader, dvSearchOrgFilter) {
+        $(dvSearchOrgFilter).slideToggle('slow');
+        $(dvSearchOrgFilterHeader).find(".ArrowClose:first").remove();
+        $("<div class='ArrowExpand'></div>").appendTo(dvSearchOrgFilterHeader);
+        isCollapse = 1;
+    }
+    var isCollapse = 0;
+    function CollapsibleOrgPanels() {
+        $('#dvSearchOrgFilter').slideToggle('slow');
+        if (isCollapse == 0) {
+            $("#dvSearchOrgFilterHeader").find(".ArrowClose:first").remove();
+            $("<div class='ArrowExpand'></div>").appendTo($("#dvSearchOrgFilterHeader"));
+            isCollapse = 1;
+        }
+        else {
+            $("#dvSearchOrgFilterHeader").find(".ArrowExpand:first").remove();
+            $("<div class='ArrowClose'></div>").appendTo($("#dvSearchOrgFilterHeader"));
+            isCollapse = 0;
+        }
+        $("#arrow").hide();
+    }
+    //Users
+    function setCollapsePanel(dvSearchUserFilterHeader, dvSearchUserFilter) {
+        $(dvSearchUserFilter).slideToggle('slow');
+        $(dvSearchUserFilterHeader).find(".ArrowClose:first").remove();
+        $("<div class='ArrowExpand'></div>").appendTo(dvSearchUserFilterHeader);
+        isCollapse = 1;
+    }
+    var isCollapse = 0;
+    function CollapsibleUserPanels() {
+        $('#dvSearchUserFilter').slideToggle('slow');
+        if (isCollapse == 0) {
+            $("#dvSearchUserFilterHeader").find(".ArrowClose:first").remove();
+            $("<div class='ArrowExpand'></div>").appendTo($("#dvSearchUserFilterHeader"));
+            isCollapse = 1;
+        }
+        else {
+            $("#dvSearchUserFilterHeader").find(".ArrowExpand:first").remove();
+            $("<div class='ArrowClose'></div>").appendTo($("#dvSearchUserFilterHeader"));
+            isCollapse = 0;
+        }
+        $("#arrow").hide();
+    }
+    function ErrorOK() {
+        $("#divErrMessagePopup").hide();
+    }
+    function btnSubmit(Type) {
+        var PlanValidator = $("#divGrid").kendoValidator().data("kendoValidator");
+        //Validate Patient Terms and Conditions
+        if (Type == 1) {
+            var TermsCondition = $("#PatientTermsAndConditionsName").val();            
+            var PateintTermsAndConditions = $("#PateintTermsAndConditions").kendoValidator({
+                rules: {
+                    upload: function (input) {
+                        if (input[0].type === "file") {
+                            return input.closest(".k-upload").find(".k-file").length;
+                        }
+                        return true;
+                    }
+                }
+            }).data("kendoValidator");
+            if (!PateintTermsAndConditions.validate() && !TermsCondition.valueOf()) {
+                $("#spnValidatePatient").show();
+                $("#spnPatient").show();
+                PlanValidator.validate();
+                return false;
+            }
+            else if (!PateintTermsAndConditions.validate()) {
+                $("#spnValidatePatient").show();
+                $("#spnPatient").hide();
+                PlanValidator.validate();
+                return false;
+            }
+            else if (!TermsCondition.valueOf()) {
+                $("#spnPatient").show();
+                $("#spnValidatePatient").hide();
+                PlanValidator.validate();
+                return false;
+            }
+            else {
+                $("#spnValidatePatient").hide();
+                $("#spnPatient").hide();
+                PlanValidator.validate();
+               
+            }
+        }
+        else if (Type == 2) {
+            var TermsCondition = $("#OrganizationTermsAndConditionsName").val();
+            var OrganizationTermsAndConditions = $("#OrganizationTermsaAndConditions").kendoValidator({
+                rules: {
+                    upload: function (input) {
+                        if (input[0].type === "file") {
+                            return input.closest(".k-upload").find(".k-file").length;
+                        }
+                        return true;
+                    }
+                }
+            }).data("kendoValidator");
+            if (!OrganizationTermsAndConditions.validate() && !TermsCondition.valueOf()) {
+                $("#spnValidateOrganization").show();
+                $("#spnOrganization").show();
+                PlanValidator.validate();
+                return false;
+            }
+            else if (!OrganizationTermsAndConditions.validate()) {
+                $("#spnValidateOrganization").show();
+                $("#spnOrganization").hide();
+                PlanValidator.validate();
+                return false;
+            }
+            else if (!TermsCondition.valueOf()) {
+                $("#spnOrganization").show();
+                $("#spnValidateOrganization").hide();
+                PlanValidator.validate();
+                return false;
+            }
+            else {
+                $("#spnValidateOrganization").hide();
+                $("#spnOrganization").hide();
+                PlanValidator.validate();
+
+            }
+        }
+        else {
+            var TermsCondition = $("#UsersTermsAndConditionsName").val();
+            var PoviderTermsAndConditions = $("#PoviderTermsAndConditions").kendoValidator({
+                rules: {
+                    upload: function (input) {
+                        if (input[0].type === "file") {
+                            return input.closest(".k-upload").find(".k-file").length;
+                        }
+                        return true;
+                    }
+                }
+            }).data("kendoValidator");
+            if (!PoviderTermsAndConditions.validate() && !TermsCondition.valueOf()) {
+                $("#spnValidateUser").show();
+                $("#spnUser").show();
+                PlanValidator.validate();
+                return false;
+            }
+            else if (!PoviderTermsAndConditions.validate()) {
+                $("#spnValidateUser").show();
+                $("#spnUser").hide();
+                PlanValidator.validate();
+                return false;
+            }
+            else if (!TermsCondition.valueOf()) {
+                $("#spnUser").show();
+                $("#spnValidateUser").hide();
+                PlanValidator.validate();
+                return false;
+            }
+            else {
+                $("#spnValidateUser").hide();
+                $("#spnUser").hide();
+                PlanValidator.validate();
+
+            }
+        }
+
+        var Path = "";
+        $.ajax({
+            url: '@Url.Action("GetTCPath", "Admin")',
+            data: { Type: Type },
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (result) {            
+               //if (Type == 1) {
+               //    var TermsCondition = $("#PatientTermsAndConditionsName").val();                      
+               // }
+               // else if (Type == 2) {
+               //     var TermsCondition = $("#OrganizationTermsAndConditionsName").val();
+               // }
+               // else {
+               //     var TermsCondition = $("#UsersTermsAndConditionsName").val();
+               // }
+                SaveTermsAndConditions(result, TermsCondition, Type, "@ServiceUrl");
+            },
+            error: function (ex) {
+                alert(XMLHttpRequest, textStatus, errorThrown);
+            }
+        });
+
+       
+
+      
+    }
+
+</script>
+
+<div class="pageheading_bar" id="divHeader" align="center">
+    <b>Terms & Conditions</b>
+</div>
+<div class="row" id="divSignupPopup" style="display: none; align-content:center;">
+    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+        <div class="Page_Dimmer">
+        </div>
+        <div class="PopupHolder" style="top:20%;">
+            <div class="Bgheader" width="100%">
+                <div>
+                    <span id="SpnPopUpTitle" style="color: White; font-family: Verdana,Tahoma;
+                                font-size: 15px; font-weight: bold;"></span>
+                    @*Physician Primary Care Plan*@
+                </div>
+            </div>
+            <div style="border: Solid 1px #33CCEE; width: 100%;">
+                <div align="left">
+                    <img alt="!" id="imgIcon" src="~/Images/Success.png"
+                         style="height: 25px; width: 25px; border-width: 0px;" />
+                </div>
+                <div align="center">
+                    <span id="spnPopupMessage" style="color: green; font-family: Verdana,Tahoma; font-size: 14px;
+                                font-weight: bold;">
+                    </span>
+                </div>
+                <div align="center">
+                    <br />
+                    <button type="button" id="btnSuccess" onclick="document.location.href = $('#loginUrl').attr('href');" class="button_blue"
+                            style="width: 70px;">
+                        Ok
+                    </button>
+                    <a id="loginUrl" href="@Html.AttributeEncode(Url.Action("TermsAndConditions", "Admin" ))">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row" id="divErrMessagePopup" style="display: none; position: relative" align="center">
+    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+        <div class="Page_Dimmer">
+        </div>
+        <div class="PopupHolder" style="top: 17%;">
+            <div class="Bgheader" width="100%">
+                <div align="center">
+                    <span id="SpanErrMsgTitle" style="color: White; font-family: Verdana,Tahoma; font-size: 15px;
+                        font-weight: bold;">Physician Primary Care Plan</span>
+                </div>
+            </div>
+            <div style="border: Solid 1px #33CCEE; width: 100%;">
+                <div align="left">
+                    <img alt="!" id="Img1" src="~/Images/Error.png" style="height: 25px; width: 25px;
+                        border-width: 0px;" />
+                </div>
+                <div align="center">
+                    <span id="spnPopupErrMessage" style="color: red; font-family: Verdana,Tahoma; font-size: 14px;
+                                font-weight: bold;">
+                    </span>
+                </div>
+                <div align="center">
+                    <br />
+                    <button type="button" id="btnErrPopup" onclick="ErrorOK();" class="button_blue"
+                            style="width: 70px;">
+                        Ok
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+
+</div>
+<div class="form-group" id="divGrid">
+    <div class="Panel_bg">
+        <div class="Panel_bg_Sub">
+
+            <div id="dvSearchFilterHeader" style="cursor: pointer;" onclick="CollapsiblePanels(document.getElementById('dvSearchFilterHeader'),document.getElementById('dvSearchFilter'));"
+                 class="PanelTopBarTC">
+                <span id="4_lblSearchPat" style="font-size:15px;font-weight:normal;color: White;">Patient Terms&Conditions</span>
+                <div style="float: right; margin-top: -5px; color: White; padding: 5px 5px 0 0">
+                </div>
+                <div id="arrow" class="ArrowClose"></div>
+            </div>
+
+
+            <div id="dvSearchFilter" style="display: none;">
+                <div class="Page_Dimmer1">
+                </div>
+                <div class="PopupHolder2" style="height:auto;">
+
+                    <div class="Panel_bg_Sub">
+                        <div style="width: 100%;height:auto;">
+                            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" id="divSearch" style="display:block">
+                                <div class="row">
+                                    <div class="row">
+                                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-4">
+                                            @Html.Label("Terms And Condition Name", new { style = "font-weight:normal;", @class = "" })
+                                        </div>
+                                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-4">
+                                            @Html.TextBoxFor(m=>m.PatientTermsAndConditionsName, null, new { style = "width:100%;", maxlength = 50 })
+                                            <br />
+                                            <span id="spnPatient" style="display:none;color:red !important"><span class="k-icon k-warning"></span>Please Enter Patient Terms and Conditions </span>
+                                        </div>
+                                        
+                                        
+                                    </div>
+                                    
+                                       
+                                    
+                                    <br />
+                                    <div class="row">
+                                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-4">
+                                            @Html.Label("Patient Terms and Conditions", new { style = "font-weight:normal;", @class = "" })
+                                        </div>
+                                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-4">
+                                            @( Html.Kendo().Upload().Multiple(false).Name("PateintTermsAndConditions").Async(a => a.Save("PatientTandCUploadedFiles", "Admin").Remove("RemoveUploadedPatientTandC", "Admin").AutoUpload(true)))
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                        <div align="center">                                 
+                                            <span id="spnValidatePatient" style="display:none;color:red !important"><span class="k-icon k-warning"></span>Please Upload Patient Terms and Conditions </span>
+                                            <br />
+                                            <button type="submit" class="button_blue" id="btnPatientSubmit" value="@Convert.ToInt32(GlobalFunctions.TermsAndConditons.Patient)"  title="Submit" style="width: 100px;" onclick="btnSubmit(this.value);">
+                                                Submit
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>                              
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        @*For Organization*@
+        <div class="Panel_bg_Sub">
+
+            <div id="dvSearchOrgFilterHeader" style="cursor: pointer;" onclick="CollapsibleOrgPanels(document.getElementById('dvSearchOrgFilterHeader'), document.getElementById('dvSearchOrgFilter'));"
+                 class="PanelTopBarTC">
+                <span id="4_lblSearchPat" style="font-size:15px;font-weight:normal;color: White;">Organization Terms&Conditions</span>
+                <div style="float: right; margin-top: -5px; color: White; padding: 5px 5px 0 0">
+                </div>
+                <div id="arrow" class="ArrowClose"></div>
+            </div>
+
+            <div id="dvSearchOrgFilter" style="display: none;">
+                <div class="Page_Dimmer1">
+                </div>
+                <div class="PopupHolder2" style="height:auto;">
+
+                    <div class="Panel_bg_Sub">
+                        <div style="width: 100%;height:auto;">
+                            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" id="divSearch" style="display:block">
+                                <div class="row">
+                                    <div class="row">
+                                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-4">
+                                            @Html.Label("Terms And Condition Name", new { style = "font-weight:normal;", @class = "" })
+                                        </div>
+                                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-4">
+                                            @Html.TextBoxFor(m => m.OrganizationTermsAndConditionsName, null, new { style = "width:100%;", maxlength = 50 })
+                                            <br />
+                                            <span id="spnOrganization" style="display:none;color:red !important"><span class="k-icon k-warning"></span>Please Enter Patient Terms and Conditions </span>
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <div class="row">
+                                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-4">
+                                            @Html.Label("Organization Terms and Conditions", new { style = "font-weight:normal;", @class = "" })
+                                        </div>
+                                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-4">
+                                            @( Html.Kendo().Upload().Multiple(false).Name("OrganizationTermsaAndConditions").Async(a => a.Save("OrganizationTandCUploadedFiles", "Admin").Remove("RemoveUploadedOrganizationTandC", "Admin").AutoUpload(true)))
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                        <div align="center">
+                                            <br />
+                                            <span id="spnValidateOrganization" style="display:none;color:red !important"><span class="k-icon k-warning"></span>Please Upload all Terms and Conditions </span>
+                                            <br />
+                                            <button type="submit" class="button_blue" id="btnorgSubmit" title="Submit" value="@Convert.ToInt32(GlobalFunctions.TermsAndConditons.Organization)"  style="width: 100px;" onclick="btnSubmit(this.value);">
+                                                Submit
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @*For Users*@
+        <div class="Panel_bg_Sub">
+            <div id="dvSearchUserFilterHeader" style="cursor: pointer;" onclick="CollapsibleUserPanels(document.getElementById('dvSearchUserFilterHeader'), document.getElementById('dvSearchUserFilter'));"
+                 class="PanelTopBarTC">
+                <span id="4_lblSearchPat" style="font-size:15px;font-weight:normal;color: White;">User Terms&Conditions</span>
+                <div style="float: right; margin-top: -5px; color: White; padding: 5px 5px 0 0">
+                </div>
+                <div id="arrow" class="ArrowClose"></div>
+            </div>
+
+            <div id="dvSearchUserFilter" style="display: none;">
+                <div class="Page_Dimmer1">
+                </div>
+                <div class="PopupHolder2" style="height:auto;">
+
+                    <div class="Panel_bg_Sub">
+                        <div style="width: 100%;height:auto;">
+                            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" id="divSearch" style="display:block">
+                                <div class="row">
+                                    <div class="row">
+                                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-4">
+                                            @Html.Label("Terms And Condition Name", new { style = "font-weight:normal;", @class = "" })
+                                        </div>
+                                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-4">
+                                            @Html.TextBoxFor(m => m.UsersTermsAndConditionsName, null, new { style = "width:100%;", maxlength = 50 })
+                                            <br />
+                                            <span id="spnUser" style="display:none;color:red !important"><span class="k-icon k-warning"></span>Please Enter User Terms and Conditions </span>
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <div class="row">
+                                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-4">
+                                            @Html.Label("Provider Terms and Conditions", new { style = "font-weight:normal;", @class = "" })
+                                        </div>
+                                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-4">
+                                            @( Html.Kendo().Upload().Multiple(false).Name("PoviderTermsAndConditions").Async(a => a.Save("ProviderTandCUploadedFiles", "Admin").Remove("RemoveUploadedProviderTandC", "Admin").AutoUpload(true)))
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                        <div align="center">
+                                            <br />
+                                            <span id="spnValidateUser" style="display:none;color:red !important"><span class="k-icon k-warning"></span>Please Upload all Terms and Conditions </span>
+                                            <br />
+                                            <button type="submit" class="button_blue" id="btnUserSubmit" value="@Convert.ToInt32(GlobalFunctions.TermsAndConditons.User)" title="Submit" style="width: 100px;" onclick="btnSubmit(this.value);">
+                                                Submit
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+

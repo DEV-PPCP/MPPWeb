@@ -1,0 +1,794 @@
+﻿@model PPCP07302018.Models.Admin.ProviderDetails
+@using System.Web.Mvc.Html
+@using Kendo.Mvc.UI
+@using System.Web.Mvc
+
+@{
+    ViewBag.Title = "ViewProviders";
+    Layout = "~/Views/Shared/WUCAdminLeftMenu.cshtml";
+    var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
+}
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/KendoScripts")
+@Scripts.Render("~/bundles/custom-validator")
+@Styles.Render("~/bundles/Kendocss")
+@Styles.Render("~/bundles/Organizationcssfiles")
+@Scripts.Render("~/bundles/ViewProvidersScriptFiles")
+
+@Html.Hidden("hdnCountryName")
+@Html.Hidden("hdnStateName")
+@Html.Hidden("hdnCityName")
+@Html.Hidden("hdnGender")
+@Html.Hidden("hdnSalutationID")
+
+<style>
+    .PanelTopBar {
+        font-family: Arial;
+        color: #02BFB9;
+        font-size: 18px;
+        padding: 5px 10px;
+        width: 100%;
+        border-bottom: solid 1px #000000;
+        background-color: #02BFB9;
+    }
+
+    .ArrowClose {
+        background-image: url(../../Images/collapse_blue.jpg);
+        width: 13px;
+        height: 13px;
+        float: right;
+        margin-top: 7px;
+        margin-right: 5px;
+    }
+
+    .ArrowExpand {
+        background-image: url(../../Images/expand_blue.jpg);
+        width: 13px;
+        height: 13px;
+        float: right;
+        margin-top: 7px;
+        margin-right: 5px;
+    }
+
+    .loadingSpinner {
+        position: absolute;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background: rgba( 255, 255, 255, .8 ) url('../../Images/loading-spinner-red.gif') 50% 50% no-repeat;
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#fsLabOrderSearch").show();
+        GetProviderDetails(0, 0, '@ServiceUrl');
+        BindOrganizations("@ServiceUrl");
+        BindProviderNames(0, "@ServiceUrl");
+    });
+
+    function EditOptions(ProviderID, FirstName, LastName, CountryCode, MobileNumber, DOB, Gender, Email, CountryName, StateName, CityName, Zip, Salutation, NPI, CountryID, StateID, CityID, SpecializationID) {
+        $("#fsLabOrderSearch").hide();
+        $("#ProviderID").val(ProviderID);
+        var providerId = ProviderID;
+        $("#hdnProviderID").val(providerId);
+        $("#divMain").show();
+        $("#divAddProvider").hide();
+        $("#divproviderGrid").hide();
+        $("#FirstName").val(FirstName);
+        $("#LastName").val(LastName);
+        $("#CountryCode").val(CountryCode);
+        $("#MobileNumber").val(MobileNumber);
+        var date = kendo.toString(kendo.parseDate(DOB), 'MM/dd/yyyy');
+        $("#DOB").val(date);
+        calulateage(date);
+        $("#CityID").val(CityID);
+        $("#CountryID").val(CountryID);
+        $("#Gender").val(Gender);
+        if (Gender == 2) {
+            document.getElementById("rbtnGenderFemale").checked = true;
+        }
+        if (Gender == 1) {
+            document.getElementById("rbtnGenderMale").checked = true;
+        }
+        var Gen = Gender;
+        $("#hdnGender").val(Gen);
+        $("#Email").val(Email);
+        $("#hdnCountryName").val(CountryName);
+        $("#hdnStateName").val(StateName);
+        $("#hdnCityName").val(CityName);
+
+        var combinedZip = Zip;
+        var postalcode = combinedZip.split('-');
+        if (postalcode[1] != null) {
+            $("#Zip").val(postalcode[0]) + "-" + $("#ZipCode").val(postalcode[1]);
+        }
+        else {
+            $("#Zip").val(postalcode[0]);
+        }
+        $("#SalutationList").val(Salutation);
+        $("#NPI").val(NPI);
+
+        BindCountries('@ServiceUrl', CountryID);
+        BindStates('@ServiceUrl', CountryID, StateID);
+        BindCites('@ServiceUrl', StateID, CityID);
+        BindSalutation(Salutation);
+        GetSpecilization("@ServiceUrl", SpecializationID);
+
+    }
+    function calulateage(date) {
+        var birthDate = $("#DOB").val();
+        $.ajax({
+            url: "/Master/GetAge/",
+            data: { birthDate: birthDate },
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (result) {
+
+                var rs = result.split(';');
+                var year = rs[0];
+                $("#Age").val(year);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+            },
+        });
+    }
+    function DateSelectionChanged(e) {
+
+        var birthDate = $("#DOB").val();
+        $.ajax({
+            url: "/Master/GetAge/",
+            data: { birthDate: birthDate },
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (result) {
+                var rs = result.split(';');
+                var year = rs[0];
+                $("#Age").val(year);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+            },
+        });
+    }
+    function UpdateProviderSubmit() {
+        var jsModel = {};
+        var ProviderValidator = $("#divMainRUpdate").kendoValidator().data("kendoValidator");
+        if (ProviderValidator.validate()) {
+            jsModel.OrganizationID = '@Session["OrganizationID"]';
+            UpdateProviders(jsModel, "@ServiceUrl");
+        }
+        else {
+            return false;
+        }
+    }
+    function ErrorOK() {
+        $("#divErrMessagePopup").hide();
+    }
+
+    function setCollapsePanel(dvSearchFilterHeader, dvSearchFilter) {
+
+        $(dvSearchFilter).slideToggle('slow');
+        $(dvSearchFilterHeader).find(".ArrowClose:first").remove();
+        $("<div class='ArrowExpand'></div>").appendTo(dvSearchFilterHeader);
+        isCollapse = 1;
+    }
+    var isCollapse = 0;
+    function CollapsiblePanels() {
+
+        $('#dvSearchFilter').slideToggle('slow');
+        if (isCollapse == 0) {
+            $("#dvSearchFilterHeader").find(".ArrowClose:first").remove();
+            $("<div class='ArrowExpand'></div>").appendTo($("#dvSearchFilterHeader"));
+            isCollapse = 1;
+        }
+        else {
+            $("#dvSearchFilterHeader").find(".ArrowExpand:first").remove();
+            $("<div class='ArrowClose'></div>").appendTo($("#dvSearchFilterHeader"));
+            isCollapse = 0;
+        }
+        $("#arrow").hide();
+    }
+
+    function btnSearch() {
+        // var ProviderID="0";
+        //if ($("#TxtProviderId").val() != "")
+        //{
+        //    ProviderID = $("#TxtProviderId").val();
+        //}
+
+        var ProviderID = $("#ProviderId").val();
+        var OrgID = $("#TxtOrgId").val();
+        if (ProviderID != "" && OrgID != "") {
+            GetProviderDetails(OrgID, ProviderID, '@ServiceUrl');
+        }
+        else if (ProviderID == "" && OrgID != "") {
+            GetProviderDetails(OrgID, 0, '@ServiceUrl');
+        }
+        else if (ProviderID != "" && OrgID == "") {
+            GetProviderDetails(0, ProviderID, '@ServiceUrl');
+        }
+        else {
+            GetProviderDetails(0, 0, '@ServiceUrl');
+        }
+    }
+    function btnClear() {
+
+        document.getElementById('OrganizationName').value = '';
+        document.getElementById('ProviderName').value = '';
+        //to clear grid
+        var OrganizationID = $("#TxtOrgId").val();
+        var ProviderID = $("#ProviderId").val();
+        GetProviderDetails(0, 0, '@ServiceUrl');
+    }
+</script>
+<div class="pageheading_bar" align="center">
+    <b>View Providers</b>
+</div>
+
+<div class="row" id="divSignupPopup" style="display: none; align-content:center;">
+    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+        <div class="Page_Dimmer">
+        </div>
+        <div class="PopupHolder" style="top:20%;">
+            <div class="Bgheader" width="100%">
+                <div>
+                    <span id="SpnPopUpTitle" style="color: White; font-family: Verdana,Tahoma;
+                                font-size: 15px; font-weight: bold;"></span>
+                    @*Physician Primary Care Plan*@
+                </div>
+            </div>
+            <div style="border: Solid 1px #33CCEE; width: 100%;">
+                <div align="left">
+                    <img alt="!" id="imgIcon" src="~/Images/Success.png"
+                         style="height: 25px; width: 25px; border-width: 0px;" />
+                </div>
+                <div align="center">
+                    <span id="spnPopupMessage" style="color: green; font-family: Verdana,Tahoma; font-size: 14px;
+                                font-weight: bold;">
+                    </span>
+                </div>
+                <div align="center">
+                    <br />
+                    <button type="button" id="btnSuccess" onclick="document.location.href = $('#loginUrl').attr('href');" class="button_blue"
+                            style="width: 70px;">
+                        Ok
+                    </button>
+                    <a id="loginUrl" href="@Html.AttributeEncode(Url.Action("ViewProviders", "Organization" ))">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="divErrMessagePopup" style="display: none; position: relative" align="center">
+    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+        <div class="Page_Dimmer">
+        </div>
+        <div class="PopupHolder" style="top: 17%;">
+            <div class="Bgheader" width="100%">
+                <div align="center">
+                    <span id="SpanErrMsgTitle" style="color: White; font-family: Verdana,Tahoma; font-size: 15px;
+                        font-weight: bold;">Physician Primary Care Plan</span>
+                </div>
+            </div>
+            <div style="border: Solid 1px #33CCEE; width: 100%;">
+                <div align="left">
+                    <img alt="!" id="Img1" src="~/Images/Error.png" style="height: 25px; width: 25px;
+                        border-width: 0px;" />
+                </div>
+                <div align="center">
+                    <span id="spnPopupErrMessage" style="color: red; font-family: Verdana,Tahoma; font-size: 14px;
+                                font-weight: bold;">
+                    </span>
+                </div>
+                <div align="center">
+                    <br />
+                    <button type="button" id="btnErrPopup" onclick="ErrorOK();" class="button_blue"
+                            style="width: 70px;">
+                        Ok
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" id="divMainRUpdate" style="margin-top:0px;">
+    <div class="Panel_bg">
+
+
+        <fieldset id="fsLabOrderSearch" style="display:none;">
+            <div class="form-group" style="display:none;">
+                <div id="dvSearchFilterHeader" style="cursor: pointer;" onclick="CollapsiblePanels(document.getElementById('dvSearchFilterHeader'),document.getElementById('dvSearchFilter'));"
+                     class="PanelTopBar">
+                    <span id="4_lblSearchPat" style="font-size:15px;font-weight:normal;color: White;">Search</span>
+                    <div style="float: right; margin-top: -5px; color: White; padding: 5px 5px 0 0">
+                    </div>
+                    <div id="arrow" class="ArrowClose"></div>
+                </div>
+            </div>
+
+            <div id="dvSearchFilter" style="display: block;">
+                <div class="Page_Dimmer1">
+                </div>
+                <div class="PopupHolder2" style="height:auto;">
+
+                    <div class="Panel_bg_Sub">
+                        <div style="width: 100%;height:auto;">
+                            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" id="divSearch" style="display:block">
+                                <div class="row">
+                                    <div class="col-xs-6 col-md-6 col-sm-6 col-lg-3">
+                                    </div>
+                                    <div class="col-xs-6 col-md-6 col-sm-6 col-lg-3">
+                                        @Html.Label("Organization Name", new { style = "font-weight:normal;", @class = "" })<br />
+                                        @(Html.Kendo().AutoCompleteFor(model => model.OrganizationName)
+                                                    .Name("OrganizationName")
+                                                    .MinLength(3)
+                                                    .Placeholder("Select Organization...")
+                                                    .HtmlAttributes(new { style = "width:100%;" })
+                                                    .DataTextField("OrganizationName")
+                                                    .Events(events =>
+                                                    {
+                                                        events.Select("OnOrganizationSelectChange");
+                                                        events.Change("OnOrganizationchangeEvent");
+                                                    })
+                                                    .DataSource(source =>
+                                                    {
+                                                        source.Read(read =>
+                                                        {
+                                                            read.Action("OrganizationSearchAutoComplete", "Admin").Data("onOrgAdditionalData");
+                                                        }).ServerFiltering(true);
+                                                    }))
+                                        <br />
+
+                                        @Html.HiddenFor(m => m.OrganizationID)
+                                        @Html.Hidden("TxtOrgId")
+                                        <script type="text/javascript">
+                                            function OnOrganizationSelectChange(e) {
+                                                $("#TxtOrgId").val("")
+                                                var dataItem = this.dataItem(e.item.index());
+                                                $("#OrganizationName").val(dataItem.OrganizationName);
+                                                $("#OrganizationID").val(dataItem.OrganizationID);
+                                                $("#TxtOrgId").val(dataItem.OrganizationID);
+                                                var OrganizationID = $("#OrganizationID").val();
+                                                var ProviderID = 0;
+                                                BindProviderNames(OrganizationID, "@ServiceUrl");
+                                            }
+                                            function onOrgAdditionalData() {
+                                                return {
+                                                    text: $("#OrganizationName").val()
+                                                }
+                                            }
+                                            function OnOrganizationchangeEvent() {
+
+                                            }
+                                        </script>
+                                    </div>
+                                    <div class="col-xs-6 col-md-6 col-sm-6 col-lg-3">
+                                        @Html.Label("Provider Name", new { style = "font-weight:normal;", @class = "" })<br />
+                                        @*@(Html.Kendo().AutoComplete()
+                                            .Name("ProviderNames")
+                                            .Placeholder("Select Provider...")
+                                            .HtmlAttributes(new { style = "width:100%;" })
+                                            .DataTextField("ProviderName")
+                                            .Events(events =>
+                                            {
+                                                events.Select("OnProviderSelectChange");
+                                            })
+                                            .DataSource(source =>
+                                            {
+                                                source.Read(read =>
+                                                {
+                                                });
+                                            }))*@
+
+                                        @(Html.Kendo().AutoCompleteFor(model => model.ProviderName)
+                                                    .Name("ProviderName")
+                                                    .MinLength(3)
+                                                    .Placeholder("First Name/Last Name/Mobile Number")
+                                                    .HtmlAttributes(new { style = "width:100%;" })
+                                                    .DataTextField("ProviderName")
+                                                    .Events(events =>
+                                                    {
+                                                        events.Select("OnProviderSelectChange");
+                                                        events.Change("OnchangeEvent");
+                                                    })
+                                                    .DataSource(source =>
+                                                    {
+                                                        source.Read(read =>
+                                                        {
+                                                            read.Action("ProviderSearchAutoComplete", "Admin").Data("onAdditionalData");
+                                                        }).ServerFiltering(true);
+                                                    }))
+                                    </div>
+
+                                </div>
+                                <div class="col-xs-6 col-md-6 col-sm-6 col-lg-12" align="center">
+                                    <br />
+                                    <span id="lblErrorMsgSearch" style="color:red; font-family: Verdana,Tahoma; font-size: 15px;
+                        font-weight: bold; text-align: center; margin-top: 8px; margin-left: 3px; ">
+                                    </span>
+                                    <br />
+                                    <button type="button" id="btnSearch" title="Search" style="width: 100px;" class="button_blue" value="Search" onclick="btnSearch()">
+                                        Search
+                                    </button>
+                                    <button type="button" id="btnClear" title="Clear" value="Clear" style="width: 100px;" class="button_blue" onclick="btnClear()">
+                                        Clear
+                                    </button>
+                                    <br />
+                                    @Html.ValidationMessageFor(model => model.ProviderName)
+                                    @Html.Hidden("ProviderId")
+                                    @Html.Hidden("TxtProviderId")
+                                    <script type="text/javascript">
+                                        //function OnProviderSelectChange(e) {
+                                        //    $("#ProviderId").val("");
+                                        //    $("#TxtProviderId").val("");
+                                        //    var dataItem = this.dataItem(e.item.index());
+                                        //    $("#ProviderName").val(dataItem.ProviderName);
+                                        //    $("#ProviderId").val(dataItem.ProviderID);
+                                        //    var ProviderID = $("#ProviderId").val();
+                                        //    $("#TxtProviderId").val(dataItem.ProviderID);
+                                        //}
+                                        function OnProviderSelectChange(e) {
+                                            $("#ProviderId").val("");
+                                            var dataItem = this.dataItem(e.item.index());
+                                            $("#ProviderName").val(dataItem.ProviderName);
+                                            $("#ProviderId").val(dataItem.ProviderID);
+                                            var ProviderID = $("#ProviderId").val();
+
+                                        }
+                                        function onAdditionalData() {
+
+                                            return { text: $("#ProviderName").val() }
+
+                                        }
+                                        function OnchangeEvent() {
+
+                                        }
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+
+
+        <div class="form-group" id="divproviderGrid">
+            <div class="form-group" id="divAddProvider">
+                <div class="row">
+                    <div align="right" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <button type="submit" id="btnAddProvider" title="Submit" style="width: 150px;" class="button_blue" value="AddProvider" onclick="@("window.location.href='" + @Url.Action("AddDoctor", "Admin") + "'");">
+                            Add Provider
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                    @Html.Hidden("RedirectTo", Url.Action("ViewProviders", "Organization"))
+                    @(Html.Kendo().Grid<PPCP07302018.Models.Organization.AddDoctor>()
+                                                .Name("ViewProviderGrid")
+                                                .Columns(columns =>
+                                                {
+                                                    columns.Bound(p => p.ProviderID).Title("ProviderID").Filterable(false).Width(120).Visible(false);
+                                                    columns.Bound(p => p.FirstName).Title("Provider Name").ClientTemplate("#: FirstName # #: LastName #").Filterable(false).Width(150);
+                                                    columns.Bound(p => p.OrganizationName).Title("OrganizationName").Filterable(false).Width(100).Visible(true);
+                                                    columns.Bound(p => p.Specialization).Title("Specialization").Filterable(false).Width(120).Visible(false);
+                                                    columns.Bound(p => p.FirstName).Title("First Name").Filterable(false).Width(130).Visible(false);
+                                                    columns.Bound(p => p.LastName).Title("Last Name").Filterable(false).Width(120).Visible(false);
+                                                    columns.Bound(p => p.CountryCode).Title("CountryCode").Filterable(false).Width(120).Visible(false);
+                                                    columns.Bound(p => p.MobileNumber).Title("MobileNumber").Filterable(false).Width(120);
+                                                    columns.Bound(p => p.DOB).Title("DOB").Filterable(false).Width(130).Visible(false);
+                                                    columns.Bound(p => p.Gender).Title("Gender").Filterable(false).Width(120).Visible(false);
+                                                    columns.Bound(p => p.Salutation).Title("Salutation").Filterable(false).Width(130).Visible(false);
+                                                    columns.Bound(p => p.Email).Title("Email").Filterable(false).Width(120).Visible(false);
+                                                    columns.Bound(p => p.CountryName).Title("CountryName").Filterable(false).Width(120).Visible(false);
+                                                    columns.Bound(p => p.StateName).Title("StateName").Filterable(false).Width(130).Visible(false);
+                                                    columns.Bound(p => p.CityName).Title("CityName").Filterable(false).Width(120).Visible(false);
+                                                    columns.Bound(p => p.Zip).Title("Zip").Filterable(false).Width(120).Visible(false);
+                                                    columns.Bound(p => p.NPI).Title("NPI").Filterable(false).Width(120).Visible(false);
+                                                    columns.Bound(p => p.SpecializationName).Title("Specialization").Filterable(false).Width(120).Visible(true);
+                                                    columns.Bound(p => p.CountryID).Title("CountryId").Filterable(false).Width(120).Visible(false);
+                                                    columns.Bound(p => p.StateID).Title("StateID").Filterable(false).Width(120).Visible(false);
+                                                    columns.Bound(p => p.CityID).Title("CityID").Filterable(false).Width(120).Visible(false);
+                                                    // columns.Bound(p => p.SalutationID).Title("SalutationID").Filterable(false).Width(120).Visible(false);
+                                                    columns.Bound(p => p).ClientTemplate(
+                                                        "<a onclick='EditOptions(#=ProviderID#,\"#=FirstName#\",\"#=LastName#\",\"#=CountryCode#\",\"#=MobileNumber#\",\"#=DOB#\",\"#=Gender#\",\"#=Email#\",\"#=CountryName#\",\"#=StateName#\",\"#=CityName#\",\"#=Zip#\",\"#=Salutation#\",\"#=NPI#\",\"#=CountryID#\",\"#=StateID#\",\"#=CityID#\",\"#=SpecializationID#\");' <span style='cursor:pointer' >View</a>").Title("Action").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(50);
+
+                                                })
+                                                .Scrollable()
+                                                .AutoBind(false)
+                                                .Pageable()
+                                                .HtmlAttributes(new { })
+                                                .Selectable()
+                                                .Filterable()
+                                                .DataSource(dataSource => dataSource
+                                                .Ajax()
+                                                .PageSize(5)
+                                                .ServerOperation(false)))
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="divMain" style="display:none;">
+        @*id="row Panel_bg_Sub"*@
+        <fieldset id="fsAddDoctors" class="Panel_bg_Sub">
+            <div>
+                &nbsp;
+            </div>
+            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Personal Information</b>:</legend>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12 ">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                @Html.Label("Last Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                @Html.TextBoxFor(model => model.LastName, null, new { style = "width:100%;", maxlength = 50 })
+                                @Html.ValidationMessageFor(model => model.LastName, "", new { @style = "color:red" })
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                @Html.Label("First Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                @Html.TextBoxFor(model => model.FirstName, null, new { style = "width:100%;", maxlength = 50 })
+                                @Html.ValidationMessageFor(model => model.FirstName, "", new { @style = "color:red" })
+                            </div>
+
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+
+                                @Html.Label("Salutation", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
+
+                                @(Html.Kendo().DropDownListFor(m => m.Salutation)
+                                                    .Name("SalutationList").HtmlAttributes(new { style = "width:100%;" })
+                                                    .OptionLabel("--Select--")
+                                                    .Events(events =>
+                                                    {
+                                                        events.Select("onSelectSalutation");
+                                                    })
+                                                    .DataValueField("Value")
+                                                    .DataTextField("Text")
+
+                                                    .DataSource(source =>
+                                                    {
+                                                        source.Read(read =>
+                                                        {
+                                                        });
+                                                    }))
+                                <br />
+                                <script type="text/javascript">
+                                    //Salutation change event to get SalutationID and Salutation
+                                    function onSelectSalutation(e) {
+                                        $("#SalutationID").val("");
+                                        var dataItem = this.dataItem(e.item.index());
+                                        $("#Salutation").val(dataItem.Text);
+                                        $("#SalutationID").val(dataItem.Value);
+
+                                    }
+                                </script>
+
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
+                                @Html.Label("Date of Birth", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                @( Html.Kendo().DatePickerFor(model => model.DOB).Format("MM/dd/yyyy").Name("DOB").Value("").Max(DateTime.Today)
+                                                    .HtmlAttributes(new { PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text", onkeydown = "return false;" })
+                                                    .Events(e => e.Change("DateSelectionChanged"))
+                                )
+                                @Html.ValidationMessageFor(model => model.DOB, "", new { @style = "color:red" })
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                @Html.Label("Gender", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                <label style="font-weight: normal;">
+                                    @(Html.RadioButton("Gender", 1, new
+                                    {
+                                        id = "rbtnGenderMale",
+                                        @onclick = "GenderValidation();"
+
+                                    }))
+                                    Male
+                                </label>
+                                <label style="font-weight: normal; margin-left:20px">
+                                    @(Html.RadioButton("Gender", 2, new
+                                    {
+                                        id = "rbtnGenderFemale",
+                                        @onclick = "GenderValidation();"
+                                    }))
+                                    Female
+                                </label>
+                                <br />
+                                <div id="divGenderValidator" style="display:none">
+                                    <span class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="Gender" data-valmsg-for="DOB" role="alert"><span class="k-icon k-warning"> </span> This Information is Requried</span>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
+                                @Html.Label("Mobile Number", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                @Html.TextBoxFor(model => model.CountryCode, null, new { style = "width:15%;", maxlength = 2 })
+                                @Html.Label("-", new { style = "font-weight:normal;", @class = "labelColor" })
+                                @Html.TextBoxFor(model => model.MobileNumber, null, new { style = "width:75%;", maxlength = 10 })
+                                @Html.ValidationMessageFor(model => model.CountryCode, "", new { @style = "color:red" })
+                                @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @style = "color:red" })
+                            </div>
+
+
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                @Html.Label("Email", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                @Html.TextBoxFor(model => model.Email, null, new { style = "width:100%;", maxlength = 50 })
+                                @Html.ValidationMessageFor(model => model.Email, "", new { @style = "color:red" })
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
+                                @Html.Label("NPI Number", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                @Html.TextBoxFor(model => model.NPI, null, new { style = "width:100%;", maxlength = 10 })
+                                @Html.ValidationMessageFor(model => model.NPI, "", new { @style = "color:red" })
+                            </div>
+
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
+
+                                @Html.Label("Country", new { style = "font-weight:normal;", @class = "labelColor" })<span style="color: Red;">*</span><br />
+
+                                @(Html.Kendo().DropDownListFor(model => model.CountryName)
+                                                .Name("CountryName")
+                                                .OptionLabel("--Select--")
+                                                .HtmlAttributes(new { style = "width:100%;" })
+                                                .DataValueField("CountryId")
+                                                .DataTextField("CountryName")
+                                                .Events(events =>
+                                                {
+                                                    events.Select("OnCountrySelectChange");
+                                                })
+                                                .DataSource(source =>
+                                                {
+                                                    source.Read(read =>
+                                                    {
+                                                    });
+                                                }))
+                                <br />
+                                @Html.ValidationMessageFor(model => model.CountryName)
+                                @Html.HiddenFor(model => model.CountryID)
+                                @Html.HiddenFor(model => model.CountryName)
+                                <script type="text/javascript">
+                                    //Country change event to get CountryName and CountryId
+                                    function OnCountrySelectChange(e) {
+                                        $("#CountryID").val("")
+                                        $("#hdnCountryName").val("");
+                                        var dataItem = this.dataItem(e.item.index());
+
+                                        $("#CountryName").val(dataItem.CountryName);
+                                        $("#CountryID").val(dataItem.CountryId);
+                                        var CountryID = $("#CountryID").val();
+                                        $("#hdnCountryName").val(dataItem.CountryName);
+                                        @*BindStates(CountryID,'@ServiceUrl');*@
+                                        BindStates('@ServiceUrl', CountryID, 0)
+                                    }
+                                </script>
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                @Html.Label("State", new { style = "font-weight:normal;", @class = "labelColor" })<span style="color: Red;">*</span><br />
+
+                                @(Html.Kendo().DropDownListFor(m => m.StateName)
+                                                .Name("StateName")
+                                                .OptionLabel("--Select--")
+                                                .HtmlAttributes(new { style = "width:100%;" })
+                                                .DataValueField("StateID")
+                                                .DataTextField("StateName")
+                                                .Events(events =>
+                                                {
+                                                    events.Select("OnStateSelectChange");
+                                                })
+                                                .DataSource(source =>
+                                                {
+                                                    source.Read(read =>
+                                                    {
+                                                    });
+                                                }))
+                                <br />
+                                @Html.ValidationMessageFor(m => m.StateName)
+                                @Html.HiddenFor(m => m.StateID)
+                                @Html.HiddenFor(m => m.StateName)
+
+                                <script type="text/javascript">
+                                    //Country State event to get StateName and StateID
+                                    function OnStateSelectChange(e) {
+                                        $("#StateID").val("");
+                                        $("#hdnStateName").val("");
+                                        var dataItem = this.dataItem(e.item.index());
+                                        $("#StateName").val(dataItem.StateName);
+                                        $("#StateID").val(dataItem.StateID);
+                                        $("#hdnStateName").val(dataItem.StateName);
+                                        var StateID = $("#StateID").val();
+                                        @*BindCities(StateID,'@ServiceUrl');*@
+                                        BindCites('@ServiceUrl', StateID, 0)
+                                    }
+                                </script>
+                            </div>
+
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
+                                @Html.Label("City", new { style = "font-weight:normal;", @class = "labelColor" })<span style="color: Red;">*</span><br />
+
+                                @(Html.Kendo().DropDownListFor(m => m.CityName)
+                                                .Name("CityName")
+                                                .OptionLabel("--Select--")
+                                                .HtmlAttributes(new { style = "width:100%;" })
+                                                .DataValueField("CityID")
+                                                .DataTextField("CityName")
+                                                .Events(events =>
+                                                {
+                                                    events.Select("OnCitySelectChange");
+                                                })
+                                                .DataSource(source =>
+                                                {
+                                                    source.Read(read =>
+                                                    {
+                                                    });
+                                                }))
+                                <br />
+                                @Html.ValidationMessageFor(m => m.CityName)
+                                @Html.HiddenFor(m => m.CityID)
+                                @Html.HiddenFor(m => m.CityName)
+                                <script type="text/javascript">
+                                    //City change event to get CityName and CityID
+                                    function OnCitySelectChange(e) {
+                                        $("#hdnCityName").val("");
+                                        $("#CityID").val("");
+                                        var dataItem = this.dataItem(e.item.index());
+                                        $("#CityName").val(dataItem.CityName);
+                                        $("#hdnCityName").val(dataItem.CityName);
+                                        $("#CityID").val(dataItem.CityID);
+                                    }
+                                </script>
+                            </div>
+
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                @Html.Label("ZIP / Postal Code", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
+                                @Html.TextBoxFor(m => m.Zip, new { style = "width:50%;Height:25px", maxlength = "5" })-
+                                @Html.TextBoxFor(m => m.ZipCode, new { style = "width:40%;Height:25px", maxlength = "4" })
+                                <br />
+                               
+                                @Html.ValidationMessageFor(m => m.Zip)
+                                @Html.ValidationMessageFor(m => m.ZipCode)
+                            </div>
+
+                        </div>
+
+                        <div class="row" style="display:block;">
+                            @Html.Label("Specialization", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3" id="divSpecializationList"></div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 " id="divSpecializationListRight"></div>
+                        </div>
+                        <div id="divSpecializationValidator" style="display:none">
+                            <span class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="SpecitizationName" data-valmsg-for="SpecitizationName" style="display:none" id="SpecitizationName_validationMessage" role="alert"><span class="k-icon k-warning"> </span> This Information is Requried</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                    <div align="center">
+
+                        <button type="button" class="button_blue" id="btnCancel" title="Cancel" style="width: 100px;" onclick="@("window.location.href='" + @Url.Action("ViewProviders", "Admin") + "'");">
+                            Cancel
+                        </button>
+                    </div>
+                    <br />
+                </div>
+            </div>
+        </fieldset>
+    </div>
+</div>
+
+

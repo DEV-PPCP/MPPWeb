@@ -1,0 +1,9 @@
+D:\Code\GIT-Projects\MyPhysicianPlanWEBApp\bin\ApplicationInsights.config
+D:\Code\GIT-Projects\MyPhysicianPlanWEBApp\bin\PPCP07302018.dll.config
+D:\Code\GIT-Projects\MyPhysicianPlanWEBApp\bin\PPCP07302018.dll
+D:\Code\GIT-Projects\MyPhysicianPlanWEBApp\bin\PPCP07302018.pdb
+D:\Code\GIT-Projects\MyPhysicianPlanWEBApp\obj\Debug\PPCP07302018.csproj.CoreCompileInputs.cache
+D:\Code\GIT-Projects\MyPhysicianPlanWEBApp\obj\Debug\PPCP07302018.csproj.CopyComplete
+D:\Code\GIT-Projects\MyPhysicianPlanWEBApp\obj\Debug\PPCP07302018.dll
+D:\Code\GIT-Projects\MyPhysicianPlanWEBApp\obj\Debug\PPCP07302018.pdb
+D:\Code\GIT-Projects\MyPhysicianPlanWEBApp\obj\Debug\PPCP07302018.csprojAssemblyReference.cache

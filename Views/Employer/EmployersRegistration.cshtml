@@ -1,0 +1,1029 @@
+﻿@*#region Description
+    /******************************************************************************************************
+    * PROJECT:PPCP VERSION:1.0
+    *
+    * MODULE : Employer
+    *
+    * ITEM NAME :EmployersRegistration.cshtml
+    *
+    * DEVELOPED BY: Veena.A
+    *
+    * REVIEWED BY:
+    *
+    * MODULE DISCRIPTION:
+    *
+    * CONTROL DESCRIPTION : used to Registration Employer
+
+    ****************************************************************************************************
+    DATE CHANGE LOG DESCRIPTION CHANGED BY
+    Date:               Description:                Author:
+    *****************************************************************************************************/
+    #endregion*@
+
+
+@model PPCP07302018.Models.Member.EmployerRegistrationDetails
+@using System.Web.Mvc.Html
+@using Kendo.Mvc.UI
+@using System.Web.Mvc
+@using PPCP07302018.Utils;
+@{
+    ViewBag.Title = "EmployersRegistration";
+    var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
+    var AttachedLink = (System.Configuration.ConfigurationManager.AppSettings["AttachedLink"].ToString());
+}
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+<script type="text/javascript" src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="~/Scripts/bootstrap.min.js"></script>
+<link href="~/Content/bootstrap.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/Content/bootstrap-leftmenu.css" />
+<link href="~/Content/login.css" rel="stylesheet" />
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/KendoScripts")
+@Scripts.Render("~/bundles/custom-validator")
+@Styles.Render("~/bundles/Kendocss")
+@*@Scripts.Render("~/bundles/OrganizationScriptFiles")*@
+@Styles.Render("~/bundles/Organizationcssfiles")
+@Scripts.Render("~/bundles/EmployersRegistrationScriptFiles")
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        debugger;
+        var countryID = 1;
+        $('#CountryID').val("1");
+        $("#CountryName").val("United States of America");
+        var stateID = 1;
+        $('#StateID').val(stateID);
+        BindCountries('@ServiceUrl');
+        BindStates(countryID, '@ServiceUrl');
+        BindCities(stateID, '@ServiceUrl', "1");
+    });
+    function ValidateUserName(Username) {
+        ValidateUserNames(Username, '@ServiceUrl');
+    }
+</script>
+
+<style type="text/css">
+    .Page_Dimmer {
+        position: fixed;
+        height: 100%;
+        width: 100%;
+        top: 0px;
+        left: 0px;
+        background-color: #CCCCFF;
+        filter: alpha(opacity=50);
+        -moz-opacity: 0.5;
+        opacity: 0.5;
+        z-index: 50;
+    }
+
+    .loadingSpinner {
+        position: absolute;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background: rgba( 255, 255, 255, .8 ) url('../../Images/loading-spinner-red.gif') 50% 50% no-repeat;
+    }
+
+    .PopupHolder {
+        position: fixed;
+        /* overflow: auto; */
+        background-color: #fff;
+        z-index: 50;
+        left: 20%;
+        right: 20%;
+        top: 17%;
+        margin: 0px;
+    }
+
+    .button_blue {
+        cursor: pointer;
+        font-family: Arial;
+        color: #ffffff;
+        font-size: 14px;
+        padding: 0px; /*width: 100px;*/
+        height: 30px;
+        text-decoration: none;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        padding: 0 10px 0 10px;
+        border-radius: 9px;
+        border: solid #cd853f 2px;
+        border-color: #cd853f #cd853f #cd853f #cd853f;
+        background: #718ca1; /* Old browsers */
+        background: -moz-linear-gradient(top, #cd853f 14%, #cd853f 47%, #cd853f 79%); /* FF3.6+ */
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(14%,#cd853f), color-stop(47%,#cd853f), color-stop(79%,#cd853f)); /* Chrome,Safari4+ */
+        background: -webkit-linear-gradient(top, #cd853f 14%,#cd853f 47%,#cd853f 79%); /* Chrome10+,Safari5.1+ */
+        background: -o-linear-gradient(top, #cd853f 14%,#cd853f 47%,#cd853f 79%); /* Opera 11.10+ */
+        background: -ms-linear-gradient(top, #cd853f 14%,#cd853f 47%,#cd853f 79%); /* IE10+ */
+        background: linear-gradient(to bottom, #cd853f 14%,#cd853f 47%,#cd853f 79%); /* W3C */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#8b4513', endColorstr='#cd853f',GradientType=0 ); /* IE6-9 */
+    }
+
+    .Bgheader {
+        background: #8B4513; /* old browsers */
+        background: -moz-linear-gradient(top, #8B4513 14%, #8B4513 47%, #8B4513 79%); /* ff3.6+ */
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(14%,#8B4513), color-stop(47%,#8B4513), color-stop(79%,#8B4513)); /* chrome,safari4+ */
+        background: -webkit-linear-gradient(top, #8B4513 14%,#8B4513 47%,#8B4513 79%); /* chrome10+,safari5.1+ */
+        background: -o-linear-gradient(top, #8B4513 14%,#8B4513 47%,#8B4513 79%); /* opera 11.10+ */
+        background: -ms-linear-gradient(top, #8B4513 14%,#8B4513 47%,#8B4513 79%); /* ie10+ */
+        background: linear-gradient(to bottom, #8B4513 14%,#8B4513 47%,#8B4513 79%); /* w3c */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#8B4513', endColorstr='#8B4513',GradientType=0 ); /* ie6-9 */
+        height: 10px;
+    }
+
+
+    .pageheading_bar {
+        font-family: Verdana;
+        color: #ffffff;
+        font-size: 14px;
+        padding: 0px;
+        width: 100%;
+        margin-left: -1px;
+        height: 25px;
+        float: left;
+        text-decoration: none;
+        -webkit-border-radius: 0px;
+        -moz-border-radius: 0px;
+        border-radius: 0px;
+        border: solid #8B4513 2px;
+        border-color: #8B4513 #8B4513 #8B4513 #8B4513;
+        background: -moz-linear-gradient(top, #8B4513 14%, #8B4513 47%, #8B4513 79%);
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(14%,#8B4513), color-stop(47%,#8B4513), color-stop(79%,#8B4513));
+        background: -webkit-linear-gradient(top, #8B4513 14%,#8B4513 47%,#8B4513 79%);
+        background: -o-linear-gradient(top, #8B4513 14%,#8B4513 47%,#8B4513 79%);
+        background: -ms-linear-gradient(top, #8B4513 14%,#8B4513 47%,#8B4513 79%);
+        background: linear-gradient(to bottom, #8B4513 14%,#8B4513 47%,#8B4513 79%);
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#8B4513', endColorstr='#8B4513',GradientType=0 );
+    }
+
+    .table {
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .Panel_bg {
+        font-family: Verdana;
+        color: #000000;
+        font-size: 14px;
+        width: 100%;
+        height: auto;
+        text-decoration: none;
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        border-radius: 2px;
+        background-color: #f9eeea;
+        -webkit-box-shadow: 1px 1px 3px #1e5799;
+        -moz-box-shadow: 1px 1px 3px #1e5799;
+        box-shadow: 1px 1px 3px #1e5799;
+        border: solid #8B4513 1px; /*background: #F7F7F7;  Old browsers */
+        float: left;
+        margin: 0px 0px 4px 0px;
+        text-align: left;
+        padding: 5px 0px 5px 10px;
+    }
+
+    .Panel_bg_Sub {
+        font-family: Verdana;
+        color: #000000;
+        font-size: 14px;
+        width: 99%;
+        height: auto;
+        text-decoration: none;
+        -moz-border-radius: 5px;
+        background-color: #fbf5e2;
+        -webkit-box-shadow: 1px 1px 3px #1e5799;
+        -moz-box-shadow: 1px 1px 3px #1e5799;
+        box-shadow: 1px 1px 3px #1e5799;
+        border: solid #8B4513 1px;
+        float: left;
+        margin: 5px 5px 5px 0px;
+        text-align: left;
+        padding: 10px 5px 15px 10px;
+    }
+
+    .contact-formbg {
+        width: 100%;
+        float: left;
+        margin: 0px;
+        padding: 5px;
+        background: #fcfcfc;
+        padding: 0px 0px 20px 0px;
+        box-shadow: rgba(187, 187, 187, 1) 0 0px 5px -1px;
+        -webkit-box-shadow: rgba(187, 187, 187, 1) 0 0px 5px -1px;
+        font: 13px;
+        color: #666;
+        /* border-radius: 10px;
+            -webkit-border-radius: 10px;*/
+    }
+
+    img {
+        border: 0;
+        width: 100%;
+    }
+
+    #Salutation_validationMessage {
+        display: none !important;
+    }
+
+    #CountryName_validationMessage {
+        display: none !important;
+    }
+
+    #StateName_validationMessage {
+        display: none !important;
+    }
+
+    #CityName_validationMessage {
+        display: none !important;
+    }
+
+    #SalutationList_validationMessage {
+        position: inherit;
+        display: block;
+        border-width: 2px;
+        height: 35px;
+        padding: 2px 5px 1px 6px;
+        border-color: #fff4c9;
+        font-family: Verdana;
+        font-size: 14px;
+    }
+
+    #CountryNameList_validationMessage {
+        position: inherit;
+        display: block;
+        border-width: 2px;
+        height: 35px;
+        padding: 2px 5px 1px 6px;
+        border-color: #fff4c9;
+        font-family: Verdana;
+        font-size: 14px;
+    }
+
+    #StateNameList_validationMessage {
+        position: inherit;
+        display: block;
+        border-width: 2px;
+        height: 35px;
+        padding: 2px 5px 1px 6px;
+        border-color: #fff4c9;
+        font-family: Verdana;
+        font-size: 14px;
+    }
+
+    #CityNameList_validationMessage {
+        position: inherit;
+        display: block;
+        border-width: 2px;
+        height: 35px;
+        padding: 2px 5px 1px 6px;
+        border-color: #fff4c9;
+        font-family: Verdana;
+        font-size: 14px;
+    }
+</style>
+@Html.Hidden("hdnOrganizationTAndConditions")
+@Html.Hidden("hdnUserTAndConditions")
+<div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" id="divMain" style="margin-top:0px; background-color: #eae6e6;">
+    <section class="web-top-header xs-display-none" style="display:none">
+        <div class="container">
+            <div class="web-top-header col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 xs-text-center text-right">
+                    <div class="">
+                        FREE ONE MONTH TRIAL: <a class="web-top-header-link text-white mr-lg-20 mr-md-20 mr-sm-20" href="https://login.ihealthpay.co/iHealthPaySubscription.aspx" target="_blank">SIGN UP</a> Text: 732-360-5252
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <header class="web-header-section" style="display:none">
+        <div class="container">
+            <div class="web-header-section col-lg-12 col-md-12 col-sm-12 col-xs-12 pt-10 pb-10 xs-display-none sm-display-none">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 sm-text-center xs-text-center text-left">
+                    <input type="image" id="left-button" class="button" src="~/Images/Innerpages-Logo.png" width="250" height="100" />
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 sm-text-center xs-text-center text-right pl-0 pr-0">
+                    <ul class="web-menu-items">
+                        <li class="web-menu-items">
+                            <a class="web-menu-links ml-20" href="https://ihealthpay.co/">&nbsp;Home&nbsp;&nbsp;</a>
+                            <a class="web-menu-links ml-20" href="http://login.ihealthpay.co">&nbsp;&nbsp;Sign In&nbsp;&nbsp;</a>
+                            <a class="web-menu-links ml-20" href="https://login.ihealthpay.co/iHealthPaySubscription.aspx">&nbsp;&nbsp;Create Account&nbsp;&nbsp;</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+            <div id="divProfile">
+                <div class="pageheading_bar" align="center">
+                    <b>Employer Registration</b>
+                </div>
+                <div class="Panel_bg" id="divMain">
+                    <fieldset id="fsMain" style="width:100%;border-color:#8B4513">
+                        <div id="divMain" class="table" style="border: 1px; width: 100%">
+                            <div class="row">
+                                <fieldset id="fsMemberDetails" style="width:100%; margin-left: 0px;border-color:#8B4513">
+                                    <br />
+                                    <div class="row Panel_bg_Sub">
+                                        @*----------------Employer Information Fieldset-----------------------------------*@
+                                        <fieldset id="fsMemberDetails" style="width:100%; margin-left: 0px;border-color:#8B4513">
+                                            <br />
+                                            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Employer Information</b>:</legend>
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                                        <div class="row">
+                                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                @Html.Label("Employer Type", new { style = "font-weight:normal;", @class = "labelColor" })<span style="color: Red;">*</span><br />
+                                                                @(Html.Kendo().DropDownListFor(m => m.EmployerType)
+                                                    .Name("EmployerTypeList")
+                                                    .OptionLabel("--Select--")
+                                                    .HtmlAttributes(new { style = "width:100%;" })
+                                                    .DataValueField("Value")
+                                                    .DataTextField("Text")
+                                                    .Events(events =>
+                                                    {
+                                                        events.Change("OnEmployerTypeSelectChange");
+                                                    })
+                                                    .DataSource(source =>
+                                                    {
+                                                        source.Read(read =>
+                                                        {
+                                                        });
+                                                    }))
+                                                                <br />
+                                                                @Html.ValidationMessageFor(m => m.EmployerType)
+                                                                @Html.HiddenFor(m => m.EmployerTypeID)
+                                                                @Html.HiddenFor(m => m.EmployerType)
+                                                                <script type="text/javascript">
+                                   //EmployerType change event to get EmployerType and EmployerTypeID
+                                             function OnEmployerTypeSelectChange(e) {
+                                                debugger;
+                                                $("#EmployerTypeID").val("");
+                                                var dataItem = e.sender.dataItem();
+                                                $("#EmployerType").val(dataItem.EmployerType);
+                                                $("#EmployerTypeID").val(dataItem.EmployerTypeID);
+                                            }
+                                                                </script>
+                                                                </div>
+                                                            </div>
+                                                                <div class="row">
+                                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                        @Html.Label("Employer  Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                                        @Html.TextBoxFor(model => model.EmployerName, null, new { style = "width:100%;", maxlength = 50 })
+                                                                        @Html.ValidationMessageFor(model => model.EmployerName, "", new { @style = "color:red" })
+                                                                    </div>
+                                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                        @Html.Label("Employer Tax ID", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                                        @Html.TextBoxFor(model => model.TaxID, null, new { style = "width:100%;", maxlength = 50 })
+                                                                        @Html.ValidationMessageFor(model => model.TaxID, "", new { @style = "color:red" })
+                                                                    </div>
+                                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                        @Html.Label("Contact Email", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                                        @Html.TextBoxFor(model => model.Email, null, new { style = "width:100%;", maxlength = 50 })
+                                                                        @Html.ValidationMessageFor(model => model.Email, "", new { @style = "color:red" })
+                                                                    </div>
+                                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                        @Html.Label("Mobile Number", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                                        @Html.TextBoxFor(model => model.EmpCountryCode, null, new { style = "width:15%;", maxlength = 4 })
+                                                                        @Html.Label("-", new { style = "font-weight:normal;", @class = "labelColor" })
+                                                                        @Html.TextBoxFor(model => model.EmpMobileNumber, null, new { style = "width:75%;", maxlength = 10 })
+                                                                        @Html.ValidationMessageFor(model => model.EmpCountryCode, "", new { @style = "color:red" })
+                                                                        @Html.ValidationMessageFor(model => model.EmpMobileNumber, "", new { @style = "color:red" })
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                        @Html.Label("Country", new { style = "font-weight:normal;", @class = "labelColor" })<span style="color: Red;">*</span><br />
+                                                                        @(Html.Kendo().DropDownListFor(model => model.CountryName)
+                                                    .Name("CountryNameList")
+                                                    .OptionLabel("--Select--")
+                                                    .HtmlAttributes(new { style = "width:100%;" })
+                                                    .DataValueField("Value")
+                                                    .DataTextField("Text")
+                                                    .Events(events =>
+                                                    {
+                                                        events.Change("OnCountrySelectChange");
+                                                    })
+                                                    .DataSource(source =>
+                                                    {
+                                                        source.Read(read =>
+                                                        {
+                                                        });
+                                                    }))
+                                                                        <br />
+                                                                        @Html.ValidationMessageFor(model => model.CountryName)
+                                                                        @Html.HiddenFor(model => model.CountryID)
+                                                                        @Html.HiddenFor(model => model.CountryName)
+                                                                        <script type="text/javascript">
+                                                            //Country change event to get CountryName and CountryId
+
+                                                            function OnCountrySelectChange(e) {
+                                                                debugger;
+                                                                // $("#CountryID").val("");
+                                                                var dataItem = e.sender.dataItem();
+                                                                $("#CountryName").val(dataItem.Text);
+                                                                $("#CountryID").val(dataItem.Value);
+                                                                var CountryID = $("#CountryID").val();
+                                                                BindStates(CountryID,'@ServiceUrl');
+                                                            }
+                                                                        </script>
+                                                                    </div>
+                                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                        @Html.Label("State", new { style = "font-weight:normal;", @class = "labelColor" })<span style="color: Red;">*</span><br />
+
+                                                                        @(Html.Kendo().DropDownListFor(m => m.StateName)
+                                                    .Name("StateNameList")
+                                                    .OptionLabel("--Select--")
+                                                    .HtmlAttributes(new { style = "width:100%;" })
+                                                    .DataValueField("StateID")
+                                                    .DataTextField("StateName")
+                                                    .Events(events =>
+                                                    {
+                                                        events.Change("OnStateSelectChange");
+                                                    })
+                                                    .DataSource(source =>
+                                                    {
+                                                        source.Read(read =>
+                                                        {
+                                                        });
+                                                    }))
+                                                                        <br />
+                                                                        @Html.ValidationMessageFor(m => m.StateName)
+                                                                        @Html.HiddenFor(m => m.StateID)
+                                                                        @Html.HiddenFor(m => m.StateName)
+                                                                        <script type="text/javascript">
+                                                            //Country State event to get StateName and StateID
+                                                            function OnStateSelectChange(e) {
+                                                                debugger;
+                                                                $("#StateID").val("");
+                                                                var dataItem = e.sender.dataItem();
+                                                                $("#StateName").val(dataItem.StateName);
+                                                                $("#StateID").val(dataItem.StateID);
+                                                                var StateID = $("#StateID").val();
+                                                                BindCities(StateID,'@ServiceUrl',"2");
+                                                            }
+                                                                        </script>
+                                                                    </div>
+                                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                        @Html.Label("City", new { style = "font-weight:normal;", @class = "labelColor" })<span style="color: Red;">*</span><br />
+                                                                        @(Html.Kendo().DropDownListFor(m => m.CityName)
+                                                    .Name("CityNameList")
+                                                    .OptionLabel("--Select--")
+                                                    .HtmlAttributes(new { style = "width:100%;" })
+                                                    .DataValueField("CityID")
+                                                    .DataTextField("CityName")
+                                                    .Events(events =>
+                                                    {
+                                                        events.Change("OnCitySelectChange");
+                                                    })
+                                                    .DataSource(source =>
+                                                    {
+                                                        source.Read(read =>
+                                                        {
+                                                        });
+                                                    }))
+                                                                        <br />
+                                                                        @Html.ValidationMessageFor(m => m.CityName)
+                                                                        @Html.HiddenFor(m => m.CityID)
+                                                                        @Html.HiddenFor(m => m.CityName)
+                                                                        <script type="text/javascript">
+                                                            //City change event to get CityName and CityID
+                                                            function OnCitySelectChange(e) {
+                                                                debugger;
+                                                                $("#CityID").val("");
+                                                                var dataItem = e.sender.dataItem();
+                                                                $("#CityName").val(dataItem.CityName);
+                                                                $("#CityID").val(dataItem.CityID);
+                                                            }
+                                                                        </script>
+                                                                    </div>
+                                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                        @Html.Label("ZIP / Postal Code", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
+                                                                        @Html.TextBoxFor(m => m.Zip, new { style = "width:50%;Height:25px", maxlength = "5" })-
+                                                                        @Html.TextBoxFor(m => m.ZipCode, new { style = "width:40%;Height:25px", maxlength = "4" })
+                                                                        <br />
+                                                                        
+                                                                        @Html.ValidationMessageFor(m => m.Zip)
+                                                                        @Html.ValidationMessageFor(m => m.ZipCode)
+                                                                    </div>
+                                                                </div>
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <div class="col-xs-0 col-md-2 col-sm-0 col-lg-2">
+                                                                </div>
+                                                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                    <b> NOTE:</b>                                                                    
+                                                                    Person authorized by Employer ONLY should register the Employer with Physician Primary Care Plan.
+                                                                </div>
+                                                                <div class="col-xs-0 col-md-2 col-sm-0 col-lg-2">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                        </fieldset>
+
+                                        @*----------------End Employer Information Fieldset-----------------------------------*@
+                                        @*-------------------Contact Information Fieldset-------------------------------------*@
+                                        <fieldset id="fsMemberDetails" style="width:100%; margin-left: 0px;">
+                                            <br />
+                                            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Contact Information</b>:</legend>
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                                        <div class="row">
+                                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                @Html.Label("First Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                                @Html.TextBoxFor(model => model.FirstName, null, new { style = "width:100%;", maxlength = 50 })
+                                                                @Html.ValidationMessageFor(model => model.FirstName, "", new { @style = "color:red" })
+                                                            </div>
+                                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                @Html.Label("Last Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                                @Html.TextBoxFor(model => model.LastName, null, new { style = "width:100%;", maxlength = 50 })
+                                                                @Html.ValidationMessageFor(model => model.LastName, "", new { @style = "color:red" })
+                                                            </div>
+                                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                @Html.Label("Date of Birth", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                                @( Html.Kendo().DatePickerFor(model => model.DOB).Format("MM/dd/yyyy").Name("DOB").Value("").Max(DateTime.Today)
+                                                    .HtmlAttributes(new { PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text" })
+                                                    .Events(e => e.Change("DateSelectionChanged"))
+                                                                )
+                                                                @Html.ValidationMessageFor(model => model.DOB, "", new { @style = "color:red" })
+                                                            </div>
+                                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                @Html.Label("Salutation", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
+                                                                @Html.Hidden("UserSalutation")
+                                                                @(Html.Kendo().DropDownListFor(m => m.Salutation)
+                                                    .Name("Salutation").HtmlAttributes(new { style = "width:100%;" })
+                                                    .OptionLabel("--Select--")
+                                                    .Events(events =>
+                                                    {
+                                                        events.Change("onSelectSalutation");
+                                                    })
+                                                    .DataValueField("Value")
+                                                    .DataTextField("Text")
+                                                    .BindTo(new List<SelectListItem>()
+                                                    {
+                                                        new SelectListItem()
+                                                        {
+                                                             Text = "Dr.",
+                                                            Value = "1"
+                                                        },
+                                                        new SelectListItem()
+                                                        {
+                                                            Text = "Mr.",
+                                                            Value = "2"
+                                                        },
+                                                        new SelectListItem()
+                                                        {
+                                                            Text = "Mrs.",
+                                                            Value = "3"
+                                                        },
+                                                        new SelectListItem()
+                                                        {
+                                                            Text = "Ms.",
+                                                            Value = "4"
+                                                        },
+                                                        new SelectListItem()
+                                                        {
+                                                            Text = "Other",
+                                                            Value = "5"
+                                                        }
+                                                    })
+                                                                )<br />
+                                                                @Html.ValidationMessageFor(m => m.Salutation)
+                                                                @Html.Hidden("SalutationId")
+                                                                <script type="text/javascript">
+                                                                    //Salutation change event to get SalutationID and Salutation
+                                                                    function onSelectSalutation(e) {
+                                                                        $("#SalutationId").val("");
+                                                                        //var dataItem = this.dataItem(e.item.index());
+                                                                        var dataItem = e.sender.dataItem();
+                                                                        $("#Salutation").val(dataItem.Text);
+                                                                        $("#SalutationId").val(dataItem.Value);
+                                                                        $("#UserSalutation").val($("#Salutation").val());
+                                                                    }
+                                                                </script>
+                                                            </div>
+                                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3" style="display:none;">
+                                                                @Html.Label("Age", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                                @Html.TextBoxFor(model => model.Age, null, new { style = "width:100%;", maxlength = 20, disabled = "disabled", @readonly = "readonly" })
+                                                                @Html.ValidationMessageFor(model => model.Age, "", new { @style = "color:red" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3" style="display:none;">
+                                                                @Html.Label("Gender", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                                <label style="font-weight: normal;">
+                                                                    @(Html.RadioButton("Gender", 1, new
+                                                                {
+                                                                    id = "rbtnGenderMale"
+                                                                }))
+                                                                    Male
+                                                                </label>
+                                                                <label style="font-weight: normal; margin-left:20px">
+                                                                    @(Html.RadioButton("Gender", 2, new
+                                                                {
+                                                                    id = "rbtnGenderFemale"
+                                                                }))
+                                                                    Female
+                                                                </label>
+                                                                <br />@Html.ValidationMessageFor(m => m.Gender)
+                                                            </div>
+
+                                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                @Html.Label("Email", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                                @Html.TextBoxFor(model => model.Email, null, new { style = "width:100%;", maxlength = 50 })
+                                                                @Html.ValidationMessageFor(model => model.Email, "", new { @style = "color:red" })
+                                                            </div>
+                                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                @Html.Label("Mobile Number", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                                @Html.TextBoxFor(model => model.CountryCode, null, new { id = "txtCountry", style = "width:15%;", maxlength = 4 })
+                                                                @Html.Label("-", new { style = "font-weight:normal;", @class = "labelColor" })
+                                                                @Html.TextBoxFor(model => model.MobileNumber, null, new { id = "txtMobile", style = "width:75%;", maxlength = 10 })
+                                                                @Html.ValidationMessageFor(model => model.CountryCode, "", new { @style = "color:red" })
+                                                                @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @style = "color:red" })
+                                                            </div>
+                                                        </div>
+                                                       
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br />
+                                            </fieldset>
+                                            @*-------------------End Contact Information Fieldset-------------------------------------*@
+                                            @*---------------------------------Login Credentials Fieldset---------------------------*@
+                                        <fieldset id="fsLoginCredentials" style="width:100%; margin-left: 0px;border-color:#8B4513">
+                                            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Login Credentials</b>:</legend>
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                                        <div class="row">
+                                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                @Html.Label("Username", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                                @Html.TextBoxFor(model => model.UserName, null, new { style = "width:100%;", maxlength = 25, onchange = "ValidateUserName(this.value);" })
+                                                                @Html.ValidationMessageFor(model => model.UserName, "", new { @style = "color:red" })
+                                                                <span id="spnUserName" style="color:red"></span>
+                                                            </div>
+                                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                @Html.Label("Password", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                                @Html.TextBoxFor(model => model.Password, null, new { style = "width:100%;", maxlength = 20, type = "password", onkeyup = "chkPasswordStrength(this.value,document.getElementById('strength'),document.getElementById('error'))", onpaste = "return false;", oncopy = "return false", oncut = "return false" })
+                                                                @Html.ValidationMessageFor(model => model.Password, "", new { @style = "color:red" })
+                                                                <span id="strength" class="strength5"></span>
+                                                            </div>
+                                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                @Html.Label("Confirm Password", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                                @Html.TextBoxFor(model => model.ConfirmPassword, null, new { style = "width:100%;", maxlength = 20, type = "password", onchange = "validatePassword()", onpaste = "return false;", oncopy = "return false", oncut = "return false" })
+                                                                @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @style = "color:red" })
+                                                                <span id="PasswordErrorMsg" style="color:red"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                        @*---------------------------------End Login Credentials Fieldset---------------------------*@
+                                        @*----------------------------Two factor Authentication--------------------------------*@
+                                        
+                                        <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>2-factor authentication</b>:</legend>
+                                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                            @Html.CheckBox("chk2factor", false)&nbsp;<b>Enable 2-factor authentication</b>
+                                        </div>
+
+                                        <div class="row" id="divEnableFactor" style="display:none;">
+                                            <div class="col-xs-10 col-md-3 col-sm-6 col-lg-10">
+                                                <label style="font-weight: normal;">
+                                                    @(Html.RadioButton("ChkList", 1, new
+                                                    {
+                                                        id = "rbtnEverytime",
+                                                    }))
+                                                    Everytime
+                                                </label>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                <label style="font-weight: normal;">
+                                                    @(Html.RadioButton("ChkList", 2, new
+                                                    {
+                                                        id = "rbtnOnlySysChange"
+                                                    }))
+                                                    Only when system change
+                                                </label>
+                                                <br />
+                                            </div>
+
+                                            <br />
+                                        </div>
+                                        <br />
+                                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-8" id="divEnrollTermsConditions" style="display:block">
+                                            @Html.CheckBox("OneTime")<span>I Accept the <a  onclick="TermsCondition();" href="https://mylabscore.com/terms-conditions/">Terms and Conditions</a> for Employer Registration</span>
+                                            @*@Html.CheckBox("SecoundTime", new { onclick = "ChckSecoundTime();" })<span>
+                                                I Accept the  <a onclick="EnrollTermsCondition();">Terms & Conditions</a> for Member Registration with Enroll Plans
+                                            </span>*@
+                                            <br />
+                                        </div>
+                                        <div class="col-xs-12 col-md-12 col-sm-12" align="center">
+                                            <span id="spnCheckTermsErrorMessages" style="display:none; color:red !important; text-align:center;">Check Terms and Condition</span>
+                                        </div>
+                                        <br />
+                                            <div id="divOTPAfterLogin" style="display: none; position: relative" align="center">
+                                                <div class="Page_Dimmer">
+                                                </div>
+                                                <div class="PopupHolder" style="top: 30%;">
+                                                    <div class="pageheading_bar" style="width: 100%; height: 70%;">
+                                                        <div style="vertical-align: middle">
+                                                            <div style="vertical-align: middle">
+                                                                Physician Primary Care Plan<span style="float: right; color: Red;
+                                                                 margin-right: 5px;"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div style="border: Solid 1px #33CCEE; width: 100%;">
+                                                        <div align="center">
+                                                            <span id="lblUserMessagee" style="color: Green; font-family: Verdana,Tahoma; font-size: 15px;
+                        font-weight: bold; text-align: center; margin-top: 8px; margin-left: 3px; display: none;">
+                                                            </span><span id="lblUserMessag" style="color: red; font-family: Verdana,Tahoma; font-size: 15px;
+                        font-weight: bold; text-align: center; margin-top: 8px; margin-left: 3px; display: none;">
+                                                            </span>
+                                                        </div>
+                                                        <div align="center">
+                                                            <br />
+                                                            <button id="btnSuccessClose" title="Close" style="width: 80px;display:none;" class="button_blue" onclick="divPopUpSuccessClose();">
+                                                                OK
+                                                            </button>
+                                                            <button id="btnErrorClose" title="Close" style="width: 80px;display:none;" class="button_blue" onclick="btnPopUpErrorClose();">
+                                                                OK
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @*----------------------------End Two factor Authentication--------------------------------*@
+                                        </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <div class="form-group">
+                        <div class="row">
+                            <div align="center" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <button type="submit" id="btnSubmitClick" title="Submit" style="width: 100px;" class="button_blue" value="Submit">
+                                    Save
+                                </button>
+                                <button id="btnSubmit" title="Save" style="width: 100px; display:none;" class="button_blue" onclick="btnSubmitOrganizationDetails();">
+                                    Save
+                                </button>
+                                <button id="btnClose" title="Close" style="width: 100px" class="button_blue" onclick="btnCloseOrganizationDetails();">
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<section class="web-footer-section" style="line-height:36px">
+    <div class="container">
+        <div class="web-header-section col-lg-12 col-md-12 col-sm-12 col-xs-12 pt-10 pb-10">
+            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 text-center">
+                Copyright &copy; 2022 <a class="web-footer-link" href="https://groupnumber.com/" target="_blank">MyPhysicianPlan, Inc.</a>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 text-center">
+                <a class="web-footer-link" href="https://ihealthpay.co/terms-and-conditions/" target="_blank">Terms & Conditions</a>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 text-center">
+                <a class="web-footer-link" href="https://ihealthpay.co/privacy-policy/" target="_blank">Privacy Policy</a>
+            </div>
+        </div>
+    </div>
+</section>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#chk2factor").click(function () {
+            debugger;
+            if ($('#chk2factor').is(":checked") == true) {
+                $("#divEnableFactor").show();
+            } else if ($('#chk2factor').is(":checked") == false) {
+                $("#divEnableFactor").hide();
+            }
+        });
+        //var OrgType = @Convert.ToInt32(GlobalFunctions.TermsAndConditons.Organization);
+        //var UserType = @Convert.ToInt32(GlobalFunctions.TermsAndConditons.User);
+          //  $("#divCheckBoxOrgList").show();
+          //  $("#divCheckBoxUserList").show();
+           // GetUpdatedOrgLink(OrgType,"@ServiceUrl");
+           // GetUpdatedUserLink(UserType,"@ServiceUrl");
+
+
+
+     var EnrollPlanValidator = $("#divMain").kendoValidator().data("kendoValidator");
+      $("#btnSubmitClick").click(function (e) {
+          debugger;
+         if (EnrollPlanValidator.validate()) {
+             if ($('#OneTime').is(":checked") == true ) {
+                 $("#spnCheckTermsErrorMessages").hide();
+                    btnSubmitOrganizationDetails();
+                }
+           }
+            else {
+             $("#spnCheckTermsErrorMessages").show();
+                return false;
+            }
+        });
+
+       
+
+    });
+
+    function validatePassword() {
+        if (($("#Password").val()) == ($("#ConfirmPassword").val())) {
+            document.getElementById("PasswordErrorMsg").innerHTML = "";
+        }
+        else {
+            document.getElementById("PasswordErrorMsg").innerHTML = "Password and Confirm Password should be Match.";
+        }
+    }
+    function UpdatedTC() {
+        debugger;
+
+        var tempfilePath = $("#hdnOrganizationTAndConditions").val();
+        var Url = @*'@AttachedLink' + "" + tempfilePath;*@  "http://stageservices.labscore.co/AppFileDownload/FileDownload.aspx?FP=D:/SitesData/StageLabScore/Attachments/90/13092019013049Income Report - Complete snapshot (4).pdf";
+        window.open(Url, "_newtab");
+        window.open(Url, "_newtab").focus();
+
+    }
+    function TermsCondition() {
+        debugger;
+
+        var Url = "http://stageservices.labscore.co/AppFileDownload/FileDownload.aspx?FP=D:/SitesData/StageLabScore/Attachments/90/13092019013049Income Report - Complete snapshot (4).pdf";
+        window.open(Url, "_newtab");
+        window.open(Url, "_newtab").focus();
+    }
+    function TermsConditionUser() {
+        debugger;
+        document.getElementById("ckhUser").disabled = false;
+        var Url = "http://stageservices.labscore.co/AppFileDownload/FileDownload.aspx?FP=D:/SitesData/StageLabScore/Attachments/90/13092019013049Income Report - Complete snapshot (4).pdf";
+        window.open(Url, "_newtab");
+        window.open(Url, "_newtab").focus();
+    }
+    function ChckOneTime() {
+        if ($('#ckhOrg').is(":checked") == true && $('#ckhUser').is(":checked")) {
+            $("#spnCheckErrorMessages").hide();
+        }
+        else {
+            $("#spnCheckErrorMessages").show();
+
+        }
+
+    }
+    function ChckSecoundTime() {
+        debugger;
+        if ($('#SecoundTime').is(":checked") == true) {
+            $("#spnCheckTermsErrorMessages").hide();
+        }
+        else {
+            $("#spnCheckTermsErrorMessages").show();
+        }
+    }
+    function UpdatedTC() {
+        debugger;
+
+        var tempfilePath = $("#hdnOrganizationTAndConditions").val();
+        var Url = @*'@AttachedLink' + "" + tempfilePath;*@  "http://stageservices.labscore.co/AppFileDownload/FileDownload.aspx?FP=D:/SitesData/StageLabScore/Attachments/90/13092019013049Income Report - Complete snapshot (4).pdf";
+        window.open(Url, "_newtab");
+        window.open(Url, "_newtab").focus();
+
+    }
+    function UpdatedUserTC() {
+        debugger;
+        document.getElementById("chkAcceptUsers").disabled = false;
+        var tempfilePath = $("#hdnUserTAndConditions").val();
+        var Url = @*'@AttachedLink' + "" + tempfilePath;*@  "http://stageservices.labscore.co/AppFileDownload/FileDownload.aspx?FP=D:/SitesData/StageLabScore/Attachments/90/13092019013049Income Report - Complete snapshot (4).pdf";
+        window.open(Url, "_newtab");
+        window.open(Url, "_newtab").focus();
+
+    }
+    function btnPopUpErrorClose() {
+        $("#divOTPAfterLogin").hide();
+    }
+    function btnCloseOrganizationDetails() {
+        var getUrl = '@Url.Action("OrganizationLogin", "Organization")';
+        window.location = getUrl;
+    }
+
+    function divPopUpSuccessClose() {
+        var getUrl = '@Url.Action("OrganizationLogin", "Organization")';
+        window.location = getUrl;
+    }
+
+    function btnSubmitOrganizationDetails() {
+        debugger;
+        var jsModel = {};
+
+        jsModel.Type = 1;
+        
+        jsModel.EmployerName = $("#EmployerName").val();
+        jsModel.FirstName = $("#FirstName").val();
+        jsModel.LastName = $("#LastName").val();
+        jsModel.DOB = $("#DOB").val();
+        jsModel.Age = $("#Age").val();
+        var rbtnMale = $('input[id=rbtnGenderMale]:checked').val();
+        if (rbtnMale == 1)
+            jsModel.Gender = rbtnMale;
+        var rbtnFEM = $('input[id=rbtnGenderFemale]:checked').val();
+        if (rbtnFEM == 2)
+            jsModel.Gender = rbtnFEM;
+        jsModel.SalutationId = $("#SalutationId").val();       
+        jsModel.Salutation = $("#UserSalutation").val();
+        jsModel.Email = $("#Email").val();
+        jsModel.CountryCode = $("#txtCountry").val();
+        jsModel.MobileNumber = $("#txtMobile").val();
+        jsModel.CountryName = $("#CountryName").val();
+        jsModel.CountryId = $("#CountryID").val();
+        jsModel.StateName = $("#StateName").val();
+        jsModel.StateId = $("#StateID").val();
+        jsModel.CityName = $("#CityName").val();
+        jsModel.CityId = $("#CityID").val();
+        if ($("#ZipCode").val() == "") {
+            jsModel.Zip = $("#Zip").val();
+        }
+        else {
+            jsModel.Zip = $("#Zip").val() + "-" + $("#ZipCode").val();
+        }
+
+
+        jsModel.UserName = $("#UserName").val();
+        jsModel.Password = $("#Password").val();
+        jsModel.ConfirmPassword = $("#ConfirmPassword").val();
+        if ($('#chk2factor').is(":checked") == true) {
+            jsModel.IsTwofactorAuthentication = true;
+            jsModel.PreferredIP = '@Session["SystemIPAddress"]';
+            var rbtnEvery = $('input[id=rbtnEverytime]:checked').val();
+            if (rbtnEvery == 1)
+                jsModel.TwoFactorType = rbtnEvery;
+            var rbtnSystem = $('input[id=rbtnOnlySysChange]:checked').val();
+            if (rbtnSystem == 2)
+                jsModel.TwoFactorType = rbtnSystem;
+        }
+        else {
+            jsModel.IsTwofactorAuthentication = false;
+            jsModel.TwoFactorType = "0";
+            jsModel.PreferredIP = "";
+        }
+
+        EmployerRegistration(jsModel, '@ServiceUrl');
+    }
+
+    function chkPasswordStrength(txtPassword, strenghtMsg, errorMsg) {
+        var desc = new Array();
+        desc[0] = "Very Weak";
+        desc[1] = "Weak";
+        desc[2] = "Average";
+        desc[3] = "Strong";
+        desc[4] = "Strong";
+        desc[5] = "Strong";
+
+        var score = 0;
+
+        //if txtPassword bigger than 6 give 1 point
+        if (txtPassword.length > 6) score++;
+
+        //if txtPassword has both lower and uppercase characters give 1 point
+        if ((txtPassword.match(/[a-z]/)) && (txtPassword.match(/[A-Z]/))) score++;
+
+        //if txtPassword has at least one number give 1 point
+        if (txtPassword.match(/\d+/)) score++;
+
+        //if txtPassword has at least one special caracther give 1 point
+        if (txtPassword.match(/.[!,#,$,%,^,&,*,?,_,~,-,(,)]/)) score++;
+
+        //if txtPassword bigger than 12 give another 1 point
+        if (txtPassword.length > 12) score++;
+
+        strenghtMsg.innerHTML = desc[score];
+
+        strenghtMsg.className = "strength" + score;
+    }
+
+    function somescript() {
+        debugger;
+        var Url = "http://stageservices.labscore.co/AppFileDownload/FileDownload.aspx?FP=D:\\SitesData\\StageLabScore\\Attachments\90\13092019013049Income%20Report%20-%20Complete%20snapshot%20(4).pdf";
+        window.open(Url, "_newtab");
+        window.open(Url, "_newtab").focus();
+
+
+
+    }
+</script>

@@ -1,0 +1,110 @@
+﻿@model PPCP07302018.Models.Admin.AddPlans
+    @using System.Web.Mvc.Html
+    @using Kendo.Mvc.UI
+    @using System.Web.Mvc
+
+
+@{
+    // Created By : Ragini
+    //Created On : 18-09-2019
+    ViewBag.Title = "ViewPlans";
+    Layout = "~/Views/Shared/WUCAdminLeftMenu.cshtml";
+    var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
+}
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/KendoScripts")
+@Scripts.Render("~/bundles/custom-validator")
+@Styles.Render("~/bundles/Kendocss")
+@Scripts.Render("~/bundles/ViewPlansScriptFiles")
+
+
+<script>
+    $(document).ready(function () {
+        BindPlanDetails("@ServiceUrl","3");//For Getting All Plan Details
+   });
+    function EditOptions(PlanID) {
+        $("#PlanID").val(PlanID);
+        var getUrl = '@Url.Action("AddPlans", "Admin")';
+        var uurl = getUrl + "?PlanID=" + PlanID;
+        window.location = uurl;
+    }
+   
+  
+</script>
+
+
+<div id="divPlanDetails">
+    <div class="pageheading_bar" align="center">
+        <b>Plans</b>
+    </div>
+    <div class="Panel_bg" id="divMainPlan">
+        <div id="divSelectPlan" style="display:block;">
+            <div class="row Panel_bg_Sub">
+                <br />
+                <div align="right">
+                    <div class="row">
+                        @*<div class="col-xs-0 col-md-10 col-sm-0 col-lg-9"></div>*@
+                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                            <button class="button_blue" type="submit" id="btnAddPlans" title="Plans" style="width: 250px;" value="Plans" onclick="@("window.location.href='" + @Url.Action("AddPlans", "Admin") + "'");">
+                                Add New Plan
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                            @Html.Hidden("RedirectTo", Url.Action("ViewPlans", "Admin"))
+                            @(Html.Kendo().Grid<PPCP07302018.Models.Admin.AddPlans>
+                                                    ()
+                                                    .Name("ViewPlanDetailsGrid")
+                                                    .Columns(columns =>
+                                                    {
+                                                        columns.Bound(p => p.PlanName).Title("Plan Name").Filterable(true).Width(150);
+                                                        columns.Bound(p => p.FromAge).ClientTemplate("#: FromAge #"+"Y " + "-" +" #: ToAge #"+ "Y").Title("Eligibility").Filterable(false).Width(80);
+                                                        columns.Bound(p => p.EnrollFee).Title("Enrollment Fee").Filterable(false).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                        columns.Bound(p => p.MonthlyFee).Title("Plan Fee").Filterable(true).Width(70).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                        columns.Bound(p => p.VisitFee).Title("Co Pay").Filterable(false).Width(70).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                        columns.Bound(p => p.EffectiveDate).Title("Effective Date(MM/DD/YYYY)").Filterable(false).Width(100).ClientTemplate("#= kendo.toString(kendo.parseDate(EffectiveDate,'yyyy-MM-dd'), '" + "MM-dd-yyyy" + "') #").HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                        columns.Bound(p => p.GenderID).ClientTemplate("#if(GenderID==1){ #Male#}else if(GenderID==2){ #Female#}else{ #Male,Female #}#").Title("Available To").Filterable(false).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                        //   columns.Bound(p => p).ClientTemplate(
+                                                        //"<a onclick='EditOptions(#=PlanID#);' <span style='cursor:pointer'>Modify</a>").Title("Action").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(50);
+                                                    })
+                                                    .Scrollable()
+                                                    .Pageable()
+                                                    .Filterable()
+                                                    .AutoBind(false)
+                                                    .HtmlAttributes(new { })
+                                                    .Selectable()
+                                                    .DataSource(dataSource => dataSource
+                                                    .Ajax()
+                                                    .PageSize(5)
+                                                    .ServerOperation(false)))
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

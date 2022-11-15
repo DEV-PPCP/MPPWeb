@@ -1,0 +1,433 @@
+﻿@model PPCP07302018.Models.Organization.PlansCreation
+@using System.Web.Mvc.Html
+@using Kendo.Mvc.UI
+@using System.Web.Mvc
+@{
+    Layout = "~/Views/Shared/WUCOrgLeftMenu.cshtml";
+    var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
+}
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/KendoScripts")
+@Scripts.Render("~/bundles/custom-validator")
+@Styles.Render("~/bundles/Kendocss")
+@Scripts.Render("~/bundles/OrganizationScriptFiles")
+@Styles.Render("~/bundles/Organizationcssfiles")
+
+<style>
+     .loadingSpinner {
+        position: absolute;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background: rgba( 255, 255, 255, .8 ) url('../../Images/loading-spinner-red.gif') 50% 50% no-repeat;
+    }
+</style>
+<div class="pageheading_bar" align="center">
+    <b>Plans Creation</b>
+</div>
+<div class="Panel_bg" id="divMain">
+    <div class="form-group">
+        <div class="row Panel_bg_Sub">
+            <b>Plan Details</b><br />
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <br />
+                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                    @Html.Label("Plan Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                    @Html.TextBoxFor(model => model.PlanName, null, new { style = "width:96%;", maxlength = 40 })
+                    @Html.ValidationMessageFor(model => model.PlanName, "", new { @style = "color:red" })
+                </div>
+                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                    @Html.Label("Plan Fee ($)", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                    @Html.TextBoxFor(model => model.PlanFee, null, new { style = "width:96%;", maxlength = 10 })
+                    @Html.ValidationMessageFor(model => model.PlanFee, "", new { @style = "color:red" })
+                </div>
+                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                    @Html.Label("Plan Start Date", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                    @( Html.Kendo().DatePickerFor(model => model.PlanStartDate).Format("MM/dd/yyyy").Name("PlanStartDate").Value(DateTime.Now).Min(DateTime.Today)
+                                                    .HtmlAttributes(new { PlaceHolder = "MM/DD/YYYY", style = "width:96%;", Maxlength = "10", type = "text" })
+                    )
+                    @Html.ValidationMessageFor(model => model.PlanStartDate, "", new { @style = "color:red" })
+                </div>
+                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                    @Html.Label("Plan End Date", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                    @( Html.Kendo().DatePickerFor(model => model.PlanEndDate).Format("MM/dd/yyyy").Name("PlanEndDate").Value(DateTime.Now).Min(DateTime.Today)
+                                                    .HtmlAttributes(new { PlaceHolder = "MM/DD/YYYY", style = "width:96%;", Maxlength = "10", type = "text" })
+                    )
+                    @Html.ValidationMessageFor(model => model.PlanEndDate, "", new { @style = "color:red" })
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <br />
+                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                    @Html.Label("Visit Fee ($)", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                    @Html.TextBoxFor(model => model.OfficeVisitFee, null, new { style = "width:96%;", maxlength = 10 })
+                    @Html.ValidationMessageFor(model => model.OfficeVisitFee, "", new { @style = "color:red" })
+                </div>
+                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                    @Html.Label("Plan Tenure", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
+                    @Html.Hidden("hfPlanTenure")
+                    @(Html.Kendo().DropDownListFor(m => m.PlanTenure)
+                                                    .Name("PlanTenure").HtmlAttributes(new { style = "width:96%;" })
+                                                    .OptionLabel("--Select--")
+                                                    .Events(events =>
+                                                    {
+                                                        events.Select("onSelectPlanTenure").Change("onChangePlanTenure");
+                                                    })
+                                                    .DataValueField("Value")
+                                                    .DataTextField("Text")
+                                                    .BindTo(new List<SelectListItem>()
+                                                    {
+                                                        new SelectListItem()
+                                                        {
+                                                             Text = "1 Month",
+                                                            Value = "1"
+                                                        },
+                                                        new SelectListItem()
+                                                        {
+                                                            Text = "3 Months",
+                                                            Value = "2"
+                                                        },
+                                                        new SelectListItem()
+                                                        {
+                                                            Text = "6 Months",
+                                                            Value = "3"
+                                                        },
+                                                        new SelectListItem()
+                                                        {
+                                                            Text = "12 Months",
+                                                            Value = "4"
+                                                        }
+                                                    })
+                    )<br />
+                    @Html.ValidationMessageFor(m => m.PlanTenure)
+                    @Html.Hidden("hfPlanTenureID")
+                    <script type="text/javascript">
+                        function onSelectPlanTenure(e) {
+                            $("#hfPlanTenureID").val("");
+                            var dataItem = this.dataItem(e.item.index());
+                            $("#PlanTenure").val(dataItem.Text);
+                            $("#hfPlanTenureID").val(dataItem.Value);
+                            $("#hfPlanTenure").val($("#PlanTenure").val());
+                        }
+
+                        function onChangePlanTenure() {
+                            var tentureType = $("#hfPlanTenureID").val();
+                            if (tentureType == "1") {
+                                $("#dvchkMonthlyPayment").show();
+                                $("#dvchkQuaterlyPayment").hide();
+                                $("#dvchkHalfYearlyPayment").hide();
+                                $("#dvchkOneTimePayment").hide();
+                            }
+                            else if (tentureType == "2") {
+                                $("#dvchkMonthlyPayment").show();
+                                $("#dvchkQuaterlyPayment").hide();
+                                $("#dvchkHalfYearlyPayment").hide();
+                                $("#dvchkOneTimePayment").show();
+                            }
+                            else if (tentureType == "3") {
+                                $("#dvchkMonthlyPayment").show();
+                                $("#dvchkQuaterlyPayment").show();
+                                $("#dvchkHalfYearlyPayment").hide();
+                                $("#dvchkOneTimePayment").show();
+                            }
+                            else if (tentureType == "4") {
+                                $("#dvchkMonthlyPayment").show();
+                                $("#dvchkQuaterlyPayment").show();
+                                $("#dvchkHalfYearlyPayment").show();
+                                $("#dvchkOneTimePayment").show();
+                            }
+                            else {
+                                $("#dvchkMonthlyPayment").show();
+                                $("#dvchkQuaterlyPayment").show();
+                                $("#dvchkHalfYearlyPayment").show();
+                                $("#dvchkOneTimePayment").show();
+                            }
+                        }
+                    </script>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div id="divOrganizationList"></div>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <br />
+                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                    @Html.Label("Plan Category", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
+                    @Html.Hidden("hfPlanCategory")
+                    @(Html.Kendo().DropDownListFor(m => m.PlanCategory)
+                                                    .Name("PlanCategory").HtmlAttributes(new { style = "width:96%;" })
+                                                    .OptionLabel("--Select--")
+                                                    .Events(events =>
+                                                    {
+                                                        events.Select("onSelectPlanCategory");
+                                                    })
+                                                    .DataValueField("Value")
+                                                    .DataTextField("Text")
+                                                    .BindTo(new List<SelectListItem>()
+                                                    {
+                                                        new SelectListItem()
+                                                        {
+                                                             Text = "Domestic",
+                                                            Value = "1"
+                                                        },
+                                                        new SelectListItem()
+                                                        {
+                                                            Text = "International",
+                                                            Value = "2"
+                                                        }
+                                                    })
+                    )<br />
+                    @Html.ValidationMessageFor(m => m.PlanCategory)
+                    @Html.Hidden("hfPlanCategoryID")
+                    <script type="text/javascript">
+                        function onSelectPlanCategory(e) {
+                            $("#hfPlanCategoryID").val("");
+                            var dataItem = this.dataItem(e.item.index());
+                            $("#PlanCategory").val(dataItem.Text);
+                            $("#hfPlanCategoryID").val(dataItem.Value);
+                            $("#hfPlanCategory").val($("#PlanCategory").val());
+                        }
+                    </script>
+                </div>
+                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                    @Html.Label("Plan Type", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
+                    @Html.Hidden("hfPlanType")
+                    @(Html.Kendo().DropDownListFor(m => m.PlanType)
+                                                    .Name("PlanType").HtmlAttributes(new { style = "width:96%;" })
+                                                    .OptionLabel("--Select--")
+                                                    .Events(events =>
+                                                    {
+                                                        events.Select("onSelectPlanType");
+                                                    })
+                                                    .DataValueField("Value")
+                                                    .DataTextField("Text")
+                                                    .BindTo(new List<SelectListItem>()
+                                                    {
+                                                        new SelectListItem()
+                                                        {
+                                                             Text = "Individual Plan",
+                                                            Value = "1"
+                                                        },
+                                                        new SelectListItem()
+                                                        {
+                                                            Text = "Family Plan",
+                                                            Value = "2"
+                                                        }
+                                                    })
+                    )<br />
+                    @Html.ValidationMessageFor(m => m.PlanType)
+                    @Html.Hidden("hfPlanTypesID")
+                    <script type="text/javascript">
+                        function onSelectPlanType(e) {
+                            $("#hfPlanTypesID").val("");
+                            var dataItem = this.dataItem(e.item.index());
+                            $("#PlanType").val(dataItem.Text);
+                            $("#hfPlanTypesID").val(dataItem.Value);
+                            $("#hfPlanType").val($("#PlanType").val());
+                        }
+                    </script>
+                </div>
+                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                    @Html.Label("Organization", new { style = "font-weight:normal;", @class = "classlabel" })<br />
+                    @Html.Hidden("hfOrganizations")
+                    @(Html.Kendo().DropDownListFor(m => m.OrganizationName)
+                                                .Name("OrganizationName")
+                                                .OptionLabel("--Select--")
+                                                .HtmlAttributes(new { style = "width:96%;" })
+                                                .DataValueField("OrganizationID")
+                                                .DataTextField("OrganizationName")
+                                                .Events(events =>
+                                                {
+                                                    events.Select("onSelectOrganization");
+                                                })
+                                                .DataSource(source =>
+                                                {
+                                                    source.Read(read =>
+                                                    {
+                                                    });
+                                                }))<br />
+                    @Html.ValidationMessageFor(m => m.OrganizationName)
+                    @Html.Hidden("hfOrganizationsID")
+                    <script type="text/javascript">
+                        function onSelectOrganization(e) {
+                            $("#hfOrganizationsID").val("");
+                            var dataItem = this.dataItem(e.item.index());
+                            $("#OrganizationName").val(dataItem.Text);
+                            $("#hfOrganizationsID").val(dataItem.Value);
+                            $("#hfOrganizations").val($("#OrganizationName").val());
+                            alert($("#OrganizationName").val() + ";" + $("#hfOrganizationsID").val());
+                            alert(dataItem.Text + ";" + dataItem.Value);
+                        }
+                    </script>
+                </div>
+                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                    @Html.Label("Primary URL", new { style = "font-weight:normal;", @class = "" })<br />
+                    @Html.TextBoxFor(model => model.PrimaryUrl, null, new { style = "width:96%;", maxlength = 40 })
+                    @Html.ValidationMessageFor(model => model.PrimaryUrl, "", new { @style = "color:red" })
+                </div>
+            </div>
+        </div>
+        <div class="row Panel_bg_Sub">
+            <b>Payment Schedule</b><br />
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <br />
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3" id="dvchkMonthlyPayment">
+                        @( Html.CheckBox("PaymentMonthly", new { style = "font-weight:normal;", @class = "", id = "chkMonthlyPayment" }))
+                        @Html.Label("Monthly", new { style = "font-weight:normal;", @class = "" })
+                    </div>
+                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3" id="dvchkQuaterlyPayment">
+                        @( Html.CheckBox("PaymentQuaterly", new { style = "font-weight:normal;", @class = "", id = "chkQuaterlyPayment" }))
+                        @Html.Label("Quarterly", new { style = "font-weight:normal;", @class = "" })
+                    </div>
+                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3" id="dvchkHalfYearlyPayment">
+                        @( Html.CheckBox("PaymentHalfYearly", new { style = "font-weight:normal;", @class = "", id = "chkHalfYearlyPayment" }))
+                        @Html.Label("Half Yearly", new { style = "font-weight:normal;", @class = "" })
+                    </div>
+                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3" id="dvchkOneTimePayment">
+                        @( Html.CheckBox("PaymentOneTime", new { style = "font-weight:normal;", @class = "", id = "chkOneTimePayment" }))
+                        @Html.Label("One Time", new { style = "font-weight:normal;", @class = "" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row Panel_bg_Sub">
+            <b>Discount</b><br />
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <br />
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="col-xs-12 col-md-4 col-sm-6 col-lg-4">
+                        @( Html.CheckBox("PracticeAllowed", new { style = "font-weight:normal;", @class = "", id = "chkPracticeAllowed" }))
+                        @Html.Label("Practice Allowed", new { style = "font-weight:normal;", @class = "" })
+                    </div>
+                    <div class="col-xs-12 col-md-4 col-sm-6 col-lg-4">
+                        @( Html.CheckBox("EmployersAllowed", new { style = "font-weight:normal;", @class = "", id = "chkEmployersAllowed" }))
+                        @Html.Label("Employers Allowed", new { style = "font-weight:normal;", @class = "" })
+                    </div>
+                    <div class="col-xs-12 col-md-4 col-sm-6 col-lg-4">
+                        @( Html.CheckBox("AgentAllowed", new { style = "font-weight:normal;", @class = "", id = "chkAgentAllowed" }))
+                        @Html.Label("Broker/Agent Allowed", new { style = "font-weight:normal;", @class = "" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row Panel_bg_Sub">
+            <b>Plan Description</b><br />
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <br />
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                        @Html.Label("Plan Description", new { style = "font-weight:normal;", @class = "" })<br />
+                        @Html.TextAreaFor(model => model.PlanDescription, new
+                   {
+                       cols = "28",
+                       style = "width:100%;height:50px;margin-left:5px;",
+                       @maxlength = "180"
+                   })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row Panel_bg_Sub">
+            <b>Plan Features</b><br />
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <br />
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                        @Html.Label("Plan Features", new { style = "font-weight:normal;", @class = "" })<br />
+                        @Html.TextAreaFor(model => model.PlanFeatures, new
+                   {
+                       cols = "28",
+                       style = "width:100%;height:50px;margin-left:5px;",
+                       @maxlength = "180"
+                   })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <br />
+            <div align="center" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <br />
+                <button type="submit" id="btnSubmitClick" title="Submit" style="width: 100px;" class="button_blue" value="Submit">
+                    Save
+                </button>
+                <button id="btnSubmit" title="Save" style="width: 100px; display:none;" class="button_blue" onclick="btnClearPlanDetails();">
+                    Clear
+                </button>
+                <button id="btnClose" title="Close" style="width: 100px" class="button_blue" onclick="btnClosePlanDetails();">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        BindPPCPOrganizations("@ServiceUrl");
+
+        var PlanCreationValidator = $("#divMain").kendoValidator().data("kendoValidator");
+        $("#btnSubmitClick").click(function (e) {
+
+            if (PlanCreationValidator.validate()) {
+                btnSubmitPlanCreationDetails();
+            }
+            else {
+                return false;
+            }
+        });
+    });
+
+    function btnClosePlanDetails() {
+
+    }
+
+    function btnClearPlanDetails() {
+
+    }
+
+    function btnSubmitPlanCreationDetails() {
+        var jsModel = {};
+
+        jsModel.PlanName = $("#PlanName").val();
+        jsModel.PlanCode = $("#PlanCode").val();
+        jsModel.PlanFee = $("#PlanFee").val();
+        jsModel.MonthlyFee = $("#MonthlyFee").val();
+        jsModel.OfficeVisitFee = $("#OfficeVisitFee").val();
+        jsModel.EffectiveDate = $("#EffectiveDate").val();
+        var rbtnMale = $('input[id=mal_g]:checked').val();
+        if (rbtnMale == 1)
+            jsModel.Gender = rbtnMale;
+        var rbtnFEM = $('input[id=fem_g]:checked').val();
+        if (rbtnFEM == 2)
+            jsModel.Gender = rbtnFEM;
+        var rbtnBOT = $('input[id=bot_g]:checked').val();
+        if (rbtnBOT == 3)
+            jsModel.Gender = rbtnBOT;
+        jsModel.PlanTenureID = $("#hfPlanTenureID").val();
+        jsModel.PlanTenure = $("#hfPlanTenure").val();
+        jsModel.PlanCategory = $("#hfPlanCategory").val();
+        jsModel.PlanCategoryID = $("#hfPlanCategoryID").val();
+        jsModel.PlanType = $("#hfPlanType").val();
+        jsModel.PlanTypeID = $("#hfPlanTypesID").val();
+        jsModel.OrganizationName = $("#hfOrganizations").val();
+        jsModel.OrganizationID = $("#hfOrganizationsID").val();
+        jsModel.PrimaryUrl = $("#PrimaryUrl").val();
+        jsModel.IsMonthlyPayment = $("#chkMonthlyPayment").val();
+        jsModel.IsQuaterlyPayment = $("#chkQuaterlyPayment").val();
+        jsModel.IsHalfYearlyPayment = $("#chkHalfYearlyPayment").val();
+        jsModel.chkOneTimePayment = $("#chkOneTimePayment").val();
+        jsModel.IsPracticeAllowed = $("#chkPracticeAllowed").val();
+        jsModel.IsEmployersAllowed = $("#chkEmployersAllowed").val();
+        jsModel.IsAgentAllowed = $("#chkAgentAllowed").val();
+        jsModel.PlanDescription = $("#PlanDescription").val();
+        jsModel.PlanFeatures = $("#PlanFeatures").val();
+
+        SavePlanDetails(jsModel);
+    }
+</script>

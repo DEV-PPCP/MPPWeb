@@ -1,0 +1,169 @@
+﻿@model PPCP07302018.Models.Organization.OrganizationPlansDetails
+@using System.Web.Mvc.Html
+@using Kendo.Mvc.UI
+@using System.Web.Mvc
+
+
+@{
+    ViewBag.Title = "PlanEnroll";
+    Layout = "~/Views/Shared/WUCOrgLeftMenu.cshtml";
+    var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
+}
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/KendoScripts")
+@Scripts.Render("~/bundles/custom-validator")
+@Styles.Render("~/bundles/Kendocss")
+@Scripts.Render("~/bundles/SubscribePlanScriptFiles")   @*For member script files*@
+@Styles.Render("~/bundles/Membercssfiles")       @*For member css files*@
+
+<style>
+     .loadingSpinner {
+        position: absolute;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background: rgba( 255, 255, 255, .8 ) url('../../Images/loading-spinner-red.gif') 50% 50% no-repeat;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        BindSubscribeDetails("@ServiceUrl");
+    });
+    
+    function onDataBound() {
+        var grid = this;
+        $("[id='ViewSubscribePlanDetailsGrid']").change(function (e) {
+            var row = $(e.target).closest("tr");
+            var dataItem = grid.dataItem(row);
+            grid.select(row);
+            document.getElementById("spnSelectedPlan").innerHTML = dataItem.PlanID;
+        });
+
+        }
+</script>
+<div class="" style="display:none">
+    @Html.Hidden("RedirectTo", Url.Action("SubscribePlans", "Organization"))
+    @(Html.Kendo().Grid<PPCP07302018.Models.Organization.OrganizationPlansDetails>
+                                                    ()
+                                                    .Name("ViewSubscribePlanDetailsGrid")
+                                                    .Events(e => e.DataBound("onDataBound"))
+                                                    .Columns(columns =>
+                                                    {
+                                                        columns.Bound(p => p.PlanName).Title("Plan Name").Filterable(true).Width(130);
+                                                        columns.Bound(p => p.FromAge).ClientTemplate("#: FromAge #" + "Y " + "-" + " #:ToAge #" + "Y").Title("Eligibility").Filterable(false).Width(100);
+                                                        columns.Bound(p => p.EnrollFee).Title("Enrollment Fee").Filterable(false).Width(90);
+                                                        columns.Bound(p => p.MonthlyFee).Title("Monthly Fee").Filterable(true).Width(90);
+                                                        columns.Bound(p => p.VisitFee).Title("Visit Fee").Filterable(false).Width(100);
+                                                        //columns.Bound(p => p.EffectiveDate).Title("Effective Date(MM/DD/YYYY)").Filterable(false).Width(90);
+                                                        columns.Bound(p => p.GenderID).ClientTemplate("#: GenderID #").Title("Available To").Filterable(false).Width(80);
+
+                                                        columns.Bound(p => p).ClientTemplate(
+                                                     "<a onclick='EditOptions(#=PlanID#);' name='PlanID' <span style='cursor:pointer'>Enroll Plan</a>").Title("Action").Width(150).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(50);
+                                                    })
+                                                    .Scrollable()
+                                                    .Pageable()
+                                                    .Filterable()
+                                                    .AutoBind(false)
+                                                    .HtmlAttributes(new { })
+                                                    .Selectable()
+                                                    .DataSource(dataSource => dataSource
+                                                    .Ajax()
+                                                    .PageSize(5)
+                                                    .ServerOperation(false)))
+</div>
+<div id="divPlanEnrollDetails">
+    <div class="pageheading_bar" align="center">
+        <b>Plan Information</b>
+    </div>
+    <div class="Panel_bg" id="divMainPlan">
+        <div id="divEnrollPlan" style="display:block;">
+            <div class="row Panel_bg_Sub">
+                <fieldset id="fsPlanInfo" class="Panel_bg_Sub" style="width:1000px;margin-left:20px;border: 1px solid silver;padding: 11px 10px 0px 10px;">
+                    <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Plan Information</b>:</legend>
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12 col-lg-offset-1">
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-4">
+                                        <span><b>Plan Name</b></span>
+                                        <br />
+                                        <span id="spnSelectedPlan"></span>
+                                    </div>
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-4 col-lg-offset-1">
+                                        <span><b>Plan Type</b></span>
+                                        <br />
+                                        <span id="spnSelectedPlan"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-4">
+                                        <span><b>Eligibility</b></span>
+                                        <br />
+                                        <span id="spnSelectedPlan"></span>
+                                    </div>
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-4 col-lg-offset-1">
+                                        <span><b>Enrollment Fee</b></span>
+                                        <br />
+                                        <span id="spnSelectedPlan"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-4">
+                                        <span><b>Visit Fee (Co-Pay)</b></span>
+                                        <br />
+                                        <span id="spnSelectedPlan"></span>
+                                    </div>
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-4 col-lg-offset-1">
+                                        <span><b>Plan Amount</b></span>
+                                        <br />
+                                        <span id="spnSelectedPlan"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-4">
+                                        <span><b>Plan Duration</b></span>
+                                        <br />
+                                        <span id="spnSelectedPlan"></span>
+                                    </div>
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-4 col-lg-offset-1">
+                                        <span><b>Available To</b></span>
+                                        <br />
+                                        <span id="spnSelectedPlan"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-4">
+                                        <span><b>Effective Date</b></span>
+                                        <br />
+                                        <span id="spnSelectedPlan"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-4">
+                                        <span><b>Plan Description</b></span>
+                                        <br />
+                                        <span id="spnSelectedPlan"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </fieldset>
+
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+

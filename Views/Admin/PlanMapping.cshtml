@@ -1,0 +1,431 @@
+﻿@model PPCP07302018.Models.Admin.PlanMapping
+@using System.Web.Mvc.Html
+@using Kendo.Mvc.UI
+@using System.Web.Mvc
+@{
+    ViewBag.Title = "AddPlans";
+    Layout = "~/Views/Shared/WUCAdminLeftMenu.cshtml";
+    var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
+
+}
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/KendoScripts")
+@Scripts.Render("~/bundles/custom-validator")
+@Styles.Render("~/bundles/Kendocss")
+@Scripts.Render("~/bundles/PlanMappingScriptFiles")
+@Styles.Render("~/bundles/Organizationcssfiles")       @*For member css files*@
+
+<style>
+    /*#PlanType_validationMessage {
+        display: none !important;
+    }
+
+    #MemberPlanType_validationMessage {
+        display: none !important;
+    }*/
+
+    #OrganizationID_validationMessage {
+        display: none !important;
+    }
+
+    #PlanMemberType_validationMessage {
+        display: none !important;
+    }
+
+    #PlanTypeList_validationMessage {
+        position: static;
+        display: inline-block;
+        border-width: 1px;
+        padding: 2px 5px 1px 6px;
+        width: 230px;
+        height: 20px;
+        font-size: 14px;
+    }
+
+    #MemberPlanTypeList_validationMessage {
+        position: static;
+        display: inline-block;
+        border-width: 1px;
+        padding: 2px 5px 1px 6px;
+        width: 230px;
+        height: 20px;
+        font-size: 14px;
+    }
+
+    #TenureList_validationMessage {
+        position: static;
+        display: inline-block;
+        border-width: 1px;
+        padding: 2px 5px 1px 6px;
+        width: 230px;
+        height: 20px;
+        font-size: 14px;
+    }
+
+     .loadingSpinner {
+        position: absolute;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        height: 50%;
+        width: 100%;
+        background: rgba( 255, 255, 255, .8 ) url('../../Images/loading-spinner-red.gif') 50% 50% no-repeat;
+    }
+
+    .k-header {
+        background-color: #f9f4e0 !important;
+    }
+</style>
+
+@Html.Hidden("hdnProviderName")
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+       
+        BindOrganizations("@ServiceUrl");
+        BindPlanDetails("@ServiceUrl","3"); //Getting all Plan Details
+        $("#btnSubmit").click(function (e) {
+           
+            var PlanMapping = $("#divMainPlanMapping").kendoValidator().data("kendoValidator");
+            if (PlanMapping.validate()) {
+
+                SavePlanMapping($("#OrganizationNames").val(), $("#OrganizationID").val(), $("#ProviderNames").val(),
+                    $("#ProviderID").val(), $("#PlanName").val(), $("#PlanID").val(), "@ServiceUrl");
+       }
+            else {
+                return false;
+            }
+        });
+    });
+</script>
+
+
+<div id="divAddPlans">
+    <div class="pageheading_bar" align="center">
+        <b>Plan Mapping</b>
+    </div>
+</div>
+
+    <div class="Panel_bg" id="divMainPlanMapping">
+        <br />
+        <br />
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-4">
+                            @Html.Label("Organization Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                            @(Html.Kendo().AutoCompleteFor(m => m.OrganizationName)
+                                .Name("OrganizationNames")
+                                .Placeholder("Select Organization...")
+                                .HtmlAttributes(new { style = "width:100%;" })
+                                .DataTextField("OrganizationName")
+                                .Events(events =>
+                                {
+                                    events.Select("OnOrganizationSelectChange");
+                                })
+                                .DataSource(source =>
+                                {
+                                    source.Read(read =>
+                                    {
+                                    });
+                                }))
+                            <br />
+
+                            @Html.HiddenFor(m => m.OrganizationID)
+
+                            <script type="text/javascript">
+                            function OnOrganizationSelectChange(e) {
+                              
+                                //OnOrganizationSelectChanges(e);
+                                var dataItem = this.dataItem(e.item.index());
+                                $("#OrganizationName").val(dataItem.OrganizationName);
+                                $("#OrganizationID").val(dataItem.OrganizationID);
+                                var OrganizationID = $("#OrganizationID").val();
+                                BindProviderNames(OrganizationID, "@ServiceUrl");
+                                $("#divOrgDetails").show();
+                                document.getElementById("spnOrgName").innerHTML = dataItem.OrganizationName;
+                                document.getElementById("spnOrgCity").innerHTML = dataItem.CityName;
+                                document.getElementById("spnOrgState").innerHTML = dataItem.StateName;
+                                document.getElementById("spnOrgAddress").innerHTML = dataItem.Address;
+
+                            }
+                            </script>
+                        </div>
+                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-4">
+                            @Html.Label("Provider Name", new { style = "font-weight:normal;", @class = "" })<br />
+                            @(Html.Kendo().AutoCompleteFor(m => m.ProviderNames)
+                                .Name("ProviderNames")
+                                .Placeholder("Select Provider...")
+                                .HtmlAttributes(new { style = "width:100%;" })
+                                .DataTextField("ProviderName")
+                                .Events(events =>
+                                {
+                                    events.Select("OnProviderSelectChange");
+                                })
+                                .DataSource(source =>
+                                {
+                                    source.Read(read =>
+                                    {
+                                    });
+                                }))
+                            <br />
+                            @Html.HiddenFor(m => m.ProviderID)
+
+
+                            <script type="text/javascript">
+                            function OnProviderSelectChange(e) {
+                               
+                                //OnProviderSelectChanges(e);
+                                var dataItem = this.dataItem(e.item.index());
+                                $("#ProviderName").val(dataItem.ProviderName);
+                                $("#ProviderID").val(dataItem.ProviderID);
+                               $("#divProviderDetails").show();
+                                var ProviderName = dataItem.FirstName + " " + dataItem.LastName;
+                                document.getElementById("spnProviderName").innerHTML = dataItem.ProviderName;
+                                document.getElementById("spnProviderCity").innerHTML = dataItem.CityName;
+                                document.getElementById("spnProviderState").innerHTML = dataItem.StateName;
+                                document.getElementById("spnProviderMob").innerHTML = dataItem.MobileNumber;
+
+                            }
+                            </script>
+                        </div>
+                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-4">
+                            @Html.Label("Plan Name", new { style = "font-weight:normal;", @class = "" })<br />
+                            @(Html.Kendo().AutoCompleteFor(m => m.PlanName)
+                                .Name("PlanName")
+                                .Placeholder("Select Plan...")
+                                .HtmlAttributes(new { style = "width:100%;" })
+                                .DataTextField("PlanName")
+                                .Events(events =>
+                                {
+                                    events.Select("OnPlanSelectChange");
+                                })
+                                .DataSource(source =>
+                                {
+                                    source.Read(read =>
+                                    {
+                                    });
+                                }))
+                            <br />
+                            @Html.HiddenFor(m => m.PlanID)
+
+                            <script type="text/javascript">
+                            function OnPlanSelectChange(e) {
+                               
+                                //OnPlanSelectChanges(e);
+                                var dataItem = this.dataItem(e.item.index());
+                                $("#PlanName").val(dataItem.PlanName);
+                                $("#PlanID").val(dataItem.PlanID);
+                                 $("#divPlanDetails").show();
+
+                                document.getElementById("spnSelectedPlanName").innerHTML = dataItem.PlanName;
+                                document.getElementById("spnPlanTermName").innerHTML = dataItem.PlanTermName;
+                                document.getElementById("spnPlanFeatures").innerHTML = dataItem.Features;
+                                document.getElementById("spnPlanDescription").innerHTML = dataItem.PlanDescription;
+
+                            }
+                            </script>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="row Panel_bg_Sub" id="divOrgDetails" style="display:none;">
+
+            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Organization Details</b>:</legend>
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12 ">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                <span><b>Organaization Name</b></span>
+                                <br />
+                                <span id="spnOrgName"></span>
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
+                                <span><b>State</b></span>
+                                <br />
+                                <span id="spnOrgState"></span>
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                <span><b>City</b></span>
+                                <br />
+                                <span id="spnOrgCity"></span>
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
+                                <span><b>Address </b></span>
+                                <br />
+                                <span id="spnOrgAddress"></span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="row Panel_bg_Sub" id="divProviderDetails" style="display:none;">
+
+            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Provider Details</b></legend>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12 ">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                <span><b>Provider Name</b></span>
+                                <br />
+                                <span id="spnProviderName"></span>
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
+                                <span><b>State</b></span>
+                                <br />
+                                <span id="spnProviderState"></span>
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                <span><b>City</b></span>
+                                <br />
+                                <span id="spnProviderCity"></span>
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
+                                <span><b>Mobile Number </b></span>
+                                <br />
+                                <span id="spnProviderMob"></span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row Panel_bg_Sub" id="divPlanDetails" style="display:none;">
+
+            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Plan Details</b></legend>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12 ">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                <span><b>Plan Name</b></span>
+                                <br />
+                                <span id="spnSelectedPlanName"></span>
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                <span><b>Plan Term</b></span>
+                                <br />
+                                <span id="spnPlanTermName"></span>
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
+                                <span><b>Plan Features</b></span>
+                                <br />
+                                <span id="spnPlanFeatures"></span>
+                            </div>
+
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
+                                <span><b>Plan Description </b></span>
+                                <br />
+                                <span id="spnPlanDescription"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                <div align="center">
+                    <button type="submit" class="button_blue" id="btnSubmit" title="Submit" style="width: 100px;" value="addUser">
+                        Submit
+                    </button>
+                    <button type="reset" class="button_blue" id="btnClear" title="Clear" value="addUser" style="width: 100px;" onclick="@("window.location.href='" + Url.Action("AddPlans", "Admin") + "'");">
+                        Clear
+                    </button>
+                    <button type="button" class="button_blue" id="btnCancel" title="Cancel" value="addUser" style="width: 100px;" onclick="@("window.location.href='" + @Url.Action("AddPlans", "Admin") + "'");">
+                        Cancel
+                    </button>
+                </div>
+                <br />
+            </div>
+        </div>
+
+    </div>
+    <div class="row" id="divSignupPopup" style="display: none; align-content:center;">
+        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+            <div class="Page_Dimmer">
+            </div>
+            <div class="PopupHolder" style="top:17%;">
+                <div class="Bgheader" width="100%">
+                    <div>
+                        <span id="SpnPopUpTitle" style="color: White; font-family: Verdana,Tahoma;
+                                font-size: 15px; font-weight: bold;">Physician Primary Care Plan</span>
+                    </div>
+                </div>
+                <div style="border: Solid 1px #33CCEE; width: 100%;">
+                    <div align="left">
+                        <img alt="!" id="imgIcon" src="~/Images/Success.png"
+                             style="height: 25px; width: 25px; border-width: 0px;" />
+                    </div>
+                    <div align="center">
+                        <span id="spnPopupMessage" style="color: green; font-family: Verdana,Tahoma; font-size: 14px;
+                                font-weight: bold;">
+                        </span>
+                    </div>
+                    <div align="center">
+                        <br />
+                        <button type="button" id="btnSuccess" onclick="document.location.href = $('#loginUrl').attr('href');" class="button_blue"
+                                style="width: 70px;">
+                            Ok
+                        </button>
+                        <a id="loginUrl" href="@Html.AttributeEncode(Url.Action("PlanMapping", "Admin" ))">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" id="divErrMessagePopup" style="display: none; position: relative" align="center">
+        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+            <div class="Page_Dimmer">
+            </div>
+            <div class="PopupHolder" style="top: 17%;">
+                <div class="Bgheader" width="100%">
+                    <div align="center">
+                        <span id="SpanErrMsgTitle" style="color: White; font-family: Verdana,Tahoma; font-size: 15px;
+                        font-weight: bold;">Physician Primary Care Plan</span>
+                    </div>
+                </div>
+                <div style="border: Solid 1px #33CCEE; width: 100%;">
+                    <div align="left">
+                        <img alt="!" id="Img1" src="~/Images/Error.png" style="height: 25px; width: 25px;
+                        border-width: 0px;" />
+                    </div>
+                    <div align="center">
+                        <span id="spnPopupErrMessage" style="color: red; font-family: Verdana,Tahoma; font-size: 14px;
+                                font-weight: bold;">
+                        </span>
+                    </div>
+                    <div align="center">
+                        <br />
+                        <button type="button" id="btnErrPopup" onclick="document.location.href = $('#errorUrl').attr('href');" class="button_blue"
+                                style="width: 70px;">
+                            Ok
+                        </button>
+                        <a id="errorUrl" href="@Html.AttributeEncode(Url.Action("PlanMapping", "Admin" ))">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

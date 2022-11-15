@@ -1,0 +1,1332 @@
+﻿@*#region Description
+    /******************************************************************************************************
+    * PROJECT:PPCP VERSION:1.0
+    *
+    * MODULE : Organization
+    *
+    * ITEM NAME :AddMember.cshtml
+    *
+    * DEVELOPED BY: Veena.A
+    *
+    * REVIEWED BY:
+    *
+    * MODULE DISCRIPTION:
+    *
+    * CONTROL DESCRIPTION : used to Add Member
+
+    ****************************************************************************************************
+    DATE CHANGE LOG DESCRIPTION CHANGED BY
+    Date:               Description:                Author:
+    *****************************************************************************************************/
+    #endregion*@
+@model PPCP07302018.Models.Organization.AddMemberDetails
+@using System.Web.Mvc.Html
+@using Kendo.Mvc.UI
+@using System.Web.Mvc
+@{
+    ViewBag.Title = "AddMember";
+    Layout = "~/Views/Shared/WUCOrgLeftMenu.cshtml";
+    var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
+}
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/KendoScripts")
+@Scripts.Render("~/bundles/custom-validator")
+@Styles.Render("~/bundles/Kendocss")
+@Styles.Render("~/bundles/Membercssfiles")       @*For member css files*@
+@Scripts.Render("~/bundles/AddmemberScriptFiles")
+<style type="text/css">
+    .loadingSpinner {
+        position: absolute;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        height: 175%;
+        width: 100%;
+        background: rgba( 255, 255, 255, .8 ) url('../../Images/loading-spinner-red.gif') 50% 50% no-repeat;
+    }
+</style>
+
+<style>
+    #Relationship_validationMessage {
+        display: none !important;
+    }
+
+    #RelationshipList_validationMessage {
+        position: inherit;
+        display: inline-block;
+        border-width: 2px;
+        height: 35px;
+        padding: 2px 5px 1px 6px;
+        border-color: #fff4c9;
+        font-family: Verdana;
+        font-size: 14px;
+    }
+
+    #Salutation_validationMessage {
+        display: none !important;
+    }
+
+    #CountryName_validationMessage {
+        display: none !important;
+    }
+
+    #StateName_validationMessage {
+        display: none !important;
+    }
+
+    #CityName_validationMessage {
+        display: none !important;
+    }
+
+    #SalutationList_validationMessage {
+        position: inherit;
+        display: inline-block;
+        border-width: 2px;
+        height: 35px;
+        padding: 2px 5px 1px 6px;
+        border-color: #fff4c9;
+        font-family: Verdana;
+        font-size: 14px;
+    }
+
+    #CityNameList_validationMessage {
+        position: inherit;
+        display: inline-block;
+        border-width: 2px;
+        height: 35px;
+        padding: 2px 5px 1px 6px;
+        border-color: #fff4c9;
+        font-family: Verdana;
+        font-size: 14px;
+    }
+
+    #StateNameList_validationMessage {
+        position: inherit;
+        display: inline-block;
+        border-width: 2px;
+        height: 35px;
+        padding: 2px 5px 1px 6px;
+        border-color: #fff4c9;
+        font-family: Verdana;
+        font-size: 14px;
+    }
+
+    #CountryNameList_validationMessage {
+        position: inherit;
+        display: inline-block;
+        border-width: 2px;
+        height: 35px;
+        padding: 2px 5px 1px 6px;
+        border-color: #fff4c9;
+        font-family: Verdana;
+        font-size: 14px;
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var countryID = 1;
+        $('#CountryID').val("1");
+        $("#CountryName").val("United States of America");
+        var stateID = 1;
+        $('#StateID').val(stateID);
+        var OrganizationID='@Session["OrganizationID"]';
+        $("#OrganizationID").val(OrganizationID);
+        GetIpAddress();
+       BindCountries('@ServiceUrl');
+        BindStates(countryID, '@ServiceUrl');
+        BindCities(stateID,'@ServiceUrl');
+        BindingPlansGrids(OrganizationID, "0", "0", "", "0", '@ServiceUrl');
+        $("#chkMemberCredentials").click(function () {
+
+            if ($('#chkMemberCredentials').is(":checked") == true) {
+                $("#MemberCredentials").show();
+            } else if ($('#chkMemberCredentials').is(":checked") == false) {
+                $("#MemberCredentials").hide();
+            }
+        });
+        $("#chk2factor").click(function () {
+            if ($('#chk2factor').is(":checked") == true) {
+                $("#divEnableFactor").show();
+            } else if ($('#chk2factor').is(":checked") == false) {
+                $("#divEnableFactor").hide();
+            }
+        });
+        //when enroll plan check box clicked
+        var MemberDetailsValidator = $("#fsMemberDetails").kendoValidator().data("kendoValidator");
+        $("#chkEnroll").click(function () {
+            if ($('#chkEnroll').is(":checked") == true) {
+            debugger;
+            var PasswordErrorMsg = document.getElementById("PasswordErrorMsg").innerText;
+            var spnUserName = document.getElementById("spnUserName").innerText;
+            if (MemberDetailsValidator.validate() && PasswordErrorMsg == "" && spnUserName == "") {
+                // e.preventDefault();
+
+                //Check Memer exists or not by vinod
+                var Gender=0;
+                var rbtnMale = $('input[id=rbtnGenderMale]:checked').val();
+                if (rbtnMale == 1)
+                {
+                    Gender= 1;
+                }else{
+                    Gender=2;
+                }
+                var Age=$("#Age").val();
+                $("#hdnAge").val(Age);
+                $("#hdnGender").val(Gender);
+                CheckMemberExists($("#FirstName").val(),$("#LastName").val(),Gender, $("#DOB").data('kendoDatePicker').value(), $("#MobileNumber").val(),Age,'@ServiceUrl');
+
+
+            }
+            else {
+                document.getElementById("CityNameList_validationMessage").style.wordWrap = "break-word";
+                return false;
+            }
+        }
+        else if ($('#chkEnroll').is(":checked") == false) {
+            $("#divCarddetails").hide();
+            $("#divSelectPlan").hide();
+            $("#SearchPlan").hide();
+            $("#divSelectPlan").hide();
+            $("#EnrollPlan").hide();
+         //   $("#divStep1").hide();
+            $("#divSubmit").show();
+            $("#divTermsConditionsSubmit").show();
+            
+        }
+        });
+        $("#chkPayNow").click(function () {
+            if ($('#chkPayNow').is(":checked") == true) {
+                var  TotalAmount=0;
+                try {
+                    var Amount=document.getElementById("spnInstallmentAmount").innerText;
+                    var InstalmentAmount=document.getElementById("spnInstalmentFee").innerText;
+                    var EnrollFee=document.getElementById("spnEnrollFee").innerText;
+                    //TotalAmount=parseFloat(Amount)+parseFloat(InstalmentAmount);
+                    TotalAmount=parseFloat(Amount)+parseFloat(InstalmentAmount)+parseFloat(EnrollFee);
+                }catch(err){
+                    
+                }
+               
+                $("#AmountPaid").val(TotalAmount);
+                $("#divCarddetails").show();
+            } else if ($('#chkPayNow').is(":checked") == false) {
+                $("#CVV").val("");
+                $("#AmountPaid").val("");
+                $("#divCarddetails").hide();
+                document.getElementById("spnCardNumber").innerHTML="";
+                document.getElementById("spnNameOnCard").innerHTML="";
+                document.getElementById("CVV").innerHTML="";
+            }
+        });
+    //Enter Only numbers in Mobile Number Textbox
+        $(".Text").keypress(function (e) {
+        var x = "";
+        x = x + e.currentTarget.value + ",";
+        if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+        //alert("Numbers only allowed");
+        return false;
+        }
+        });
+
+
+
+        function MembeDetail()
+        {
+            debugger;
+            var MemberRegistrationDetails =@Html.Raw(Json.Encode(@Model));
+            MemberRegistrationDetails.OrganizationID='@Session["OrganizationID"]';
+            MemberRegistrationDetails.OrganizationName='@Session["OrganizationName"]';
+            MemberRegistrationDetails.RelationshipID = "0";
+            MemberRegistrationDetails.RelationshipName ="Self";
+            AddMembeDetails(MemberRegistrationDetails,"@Session["SystemIPAddress"]",'@ServiceUrl');
+        }
+
+        $("#btnSubmit").click(function (e) {
+            debugger;
+            var EnrollPlanValidator = $("#EnrollPlan").kendoValidator().data("kendoValidator");
+            var MemberDetailsvalidate = $("#MemberDetails").kendoValidator().data("kendoValidator");//fsMain
+            var MemberCredentialsvalidattion = $("#MemberCredentials").kendoValidator().data("kendoValidator");
+            if($('#chkEnroll').is(":checked") == false)
+            {
+                document.getElementById("spnEnrollValidator").innerHTML="Please Enroll the plan";
+                return false;
+                if ($('#chkMemberCredentials').is(":checked") == true) {
+                    if(MemberDetailsvalidate.validate() && MemberCredentialsvalidattion.validate()){
+                        MembeDetail();
+                    }
+                }
+                else{
+                    if(MemberDetailsvalidate.validate()){
+                        MembeDetail();
+                    } else{
+                        return false;
+                    }
+                }
+            }
+            if($('#chkEnroll').is(":checked") == true)
+            {
+                document.getElementById("spnEnrollValidator").innerHTML="";
+                if ($('#chkPayNow').is(":checked") == true) {
+                    if($("#CardNumber").val()==""||$("#CardNumber").val()==null){
+                        document.getElementById("spnCardNumber").innerHTML="This information is required";
+                        return false;
+                    }else document.getElementById("spnCardNumber").innerHTML="";
+                    if($("#NameOnCard").val()==""||$("#NameOnCard").val()==null){
+                        document.getElementById("spnNameOnCard").innerHTML="This information is required";
+                        return false;
+                    }else document.getElementById("spnNameOnCard").innerHTML="";
+                    if($("#CVV").val()==""||$("#CVV").val()==null){
+                        document.getElementById("CVV").innerHTML="This information is required";
+                        return false;
+                    }else document.getElementById("CVV").innerHTML="";
+                    // MembeDetail();
+                }
+                if ($('#chkPayNow').is(":checked") == false){
+                    document.getElementById("spnCardNumber").innerHTML="";
+                    document.getElementById("spnNameOnCard").innerHTML="";
+                    document.getElementById("CVV").innerHTML="";
+                }
+                var AmountValidation=document.getElementById("spnAmountPaid").innerText;
+                MembeDetail();
+                //if($('#SecoundTime').is(":checked") == true){
+                    
+                //}
+                //else{
+                //    $("#spnCheckTermsErrorMessages").show();
+                //    $("#spnCheckErrorMessages").show();
+                //    return false;
+                //}
+               
+            }
+               
+            //if (EnrollPlanValidator.validate() && AmountValidation==""){
+
+
+            //    if($('#SecoundTime').is(":checked") == true){
+            //        // MembeDetail();
+            //    }
+            //    else{
+            //        $("#spnCheckTermsErrorMessages").show();
+            //        $("#spnCheckErrorMessages").show();
+            //        return false;
+            //    }
+            //}
+            //else if($('#chkEnroll').is(":checked") == true)
+            //{
+            //    if($('#SecoundTime').is(":checked") == true){
+            //        MembeDetail();
+            //    }
+            //    else{
+            //        $("#spnCheckTermsErrorMessages").show();
+            //        $("#spnCheckErrorMessages").show();
+            //        return false;
+            //    }
+            //}
+            //else{
+            //    if($('#SecoundTime').is(":checked") == true){
+            //        MembeDetail();
+            //    }
+            //    else{
+            //        $("#spnCheckTermsErrorMessages").show();
+            //        $("#spnCheckErrorMessages").show();
+            //        return false;
+            //    }
+            //}
+       // }
+            
+        });
+
+
+    });
+
+    function onDataBound() {
+        debugger;
+        var grid = this;
+        $("[name='PlanID']").change(function (e) {
+            var row = $(e.target).closest("tr");
+            var dataItem = grid.dataItem(row);
+            grid.select(row);
+            var PlanID = dataItem.PlanID;
+            document.getElementById("PlanID").innerHTML = PlanID;
+            document.getElementById("spnSelectedPlan").innerHTML = dataItem.PlanName;
+            document.getElementById("spnSelectedOrganization").innerHTML = dataItem.OrganizationName;
+            document.getElementById("SpProviderName").innerHTML = dataItem.ProviderName;
+            document.getElementById("SpOrganizationID").innerHTML = dataItem.OrganizationID;
+            document.getElementById("SpProviderID").innerHTML = dataItem.ProviderID;
+            document.getElementById("spnVisitFee").innerHTML = dataItem.VisitFee;
+            document.getElementById("spnEnrollFee").innerHTML = dataItem.EnrollFee;
+            document.getElementById("spnEligibility").innerHTML =dataItem.VisitFee+"Y - "+dataItem.ToAge+"Y";
+            document.getElementById("spnDuration").innerHTML = dataItem.PlanTermName;
+            document.getElementById("spnPlanType").innerHTML = "Individual";
+            document.getElementById("spnMonthlyPlanFee").innerHTML =dataItem.Amount;
+            document.getElementById("spnPlanDescription").innerHTML =dataItem.PlanDescription;
+            document.getElementById("spnPlanTermMonths").innerHTML =dataItem.PlanTermMonths;
+            document.getElementById("spnCommPPCP").innerHTML = dataItem.CommPPCP;
+            document.getElementById("spnCommPrimaryMember").innerHTML = dataItem.CommPrimaryMember;
+            //To get selected Plan payment information
+            var OrganizationID = dataItem.OrganizationID;
+            var ProviderID = dataItem.ProviderID;
+          
+            BindPlans(OrganizationID, ProviderID, PlanID,$("#hdnGender").val(),$("#hdnAge").val(),'@ServiceUrl');
+
+        });
+    }
+    function onPlansPaymentDataBound() {
+        var Paymentgrid = this;
+        $("#divStep1").hide();
+
+        //$("#divTermsConditions").show();
+
+
+        $("[name='Paymentschedule']").change(function (e) {
+            debugger;
+            var row = $(e.target).closest("tr");
+            var dataItem = Paymentgrid.dataItem(row);
+            Paymentgrid.select(row);
+            //if(dataItem.Paymentschedule=="Quarterly"){
+            //    dataItem.Paymentschedule="Quaterly";
+            //}
+            document.getElementById("Paymentschedule").innerHTML = dataItem.Paymentschedule;
+            document.getElementById("spnPaymentschedule").innerHTML = dataItem.Paymentschedule;
+            document.getElementById("spnNoofInstalments").innerHTML = dataItem.NoofInstallments;
+            document.getElementById("spnInstallmentAmount").innerHTML = dataItem.InstallmentAmount;
+            document.getElementById("InstallmentFee").innerHTML = dataItem.InstallmentFee;
+            document.getElementById("Installments").innerHTML = dataItem.NoofInstallments;
+            document.getElementById("Savings").innerHTML = dataItem.Savings;
+            document.getElementById("spnPlanAmount").innerHTML = dataItem.TotalAmount;
+            document.getElementById("spnStripeAccountID").innerHTML = dataItem.AccountID;
+            document.getElementById("spnInstalmentFee").innerHTML = dataItem.InstallmentFee;
+            
+            $('#chkPayNow').is(":checked") == true;
+            $('input[name="chkPayNow"]').attr('checked', true);
+            var  TotalAmount=0;
+            try {
+                var Amount=document.getElementById("spnInstallmentAmount").innerText;
+                var InstalmentAmount=document.getElementById("spnInstalmentFee").innerText;
+                var EnrollFee=document.getElementById("spnEnrollFee").innerText;
+                //TotalAmount=parseFloat(Amount)+parseFloat(InstalmentAmount);
+
+                if(dataItem.Paymentschedule == "One Time")
+                {
+                    TotalAmount=parseFloat(Amount)+parseFloat(EnrollFee);
+                }
+                else
+                {
+                    TotalAmount=parseFloat(Amount)+parseFloat(InstalmentAmount)+parseFloat(EnrollFee);
+                }
+
+               // TotalAmount=parseFloat(Amount)+parseFloat(InstalmentAmount)+parseFloat(EnrollFee);
+            }catch(err){
+                    
+            }
+               
+            $("#AmountPaid").val(TotalAmount);
+            $("#divCarddetails").show();
+            $("#divValidator").hide();
+            $("#btnSubmit").show();
+            
+            document.getElementById("PlanPaymentValidation").innerHTML = "";
+            var Months=document.getElementById("spnPlanTermMonths").innerHTML;
+            AddMonths(Months);
+           $("#EnrollPlan").show();
+        });
+    }
+    function AddMonths(Months){
+        debugger;
+        var dt = new Date($("#PlanStartDate").val());
+        dt.setMonth( dt.getMonth() + parseInt(Months) );
+        $("#spnPlanEndDate").val((dt.getMonth() + 1) + '/' + dt.getDate() + '/' +  dt.getFullYear());
+        document.getElementById("spnPlanStartDate").innerHTML =$("#PlanStartDate").val() ;
+        document.getElementById("spnPlanEndDate").innerHTML =$("#spnPlanEndDate").val() ;
+    }
+
+    function DateSelectionChanged(e) {
+        var birthDate = $("#DOB").val();
+        $.ajax({
+            url: "/Master/GetAge/",
+            data: { birthDate: birthDate },
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (result) {
+                var rs = result.split(';');
+                var year = rs[0];
+                $("#Age").val(year);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+            },
+        });
+    }
+    ///To check Password strength in MemberRegistration  :Veena
+    function chkPasswordStrength(txtPassword, strenghtMsg, errorMsg) {
+        var desc = new Array();
+        desc[0] = "Very Weak";
+        desc[1] = "Weak";
+        desc[2] = "Average";
+        desc[3] = "Strong";
+        desc[4] = "Strong";
+        desc[5] = "Strong";
+
+        var score = 0;
+
+        //if txtPassword bigger than 6 give 1 point
+        if (txtPassword.length > 6) score++;
+
+        //if txtPassword has both lower and uppercase characters give 1 point
+        if ((txtPassword.match(/[a-z]/)) && (txtPassword.match(/[A-Z]/))) score++;
+
+        //if txtPassword has at least one number give 1 point
+        if (txtPassword.match(/\d+/)) score++;
+
+        //if txtPassword has at least one special caracther give 1 point
+        if (txtPassword.match(/.[!,#,$,%,^,&,*,?,_,~,-,(,)]/)) score++;
+
+        //if txtPassword bigger than 12 give another 1 point
+        if (txtPassword.length > 12) score++;
+
+        strenghtMsg.innerHTML = desc[score];
+
+        strenghtMsg.className = "strength" + score;
+    }
+    //Compair passwords in FamilyMembers
+    function validatePassword() {
+        //To Compare Password and ConfirmPassword (in Step1)
+        if (($("#Password").val()) == ($("#ConfirmPassword").val())) {
+            document.getElementById("PasswordErrorMsg").innerHTML = "";
+        }
+        else {
+            document.getElementById("PasswordErrorMsg").innerHTML = "Password and Confirm Password should be Match.";
+        }
+    }
+    function ValidateUserName(UserName) {
+        ValidateUserNames(UserName,'@ServiceUrl');
+    }
+    function ChckSecoundTime(){
+        if ($('#SecoundTime').is(":checked") == true) {
+            $("#spnCheckTermsErrorMessages").hide();
+        }
+        else {
+            $("#spnCheckTermsErrorMessages").show();
+        }
+    }
+    function ValidateExistingMember(){
+        debugger;
+        var Gender=0;
+        var rbtnMale = $('input[id=rbtnGenderMale]:checked').val();
+        if (rbtnMale == 1)
+        {
+            Gender= 1;
+        }else{
+            Gender=2;
+        }
+        CheckMemberExists($("#FirstName").val(),$("#LastName").val(),Gender, $("#DOB").data('kendoDatePicker').value(), $("#MobileNumber").val(),$("#Age").val(),'@ServiceUrl');
+        
+    }
+    function validateConfirmUsername() {
+        if (($("#UserName").val()) == ($("#ConfirmUserName").val())) {
+            document.getElementById("spnConfirmUserName").innerHTML = "";
+        }
+        else {
+            document.getElementById("spnConfirmUserName").innerHTML = "Username and Confirm Username must match.";
+        }
+    }
+</script>
+
+
+<div class="pageheading_bar" align="center">
+    <b>Add Member</b>
+</div>
+<div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" id="divMain" style="margin-top:0px;">
+    <div class="row" id="divSignupPopup" style="display: none; align-content:center;">
+        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+            <div class="Page_Dimmer">
+            </div>
+            <div class="PopupHolder" style="top:17%;">
+                <div class="Bgheader" width="100%">
+                    <div>
+                        <span id="SpnPopUpTitle" style="color: White; font-family: Verdana,Tahoma;
+                                font-size: 15px; font-weight: bold;">Physician Primary Care Plan</span>
+                    </div>
+                </div>
+                <div style="border: Solid 1px #33CCEE; width: 100%;">
+                    <div align="left">
+                        <img alt="!" id="imgIcon" src="~/Images/Success.png"
+                             style="height: 25px; width: 25px; border-width: 0px;" />
+                    </div>
+                    <div align="center">
+                        <span id="spnPopupMessage" style="color: green; font-family: Verdana,Tahoma; font-size: 14px;
+                                font-weight: bold;">
+                        </span>
+                    </div>
+                    <div align="center">
+                        <br />
+                        <button type="button" id="btnSuccess" onclick="document.location.href = $('#loginUrl').attr('href');" class="button_blue"
+                                style="width: 70px;">
+                            Ok
+                        </button>
+                        <a id="loginUrl" href="@Html.AttributeEncode(Url.Action("AddMember", "Organization" ))">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" id="divErrMessagePopup" style="display: none; position: relative" align="center">
+        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+            <div class="Page_Dimmer">
+            </div>
+            <div class="PopupHolder" style="top: 17%;">
+                <div class="Bgheader" width="100%">
+                    <div align="center">
+                        <span id="SpanErrMsgTitle" style="color: White; font-family: Verdana,Tahoma; font-size: 15px;
+                        font-weight: bold;">Physician Primary Care Plan</span>
+                    </div>
+                </div>
+                <div style="border: Solid 1px #33CCEE; width: 100%;">
+                    <div align="left">
+                        <img alt="!" id="Img1" src="~/Images/Error.png" style="height: 25px; width: 25px;
+                        border-width: 0px;" />
+                    </div>
+                    <div align="center">
+                        <span id="spnPopupErrMessage" style="color: red; font-family: Verdana,Tahoma; font-size: 14px;
+                                font-weight: bold;">
+                        </span>
+                    </div>
+                    <div align="center">
+                        <br />
+                        <button type="button" id="btnErrPopup" onclick="document.location.href = $('#errorUrl').attr('href');" class="button_blue"
+                                style="width: 70px;">
+                            Ok
+                        </button>
+                        <a id="errorUrl" href="@Html.AttributeEncode(Url.Action("AddMember", "Organization" ))">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <fieldset id="fsMain" style="margin:0px;width:100%;">
+        <div class="table" style="border: 1px; width: 100%">
+            <div class="row">
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                    <br />
+                </div>
+
+
+                <div class="row">
+                    <div class="row Panel_bg_Sub">
+                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                        </div>
+                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                            <div id="MemberDetails" class="form-group" style="width:100%;">
+                                <div class="row">
+                                    <br />
+                                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                    </div>
+
+                                </div>
+
+                                <fieldset id="fsMemberDetails" style="margin:0px;width:100%;">
+                                    <div class="row" id="MemberDetailsvalidate">
+                                    </div>
+                                    <br />
+                                    <div class="row Panel_bg_Sub">
+                                        <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Member Details</b>:</legend>
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                                    <div class="row">
+                                                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                            @Html.Label("First Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                            @Html.TextBoxFor(model => model.FirstName, null, new { style = "width:100%;", maxlength = 50 })
+                                                            @*@Html.ValidationMessageFor(model => model.FirstName, "", new { @style = "color:red" })*@
+                                                        </div>
+                                                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                            @Html.Label("Last Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                            @Html.TextBoxFor(model => model.LastName, null, new { style = "width:100%;", maxlength = 50 })
+                                                            @*@Html.ValidationMessageFor(model => model.LastName, "", new { @style = "color:red" })*@
+                                                        </div>
+                                                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                            @Html.Label("Date of Birth", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                            @( Html.Kendo().DatePickerFor(model => model.DOB).Format("MM/dd/yyyy").Name("DOB").Value("").Max(DateTime.Today)
+                                                    .HtmlAttributes(new { PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text", onkeydown = "return true;" })
+                                                    .Events(e => e.Change("DateSelectionChanged"))
+                                                            )
+                                                            @*@Html.ValidationMessageFor(model => model.DOB, "", new { @style = "color:red" })*@
+                                                        </div>
+                                                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                            @Html.Label("Age", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                            @Html.TextBoxFor(model => model.Age, null, new { style = "width:100%;", maxlength = 20, disabled = "disabled", @readonly = "readonly" })
+                                                            @Html.ValidationMessageFor(model => model.Age, "", new { @style = "color:red" })
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                            @Html.Label("Gender", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                            <label style="font-weight: normal;">
+                                                                @(Html.RadioButton("Gender", 1, new
+                                                            {
+                                                                id = "rbtnGenderMale"
+                                                            }))
+                                                                Male
+                                                            </label>
+                                                            <label style="font-weight: normal; margin-left:20px">
+                                                                @(Html.RadioButton("Gender", 2, new
+                                                            {
+                                                                id = "rbtnGenderFemale"
+                                                            }))
+                                                                Female
+                                                            </label>
+                                                            <br />@Html.ValidationMessageFor(m => m.Gender)
+                                                        </div>
+                                                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                            @Html.Label("Salutation", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
+                                                            @(Html.Kendo().DropDownListFor(m => m.Salutation)
+                                                    .Name("SalutationList").HtmlAttributes(new { style = "width:100%;" })
+                                                    .OptionLabel("--Select--")
+                                                    .Events(events =>
+                                                    {
+                                                        events.Change("onSelectSalutation");
+                                                    })
+                                                    .DataValueField("Value")
+                                                    .DataTextField("Text")
+                                                    .BindTo(new List<SelectListItem>
+                                                        ()
+                                                        {
+                                                        new SelectListItem()
+                                                        {
+                                                        Text = "Dr.",
+                                                        Value = "1"
+                                                        },
+                                                        new SelectListItem()
+                                                        {
+                                                        Text = "Mr.",
+                                                        Value = "2"
+                                                        },
+                                                        new SelectListItem()
+                                                        {
+                                                        Text = "Mrs.",
+                                                        Value = "3"
+                                                        },
+                                                        new SelectListItem()
+                                                        {
+                                                        Text = "Ms.",
+                                                        Value = "4"
+                                                        },
+                                                        new SelectListItem()
+                                                        {
+                                                        Text = "Other",
+                                                        Value = "5"
+                                                        }
+                                                        })
+                                                            )<br />
+                                                            @*@Html.ValidationMessageFor(m => m.Salutation)*@
+                                                            @*@Html.HiddenFor(m => m.SalutationID)*@
+                                                            @Html.Hidden("SalutationID")
+                                                            @Html.Hidden("hdnAge")
+                                                            @Html.Hidden("hdnGender")
+                                                            @Html.Hidden("hdnMemberID")
+                                                            @Html.HiddenFor(m => m.Salutation)
+                                                            <script type="text/javascript">
+                                                                //Salutation change event to get SalutationID and Salutation
+                                                                function onSelectSalutation(e) {
+                                                                    $("#SalutationID").val("");
+                                                                    var dataItem = e.sender.dataItem();
+                                                                    $("#Salutation").val(dataItem.Text);
+                                                                    $("#SalutationID").val(dataItem.Value);
+                                                                }
+                                                            </script>
+                                                        </div>
+                                                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                            @Html.Label("Email", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                            @Html.TextBoxFor(model => model.Email, null, new { style = "width:100%;", maxlength = 50 })
+                                                            @*@Html.ValidationMessageFor(model => model.Email, "", new { @style = "color:red" })*@
+                                                        </div>
+                                                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                            @Html.Label("Mobile Number", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                            @Html.TextBoxFor(model => model.CountryCode, null, new { style = "width:15%;", maxlength = 2 })
+                                                            @Html.Label("-", new { style = "font-weight:normal;", @class = "labelColor" })
+                                                            @Html.TextBoxFor(model => model.MobileNumber, null, new { style = "width:75%;", maxlength = 10, @class = "Text"})
+                                                            @*@Html.ValidationMessageFor(model => model.CountryCode, "", new { @style = "color:red" })
+                                        @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @style = "color:red" })*@
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                            @Html.Label("Country", new { style = "font-weight:normal;", @class = "labelColor" })<span style="color: Red;">*</span><br />
+                                                            @(Html.Kendo().DropDownListFor(model => model.CountryName)
+                                                    .Name("CountryNameList")
+                                                    // .OptionLabel("--Select--")
+                                                    .HtmlAttributes(new { style = "width:100%;" })
+                                                    .DataValueField("Value")
+                                                    .DataTextField("Text")
+                                                    .Events(events =>
+                                                    {
+                                                          events.Change("OnCountrySelectChange");
+                                                    })
+                                                    .DataSource(source =>
+                                                    {
+                                                        source.Read(read =>
+                                                        {
+                                                        });
+                                                    })
+                                                            )
+                                                            <br />
+
+                                                            @*@Html.ValidationMessageFor(model => model.CountryName)*@
+                                                            @Html.HiddenFor(model => model.CountryID)
+                                                            @Html.HiddenFor(model => model.CountryName)
+                                                            <script type="text/javascript">
+                                                                //Country change event to get CountryName and CountryId
+                                                                function OnCountrySelectChange(e) {
+                                                                    var dataItem = e.sender.dataItem();
+                                                                    $("#CountryName").val(dataItem.Text);
+                                                                    $("#CountryID").val(dataItem.Value);
+                                                                    var CountryID = $("#CountryID").val();
+                                                                    BindStates(CountryID,'@ServiceUrl');
+                                                                }
+                                                            </script>
+                                                        </div>
+                                                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                            @Html.Label("State", new { style = "font-weight:normal;", @class = "labelColor" })<span style="color: Red;">*</span><br />
+                                                            @(Html.Kendo().DropDownListFor(m => m.StateName)
+                                                    .Name("StateNameList")
+                                                    .OptionLabel("--Select--")
+                                                    .HtmlAttributes(new { style = "width:100%;" })
+                                                    .DataValueField("StateID")
+                                                    .DataTextField("StateName")
+                                                    .Events(events =>
+                                                    {
+                                                        events.Change("OnStateSelectChange");
+                                                    })
+                                                    .DataSource(source =>
+                                                    {
+                                                        source.Read(read =>
+                                                        {
+                                                        });
+                                                    }))
+                                                            <br />
+                                                            @*@Html.ValidationMessageFor(m => m.StateName)*@
+                                                            @Html.HiddenFor(m => m.StateID)
+                                                            @Html.HiddenFor(m => m.StateName)
+                                                            @Html.Hidden("OrganizationID")
+                                                            <script type="text/javascript">
+                                                                //Country State event to get StateName and StateID
+                                                                function OnStateSelectChange(e) {
+                                                                    $("#StateID").val("");
+                                                                    var dataItem = e.sender.dataItem();
+                                                                    $("#StateName").val(dataItem.StateName);
+                                                                    $("#StateID").val(dataItem.StateID);
+                                                                    var StateID = $("#StateID").val();
+                                                                    BindCities(StateID,'@ServiceUrl');
+                                                                }
+                                                            </script>
+                                                        </div>
+                                                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                            @Html.Label("City", new { style = "font-weight:normal;", @class = "labelColor" })<span style="color: Red;">*</span><br />
+                                                            @(Html.Kendo().DropDownListFor(m => m.CityName)
+                                                    .Name("CityNameList")
+                                                    .OptionLabel("--Select--")
+                                                    .HtmlAttributes(new { style = "width:100%;" })
+                                                    .DataValueField("CityID")
+                                                    .DataTextField("CityName")
+                                                    .Events(events =>
+                                                    {
+                                                        events.Change("OnCitySelectChange");
+                                                    })
+                                                    .DataSource(source =>
+                                                    {
+                                                        source.Read(read =>
+                                                        {
+                                                        });
+                                                    }))
+                                                            <br />
+                                                            @*@Html.ValidationMessageFor(m => m.CityName)*@
+                                                            @Html.HiddenFor(m => m.CityID)
+                                                            @Html.HiddenFor(m => m.CityName)
+                                                            <script type="text/javascript">
+                                                                //City change event to get CityName and CityID
+                                                                function OnCitySelectChange(e) {
+                                                                    $("#CityID").val("");
+                                                                    var dataItem = e.sender.dataItem();
+                                                                    $("#CityName").val(dataItem.CityName);
+                                                                    $("#CityID").val(dataItem.CityID);
+                                                                }
+                                                            </script>
+                                                        </div>
+                                                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                            @Html.Label("ZIP / Postal Code", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
+                                                            @Html.TextBoxFor(m => m.Zip, new { style = "width:50%;Height:25px", maxlength = "5" })-
+                                                            @Html.TextBoxFor(m => m.ZipCode, new { style = "width:40%;Height:25px", maxlength = "4" })
+                                                            <br />                                                            
+                                                            @*@Html.ValidationMessageFor(m => m.Zip)
+                                        @Html.ValidationMessageFor(m => m.ZipCode)*@
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <br />
+                                <div class="row Panel_bg_Sub">
+                                    <div class="row">
+                                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                            @*@Html.CheckBox("chkMemberCredentials", false)&nbsp;*@
+                                            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Member Credentials</b>:</legend>
+
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group">
+
+                                        <div class="row" id="MemberCredentials" style="display:block">
+                                            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                                <div class="row">
+                                                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                                        <div class="row">
+                                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                @Html.Label("Username", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                                @Html.TextBoxFor(model => model.UserName, null, new { style = "width:100%;", maxlength = 25, onchange = "ValidateUserName(this.value);" })
+                                                                @*@Html.ValidationMessageFor(model => model.UserName, "", new { @style = "color:red" })*@
+                                                                <span id="spnUserName" style="color:red"></span>
+                                                            </div>
+                                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                @Html.Label("Confirm Username", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                                @Html.TextBoxFor(model => model.ConfirmUserName, null, new { style = "width:100%;", maxlength = 25, onchange = "validateConfirmUsername();" })
+                                                                @*@Html.ValidationMessageFor(model => model.ConfirmUserName, "", new { @style = "color:red" })*@
+                                                                <span id="spnConfirmUserName" style="color:red"></span>
+                                                            </div>
+                                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                @Html.Label("Password", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                                @Html.TextBoxFor(model => model.Password, null, new { style = "width:100%;", maxlength = 20, type = "password", onkeyup = "chkPasswordStrength(this.value,document.getElementById('strength'),document.getElementById('error'))", onpaste = "return false;", oncopy = "return false", oncut = "return false" })
+                                                                @*@Html.ValidationMessageFor(model => model.Password, "", new { @style = "color:red" })*@
+                                                                <span id="strength" class="strength5"></span>
+                                                            </div>
+                                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                @Html.Label("Confirm Password", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                                @Html.TextBoxFor(model => model.ConfirmPassword, null, new { style = "width:100%;", maxlength = 20, type = "password", onchange = "validatePassword()", onpaste = "return false;", oncopy = "return false", oncut = "return false" })
+                                                                @*@Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @style = "color:red" })*@
+                                                                <span id="PasswordErrorMsg" style="color:red"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                                    @Html.CheckBox("chk2factor", false)&nbsp;<b>Enable 2-factor authentication</b>
+                                                </div>
+                                            </div>
+                                            <div class="row" id="divEnableFactor" style="display:none;">
+                                                <div class="col-xs-10 col-md-3 col-sm-6 col-lg-10">
+                                                    <label style="font-weight: normal;">
+                                                        @(Html.RadioButton("ChkList", 1, new
+                                                    {
+                                                        id = "rbtnEverytime",
+                                                    }))
+                                                        Everytime
+                                                    </label>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    <label style="font-weight: normal;">
+                                                        @(Html.RadioButton("ChkList", 2, new
+                                                    {
+                                                        id = "rbtnOnlySysChange"
+                                                    }))
+                                                        Only when system change
+                                                    </label>
+                                                    <br />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                                <br />
+                                @*Added by akhil*@
+                                <div class="row Panel_bg_Sub">
+                                    <div class="row">
+                                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b> @Html.CheckBox("chkEnroll", true)Do you want to Enroll Plan </b></legend>
+
+                                        </div>
+                                        <div align="center" id="divEnrollValidator" class="row" style="display:block;">
+                                            <span style="color: Red"><span id="spnEnrollValidator"></span></span>
+                                        </div>
+                                        <div align="center" id="divExistingMemberValidator" class="row" style="display:block;">
+                                            <span style="color: Red"><span id="spnExistingMemberValidator"></span></span>
+                                        </div>
+                                    </div>
+                                    <div id="SearchPlan" class="form-group" style="width:100%;display:block;">
+                                       
+                                        <div class="row">
+                                            <div class="row Panel_bg_Sub" id="fssearchplan" style="margin:0px;width:100%;">
+                                                <br />
+                                                <div id="divSelectPlan" style="display:block;">
+                                                    <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Select a plan</b>:</legend>
+                                                    <div class="form-group">
+                                                        <div class="row">
+                                                            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                                                @(Html.Kendo().Grid<PPCP07302018.Models.Member.MemberDetails>
+                                                    ()
+                                                    .Name("PlansGrid")
+                                                    .Events(e => e.DataBound("onDataBound"))
+                                                    .Columns(columns =>
+                                                    {
+                                                        columns.Bound(p => p.PlanID).ClientTemplate("<input type='radio' name='PlanID' value='#= PlanID #' />").Title("Select").Filterable(false).Width(50);
+                                                        //columns.Bound(p => p.Specialization).Title("Specialization").Filterable(true).Visible(false);
+                                                        columns.Bound(p => p.PlanName).Title("Plan Name").Filterable(true).Width(100);
+                                                        columns.Bound(p => p.ProviderName).Title("Provider Name").Filterable(true).Width(100);
+                                                    })
+                                                    .Scrollable()
+                                                    .Pageable()
+                                                    .Filterable()
+                                                    .AutoBind(false)
+                                                    .HtmlAttributes(new { })
+                                                    .Selectable()
+                                                    .DataSource(dataSource => dataSource
+                                                    .Ajax()
+                                                    .PageSize(5)
+                                                    .ServerOperation(false)))
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <br />
+                                                    <div id="divPlanPayment" style="display:none;">
+                                                        <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Select Plan Start Date / Payment Schedule</b>:</legend>
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
+                                                                    @Html.Label("Plan start date ", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;"> * </span>
+                                                                    @( Html.Kendo().DatePickerFor(model => model.PlanStartDate).Format("MM/dd/yyyy").Name("PlanStartDate").Value(DateTime.Now)
+                                                    .HtmlAttributes(new { PlaceHolder = "MM/DD/YYYY", Maxlength = "10", type = "text", onkeydown = "return false;" }))
+                                                                    @Html.ValidationMessageFor(model => model.PlanStartDate, "", new { @style = "color:red" })
+                                                                </div>
+                                                                <div class="col-xs-0 col-md-6 col-sm-6 col-lg-6"></div>
+                                                            </div>
+                                                            <br />
+                                                            <div class="row">
+                                                                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                                                    @(Html.Kendo().Grid<PPCP07302018.Models.Member.MemberDetails>
+                                                        ()
+                                                        .Name("PlansPayment")
+                                                        .Events(e => e.DataBound("onPlansPaymentDataBound"))
+                                                        .Columns(columns =>
+                                                        {
+                                                            columns.Bound(p => p.Paymentschedule).ClientTemplate("<input type='radio' name='Paymentschedule' value='#= Paymentschedule #' />" + " " + "#=Paymentschedule#").Title("Payment Schedule").Filterable(false).Width(150);
+                                                            columns.Bound(p => p.TotalAmount).Title("TotalAmount").Filterable(true).Width(150);
+                                                            columns.Bound(p => p.NoofInstallments).Title("No. of Installments").Filterable(true).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                            columns.Bound(p => p.InstallmentAmount).Title("Installment Amount").Filterable(true).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                            columns.Bound(p => p.InstallmentFee).Title("Installment Fee").Filterable(true).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                            columns.Bound(p => p.Savings).Title("Savings").Filterable(true).Width(100).Visible(false);
+                                                        })
+                                                        .Scrollable()
+                                                        .Pageable()
+                                                        .Filterable()
+                                                        .AutoBind(false)
+                                                        .HtmlAttributes(new { })
+                                                        .Selectable()
+                                                        .DataSource(dataSource => dataSource
+                                                        .Ajax()
+                                                        .PageSize(5)
+                                                        .ServerOperation(false)))
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div align="center" id="divValidator" class="row" style="display:none;">
+                                                            <span style="color: Red"><span id="PlanPaymentValidation"></span></span>
+                                                        </div>
+                                                        <div>
+                                                            <div class="row">
+                                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                    <span id="PlanID" style="display:none;"></span>
+                                                                    <span id="SpOrganizationID" style="display:none;"></span>
+                                                                    <span id="spnSelectedOrganization" style="display:none;"></span>
+                                                                    <span id="spnMonthlyPlanFee" style="display:none;"></span>
+                                                                    <span id="TotalAmount" style="display:none;"></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div>
+                                                                    <span id="SpProviderID" style="display:none;"></span>
+                                                                    <span id="SpProviderName" style="display:none;"></span>
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                    <span id="Installments" style="display:none;"></span>
+                                                                    <span id="Paymentschedule" style="display:none;"></span>
+                                                                    <span id="SelectedOrganization" style="display:none;"></span>
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                    <span id="spnPlanTermMonths" style="display:none;"></span>
+                                                                    <span id="InstallmentFee" style="display:none;"></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                    <span id="Savings" style="display:none;"></span>
+                                                                    <span id="DueAmount" style="display:none;"></span>
+                                                                    <span id="spnEligibility" style="display:none;"></span>
+                                                                    <span id="spnCommPPCP" style="display:none;"></span>
+                                                                    <span id="spnCommPrimaryMember" style="display:none;"></span>
+                                                                    @*<span id="spnPlanEndDate" style="display:none;"></span>*@
+                                                                    @*<span id="InstallmentAmount" style="display:none;"></span>*@
+
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <span id="Status" style="display:none;"></span>
+                                                            </div>
+                                                        </div>
+                                                       
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="EnrollPlan" class="form-group" style="width:100%;display:none;">
+                                       
+                                        <div class="row">
+                                            <div class="row Panel_bg_Sub" id="fsenrollplan" style="margin:0px;width:100%;">
+                                                <br />
+                                                <legend class="Legendtxtcolor" style="float: left; font-size: 14px;margin-bottom:0px;"><b>Selected Plan</b>:</legend>
+                                                <br />
+                                                <div class="form-group">
+                                                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                                        <div class="row">
+                                                            <br />
+                                                            <div class="row">
+                                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                    <span><b>Plan Name</b></span>
+                                                                    <br />
+                                                                    <span id="spnSelectedPlan"></span>
+                                                                </div>
+                                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                    <span><b>Plan Type</b></span>
+                                                                    <br />
+                                                                    <span id="spnPlanType"></span>
+                                                                </div>
+                                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                    <span><b>Plan Duration</b></span>
+                                                                    <br />
+                                                                    <span id="spnDuration"></span>
+                                                                </div>
+                                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                    <span><b>Enrollment Fee  </b> </span>
+                                                                    <br />
+                                                                    <span id="spnEnrollFee"></span>
+                                                                </div>
+                                                            </div>
+                                                            <br />
+                                                            <div class="row">
+                                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                    <span><b>Plan Amount  </b> </span>
+                                                                    <br />
+                                                                    <span id="spnPlanAmount"></span>
+                                                                </div>
+                                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                    <span><b>Plan Start date </b></span>
+                                                                    <br />
+                                                                    <span id="spnPlanStartDate"></span>
+                                                                </div>
+                                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                    <span><b>Plan End Date </b></span>
+                                                                    <br />
+                                                                    <span id="spnPlanEndDate"></span>
+                                                                </div>
+                                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                    <span><b>Visit Fee </b></span>
+                                                                    <br />
+                                                                    <span id="spnVisitFee"></span>
+                                                                </div>
+                                                            </div>
+                                                            </br>
+                                                            <div class="row">
+                                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                    <span><b>Instalment Amount </b>  </span>
+                                                                    <br />
+                                                                    <span id="spnInstallmentAmount"></span>
+                                                                </div>
+                                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                    <span><b>Payment Schedule</b></span>
+                                                                    <br />
+                                                                    <span id="spnPaymentschedule"></span>
+                                                                </div>
+                                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                    <span><b>Installment Fee  </b> </span>
+                                                                    <br />
+                                                                    <span id="spnInstalmentFee"></span>
+                                                                </div>
+                                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3" style="display:none;">
+                                                                    <span><b>Terms (No. of payments)</b></span>
+                                                                    <br />
+                                                                    <span id="spnNoofInstalments"></span>
+                                                                </div>
+                                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3"  style="display:none;">
+                                                                    <span><b>Plan Decription</b></span>
+                                                                    <br />
+                                                                    <span id="spnPlanDescription"></span>
+                                                                </div>
+
+                                                                <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6 col-lg-push-1 col-md-push-1" style="display:none">
+                                                                    <span><b>AccountID  </b> </span>
+                                                                    <br />
+                                                                    <span id="spnStripeAccountID"></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                               
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <br />
+
+                                                <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>@Html.CheckBox("chkPayNow", false,new{ @disabled = "disabled" }) Pay Now</b>:</legend>
+
+                                                <div class="form-group">
+                                                    <div class="row">
+                                                    </div>
+                                                    <div class="row" id="divCarddetails" style="display:none;">
+                                                        <br />
+                                                        <div class="row">
+                                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                <span style="font-weight:bold; font-size:15px">Card Details :</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="row">
+                                                                <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
+                                                                    @Html.Label("Amount", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;"> * </span>
+                                                                    @Html.TextBoxFor(model => model.AmountPaid, null, new { PlaceHolder = "", maxlength = 20, onchange = "ValidateAmountPaid(this.value);" })
+                                                                    @Html.ValidationMessageFor(model => model.AmountPaid, "", new { @style = "color:red" })
+                                                                </div>
+                                                                <div class="col-xs-0 col-md-6 col-sm-6 col-lg-6 col-md-pull-2 col-lg-pull-2">
+                                                                    <span id="spnAmountPaid" style="color:red"></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+                                                                @Html.Label("Card Number", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
+                                                                @Html.TextBoxFor(model => model.CardNumber, null, new { PlaceHolder = "", style = "width:100%;", maxlength = 16 })
+                                                                @*@Html.ValidationMessageFor(model => model.CardNumber, "", new { @style = "color:red" })*@
+                                                                <span id="spnCardNumber" style="color:red"></span>
+                                                            </div>
+                                                            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+                                                                @Html.Label("Name On Card", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
+                                                                @Html.TextBoxFor(model => model.NameOnCard, null, new { PlaceHolder = "", style = "width:100%;", maxlength = 50 })
+                                                                @*@Html.ValidationMessageFor(model => model.NameOnCard, "", new { @style = "color:red" })*@
+                                                                <span id="spnNameOnCard" style="color:red"></span>
+                                                            </div>
+                                                            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                                                                @Html.Label("Expiry Date (MM/YY)", new { style = "font-weight:normal;", @class = "labelColor" })<span style="color: Red;">*</span><br />
+                                                                @(Html.Kendo().DropDownListFor(m => m.MM)
+                                                .Name("MM").HtmlAttributes(new { style = "width:30%;" })
+                                                .HtmlAttributes(new { style = "width:30%;" })
+                                                //.OptionLabel("--Select--")
+                                                .DataTextField("Text")
+                                                .DataValueField("Value")
+                                                .Events(events =>
+                                                {
+                                                    events.Change("OnMonth");
+                                                })
+                                                .DataSource(source =>
+                                                {
+                                                    source.Read(read =>
+                                                    {
+                                                        read.Action("BindMonths", "Master");
+                                                    });
+                                                }))
+
+                                                                @(Html.Kendo().DropDownListFor(m => m.YY)
+                                                .Name("YY").HtmlAttributes(new { style = "width:30%;" })
+                                                .HtmlAttributes(new { style = "width:30%;" })
+                                                //.OptionLabel("--Select--")
+                                                .DataTextField("Text")
+                                                .DataValueField("Value")
+                                                .Events(events =>
+                                                {
+                                                    events.Change("OnYear");
+                                                })
+                                                .DataSource(source =>
+                                                {
+                                                    source.Read(read =>
+                                                    {
+                                                        read.Action("BindYears", "Master");
+                                                    });
+                                                }))
+                                                                @Html.Hidden("MM")
+                                                                @Html.Hidden("YY")
+                                                                <script type="text/javascript">
+                                                        function OnMonth(e) {
+                                                            var dataItem = e.sender.dataItem();
+                                                            $("#MM").val(dataItem.Text);
+                                                        }
+                                                        function OnYear(e) {
+                                                            var dataItem = e.sender.dataItem();
+                                                            $("#YY").val(dataItem.Text);
+                                                        }
+                                                                </script>
+                                                            </div>
+                                                            <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2 col-lg-pull-1">
+                                                                @Html.Label("CVV", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
+                                                                @Html.TextBoxFor(model => model.CVV, null, new { PlaceHolder = "", style = "width:30%;background-color:white", maxlength = 3 })
+                                                                @*@Html.ValidationMessageFor(model => model.CVV, "", new { @style = "color:red" })*@
+                                                                <span id="spnCVV" style="color:red"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <br />
+
+                                                </div>
+
+
+
+                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-8" id="divEnrollTermsConditions" style="display:none;">
+                                                    @Html.CheckBox("SecoundTime", new { onclick = "ChckSecoundTime();" })
+                                                    <span>I Accept the <a onclick="EnrollTermsCondition()"><span id="\" style="color:blue;text-decoration:underline;cursor:pointer;"></span></a> for Member</span>
+                                                    <br />
+                                                </div>
+                                                <div class="col-xs-12 col-md-12 col-sm-12" align="center">
+                                                    <span id="spnCheckTermsErrorMessages" style="display:none; color:red !important; text-align:center;">Check Terms and Condition</span>
+                                                </div>
+                                                <br />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-12 col-md-12 col-sm-12" align="center">
+                                            <button class="button_blue" type="submit" id="btnSubmit" title="Submit" style="width: 100px;display:none;" value="Submit">
+                                                Submit
+                                            </button>
+                                            <button class="button_blue" type="button" id="btnCancel" title="Cancel" value="Cancel" style="width: 100px;" onclick="@("window.location.href='" + @Url.Action("ViewMemberDetails", "Organization") + "'");">
+                                                Cancel
+                                            </button>
+                                            @*<div id="loading" >
+                        <div id="loadingcontent">
+                            <p id="loadingspinner" >
+                                Searching things...
+                            </p>
+                        </div>
+                    </div>*@
+                                        </div>
+                                        <br />
+                                    </div>
+
+                                @*</div>MemberDetailsclose*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </fieldset>
+</div>
+
+
