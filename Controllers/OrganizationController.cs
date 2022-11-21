@@ -1545,13 +1545,13 @@ namespace PPCP07302018.Controllers
         {
             DataAccessLayer.ServiceCall<PPCP07302018.Models.Admin.MemberAutoComplete> objcall = new DataAccessLayer.ServiceCall<PPCP07302018.Models.Admin.MemberAutoComplete>();
             PPCP07302018.Models.Member.ServiceData ServiceData = new PPCP07302018.Models.Member.ServiceData();
-            string[] ParameterName = new string[] { "OrganizationID", "Text" };
+            string[] ParameterName = new string[] { "OrganizationID", "strMemberID", "searchtext" };
 
-            string[] ParameterValue = new string[] { Convert.ToString(Session["OrganizationID"]), Text };
+            string[] ParameterValue = new string[] { Convert.ToString(Session["OrganizationID"]), "0", Text };
             ServiceData.ParameterName = ParameterName;
             ServiceData.ParameterValue = ParameterValue;
-            ServiceData.WebMethodName = "GetMembersAutoComplete";
-            List<PPCP07302018.Models.Admin.MemberAutoComplete> List = objcall.CallServicesAdmin(Convert.ToInt32(0), "GetMembersAutoComplete", ServiceData);
+            ServiceData.WebMethodName = "GetMembersList";
+            List<PPCP07302018.Models.Admin.MemberAutoComplete> List = objcall.CallServices(Convert.ToInt32(0), "GetMembersList", ServiceData);
             return Json(List, JsonRequestBehavior.AllowGet);
         }
 
