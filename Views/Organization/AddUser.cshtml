@@ -30,20 +30,14 @@
     Layout = "~/Views/Shared/WUCOrgLeftMenu.cshtml";
     var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
 
-    }
+}
 
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/jqueryval")
-@Scripts.Render("~/bundles/modernizr")
-@Scripts.Render("~/bundles/bootstrap")
-@Scripts.Render("~/bundles/KendoScripts")
-@Scripts.Render("~/bundles/custom-validator")
-@Styles.Render("~/bundles/Kendocss")
+
 @Scripts.Render("~/bundles/AddUsersScriptFiles")   @*For Add User script files*@
 @Styles.Render("~/bundles/Organizationcssfiles")       @*For member css files*@
 <link href="~/Content/login.css" rel="stylesheet" />
 <style type="text/css">
-   .loadingSpinner {
+    .loadingSpinner {
         position: absolute;
         z-index: 1000;
         top: 0;
@@ -62,7 +56,7 @@
         BindStates("1", "StateName", '@ServiceUrl', "1");
         BindCities("1", "CityName", '@ServiceUrl', "1");
     });
-  
+
     function EditOptions(UserID, OrganizationID) {
         var webMethodName = "GetOrganizationUsers";
         var ParameterNames = new Array();
@@ -71,7 +65,7 @@
         ParameterValues[0] = UserID;
         ParameterNames[1] = "OrganizationID";
         ParameterValues[1] = OrganizationID;
-        var Url = "http://192.168.1.20/ppcpwebservice/OrganizationServices";       
+        var Url = "http://192.168.1.20/ppcpwebservice/OrganizationServices";
         var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
         $.ajax({
             type: "POST",
@@ -116,7 +110,7 @@
                         <div class="Bgheader" width="100%">
                             <div>
                                 <span id="SpnPopUpTitle" style="color: White; font-family: Verdana,Tahoma;
-                                font-size: 15px; font-weight: bold;">Physician Primary Care Plan</span>
+                                font-size: 15px; font-weight: bold;">My Physician Plan</span>
                             </div>
                         </div>
                         <div style="border: Solid 1px #33CCEE; width: 100%;">
@@ -150,7 +144,7 @@
                         <div class="Bgheader" width="100%">
                             <div align="center">
                                 <span id="SpanErrMsgTitle" style="color: White; font-family: Verdana,Tahoma; font-size: 15px;
-                        font-weight: bold;">Physician Primary Care Plan</span>
+                        font-weight: bold;">My Physician Plan</span>
                             </div>
                         </div>
                         <div style="border: Solid 1px #33CCEE; width: 100%;">
@@ -405,7 +399,7 @@
                                                     var CountryID = $("#CountryId").val();
                                                     $("#UserCountryName").val($("#CountryName").val());
                                                     BindStates(CountryID, "StateName", '@ServiceUrl',"2");
-                                                   
+
                                                 }
                                             </script>
                                         </div>
@@ -482,7 +476,7 @@
                                             @Html.TextBoxFor(m => m.Zip, new { style = "width:50%;Height:25px", maxlength = "5" })-
                                             @Html.TextBoxFor(m => m.ZipCode, new { style = "width:40%;Height:25px", maxlength = "4" })
                                             <br />
-                                            
+
                                             @Html.ValidationMessageFor(m => m.Zip)
                                             @Html.ValidationMessageFor(m => m.ZipCode)
                                         </div>
@@ -552,7 +546,7 @@
                     <div class="form-group">
                         <div class="row">
                             <div align="center" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                               
+
                                 <button type="submit" id="btnSubmitClick" title="Submit" style="width: 100px;" class="button_blue" value="Submit">
                                     Save
                                 </button>
@@ -560,8 +554,8 @@
                                     Clear
                                 </button>
 
-                                <button id="btnClose" title="Close" style="width: 100px" class="button_blue" onclick="@("window.location.href='" + @Url.Action("ViewUsers", "Organization") + "'");"> 
-                                                                        @*onclick="btnCloseOrganizationDetails();"*@
+                                <button id="btnClose" title="Close" style="width: 100px" class="button_blue" onclick="@("window.location.href='" + @Url.Action("ViewUsers", "Organization") + "'");">
+                                    @*onclick="btnCloseOrganizationDetails();"*@
                                     Close
                                 </button>
                             </div>
@@ -570,8 +564,8 @@
                 </div>
             </div>
         </div>
-     
-        </div>
+
+    </div>
 
 
 

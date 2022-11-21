@@ -26,13 +26,7 @@
     Layout = "~/Views/Shared/WUCOrgLeftMenu.cshtml";
     var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
 }
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/jqueryval")
-@Scripts.Render("~/bundles/modernizr")
-@Scripts.Render("~/bundles/bootstrap")
-@Scripts.Render("~/bundles/KendoScripts")
-@Scripts.Render("~/bundles/custom-validator")
-@Styles.Render("~/bundles/Kendocss")
+
 @Scripts.Render("~/bundles/ViewPaymentDetailsScriptFiles")   @*For ViewPaymentDetails script files*@
 @Styles.Render("~/bundles/Membercssfiles")       @*For member css files*@
 <style type="text/css">
@@ -100,7 +94,6 @@
 
                         <div class="Panel_bg_Sub">
                             <div style="width: 100%;height:auto;">
-                                <div class="col-xs-0 col-md-3 col-sm-0 col-lg-3"></div>
                                 <div class="row">
                                     <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                         @( Html.Label("From", new { style = "font-weight:normal;" }))<span style="color: Red;">*</span><br />
@@ -119,24 +112,11 @@
                                             <span id="Span7"></span>
                                         </span>
                                     </div>
-                                </div>
-                                <div class="col-xs-0 col-md-3 col-sm-0 col-lg-3"></div>
-                               
 
-                                <div class="col-xs-0 col-md-3 col-sm-0 col-lg-3"></div>
-                                <div class="col-xs-0 col-md-3 col-sm-0 col-lg-3"></div>
-                                <div class="row">
-                                    <div align="center">
-                                        <span id="DateValidationMessage" style="color: Red"></span>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div align="center">
-                                        <div class="col-xs-0 col-md-3 col-sm-3 col-lg-3"></div>
-                                        <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
-                                            <br />
-                                            <button type="button" id="btnSearch" title="Search" style="width: 100px;" class="button_blue" value="Search" onclick="btnDownLoad()">
-                                                @*onclick="btnDownLoad()"*@
+                                    <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
+                                        <br />
+                                        <button type="button" id="btnSearch" title="Search" style="width: 100px;" class="button_blue" value="Search" onclick="btnDownLoad()">
+                                            @*onclick="btnDownLoad()"*@
                                             Search
                                         </button>
                                         <button type="button" id="btnClear" title="Clear" value="Clear" style="width: 100px;display:none" class="button_blue">
@@ -146,42 +126,44 @@
                                             Close
                                         </button>
                                     </div>
-                                    <div class="col-xs-0 col-md-3 col-sm-3 col-lg-3"></div>
                                 </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @*Report Preview code*@
-            <div class="row" id="divpdfviewprescriptionpopup" style="display: none; align-content:center;">
-                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
-                    
-                    <div style="border: Solid 1px #33CCEE; width: 100%;">
-                        <div id="divotherpdfview"></div>
-
-                        <div class="row">
-                            <div class="col-xs-12 col-md-12 col-sm-12 ">
-                                <div id="divImagePrescription" style="height: 643px; width: 100%; ">
+                                <div class="row">
+                                    <div align="center">
+                                        <span id="DateValidationMessage" style="color: Red"></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div id="divbtnrereshOK" align="center" style="display:none">
-                            <button type="button" id="btnSuccess" onclick="OkPDFFile();" class="button_Sky_blue"
-                                    style="width: 70px;">
-                                Ok
-                            </button>
-
-                        </div>
                     </div>
-                    @*</div>*@
                 </div>
-            </div>
-        </fieldset>
+                @*Report Preview code*@
+                <div class="row" id="divpdfviewprescriptionpopup" style="display: none; align-content:center;">
+                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
 
+                        <div style="border: Solid 1px #33CCEE; width: 100%;">
+                            <div id="divotherpdfview"></div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-md-12 col-sm-12 ">
+                                    <div id="divImagePrescription" style="height: 643px; width: 100%; ">
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="divbtnrereshOK" align="center" style="display:none">
+                                <button type="button" id="btnSuccess" onclick="OkPDFFile();" class="button_Sky_blue"
+                                        style="width: 70px;">
+                                    Ok
+                                </button>
+
+                            </div>
+                        </div>
+                        @*</div>*@
+                    </div>
+                </div>
+            </fieldset>
+
+        </div>
     </div>
-</div>
 </div>
 @*}*@
 <script type="text/javascript">

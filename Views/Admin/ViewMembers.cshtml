@@ -31,13 +31,7 @@
     var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
 }
 
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/jqueryval")
-@Scripts.Render("~/bundles/modernizr")
-@Scripts.Render("~/bundles/bootstrap")
-@Scripts.Render("~/bundles/KendoScripts")
-@Scripts.Render("~/bundles/custom-validator")
-@Styles.Render("~/bundles/Kendocss")
+
 @Styles.Render("~/bundles/Membercssfiles")       @*For member css files*@
 @Scripts.Render("~/bundles/ViewMemberDetailsScriptFiles")
 
@@ -265,7 +259,7 @@
                     <div class="Bgheader" width="100%">
                         <div>
                             <span id="SpnPopUpTitle" style="color: White; font-family: Verdana,Tahoma;
-                                font-size: 15px; font-weight: bold;">Physician Primary Care Plan</span>
+                                font-size: 15px; font-weight: bold;">My Physician Plan</span>
                         </div>
                     </div>
                     <div style="border: Solid 1px #33CCEE; width: 100%;">
@@ -299,7 +293,7 @@
                     <div class="Bgheader" width="100%">
                         <div align="center">
                             <span id="SpanErrMsgTitle" style="color: White; font-family: Verdana,Tahoma; font-size: 15px;
-                        font-weight: bold;">Physician Primary Care Plan</span>
+                        font-weight: bold;">My Physician Plan</span>
                         </div>
                     </div>
                     <div style="border: Solid 1px #33CCEE; width: 100%;">
@@ -471,7 +465,7 @@
                         <div class="Bgheader" width="100%">
                             <div align="center">
                                 <span id="SpanErrMsgTitle" style="color: White; font-family: Verdana,Tahoma; font-size: 15px;
-                        font-weight: bold;">Physician Primary Care Plan</span>
+                        font-weight: bold;">My Physician Plan</span>
                             </div>
                         </div>
                         <div style="border: Solid 1px #33CCEE; width: 100%;">
@@ -523,12 +517,12 @@
                                             <div class="row">
                                                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                     @Html.Label("First Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                                    @Html.TextBoxFor(model => model.FirstName, null, new { style = "width:100%;", maxlength = 50 })
+                                                    @Html.TextBoxFor(model => model.FirstName, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
                                                     @*@Html.ValidationMessageFor(model => model.FirstName, "", new { @style = "color:red" })*@
                                                 </div>
                                                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                     @Html.Label("Last Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                                    @Html.TextBoxFor(model => model.LastName, null, new { style = "width:100%;", maxlength = 50 })
+                                                    @Html.TextBoxFor(model => model.LastName, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
                                                     @*@Html.ValidationMessageFor(model => model.LastName, "", new { @style = "color:red" })*@
                                                 </div>
                                                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
@@ -541,7 +535,7 @@
                                                 </div>
                                                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                     @Html.Label("Age", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                                    @Html.TextBoxFor(model => model.Age, null, new { style = "width:100%;", maxlength = 20, disabled = "disabled", @readonly = "readonly" })
+                                                    @Html.TextBoxFor(model => model.Age, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 20, disabled = "disabled", @readonly = "readonly" })
                                                     @*@Html.ValidationMessageFor(model => model.Age, "", new { @style = "color:red" })*@
                                                 </div>
                                             </div>
@@ -592,14 +586,14 @@
                                                 </div>
                                                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                     @Html.Label("Email", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                                    @Html.TextBoxFor(model => model.Email, null, new { style = "width:100%;", maxlength = 50 })
+                                                    @Html.TextBoxFor(model => model.Email, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
                                                     @*@Html.ValidationMessageFor(model => model.Email, "", new { @style = "color:red" })*@
                                                 </div>
                                                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                     @Html.Label("Mobile Number", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                                    @Html.TextBoxFor(model => model.CountryCode, null, new { style = "width:15%;", maxlength = 2 })
+                                                    @Html.TextBoxFor(model => model.CountryCode, null, new { @class = "customKendoTextBox", style = "width:15%;", maxlength = 2 })
                                                     @Html.Label("-", new { style = "font-weight:normal;", @class = "labelColor" })
-                                                    @Html.TextBoxFor(model => model.MobileNumber, null, new { style = "width:75%;", maxlength = 10, @class = "Text" })
+                                                    @Html.TextBoxFor(model => model.MobileNumber, null, new { @class = "customKendoTextBox Text", style = "width:75%;", maxlength = 10 })
                                                     @*@Html.ValidationMessageFor(model => model.CountryCode, "", new { @style = "color:red" })
                                                         @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @style = "color:red" })*@
                                                 </div>
@@ -709,8 +703,8 @@
                                                 </div>
                                                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                     @Html.Label("ZIP / Postal Code", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
-                                                    @Html.TextBoxFor(m => m.Zip, new { style = "width:50%;Height:25px", maxlength = "5" })-
-                                                    @Html.TextBoxFor(m => m.ZipCode, new { style = "width:40%;Height:25px", maxlength = "4" })
+                                                    @Html.TextBoxFor(m => m.Zip, new { @class = "customKendoTextBox", style = "width:50%;Height:25px", maxlength = "5" }) - 
+                                                    @Html.TextBoxFor(m => m.ZipCode, new { @class = "customKendoTextBox", style = "width:40%;Height:25px", maxlength = "4" })
                                                     <br />
                                                     
                                                     @*@Html.ValidationMessageFor(m => m.Zip)

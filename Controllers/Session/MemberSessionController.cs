@@ -18,7 +18,7 @@ namespace PPCP07302018.Controllers.Session
             HttpContext ctx = HttpContext.Current;
             // check  sessions here
             string actionName = System.Web.HttpContext.Current.Request.RequestContext.RouteData.Values["action"].ToString();
-            if((actionName.Equals("VerifyUser")) || (actionName.Equals("MemberLogin")) || 
+            if((actionName.Equals("ValidateCredentials")) || (actionName.Equals("MemberLogin")) || 
                 (actionName.Equals("MemberRegistration")) || (actionName.Equals("MemberCredentials")) ||
                 (actionName.Equals("SessionOut")))
             {

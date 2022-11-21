@@ -1,41 +1,35 @@
 ﻿@*#region Description
-/******************************************************************************************************
-* PROJECT:PPCP VERSION:1.0
-*
-* MODULE : Organization
-*
-* ITEM NAME :ViewMemberDetails.cshtml
-*
-* DEVELOPED BY: Veena.A
-*
-* REVIEWED BY:
-*
-* MODULE DISCRIPTION:
-*
-* CONTROL DESCRIPTION : used to View Member details in Grid
+    /******************************************************************************************************
+    * PROJECT:PPCP VERSION:1.0
+    *
+    * MODULE : Organization
+    *
+    * ITEM NAME :ViewMemberDetails.cshtml
+    *
+    * DEVELOPED BY: Veena.A
+    *
+    * REVIEWED BY:
+    *
+    * MODULE DISCRIPTION:
+    *
+    * CONTROL DESCRIPTION : used to View Member details in Grid
 
-****************************************************************************************************
-DATE CHANGE LOG DESCRIPTION CHANGED BY
-Date:               Description:                Author:   
-*****************************************************************************************************/
-#endregion*@
+    ****************************************************************************************************
+    DATE CHANGE LOG DESCRIPTION CHANGED BY
+    Date:               Description:                Author:
+    *****************************************************************************************************/
+    #endregion*@
 
 @model PPCP07302018.Models.Organization.AddMemberDetails
 @using System.Web.Mvc.Html
 @using Kendo.Mvc.UI
-@using System.Web.Mvc 
+@using System.Web.Mvc
 @{
     ViewBag.Title = "ViewMemberDetails";
     Layout = "~/Views/Shared/WUCOrgLeftMenu.cshtml";
     var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
 }
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/jqueryval")
-@Scripts.Render("~/bundles/modernizr")
-@Scripts.Render("~/bundles/bootstrap")
-@Scripts.Render("~/bundles/KendoScripts")
-@Scripts.Render("~/bundles/custom-validator")
-@Styles.Render("~/bundles/Kendocss")
+
 @Styles.Render("~/bundles/Membercssfiles")       @*For member css files*@
 @Scripts.Render("~/bundles/ViewMemberDetailsScriptFiles")
 
@@ -69,7 +63,8 @@ Date:               Description:                Author:
         margin-top: 7px;
         margin-right: 5px;
     }
-     .loadingSpinner {
+
+    .loadingSpinner {
         position: absolute;
         z-index: 1000;
         top: 0;
@@ -101,11 +96,11 @@ Date:               Description:                Author:
         });
     }
     function EditOptions(MemberID, FirstName, LastName, CountryCode, MobileNumber, DOB, Gender, Email, CountryName, StateName, CityName, Zip, Salutation, CountryID, StateID, CityID, IsTwofactorAuthentication, TwoFactorType) {
-     
+
         $("#MemberID").val(MemberID);
         var x = MemberID;
         $("#hdnMemberID").val(x);
-        $("#divMainMemberDetails").show(); 
+        $("#divMainMemberDetails").show();
 
         $("#DivViewMember").show();
         $("#divAddMember").hide();
@@ -148,28 +143,38 @@ Date:               Description:                Author:
             $("#Zip").val(postalcode[0]);
         }
         $("#Salutation").val(Salutation);
-  
-            $('#chk2factor').prop('checked', true);
-            $("#divEnableFactor").show();
+
+            $('#chk2factor').prop('checked', false);
+            $("#divEnableFactor").hide();
             if(TwoFactorType == "1")
             {
-
+                $("#divEnableFactor").show();
+                $('#chk2factor').prop('checked', true);
                 $('#rbtnEverytime').prop('checked', true);
 
             }else if(TwoFactorType == "2")
             {
-
+                $("#divEnableFactor").show();
+                $('#chk2factor').prop('checked', true);
                 $('#rbtnOnlySysChange').prop('checked', true);
             }
 
-
-       
         BindCountries('@ServiceUrl', CountryID);
         BindStates('@ServiceUrl', CountryID, StateID);
         BindCites('@ServiceUrl', StateID, CityID);
         BindSalutation(Salutation);
+
+        $("#chk2factor").click(function () {
+            if ($("#chk2factor").is(":checked") == true) {
+                $("#divEnableFactor").show();
+            }
+            else if ($("#chk2factor").is(":checked") == false) {
+                $("#divEnableFactor").hide();
+            }
+        });
+
         function MembeDetail()
-        {         
+        {
             var MemberRegistrationDetails = {   };
             MemberRegistrationDetails.OrganizationID='@Session["OrganizationID"]';
             MemberRegistrationDetails.OrganizationName='@Session["OrganizationName"]';
@@ -236,14 +241,14 @@ Date:               Description:                Author:
     function btnSearch() {
         var MemeberID = $("#MemberId").val();
         GetMemberDetails('@Session["OrganizationID"]', MemeberID, '@ServiceUrl');
-        
+
     }
     function btnClear() {
         document.getElementById('MemberName').value = '';
         //to clear grid
         GetMemberDetails('@Session["OrganizationID"]', "0", '@ServiceUrl');
     }
-    </script>
+</script>
 
 <div id="divViewMember">
     <div class="pageheading_bar" align="center">
@@ -259,7 +264,7 @@ Date:               Description:                Author:
                     <div class="Bgheader" width="100%">
                         <div>
                             <span id="SpnPopUpTitle" style="color: White; font-family: Verdana,Tahoma;
-                                font-size: 15px; font-weight: bold;">Physician Primary Care Plan</span>
+                                font-size: 15px; font-weight: bold;">My Physician Plan</span>
                         </div>
                     </div>
                     <div style="border: Solid 1px #33CCEE; width: 100%;">
@@ -280,6 +285,7 @@ Date:               Description:                Author:
                             </button>
                             <a id="loginUrl" href="@Html.AttributeEncode(Url.Action("ViewMemberDetails", "Organization" ))">
                             </a>
+                            <br /><br />
                         </div>
                     </div>
                 </div>
@@ -293,7 +299,7 @@ Date:               Description:                Author:
                     <div class="Bgheader" width="100%">
                         <div align="center">
                             <span id="SpanErrMsgTitle" style="color: White; font-family: Verdana,Tahoma; font-size: 15px;
-                        font-weight: bold;">Physician Primary Care Plan</span>
+                        font-weight: bold;">My Physician Plan</span>
                         </div>
                     </div>
                     <div style="border: Solid 1px #33CCEE; width: 100%;">
@@ -314,12 +320,13 @@ Date:               Description:                Author:
                             </button>
                             <a id="errorUrl" href="@Html.AttributeEncode(Url.Action("ViewMemberDetails", "Organization" ))">
                             </a>
+                            <br /><br />
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div id="divSelectPlan" >
+        <div id="divSelectPlan">
             <div class="form-group" id="divAddMember">
                 <div class="row">
                     <div align="right" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -330,7 +337,7 @@ Date:               Description:                Author:
                 </div>
             </div>
             <fieldset id="fsLabOrderSearch" style="display:block">
-                <div class="form-group"  style="display:none">
+                <div class="form-group" style="display:none">
                     <div id="dvSearchFilterHeader" style="cursor: pointer;" onclick="CollapsiblePanels(document.getElementById('dvSearchFilterHeader'),document.getElementById('dvSearchFilter'));"
                          class="PanelTopBar">
                         <span id="4_lblSearchPat" style="font-size:15px;font-weight:normal;color: White;">Search</span>
@@ -347,10 +354,9 @@ Date:               Description:                Author:
                         <div class="Panel_bg_Sub">
                             <div style="width: 100%;height:auto;">
                                 <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" style="display:block">
-                                    <div class="col-xs-0 col-md-3 col-sm-0 col-lg-4"></div>
                                     <div class="row">
                                         <div class="col-xs-6 col-md-3 col-sm-6 col-lg-4">
-                                           
+
                                             @(Html.Kendo().AutoComplete()
                                                     .Name("MemberName")
                                                     .Placeholder("First Name/Last Name/Mobile Number")
@@ -369,63 +375,64 @@ Date:               Description:                Author:
                                                             read.Action("MemberSearchAutoComplete", "Organization").Data("onAdditionalData");
                                                         }).ServerFiltering(true);
                                                     }))
-                                            </div>
                                         </div>
-                                            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" align="center">
-                                                <br />
-                                                 <button type="button" id="btnSearch" title="Search" style="width: 100px;" class="button_blue" value="Search" onclick="btnSearch()">
-                                                   Search
-                                                </button>
-                                                <button type="button" id="btnClear" title="Clear" value="Clear" style="width: 100px;" class="button_blue" onclick="btnClear()">
-                                                    Clear
-                                                </button>
-                                                <br />
-                                                @Html.ValidationMessageFor(model => model.MemberName)
-                                                @Html.Hidden("MemberId")
-                                                <script type="text/javascript">
-                                                    function OnMemberNameSelectChange(e) {
-                                                       $("#MemberId").val("0");
-                                                        var dataItem = this.dataItem(e.item.index());
-                                                        $("#MemberName").val(dataItem.MemberName);
-                                                        $("#MemberId").val(dataItem.MemberID);
-                                                        var MemberID = $("#MemberId").val();                                                      
-                                                    }
-                                                    function OnMemberchangeEvent() {
-                                                       
-                                                    }
-                                                    function onAdditionalData() {
-                                                        return {
-                                                            text: $("#MemberName").val()
-                                                        };
-                                                    }
-                                                  
-                                                </script>
-                                            </div>
-                                    </div>
-                                </div>
+                                        <div class="col-xs-6 col-md-6 col-sm-6 col-lg-6">
+                                            <button type="button" id="btnSearch" title="Search" style="width: 100px;" class="button_blue" value="Search" onclick="btnSearch()">
+                                                Search
+                                            </button>
+                                            <button type="button" id="btnClear" title="Clear" value="Clear" style="width: 100px;" class="button_blue" onclick="btnClear()">
+                                                Clear
+                                            </button>
+                                            @Html.ValidationMessageFor(model => model.MemberName)
+                                            @Html.Hidden("MemberId")
+                                            <script type="text/javascript">
+                                                function OnMemberNameSelectChange(e) {
+                                                    $("#MemberId").val("0");
+                                                    var dataItem = this.dataItem(e.item.index());
+                                                    $("#MemberName").val(dataItem.MemberName);
+                                                    $("#MemberId").val(dataItem.MemberID);
+                                                    var MemberID = $("#MemberId").val();
+                                                }
+                                                function OnMemberchangeEvent() {
 
+                                                }
+                                                function onAdditionalData() {
+                                                    return {
+                                                        text: $("#MemberName").val()
+                                                    };
+                                                }
+
+                                            </script>
+                                        </div>
+                                    </div>
+
+                                </div>
                             </div>
+
                         </div>
                     </div>
-               </fieldset>
-              
-               
-                <div class="form-group" id="DivMemberGrid">
-                    <div class="row">
-                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
-                            @Html.Hidden("RedirectTo", Url.Action("ViewMemberDetails", "Organization"))
-                            @(Html.Kendo().Grid<PPCP07302018.Models.Organization.AddMemberDetails>
+                </div>
+            </fieldset>
+
+
+            <div class="form-group" id="DivMemberGrid">
+                <div class="row">
+                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                        @Html.Hidden("RedirectTo", Url.Action("ViewMemberDetails", "Organization"))
+                        @(Html.Kendo().Grid<PPCP07302018.Models.Organization.AddMemberDetails>
                                                     ()
                                                     .Name("ViewMemberGrid")
                                                     .Columns(columns =>
                                                     {
                                                         columns.Bound(p => p.MemberName).Width(100).ClientTemplate(" <a onclick='SelectPat(#= Member_Id # );' <span style=' cursor:pointer'>#: Member_name #</a>").Width(150).Title("Name").Visible(false);
-                                                        columns.Bound(p => p.OrganizationName).Title("OrganizationName").Filterable(true).Width(100).Visible(false);
+                                                        columns.Bound(p => p.OrganizationName).Title("Organization Name").Filterable(true).Width(100).Visible(false);
                                                         columns.Bound(p => p.FirstName).Title("FirstName").Filterable(true).Width(130).Visible(false);
                                                         columns.Bound(p => p.LastName).Title("Last Name").Filterable(true).Width(120).Visible(false);
                                                         columns.Bound(p => p.FirstName).Title("Member Name").ClientTemplate("#: FirstName # #: LastName #").Filterable(true).Width(150);
-                                                        columns.Bound(p => p.CountryCode).Title("CountryCode").Filterable(true).Width(120).Visible(false);
-                                                        columns.Bound(p => p.MobileNumber).Title("MobileNumber").Filterable(true).Width(120);
+                                                        columns.Bound(p => p.CountryCode).Title("Country Code").Filterable(true).Width(120).Visible(false);
+                                                        columns.Bound(p => p.MobileNumber).Title("Mobile Number").Filterable(true).Width(120);
+                                                        columns.Bound(p => p.PlanStartDate).Title("Plan Start Date").ClientTemplate("#= kendo.toString(kendo.parseDate(PlanStartDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') #").Filterable(true).Width(120);
+                                                        columns.Bound(p => p.PlanEndDate).Title("Plan End Date").ClientTemplate("#= kendo.toString(kendo.parseDate(PlanEndDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') #").Filterable(true).Width(120);
                                                         columns.Bound(p => p.DOB).Title("DOB").Filterable(true).Width(130).Visible(false);
                                                         columns.Bound(p => p.Age).Title("Age").Filterable(true).Width(120).Visible(false);
                                                         columns.Bound(p => p.Gender).Title("Gender").Filterable(true).Width(120).Visible(false);
@@ -458,113 +465,113 @@ Date:               Description:                Author:
                                                     .Ajax()
                                                     .PageSize(5)
                                                     .ServerOperation(false)))
-                        </div>
                     </div>
                 </div>
-                <div class="row" id="divErrMessagePopup" style="display: none; position: relative" align="center">
-                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
-                        <div class="Page_Dimmer">
-                        </div>
-                        <div class="PopupHolder" style="top: 17%;">
-                            <div class="Bgheader" width="100%">
-                                <div align="center">
-                                    <span id="SpanErrMsgTitle" style="color: White; font-family: Verdana,Tahoma; font-size: 15px;
-                        font-weight: bold;">Physician Primary Care Plan</span>
-                                </div>
+            </div>
+            <div class="row" id="divErrMessagePopup" style="display: none; position: relative" align="center">
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                    <div class="Page_Dimmer">
+                    </div>
+                    <div class="PopupHolder" style="top: 17%;">
+                        <div class="Bgheader" width="100%">
+                            <div align="center">
+                                <span id="SpanErrMsgTitle" style="color: White; font-family: Verdana,Tahoma; font-size: 15px;
+                        font-weight: bold;">My Physician Plan</span>
                             </div>
-                            <div style="border: Solid 1px #33CCEE; width: 100%;">
-                                <div align="left">
-                                    <img alt="!" id="Img1" src="~/Images/Error.png" style="height: 25px; width: 25px;
+                        </div>
+                        <div style="border: Solid 1px #33CCEE; width: 100%;">
+                            <div align="left">
+                                <img alt="!" id="Img1" src="~/Images/Error.png" style="height: 25px; width: 25px;
                         border-width: 0px;" />
-                                </div>
-                                <div align="center">
-                                    <span id="spnPopupErrMessage" style="color: Orange; font-family: Verdana,Tahoma; font-size: 14px;
+                            </div>
+                            <div align="center">
+                                <span id="spnPopupErrMessage" style="color: Orange; font-family: Verdana,Tahoma; font-size: 14px;
                                 font-weight: bold;">
-                                    </span>
-                                </div>
-                                <div align="center">
-                                    <br />
-                                    <button type="button" id="btnErrPopup" onclick="document.location.href = $('#errorUrl').attr('href');" class="button_blue"
-                                            style="width: 70px;">
-                                        Ok
-                                    </button>
-                                    <a id="errorUrl" href="@Html.AttributeEncode(Url.Action("AddMember", "Organization" ))">
-                                    </a>
-                                </div>
+                                </span>
+                            </div>
+                            <div align="center">
+                                <br />
+                                <button type="button" id="btnErrPopup" onclick="document.location.href = $('#errorUrl').attr('href');" class="button_blue"
+                                        style="width: 70px;">
+                                    Ok
+                                </button>
+                                <a id="errorUrl" href="@Html.AttributeEncode(Url.Action("AddMember", "Organization" ))">
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
-            
-            <div class="row" style="display:none;" id="DivViewMember">
-               
-                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
-                    </div>
-                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
-                        <div id="MemberDetails" class="form-group" style="width:100%;">
-                            <div class="row">
-                                <br />
-                                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
-                                </div>
+            </div>
 
+            <div class="row" style="display:none;" id="DivViewMember">
+
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                </div>
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                    <div id="MemberDetails" class="form-group" style="width:100%;">
+                        <div class="row">
+                            <br />
+                            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
                             </div>
 
-                            <fieldset id="fsMemberDetails" style="margin:0px;width:100%; " >
-                                <div class="row" id="MemberDetailsvalidate">
-                                </div>
-                                <br />
-                                <div class="row Panel_bg_Sub">
-                                    <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Member Details</b>:</legend>
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
-                                                <div class="row">
-                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                                        @Html.Label("First Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                                        @Html.TextBoxFor(model => model.FirstName, null, new { style = "width:100%;", maxlength = 50 })
-                                                        @*@Html.ValidationMessageFor(model => model.FirstName, "", new { @style = "color:red" })*@
-                                                    </div>
-                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                                        @Html.Label("Last Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                                        @Html.TextBoxFor(model => model.LastName, null, new { style = "width:100%;", maxlength = 50 })
-                                                        @*@Html.ValidationMessageFor(model => model.LastName, "", new { @style = "color:red" })*@
-                                                    </div>
-                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                                        @Html.Label("Date of Birth", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                                        @( Html.Kendo().DatePickerFor(model => model.DOB).Format("MM/dd/yyyy").Name("DOB").Value("").Max(DateTime.Today)
+                        </div>
+
+                        <fieldset id="fsMemberDetails" style="margin:0px;width:100%; ">
+                            <div class="row" id="MemberDetailsvalidate">
+                            </div>
+                            <br />
+                            <div class="row Panel_bg_Sub">
+                                <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Member Details</b>:</legend>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                            <div class="row">
+                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                    @Html.Label("First Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                    @Html.TextBoxFor(model => model.FirstName, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
+                                                    @*@Html.ValidationMessageFor(model => model.FirstName, "", new { @style = "color:red" })*@
+                                                </div>
+                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                    @Html.Label("Last Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                    @Html.TextBoxFor(model => model.LastName, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
+                                                    @*@Html.ValidationMessageFor(model => model.LastName, "", new { @style = "color:red" })*@
+                                                </div>
+                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                    @Html.Label("Date of Birth", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                    @( Html.Kendo().DatePickerFor(model => model.DOB).Format("MM/dd/yyyy").Name("DOB").Value("").Max(DateTime.Today)
                                                     .HtmlAttributes(new { PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text", onkeydown = "return true;" })
                                                     .Events(e => e.Change("DateSelectionChanged"))
                                                         )
-                                                        @*@Html.ValidationMessageFor(model => model.DOB, "", new { @style = "color:red" })*@
-                                                    </div>
-                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                                        @Html.Label("Age", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                                        @Html.TextBoxFor(model => model.Age, null, new { style = "width:100%;", maxlength = 20, disabled = "disabled", @readonly = "readonly" })
-                                                        @*@Html.ValidationMessageFor(model => model.Age, "", new { @style = "color:red" })*@
-                                                    </div>
+                                                    @*@Html.ValidationMessageFor(model => model.DOB, "", new { @style = "color:red" })*@
                                                 </div>
-                                                <div class="row">
-                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                                        @Html.Label("Gender", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                                        <label style="font-weight: normal;">
-                                                            @(Html.RadioButton("Gender", 1, new
+                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                    @Html.Label("Age", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                    @Html.TextBoxFor(model => model.Age, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 20, disabled = "disabled", @readonly = "readonly" })
+                                                    @*@Html.ValidationMessageFor(model => model.Age, "", new { @style = "color:red" })*@
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                    @Html.Label("Gender", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                    <label style="font-weight: normal;">
+                                                        @(Html.RadioButton("Gender", 1, new
                                                             {
                                                                 id = "rbtnGenderMale"
                                                             }))
-                                                            Male
-                                                        </label>
-                                                        <label style="font-weight: normal; margin-left:20px">
-                                                            @(Html.RadioButton("Gender", 2, new
+                                                        Male
+                                                    </label>
+                                                    <label style="font-weight: normal; margin-left:20px">
+                                                        @(Html.RadioButton("Gender", 2, new
                                                             {
                                                                 id = "rbtnGenderFemale"
                                                             }))
-                                                            Female
-                                                        </label>
-                                                        @*<br />@Html.ValidationMessageFor(m => m.Gender)*@
-                                                    </div>
-                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                                        @Html.Label("Salutation", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
-                                                        @(Html.Kendo().DropDownListFor(m => m.Salutation)
+                                                        Female
+                                                    </label>
+                                                    @*<br />@Html.ValidationMessageFor(m => m.Gender)*@
+                                                </div>
+                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                    @Html.Label("Salutation", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
+                                                    @(Html.Kendo().DropDownListFor(m => m.Salutation)
                                                     .Name("SalutationList").HtmlAttributes(new { style = "width:100%;" })
                                                     .OptionLabel("--Select--")
                                                     .Events(events =>
@@ -573,39 +580,39 @@ Date:               Description:                Author:
                                                     })
                                                     .DataValueField("Value")
                                                     .DataTextField("Text")
-                                                    
+
                                                         )<br />
-                                                        @*@Html.ValidationMessageFor(m => m.Salutation)*@
-                                                        @Html.Hidden("SalutationID")
-                                                        @Html.HiddenFor(m => m.Salutation)
-                                                        <script type="text/javascript">
-                                                                //Salutation change event to get SalutationID and Salutation
-                                                                function onSelectSalutation(e) {
-                                                                    $("#SalutationID").val("");
-                                                                    var dataItem = this.dataItem(e.item.index());
-                                                                    $("#Salutation").val(dataItem.Text);
-                                                                    $("#SalutationID").val(dataItem.Value);
-                                                                }
-                                                        </script>
-                                                    </div>
-                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                                        @Html.Label("Email", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                                        @Html.TextBoxFor(model => model.Email, null, new { style = "width:100%;", maxlength = 50 })
-                                                        @*@Html.ValidationMessageFor(model => model.Email, "", new { @style = "color:red" })*@
-                                                    </div>
-                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                                        @Html.Label("Mobile Number", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                                        @Html.TextBoxFor(model => model.CountryCode, null, new { style = "width:15%;", maxlength = 2 })
-                                                        @Html.Label("-", new { style = "font-weight:normal;", @class = "labelColor" })
-                                                        @Html.TextBoxFor(model => model.MobileNumber, null, new { style = "width:75%;", maxlength = 10, @class = "Text" })
-                                                        @*@Html.ValidationMessageFor(model => model.CountryCode, "", new { @style = "color:red" })
-                                                    @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @style = "color:red" })*@
-                                                    </div>
+                                                    @*@Html.ValidationMessageFor(m => m.Salutation)*@
+                                                    @Html.Hidden("SalutationID")
+                                                    @Html.HiddenFor(m => m.Salutation)
+                                                    <script type="text/javascript">
+                                                        //Salutation change event to get SalutationID and Salutation
+                                                        function onSelectSalutation(e) {
+                                                            $("#SalutationID").val("");
+                                                            var dataItem = this.dataItem(e.item.index());
+                                                            $("#Salutation").val(dataItem.Text);
+                                                            $("#SalutationID").val(dataItem.Value);
+                                                        }
+                                                    </script>
                                                 </div>
-                                                <div class="row">
-                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                                        @Html.Label("Country", new { style = "font-weight:normal;", @class = "labelColor" })<span style="color: Red;">*</span><br />
-                                                        @(Html.Kendo().DropDownListFor(model => model.CountryName)
+                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                    @Html.Label("Email", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                    @Html.TextBoxFor(model => model.Email, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
+                                                    @*@Html.ValidationMessageFor(model => model.Email, "", new { @style = "color:red" })*@
+                                                </div>
+                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                    @Html.Label("Mobile Number", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                    @Html.TextBoxFor(model => model.CountryCode, null, new { @class = "customKendoTextBox", style = "width:15%;", maxlength = 2 })
+                                                    @Html.Label("-", new { style = "font-weight:normal;", @class = "labelColor" })
+                                                    @Html.TextBoxFor(model => model.MobileNumber, null, new { @class = "customKendoTextBox Text", style = "width:75%;", maxlength = 10 })
+                                                    @*@Html.ValidationMessageFor(model => model.CountryCode, "", new { @style = "color:red" })
+                                                        @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @style = "color:red" })*@
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                    @Html.Label("Country", new { style = "font-weight:normal;", @class = "labelColor" })<span style="color: Red;">*</span><br />
+                                                    @(Html.Kendo().DropDownListFor(model => model.CountryName)
                                                     .Name("CountryNameList")
                                                     .OptionLabel("--Select--")
                                                     .HtmlAttributes(new { style = "width:100%;" })
@@ -621,12 +628,12 @@ Date:               Description:                Author:
                                                         {
                                                         });
                                                     }))
-                                                        <br />
+                                                    <br />
 
-                                                        @*@Html.ValidationMessageFor(model => model.CountryName)*@
-                                                        @Html.HiddenFor(model => model.CountryID)
-                                                        @Html.HiddenFor(model => model.CountryName)
-                                                        <script type="text/javascript">
+                                                    @*@Html.ValidationMessageFor(model => model.CountryName)*@
+                                                    @Html.HiddenFor(model => model.CountryID)
+                                                    @Html.HiddenFor(model => model.CountryName)
+                                                    <script type="text/javascript">
                                                                 //Country change event to get CountryName and CountryId
                                                                 function OnCountrySelectChange(e) {
                                                                     var dataItem = this.dataItem(e.item.index());
@@ -636,11 +643,11 @@ Date:               Description:                Author:
                                                                     @*BindStates(CountryID,'@ServiceUrl');*@
                                                                     BindStates('@ServiceUrl', CountryID, 0)
                                                                 }
-                                                        </script>
-                                                    </div>
-                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                                        @Html.Label("State", new { style = "font-weight:normal;", @class = "labelColor" })<span style="color: Red;">*</span><br />
-                                                        @(Html.Kendo().DropDownListFor(m => m.StateName)
+                                                    </script>
+                                                </div>
+                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                    @Html.Label("State", new { style = "font-weight:normal;", @class = "labelColor" })<span style="color: Red;">*</span><br />
+                                                    @(Html.Kendo().DropDownListFor(m => m.StateName)
                                                     .Name("StateNameList")
                                                     .OptionLabel("--Select--")
                                                     .HtmlAttributes(new { style = "width:100%;" })
@@ -656,11 +663,11 @@ Date:               Description:                Author:
                                                         {
                                                         });
                                                     }))
-                                                        <br />
-                                                        @*@Html.ValidationMessageFor(m => m.StateName)*@
-                                                        @Html.HiddenFor(m => m.StateID)
-                                                        @Html.HiddenFor(m => m.StateName)
-                                                        <script type="text/javascript">
+                                                    <br />
+                                                    @*@Html.ValidationMessageFor(m => m.StateName)*@
+                                                    @Html.HiddenFor(m => m.StateID)
+                                                    @Html.HiddenFor(m => m.StateName)
+                                                    <script type="text/javascript">
                                                                 //Country State event to get StateName and StateID
                                                                 function OnStateSelectChange(e) {
                                                                     $("#StateID").val("");
@@ -671,11 +678,11 @@ Date:               Description:                Author:
                                                                     @*BindCities(StateID,'@ServiceUrl');*@
                                                                     BindCites('@ServiceUrl', StateID, 0)
                                                                 }
-                                                        </script>
-                                                    </div>
-                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                                        @Html.Label("City", new { style = "font-weight:normal;", @class = "labelColor" })<span style="color: Red;">*</span><br />
-                                                        @(Html.Kendo().DropDownListFor(m => m.CityName)
+                                                    </script>
+                                                </div>
+                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                    @Html.Label("City", new { style = "font-weight:normal;", @class = "labelColor" })<span style="color: Red;">*</span><br />
+                                                    @(Html.Kendo().DropDownListFor(m => m.CityName)
                                                     .Name("CityNameList")
                                                     .OptionLabel("--Select--")
                                                     .HtmlAttributes(new { style = "width:100%;" })
@@ -691,97 +698,97 @@ Date:               Description:                Author:
                                                         {
                                                         });
                                                     }))
-                                                        <br />
-                                                        @*@Html.ValidationMessageFor(m => m.CityName)*@
-                                                        @Html.HiddenFor(m => m.CityID)
-                                                        @Html.HiddenFor(m => m.CityName)
-                                                        <script type="text/javascript">
-                                                                //City change event to get CityName and CityID
-                                                                function OnCitySelectChange(e) {
-                                                                    $("#CityID").val("");
-                                                                    var dataItem = this.dataItem(e.item.index());
-                                                                    $("#CityName").val(dataItem.CityName);
-                                                                    $("#CityID").val(dataItem.CityID);
-                                                                }
-                                                        </script>
-                                                    </div>
-                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                                        @Html.Label("ZIP / Postal Code", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
-                                                        @Html.TextBoxFor(m => m.Zip, new { style = "width:50%;Height:25px", maxlength = "5" })-
-                                                        @Html.TextBoxFor(m => m.ZipCode, new { style = "width:40%;Height:25px", maxlength = "4" })
-                                                        <br />                                                       
-                                                        
-                                                        @*@Html.ValidationMessageFor(m => m.Zip)
-                                                    @Html.ValidationMessageFor(m => m.ZipCode)*@
-                                                    </div>
+                                                    <br />
+                                                    @*@Html.ValidationMessageFor(m => m.CityName)*@
+                                                    @Html.HiddenFor(m => m.CityID)
+                                                    @Html.HiddenFor(m => m.CityName)
+                                                    <script type="text/javascript">
+                                                        //City change event to get CityName and CityID
+                                                        function OnCitySelectChange(e) {
+                                                            $("#CityID").val("");
+                                                            var dataItem = this.dataItem(e.item.index());
+                                                            $("#CityName").val(dataItem.CityName);
+                                                            $("#CityID").val(dataItem.CityID);
+                                                        }
+                                                    </script>
+                                                </div>
+                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                    @Html.Label("ZIP / Postal Code", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
+                                                    @Html.TextBoxFor(m => m.Zip, new { @class = "customKendoTextBox", style = "width:50%;Height:25px", maxlength = "5" })-
+                                                    @Html.TextBoxFor(m => m.ZipCode, new { @class = "customKendoTextBox", style = "width:40%;Height:25px", maxlength = "4" })
+                                                    <br />
+                                                    
+                                                    @*@Html.ValidationMessageFor(m => m.Zip)
+                                                        @Html.ValidationMessageFor(m => m.ZipCode)*@
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </fieldset>
-                            <br />
-                            <div class="row Panel_bg_Sub" style="display:none;" id="DivMemberCredentials">
-                                <div class="row">
-                                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
-                                        @*@Html.CheckBox("chkMemberCredentials", false)&nbsp;*@
-                                        <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Member Credentials</b>:</legend>
+                            </div>
+                        </fieldset>
+                        <br />
+                        <div class="row Panel_bg_Sub" style="display:none;" id="DivMemberCredentials">
+                            <div class="row">
+                                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                    @*@Html.CheckBox("chkMemberCredentials", false)&nbsp;*@
+                                    <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Member Credentials</b>:</legend>
 
-                                    </div>
                                 </div>
+                            </div>
 
 
-                                <div class="form-group">
+                            <div class="form-group">
 
-                                    <div class="row" id="MemberCredentials" style="display:block">
-                                       
-                                        <div class="row">
-                                            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
-                                                @Html.CheckBox("chk2factor", false)&nbsp;<b>Enable 2-factor authentication</b>
-                                            </div>
+                                <div class="row" id="MemberCredentials" style="display:block">
+
+                                    <div class="row">
+                                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                            @Html.CheckBox("chk2factor", false)&nbsp;<b>Enable 2-factor authentication</b>
                                         </div>
-                                        <div class="row" id="divEnableFactor" >
-                                            <div class="col-xs-10 col-md-3 col-sm-6 col-lg-10">
-                                                <label style="font-weight: normal;">
-                                                    @(Html.RadioButton("ChkList", 1, new
+                                    </div>
+                                    <div class="row" id="divEnableFactor">
+                                        <div class="col-xs-10 col-md-3 col-sm-6 col-lg-10">
+                                            <label style="font-weight: normal;">
+                                                @(Html.RadioButton("ChkList", 1, new
                                                     {
                                                         id = "rbtnEverytime",
                                                     }))
-                                                    Everytime
-                                                </label>&nbsp;&nbsp;&nbsp;&nbsp;
-                                                <label style="font-weight: normal;">
-                                                    @(Html.RadioButton("ChkList", 2, new
+                                                Everytime
+                                            </label>&nbsp;&nbsp;&nbsp;&nbsp;
+                                            <label style="font-weight: normal;">
+                                                @(Html.RadioButton("ChkList", 2, new
                                                     {
                                                         id = "rbtnOnlySysChange"
                                                     }))
-                                                    Only when system change
-                                                </label>
-                                                <br />
-                                            </div>
+                                                Only when system change
+                                            </label>
+                                            <br />
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <br />
-                            <div class="row" style="display:none;" id="DivUpdate">
-                                <div class="col-xs-12 col-md-12 col-sm-12" align="center">
-                                    <button class="button_blue" type="submit" id="btnSubmit" title="Submit" style="width: 100px;" value="Submit">
-                                        Update
-                                    </button>
-                                    <button class="button_blue" type="button" id="btnCancel" title="Cancel" value="Cancel" style="width: 100px;" onclick="@("window.location.href='" + @Url.Action("ViewMemberDetails", "Organization") + "'");">
-                                        Cancel
-                                    </button>
-                                </div>
-                                <br />
-                            </div>
-
                         </div>
+                        <br />
+                        <div class="row" style="display:none;" id="DivUpdate">
+                            <div class="col-xs-12 col-md-12 col-sm-12" align="center">
+                                <button class="button_blue" type="submit" id="btnSubmit" title="Submit" style="width: 100px;" value="Submit">
+                                    Update
+                                </button>
+                                <button class="button_blue" type="button" id="btnCancel" title="Cancel" value="Cancel" style="width: 100px;" onclick="@("window.location.href='" + @Url.Action("ViewMemberDetails", "Organization") + "'");">
+                                    Cancel
+                                </button>
+                            </div>
+                            <br />
+                        </div>
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 
-  
+
 

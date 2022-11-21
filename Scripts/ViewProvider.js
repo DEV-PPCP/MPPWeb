@@ -171,12 +171,12 @@ function GetSpecilization(Url, SpecializationTempID) {
 
                     if (SpecializationTempID.includes(objlist[r].SpecializationID)) {
                         jsonResult += "<input type='checkbox' checked='true'  id='" + objlist[r].SpecializationID + "' onclick = '" + "SpecializationValidation();" + "' name='" + "SPList" + "' value='" + objlist[r].SpecializationID + ";" + objlist[r].SpecializationName + "' onclick='" + "check(this.value)" + "'  />" +
-                        "<label for='" + objlist[r].SpecializationName + "'>" + objlist[r].SpecializationName + "</label>" + "<br />"
+                            "<label for='" + objlist[r].SpecializationName + "'> &nbsp;" + objlist[r].SpecializationName + "</label>" + "<br />"
                         Id = objlist[r].SpecializationID;
                     }
                     else {
                         jsonResult += "<input type='checkbox'  id='" + objlist[r].SpecializationID + "' onclick = '" + "SpecializationValidation();" + "' name='" + "SPList" + "' value='" + objlist[r].SpecializationID + ";" + objlist[r].SpecializationName + "' onclick='" + "check(this.value)" + "'  />" +
-                        "<label for='" + objlist[r].SpecializationName + "'>" + objlist[r].SpecializationName + "</label>" + "<br />"
+                            "<label for='" + objlist[r].SpecializationName + "'> &nbsp;" + objlist[r].SpecializationName + "</label>" + "<br />"
                         Id = objlist[r].SpecializationID;
                     }
                     $("#divSpecializationList").html(jsonResult);
@@ -186,12 +186,12 @@ function GetSpecilization(Url, SpecializationTempID) {
                 else {
                     if (SpecializationTempID.includes(objlist[r].SpecializationID)) {
                         jsonResults += "<input type='checkbox' checked='true'  id='" + objlist[r].SpecializationID + "' onclick = '" + "SpecializationValidation();" + "' name='" + "SPList" + "' value='" + objlist[r].SpecializationID + ";" + objlist[r].SpecializationName + "' onclick='" + "check(this.value)" + "'  />" +
-                        "<label for='" + objlist[r].SpecializationName + "'>" + objlist[r].SpecializationName + "</label>" + "<br />"
+                            "<label for='" + objlist[r].SpecializationName + "'> &nbsp;" + objlist[r].SpecializationName + "</label>" + "<br />"
                         Id = objlist[r].SpecializationID;
                     }
                     else {
                         jsonResults += "<input type='checkbox'  id='" + objlist[r].SpecializationID + "' onclick = '" + "SpecializationValidation();" + "' name='" + "SPList" + "' value='" + objlist[r].SpecializationID + ";" + objlist[r].SpecializationName + "' onclick='" + "check(this.value)" + "'  />" +
-                        "<label for='" + objlist[r].SpecializationName + "'>" + objlist[r].SpecializationName + "</label>" + "<br />"
+                            "<label for='" + objlist[r].SpecializationName + "'> &nbsp;" + objlist[r].SpecializationName + "</label>" + "<br />"
                         Id = objlist[r].SpecializationID;
                     }
                     $("#divSpecializationListRight").html(jsonResults);

@@ -7,13 +7,7 @@
     Layout = "~/Views/Shared/BaseMaster.cshtml";
     var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
 }
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/jqueryval")
-@Scripts.Render("~/bundles/modernizr")
-@Scripts.Render("~/bundles/bootstrap")
-@Scripts.Render("~/bundles/KendoScripts")
-@Scripts.Render("~/bundles/custom-validator")
-@Styles.Render("~/bundles/Kendocss")
+
 @Styles.Render("~/bundles/Membercssfiles")       @*For member css files*@
 @Scripts.Render("~/bundles/FamilyRegistrationScriptFiles")
 <style>
@@ -21,7 +15,7 @@
         display: none !important;
     }
 
-     .loadingSpinner {
+    .loadingSpinner {
         position: absolute;
         z-index: 1000;
         top: 0;
@@ -30,6 +24,7 @@
         width: 100%;
         background: rgba( 255, 255, 255, .8 ) url('../../Images/loading-spinner-red.gif') 50% 50% no-repeat;
     }
+
     #RelationshipList_validationMessage {
         position: inherit;
         display: inline-block;
@@ -44,9 +39,11 @@
     #Salutation_validationMessage {
         display: none !important;
     }
-    #SalutationID_validationMessage{
-         display: none !important;
+
+    #SalutationID_validationMessage {
+        display: none !important;
     }
+
     #CountryName_validationMessage {
         display: none !important;
     }
@@ -140,28 +137,28 @@
 
         $("#btnSubmit").click(function (e) {
             var MemberDetailsvalidate = $("#fsMain").kendoValidator().data("kendoValidator");
-            
+
             if ($('#chkMemberCredentials').is(":checked") == true) {
                 MemberDetailsvalidate.validate();
                 if( $("#UserName").val()=="" ||$("#Password").val()==""){
-                  
+
                     $("#spnUserNameValidator").show();
                     $("#spnUserpasswordValidator").show();
                     $("#spnPUserpasswordValidator").show();
-                   
+
                     return false;
-                } 
+                }
                 else{
-                
+
                     $("#spnUserNameValidator").hide();
                     $("#spnUserpasswordValidator").hide();
                     $("#spnPUserpasswordValidator").hide();
                     MembeDetail();
                 }
                }
-            
+
             else{
-               
+
                 if(MemberDetailsvalidate.validate()){
                     MembeDetail();
                 }
@@ -187,7 +184,7 @@
             },
         });
     }
-   
+
     ///To check Password strength in MemberRegistration  : Ragini on 14-08-2019
     function chkPasswordStrength(txtPassword, strenghtMsg, errorMsg) {
         if(txtPassword!=""){
@@ -235,7 +232,7 @@
             document.getElementById("PasswordErrorMsg").innerHTML = "Password and Confirm Password should be Match.";
         }
     }
-   
+
     function ValidateUserName(UserName) {
         $("#spnUserNameValidator").hide();
         ValidateUserNames(UserName,'@ServiceUrl');
@@ -244,9 +241,6 @@
 <div class="pageheading_bar" align="center">
     <b>Family Registration</b>
 </div>
-
-
-
 
 <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" id="divMain" style="margin-top:0px;">
     <div class="row" id="divSignupPopup" style="display: none; align-content:center;">
@@ -257,7 +251,7 @@
                 <div class="Bgheader" width="100%">
                     <div>
                         <span id="SpnPopUpTitle" style="color: White; font-family: Verdana,Tahoma;
-                                font-size: 15px; font-weight: bold;">Physician Primary Care Plan</span>
+                                font-size: 15px; font-weight: bold;">My Physician Plan</span>
                     </div>
                 </div>
                 <div style="border: Solid 1px #33CCEE; width: 100%;">
@@ -276,6 +270,7 @@
                                 style="width: 70px;">
                             Ok
                         </button>
+                        <br /><br />
                         <a id="loginUrl" href="@Html.AttributeEncode(Url.Action("FamilyMember", "Member" ))">
                         </a>
                     </div>
@@ -291,7 +286,7 @@
                 <div class="Bgheader" width="100%">
                     <div align="center">
                         <span id="SpanErrMsgTitle" style="color: White; font-family: Verdana,Tahoma; font-size: 15px;
-                        font-weight: bold;">Physician Primary Care Plan</span>
+                        font-weight: bold;">My Physician Plan</span>
                     </div>
                 </div>
                 <div style="border: Solid 1px #33CCEE; width: 100%;">
@@ -312,6 +307,7 @@
                         </button>
                         <a id="errorUrl" href="@Html.AttributeEncode(Url.Action("FamilyMember", "Member" ))">
                         </a>
+                        <br /><br />
                     </div>
                 </div>
             </div>
@@ -386,14 +382,14 @@
                                                 <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
                                                     <div class="row">
                                                         <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                                            @Html.Label("Last Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                                            @Html.TextBoxFor(model => model.LastName, null, new { style = "width:100%;", maxlength = 50 })
-                                                            @Html.ValidationMessageFor(model => model.LastName, "", new { @style = "color:red" })
+                                                            @Html.Label("First Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                            @Html.TextBoxFor(model => model.FirstName, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
+                                                            @Html.ValidationMessageFor(model => model.FirstName, "", new { @style = "color:red" })
                                                         </div>
                                                         <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                                            @Html.Label("First Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                                            @Html.TextBoxFor(model => model.FirstName, null, new { style = "width:100%;", maxlength = 50 })
-                                                            @Html.ValidationMessageFor(model => model.FirstName, "", new { @style = "color:red" })
+                                                            @Html.Label("Last Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                            @Html.TextBoxFor(model => model.LastName, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
+                                                            @Html.ValidationMessageFor(model => model.LastName, "", new { @style = "color:red" })
                                                         </div>
                                                         <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                             @Html.Label("Date of Birth", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
@@ -405,7 +401,7 @@
                                                         </div>
                                                         <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                             @Html.Label("Age", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                                            @Html.TextBoxFor(model => model.Age, null, new { style = "width:100%;", maxlength = 20, disabled = "disabled", @readonly = "readonly" })
+                                                            @Html.TextBoxFor(model => model.Age, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 20, disabled = "disabled", @readonly = "readonly" })
                                                             @Html.ValidationMessageFor(model => model.Age, "", new { @style = "color:red" })
                                                         </div>
                                                     </div>
@@ -484,14 +480,14 @@
                                                         </div>
                                                         <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                             @Html.Label("Email", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                                            @Html.TextBoxFor(model => model.Email, null, new { style = "width:100%;", maxlength = 50 })
+                                                            @Html.TextBoxFor(model => model.Email, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
                                                             @Html.ValidationMessageFor(model => model.Email, "", new { @style = "color:red" })
                                                         </div>
                                                         <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                             @Html.Label("Mobile Number", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                                            @Html.TextBoxFor(model => model.CountryCode, null, new { style = "width:15%;", maxlength = 2 })
+                                                            @Html.TextBoxFor(model => model.CountryCode, null, new { @class = "customKendoTextBox", style = "width:15%;", maxlength = 2 })
                                                             @Html.Label("-", new { style = "font-weight:normal;", @class = "labelColor" })
-                                                            @Html.TextBoxFor(model => model.MobileNumber, null, new { style = "width:75%;", maxlength = 10 })
+                                                            @Html.TextBoxFor(model => model.MobileNumber, null, new { @class = "customKendoTextBox", style = "width:75%;", maxlength = 10 })
                                                             @Html.ValidationMessageFor(model => model.CountryCode, "", new { @style = "color:red" })
                                                             @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @style = "color:red" })
                                                         </div>
@@ -598,10 +594,10 @@
                                                         </div>
                                                         <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                             @Html.Label("ZIP / Postal Code", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
-                                                            @Html.TextBoxFor(m => m.Zip, new { style = "width:50%;Height:25px", maxlength = "5" })-
-                                                            @Html.TextBoxFor(m => m.ZipCode, new { style = "width:40%;Height:25px", maxlength = "4" })
+                                                            @Html.TextBoxFor(m => m.Zip, new { @class = "customKendoTextBox", style = "width:50%;Height:25px", maxlength = "5" }) -
+                                                            @Html.TextBoxFor(m => m.ZipCode, new { @class = "customKendoTextBox", style = "width:40%;Height:25px", maxlength = "4" })
                                                             <br />
-                                                            
+
                                                             @Html.ValidationMessageFor(m => m.Zip)
                                                             @Html.ValidationMessageFor(m => m.ZipCode)
                                                         </div>
@@ -629,22 +625,22 @@
                                                         <div class="row">
                                                             <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                                 @Html.Label("Username", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                                                @Html.TextBoxFor(model => model.UserName, null, new { style = "width:100%;", maxlength = 25, onchange = "ValidateUserName(this.value);" })
+                                                                @Html.TextBoxFor(model => model.UserName, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 25, onchange = "ValidateUserName(this.value);" })
                                                                 @*@Html.ValidationMessageFor(model => model.UserName, "", new { @style = "color:red" })*@
-                                                                <span id="spnUserName" style="color:red"></span><span id="spnUserNameValidator" style="color:red;display:none;" >This Information is Requried</span>
+                                                                <span id="spnUserName" style="color:red"></span><span id="spnUserNameValidator" style="color:red;display:none;">This Information is Requried</span>
                                                             </div>
                                                             <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                                 @Html.Label("Password", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                                                @Html.TextBoxFor(model => model.Password, null, new { style = "width:100%;", maxlength = 20, onchange = "chkPasswordStrength(this.value);", type = "password", onkeyup = "chkPasswordStrength(this.value,document.getElementById('strength'),document.getElementById('error'))", onpaste = "return false;", oncopy = "return false", oncut = "return false" })
+                                                                @Html.TextBoxFor(model => model.Password, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 20, onchange = "chkPasswordStrength(this.value);", type = "password", onkeyup = "chkPasswordStrength(this.value,document.getElementById('strength'),document.getElementById('error'))", onpaste = "return false;", oncopy = "return false", oncut = "return false" })
                                                                 @*@Html.ValidationMessageFor(model => model.Password, "", new { @style = "color:red" })*@
                                                                 <span id="strength" class="strength5"></span><span id="spnUserpasswordValidator" style="color:red;display:none;">This Information is Requried</span>
                                                             </div>
                                                             <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                                 @Html.Label("Confirm Password", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                                                @Html.TextBoxFor(model => model.ConfirmPassword, null, new { style = "width:100%;", maxlength = 20, type = "password", onchange = "validatePassword(this.value)", onpaste = "return false;", oncopy = "return false", oncut = "return false" })
+                                                                @Html.TextBoxFor(model => model.ConfirmPassword, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 20, type = "password", onchange = "validatePassword(this.value)", onpaste = "return false;", oncopy = "return false", oncut = "return false" })
                                                                 @*@Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @style = "color:red" })*@
                                                                 <span id="PasswordErrorMsg" style="color:red"></span> <span id="spnPUserpasswordValidator" style="color:red;display:none;">This Information is Requried</span>
-                                 </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>

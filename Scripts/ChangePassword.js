@@ -13,7 +13,7 @@ function getformattedJsonFromArray(arrayObj) {
 }
 
 ///Updating Password in MemberChangePassword : Ragini on 14-08-2019 ///
-function btnUpdateScript(MemberID,Url) {
+function btnUpdateScript(UserID,Url) {
     var txtpassword = $("#NewPassword").val();
     var txtconfirmpassword = $("#ConfirmPassword").val();
 
@@ -24,7 +24,7 @@ function btnUpdateScript(MemberID,Url) {
         var ParameterNames = new Array();
         var ParameterValues = new Array();
         ParameterNames[0] = "UserID";
-        ParameterValues[0] = MemberID;
+        ParameterValues[0] = UserID;
         ParameterNames[1] = "Password";
         ParameterValues[1] = txtconfirmpassword;
         ParameterNames[2] = "TypeID";

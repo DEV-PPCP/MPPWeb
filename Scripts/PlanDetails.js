@@ -43,6 +43,7 @@ function GetMemberFamilyPlanDetails(Url, MemberParentID, Type) {
         dataType: "text",
         contentType: "application/json",
         success: function (result) {
+            debugger;
             $("#divOrganizationPayments").find(".loadingSpinner:first").remove();
             var obj = jQuery.parseJSON(result);
             var OrganizationList = obj[0];

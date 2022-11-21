@@ -26,13 +26,7 @@
     Layout = "~/Views/Shared/WUCAdminLeftMenu.cshtml";
     var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
 }
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/jqueryval")
-@Scripts.Render("~/bundles/modernizr")
-@Scripts.Render("~/bundles/bootstrap")
-@Scripts.Render("~/bundles/KendoScripts")
-@Scripts.Render("~/bundles/custom-validator")
-@Styles.Render("~/bundles/Kendocss")
+
 @Scripts.Render("~/bundles/ViewPaymentDetailsScriptFiles")   @*For ViewPaymentDetails script files*@
 @Styles.Render("~/bundles/Membercssfiles")       @*For member css files*@
 <style type="text/css">
@@ -100,27 +94,21 @@
 
                         <div class="Panel_bg_Sub">
                             <div style="width: 100%;height:auto;">
-                                <div class="col-xs-0 col-md-3 col-sm-0 col-lg-3"></div>
                                 <div class="row">
                                     <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                         @( Html.Label("From", new { style = "font-weight:normal;" }))<span style="color: Red;">*</span><br />
                                         @( Html.Kendo().DatePicker().Format("MM/dd/yyyy").Name("FromDate").Events(e => e.Change("startChange")).Value("")
        .Max(DateTime.Today).HtmlAttributes(new { PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text" }))<br />
-
-
                                         <span style="color: Red"><span id="Span3"></span></span>
                                     </div>
                                     <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                         @( Html.Label("To", new { style = "font-weight:normal;" }))<span style="color: Red;">*</span><br />
                                         @( Html.Kendo().DatePicker().Format("MM/dd/yyyy").Name("ToDate").Events(e => e.Change("endChange")).Value("").Max(DateTime.Today).HtmlAttributes(new { PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text" }))<br />
-
-
                                         <span style="color: Red">
                                             <span id="Span7"></span>
                                         </span>
                                     </div>
                                 </div>
-                                <div class="col-xs-0 col-md-3 col-sm-0 col-lg-3"></div>
                                 <div class="row">
                                     <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                         @Html.Label("Organization Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
@@ -191,66 +179,6 @@
 
                                         }
                                     </script>
-
-
-
-                                </div>
-                                <div class="col-xs-0 col-md-3 col-sm-0 col-lg-3"></div>
-                                <div class="row">
-                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3" style="display:none">
-                                        @Html.Label("Payment Status", new { style = "font-weight:normal;", @class = "classlabel" })<br />
-
-                                        @(Html.Kendo().DropDownList()
-                    .Name("PaymentStatus").HtmlAttributes(new { style = "width:100%;" })
-                    .OptionLabel("--Select--")
-                    .Events(events =>
-                    {
-                        events.Change("onSelectPaymentStatus");
-                    })
-                    .DataValueField("Value")
-                    .DataTextField("Text")
-                    .BindTo(new List<SelectListItem>()
-                    {
-                                                        new SelectListItem()
-                                                        {
-                                                             Text = "Paid",
-                                                            Value = "1"
-                                                        },
-                                                         new SelectListItem()
-                                                        {
-                                                            Text = "Partially",
-                                                            Value = "2"
-                                                        },
-                                                        new SelectListItem()
-                                                        {
-                                                            Text = "Pending",
-                                                            Value = "3"
-                                                        },
-                                                        new SelectListItem()
-                                                        {
-                                                            Text = "All",
-                                                            Value = "4"
-                                                        }
-
-                    })
-                                        )<br />
-
-                                        @Html.Hidden("PaymentStatusID")
-                                        <script type="text/javascript">
-
-                                            function onSelectPaymentStatus(e) {
-
-                                                $("#PaymentStatus").val("");
-                                                    var dataItem = e.sender.dataItem();
-                                                    $("#PaymentStatus").val(dataItem.Text);
-                                                    $("#PaymentStatusID").val(dataItem.Value);
-                                                    if ($("#PaymentStatus").val() == "--Select--") {
-                                                        $("#PaymentStatus").val("");
-                                                    }
-                                                }
-                                        </script>
-                                    </div>
-
                                     <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                         @Html.Label("Plan Type", new { style = "font-weight:normal;", @class = "classlabel" })<br />
 
@@ -300,6 +228,64 @@
                                             }
                                         </script>
                                     </div>
+                                </div>
+                                <div class="col-xs-0 col-md-3 col-sm-0 col-lg-3"></div>
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3" style="display:none">
+                                        @Html.Label("Payment Status", new { style = "font-weight:normal;", @class = "classlabel" })<br />
+
+                                        @(Html.Kendo().DropDownList()
+                    .Name("PaymentStatus").HtmlAttributes(new { style = "width:100%;" })
+                    .OptionLabel("--Select--")
+                    .Events(events =>
+                    {
+                        events.Change("onSelectPaymentStatus");
+                    })
+                    .DataValueField("Value")
+                    .DataTextField("Text")
+                    .BindTo(new List<SelectListItem>()
+                    {
+                                                        new SelectListItem()
+                                                        {
+                                                             Text = "Paid",
+                                                            Value = "1"
+                                                        },
+                                                         new SelectListItem()
+                                                        {
+                                                            Text = "Partially",
+                                                            Value = "2"
+                                                        },
+                                                        new SelectListItem()
+                                                        {
+                                                            Text = "Pending",
+                                                            Value = "3"
+                                                        },
+                                                        new SelectListItem()
+                                                        {
+                                                            Text = "All",
+                                                            Value = "4"
+                                                        }
+
+                    })
+                                        )<br />
+
+                                        @Html.Hidden("PaymentStatusID")
+                                        <script type="text/javascript">
+
+                                            function onSelectPaymentStatus(e) {
+
+                                                $("#PaymentStatus").val("");
+                                                var dataItem = e.sender.dataItem();
+                                                $("#PaymentStatus").val(dataItem.Text);
+                                                $("#PaymentStatusID").val(dataItem.Value);
+                                                if ($("#PaymentStatus").val() == "--Select--") {
+                                                    $("#PaymentStatus").val("");
+                                                }
+                                            }
+                                        </script>
+                                    </div>
+
+
 
                                     @*<label style="font-weight: normal;">
                                             @Html.Label("Plan Type", new { style = "font-weight:normal;", @class = "classlabel" })<br />
@@ -329,8 +315,6 @@
                                         </label>*@
                                 </div>
 
-                                <div class="col-xs-0 col-md-3 col-sm-0 col-lg-3"></div>
-                                <div class="col-xs-0 col-md-3 col-sm-0 col-lg-3"></div>
                                 <div class="row">
                                     <div align="center">
                                         <span id="DateValidationMessage" style="color: Red"></span>
@@ -340,7 +324,7 @@
                                     <div align="center">
                                         <div class="col-xs-0 col-md-3 col-sm-3 col-lg-3"></div>
                                         <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
-                                            <br />
+
                                             <span id="spnOrganiizationerror" style="color:red"></span><br />
                                             <button type="button" id="btnSearch" title="Search" style="width: 100px;" class="button_blue" value="Search" onclick="btnDownLoad()">
                                                 @*onclick="btnDownLoad()"*@
@@ -356,7 +340,6 @@
                                         <div class="col-xs-0 col-md-3 col-sm-3 col-lg-3"></div>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>

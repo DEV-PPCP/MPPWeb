@@ -174,6 +174,22 @@ function BindSalutation(SalutationID) {
     });
 }
 
+function BindDegree() {
+    $.ajax({
+        type: 'POST',
+        cache: false,
+        url: '/Master/BindDegree',
+        //data: ,
+        success: function (SalutationList, textStatus, jqXHR) {
+            for (var r in SalutationList) {
+                $('#Degree').data('kendoDropDownList').dataSource.insert(r, { Text: SalutationList[r].Text, Value: SalutationList[r].ID });
+            }
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+        },
+    });
+}
+
 //Getting and binding Specilizations in both Admin and Organization Module by Ragini on 31/10/2019
 function GetSpecilization(Url, SpecializationTempID) {
     var webMethodName = "GetSpecializationLKP";
@@ -199,12 +215,12 @@ function GetSpecilization(Url, SpecializationTempID) {
 
                     if (SpecializationTempID.includes(objlist[r].SpecializationID)) {
                         jsonResult += "<input type='checkbox' checked='true'  id='" + objlist[r].SpecializationID + "' onclick = '" + "SpecializationValidation();" + "' name='" + "SPList" + "' value='" + objlist[r].SpecializationID + ";" + objlist[r].SpecializationName + "' onclick='" + "check(this.value)" + "'  />" +
-                        "<label for='" + objlist[r].SpecializationName + "'>" + objlist[r].SpecializationName + "</label>" + "<br />"
+                            "<label for='" + objlist[r].SpecializationName + "'> &nbsp;" + objlist[r].SpecializationName + "</label>" + "<br />"
                       Id = objlist[r].SpecializationID;
                     }
                     else {
                         jsonResult += "<input type='checkbox'  id='" + objlist[r].SpecializationID + "' onclick = '" + "SpecializationValidation();" + "' name='" + "SPList" + "' value='" + objlist[r].SpecializationID + ";" + objlist[r].SpecializationName + "' onclick='" + "check(this.value)" + "'  />" +
-                        "<label for='" + objlist[r].SpecializationName + "'>" + objlist[r].SpecializationName + "</label>" + "<br />"
+                            "<label for='" + objlist[r].SpecializationName + "'> &nbsp;" + objlist[r].SpecializationName + "</label>" + "<br />"
                         Id = objlist[r].SpecializationID;
                     }
                     $("#divSpecializationList").html(jsonResult);
@@ -214,12 +230,12 @@ function GetSpecilization(Url, SpecializationTempID) {
                 else {
                     if (SpecializationTempID.includes(objlist[r].SpecializationID)) {
                         jsonResults += "<input type='checkbox' checked='true'  id='" + objlist[r].SpecializationID + "' onclick = '" + "SpecializationValidation();" + "' name='" + "SPList" + "' value='" + objlist[r].SpecializationID + ";" + objlist[r].SpecializationName + "' onclick='" + "check(this.value)" + "'  />" +
-                        "<label for='" + objlist[r].SpecializationName + "'>" + objlist[r].SpecializationName + "</label>" + "<br />"
+                            "<label for='" + objlist[r].SpecializationName + "'> &nbsp;" + objlist[r].SpecializationName + "</label>" + "<br />"
                         Id = objlist[r].SpecializationID;
                     }
                     else {
                         jsonResults += "<input type='checkbox'  id='" + objlist[r].SpecializationID + "' onclick = '" + "SpecializationValidation();" + "' name='" + "SPList" + "' value='" + objlist[r].SpecializationID + ";" + objlist[r].SpecializationName + "' onclick='" + "check(this.value)" + "'  />" +
-                        "<label for='" + objlist[r].SpecializationName + "'>" + objlist[r].SpecializationName + "</label>" + "<br />"
+                            "<label for='" + objlist[r].SpecializationName + "'> &nbsp;" + objlist[r].SpecializationName + "</label>" + "<br />"
                        Id = objlist[r].SpecializationID;
                     }
                     $("#divSpecializationListRight").html(jsonResults);
@@ -241,20 +257,25 @@ function UpdateProviders(jsModel, Url) {
     jsModel.Gender = $("#hdnGender").val();
     jsModel.Email = $("#Email").val();
             
-    jsModel.Zip = $("#Zip").val();
+    if ($("#ZipCode").val() == "") {
+        jsModel.Zip = $("#Zip").val();
+    }
+    else {
+        jsModel.Zip = $("#Zip").val() + "-" + $("#ZipCode").val();
+    }
     jsModel.Salutation = $("#SalutationList").val();
     jsModel.CountryCode = $("#CountryCode").val();
             
     jsModel.CountryID = $("#CountryID").val();
-    jsModel.CountryName = $("#CountryName").val();
+    jsModel.CountryName = $("#hdnCountryName").val();
     jsModel.StateID = $("#StateID").val();
-    jsModel.StateName = $("#StateName").val();
+    jsModel.StateName = $("#hdnStateName").val();
     jsModel.CityID = $("#CityID").val();
-    jsModel.CityName = $("#CityName").val();
+    jsModel.CityName = $("#hdnCityName").val();
     jsModel.NPI = $("#NPI").val();
   
     
-    jsModel.Faz = $("#Fax").val();
+    jsModel.Fax = $("#Fax").val();
     jsModel.Address = $("#Address").val();
     jsModel.Degree = $("#Degree").val();
 

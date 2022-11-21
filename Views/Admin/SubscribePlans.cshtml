@@ -28,13 +28,7 @@
     Layout = "~/Views/Shared/WUCAdminLeftMenu.cshtml";
     var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
 }
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/jqueryval")
-@Scripts.Render("~/bundles/modernizr")
-@Scripts.Render("~/bundles/bootstrap")
-@Scripts.Render("~/bundles/KendoScripts")
-@Scripts.Render("~/bundles/custom-validator")
-@Styles.Render("~/bundles/Kendocss")
+
 @Styles.Render("~/bundles/Membercssfiles")       @*For member css files**@
     @Scripts.Render("~/bundles/AdminSubscribePlansScriptFiles")   @*For Subscribe script files
 @Styles.Render("~/bundles/Organizationcssfiles")       @*For member css files*@
@@ -97,7 +91,7 @@
         <div class="pageheading_bar" style="width: 100%; height: 70%;">
             <div style="vertical-align: middle">
                 <div style="vertical-align: middle">
-                    Physician Primary Care Plan<span style="float: right; color: Red;
+                    My Physician Plan<span style="float: right; color: Red;
                             margin-right: 5px;"></span>
                 </div>
             </div>

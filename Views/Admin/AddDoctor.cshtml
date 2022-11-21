@@ -7,13 +7,7 @@
     Layout = "~/Views/Shared/WUCAdminLeftMenu.cshtml";
     var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
 }
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/jqueryval")
-@Scripts.Render("~/bundles/modernizr")
-@Scripts.Render("~/bundles/bootstrap")
-@Scripts.Render("~/bundles/KendoScripts")
-@Scripts.Render("~/bundles/custom-validator")
-@Styles.Render("~/bundles/Kendocss")
+
 @Scripts.Render("~/bundles/AddDoctorsScriptFiles")
 @Styles.Render("~/bundles/Organizationcssfiles")
 
@@ -240,7 +234,7 @@
 
 
 <div class="pageheading_bar" align="center">
-    <b>Add Doctors</b>
+    <b>Add Doctor</b>
 </div>
 
 <div class="Panel_bg" id="divMainAddDoctors">
@@ -253,7 +247,7 @@
                     <div>
                         <span id="SpnPopUpTitle" style="color: White; font-family: Verdana,Tahoma;
                                 font-size: 15px; font-weight: bold;"></span>
-                        @*Physician Primary Care Plan*@
+                        @*My Physician Plan*@
                     </div>
                 </div>
                 <div style="border: Solid 1px #33CCEE; width: 100%;">
@@ -287,7 +281,7 @@
                 <div class="Bgheader" width="100%">
                     <div align="center">
                         <span id="SpanErrMsgTitle" style="color: White; font-family: Verdana,Tahoma; font-size: 15px;
-                        font-weight: bold;">Physician Primary Care Plan</span>
+                        font-weight: bold;">My Physician Plan</span>
                     </div>
                 </div>
                 <div style="border: Solid 1px #33CCEE; width: 100%;">
@@ -404,7 +398,7 @@
                 </div>
             </div>
 
-            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;">@Html.CheckBox("chk2factor", false)<b>Enable 2-factor authentication</b>:</legend>
+            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;">@Html.CheckBox("chk2factor", false)<b> Enable 2-factor authentication</b>:</legend>
             <div class="row" id="divEnableFactor" style="display:none;">
                 <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12 ">
                     <label style="font-weight: normal;">

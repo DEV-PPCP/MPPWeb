@@ -1082,3 +1082,11 @@ div.RadGrid .rgAltRow td {
     background: linear-gradient(to bottom, #efac6c 14%,#cd853f 47%,#cd853f 79%);
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#03846d', endColorstr='#03846d',GradientType=0 );
 }
+
+.panel-title {
+    color: #cd853f;
+}
+
+.panel-collapse {
+    background-color: rgb(255, 248, 220);
+}

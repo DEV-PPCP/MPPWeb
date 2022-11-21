@@ -15,7 +15,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PPCP07302018</RootNamespace>
     <AssemblyName>PPCP07302018</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
@@ -96,6 +96,9 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Diagnostics.Tracing.EventSource, Version=1.1.24.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Diagnostics.Tracing.EventSource.Redist.1.1.24\lib\net40\Microsoft.Diagnostics.Tracing.EventSource.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -250,6 +253,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\EmployerController.cs" />
     <Compile Include="Controllers\MasterController.cs" />
@@ -622,21 +626,63 @@
     <Content Include="Content\master.css" />
     <Content Include="Content\Member.css" />
     <Content Include="Content\Purple.css" />
+    <Content Include="DLLS\Iph.Utilities.Common.dll" />
+    <Content Include="DLLS\Kendo.Mvc.dll" />
+    <Content Include="DLLS\Telerik.Reporting.dll" />
+    <Content Include="DLLS\Telerik.ReportViewer.WebForms.dll" />
+    <Content Include="DLLS\Telerik.Web.Design.dll" />
+    <Content Include="DLLS\Telerik.Web.Device.Detection.dll" />
+    <Content Include="DLLS\Telerik.Web.UI.dll" />
+    <Content Include="DLLS\Telerik.Web.UI.Skins.dll" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="Images\001-settings.png" />
-    <Content Include="Images\Arrow.jpg" />
-    <Content Include="Images\collapse_blue.jpg" />
-    <Content Include="Images\Crossmark.gif" />
-    <Content Include="Images\Error.png" />
-    <Content Include="Images\expand_blue.jpg" />
-    <Content Include="Images\Inner-Logo.png" />
-    <Content Include="Images\Innerpages-Logo.png" />
-    <Content Include="Images\loading-spinner-red.gif" />
-    <Content Include="Images\Logout.png" />
-    <Content Include="Images\Success.png" />
+    <Content Include="Images\001-settings.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\Arrow.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\ArrowTransparent.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\collapse_blue.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\Crossmark.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\Error.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\expand_blue.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\icons8-gear-80.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\icons8-logout-26.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\Inner-Logo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\Innerpages-Logo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\loading-spinner-red.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\Logout.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\rxCard.jpeg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\Success.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Inner-Logo.png" />
     <Content Include="Innerpages-Logo.png" />
     <Content Include="packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll" />
@@ -909,12 +955,13 @@
     </None>
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\ChangePassword.js" />
+    <Content Include="Scripts\Common.js" />
     <Content Include="Scripts\DiabledOrganizations.js" />
     <Content Include="Scripts\EmployerForgotPassword.js" />
     <Content Include="Scripts\EmployersRegistration.js" />
     <Content Include="Scripts\FamilyMember.js" />
     <Content Include="Scripts\FamilyRegistration.js" />
-    <Content Include="Scripts\OrganizationCredentials.js" />
+    <Content Include="Scripts\OrganizationCredentials_XXX.js" />
     <Content Include="Scripts\OrganizationProfileDetails.js" />
     <Content Include="Scripts\PartialPayments.js" />
     <Content Include="Scripts\PaymentDetails.js" />
@@ -1072,14 +1119,14 @@
     <Content Include="Scripts\kendo\2014.3.1316\messages\kendo.messages.zh-HK.min.js" />
     <Content Include="Scripts\kendo\2014.3.1316\messages\kendo.messages.zh-TW.min.js" />
     <Content Include="Scripts\Member.js" />
-    <Content Include="Scripts\MemberCredentials.js" />
+    <Content Include="Scripts\Credentials.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\Organization.js" />
     <Content Include="Scripts\PendingPlanEnrollment.js" />
     <Content Include="Scripts\PlanDetails.js" />
     <Content Include="Scripts\PlanEnroll.js" />
     <Content Include="Scripts\PlanMapping.js" />
-    <Content Include="Scripts\ProviderCredentials.js" />
+    <Content Include="Scripts\ProviderCredentials_XXX.js" />
     <Content Include="Scripts\ProviderLogin.js" />
     <Content Include="Scripts\ProviderRegistration.js" />
     <Content Include="Scripts\respond.js" />
@@ -1230,9 +1277,7 @@
     <Content Include="Views\Member\TestPage.cshtml" />
     <Content Include="Views\Shared\BaseFooter.cshtml" />
     <Content Include="Views\Member\MemberRegistration.cshtml" />
-    <Content Include="Views\Member\MemberLogin.cshtml" />
     <Content Include="Views\Organization\OrgnizationRegistration.cshtml" />
-    <Content Include="Views\Member\MemberCredentials.cshtml" />
     <Content Include="Views\Member\PlanDetails.cshtml" />
     <Content Include="Views\Member\ChangePassword.cshtml" />
     <Content Include="Views\Member\FamilyRegistration.cshtml" />
@@ -1242,7 +1287,7 @@
     <Content Include="Views\Organization\PlanEnroll.cshtml" />
     <Content Include="Views\Organization\PaymentDetails.cshtml" />
     <Content Include="Views\Member\LoginHistory.cshtml" />
-    <Content Include="Views\Organization\OrganizationLogin.cshtml" />
+    <Content Include="Views\Organization\OrganizationLogin_XXX.cshtml" />
     <Content Include="Views\Organization\PlansCreation.cshtml" />
     <Content Include="Views\Organization\AddUser.cshtml" />
     <Content Include="Views\Member\AvailablePlans.cshtml" />
@@ -1250,7 +1295,7 @@
     <Content Include="Views\Member\FamilyMember.cshtml" />
     <Content Include="Views\Member\ViewMember.cshtml" />
     <Content Include="Views\Member\PartialPayments.cshtml" />
-    <Content Include="Views\Organization\OrganizationCredentials.cshtml" />
+    <Content Include="Views\Organization\OrganizationCredentials_XXX.cshtml" />
     <Content Include="Views\Organization\ChangePassword.cshtml" />
     <Content Include="Views\Shared\WUCOrgLeftMenu.cshtml" />
     <Content Include="Views\Organization\OrganizationProfileDetails.cshtml" />
@@ -1266,17 +1311,17 @@
     <Content Include="Views\Admin\ViewOrganizations.cshtml" />
     <Content Include="Views\Admin\WithdrawPlans.cshtml" />
     <Content Include="Views\Admin\PlanMapping.cshtml" />
-    <Content Include="Views\Admin\AdminLogin.cshtml" />
+    <Content Include="Views\Admin\AdminLogin_XXX.cshtml" />
     <Content Include="Views\Shared\WUCAdminLeftMenu.cshtml" />
-    <Content Include="Views\Provider\ProviderLogin.cshtml" />
+    <Content Include="Views\Provider\ProviderLogin_XXX.cshtml" />
     <Content Include="Views\Provider\ProviderRegistration.cshtml" />
-    <Content Include="Views\Provider\ProviderCredentials.cshtml" />
+    <Content Include="Views\Provider\ProviderCredentials_XXX.cshtml" />
     <Content Include="Views\Admin\ViewPayments.cshtml" />
     <Content Include="Views\Admin\ViewProviders.cshtml" />
     <Content Include="Views\Admin\ViewMembers.cshtml" />
     <Content Include="Views\Admin\TermsAndConditions.cshtml" />
-    <Content Include="Views\Member\PatientsTermsAndConditions.cshtml" />
-    <Content Include="Views\Organization\OrganizationTermsAndConditions.cshtml" />
+    <Content Include="Views\Member\PatientsTermsAndConditions_XXX.cshtml" />
+    <Content Include="Views\Organization\OrganizationTermsAndConditions_XXX.cshtml" />
     <Content Include="Views\Admin\ViewUser.cshtml" />
     <Content Include="Views\Admin\DiabledOrganizations.cshtml" />
     <Content Include="Views\Member\CancelPlans.cshtml" />
@@ -1301,6 +1346,14 @@
     <Content Include="Views\Admin\AdminPaymentsTransactionReport.cshtml" />
     <Content Include="Views\Admin\AdminViewPaymentDetails.cshtml" />
     <Content Include="Views\Admin\AddDoctor.cshtml" />
+    <Content Include="Views\Shared\_Popups.cshtml" />
+    <Content Include="Views\Account\TermsAndConditions.cshtml" />
+    <Content Include="Views\Account\ForgotCredentials.cshtml" />
+    <Content Include="Views\Account\MPPLogin.cshtml" />
+    <Content Include="_EventRegisterUsersGuide.docx" />
+    <Content Include="_EventSourceUsersGuide.docx" />
+    <Content Include="Views\Organization\BillingDashboard.cshtml" />
+    <Content Include="Views\Organization\ClaimSubmission.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1350,7 +1403,9 @@
     </PropertyGroup>
     <Error Condition="!Exists('packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props'))" />
     <Error Condition="!Exists('packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('packages\Microsoft.Diagnostics.Tracing.EventRegister.1.1.24\build\Microsoft.Diagnostics.Tracing.EventRegister.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.Diagnostics.Tracing.EventRegister.1.1.24\build\Microsoft.Diagnostics.Tracing.EventRegister.targets'))" />
   </Target>
+  <Import Project="packages\Microsoft.Diagnostics.Tracing.EventRegister.1.1.24\build\Microsoft.Diagnostics.Tracing.EventRegister.targets" Condition="Exists('packages\Microsoft.Diagnostics.Tracing.EventRegister.1.1.24\build\Microsoft.Diagnostics.Tracing.EventRegister.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

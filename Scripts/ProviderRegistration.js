@@ -165,13 +165,13 @@ function GetSpecilization(Url) {
             for (var r in objlist) {
                 if (r % 2 == 0 || r == 0) {
                     jsonResult += "<input type='checkbox' onclick = '" + "SpecializationValidation();" + "' name='" + "SPList" + "' value='" + objlist[r].SpecializationID + ";" + objlist[r].SpecializationName + "' onclick='" + "check(this.value)" + "'  />" +
-                    "<label for='" + objlist[r].SpecializationName + "'>" + objlist[r].SpecializationName + "</label>" + "<br />"
+                        "<label for='" + objlist[r].SpecializationName + "'> &nbsp;" + objlist[r].SpecializationName + "</label>" + "<br />"
 
                     $("#divSpecializationList").html(jsonResult);
                 }
                 else {
                     jsonResults += "<input type='checkbox' onclick = '" + "SpecializationValidation();" + "' name='" + "SPList" + "' value='" + objlist[r].SpecializationID + ";" + objlist[r].SpecializationName + "' onclick='" + "check(this.value)" + "'  />" +
-                   "<label for='" + objlist[r].SpecializationName + "'>" + objlist[r].SpecializationName + "</label>" + "<br />"
+                        "<label for='" + objlist[r].SpecializationName + "'> &nbsp;" + objlist[r].SpecializationName + "</label>" + "<br />"
 
                     $("#divSpecializationListRight").html(jsonResults);
                 }
@@ -232,17 +232,14 @@ function CallSaveAddDotors(data, url) {
         },
     });
 }
-//ProviderRegistration :Ragini 26-09-2019
+
 function ValidateuserName(UserName, Url) {
-    if ($("#UserName").val() == "") {
-        $("#spnUserName").hide();
-    }
-    var webMethodName = "ValidateProviderUserName";
+    var webMethodName = "ValidateUserName";
     var ParameterNames = new Array();
     var ParameterValues = new Array();
     ParameterNames[0] = "Username";
     ParameterValues[0] = UserName;
-    var Url = Url + "OrganizationServices";
+    var Url = Url + "DefaultService";
     var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
     $.ajax({
         type: "POST",
@@ -251,15 +248,12 @@ function ValidateuserName(UserName, Url) {
         dataType: "json",
         contentType: "application/json",
         success: function (result) {
-
-            if (result == 0) {
-
-                document.getElementById("spnUserName").innerHTML = " ";
+            var obj = result[0];
+            if (obj[0].ResultID == 0) {
+                document.getElementById("spnUserName").innerHTML = "";
             }
-
             else {
                 document.getElementById("spnUserName").innerHTML = "Username already exists"; return false;
-
             }
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -267,6 +261,41 @@ function ValidateuserName(UserName, Url) {
         },
     });
 }
+//ProviderRegistration :Ragini 26-09-2019
+//function ValidateuserName(UserName, Url) {
+//    if ($("#UserName").val() == "") {
+//        $("#spnUserName").hide();
+//    }
+//    var webMethodName = "ValidateProviderUserName";
+//    var ParameterNames = new Array();
+//    var ParameterValues = new Array();
+//    ParameterNames[0] = "Username";
+//    ParameterValues[0] = UserName;
+//    var Url = Url + "OrganizationServices";
+//    var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
+//    $.ajax({
+//        type: "POST",
+//        url: Url,
+//        data: jsonPostString,
+//        dataType: "json",
+//        contentType: "application/json",
+//        success: function (result) {
+
+//            if (result == 0) {
+
+//                document.getElementById("spnUserName").innerHTML = " ";
+//            }
+
+//            else {
+//                document.getElementById("spnUserName").innerHTML = "Username already exists"; return false;
+
+//            }
+//        },
+//        error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+//        },
+//    });
+//}
 
 /// PasswordValidation in AddDoctors : Ragini on 13-09-2019 ///
 function validatePassword() {

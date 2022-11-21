@@ -39,12 +39,20 @@ namespace PPCP07302018
 
             bundles.Add(new ScriptBundle("~/bundles/custom-validator").Include(
                                   "~/Scripts/script-custom-validator.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/CommonScriptFiles").Include(
+                                "~/Scripts/Common.js"));
+
             bundles.Add(new ScriptBundle("~/bundles/MemberScriptFiles").Include(
                                  "~/Scripts/Member.js"));
           
             bundles.Add(new StyleBundle("~/bundles/Membercssfiles").Include(
                                  "~/Content/Member.css", "~/Content/bootstrap.min.css"));
 
+            bundles.Add(new ScriptBundle("~/bundles/CredentialsFiles").Include(
+                          "~/Scripts/Credentials.js"));
+            bundles.Add(new ScriptBundle("~/bundles/ChangePasswordFiles").Include(
+                        "~/Scripts/ChangePassword.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/OrganizationScriptFiles").Include(
                                  "~/Scripts/Organization.js"));
@@ -56,18 +64,15 @@ namespace PPCP07302018
                                "~/Scripts/FamilyRegistration.js"));
             bundles.Add(new ScriptBundle("~/bundles/PlanEnrollScriptFiles").Include(
                              "~/Scripts/PlanEnroll.js"));
-            bundles.Add(new ScriptBundle("~/bundles/MemberCredentialsFiles").Include(
-                           "~/Scripts/MemberCredentials.js"));
-            bundles.Add(new ScriptBundle("~/bundles/ChangePasswordFiles").Include(
-                        "~/Scripts/ChangePassword.js"));
+           
             bundles.Add(new ScriptBundle("~/bundles/PaymentDetailsFiles").Include(
                       "~/Scripts/PaymentDetails.js"));
             bundles.Add(new ScriptBundle("~/bundles/ViewMemberFiles").Include(
                       "~/Scripts/ViewMember.js"));
             bundles.Add(new ScriptBundle("~/bundles/PlanDetailsScriptFiles").Include(
                     "~/Scripts/PlanDetails.js"));
-            bundles.Add(new ScriptBundle("~/bundles/OrganizationCredentialsScriptFiles").Include(
-                   "~/Scripts/OrganizationCredentials.js"));
+            //bundles.Add(new ScriptBundle("~/bundles/OrganizationCredentialsScriptFiles").Include(
+            //       "~/Scripts/OrganizationCredentials.js"));
             bundles.Add(new ScriptBundle("~/bundles/PartialPaymentsScriptFiles").Include(
                 "~/Scripts/PartialPayments.js"));
 
@@ -98,8 +103,8 @@ namespace PPCP07302018
             bundles.Add(new ScriptBundle("~/bundles/AddUsersScriptFiles").Include(
            "~/Scripts/AddUsers.js"));
             //ProviderCredentials :  Added by Veena
-            bundles.Add(new ScriptBundle("~/bundles/ProviderCredentialsScriptFiles").Include(
-           "~/Scripts/ProviderCredentials.js"));
+           // bundles.Add(new ScriptBundle("~/bundles/ProviderCredentialsScriptFiles").Include(
+           //"~/Scripts/ProviderCredentials.js"));
             //AdminSubscribePlans :  Added by Veena
             bundles.Add(new ScriptBundle("~/bundles/AdminSubscribePlansScriptFiles").Include(
            "~/Scripts/AdminSubscribePlans.js"));

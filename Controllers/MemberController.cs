@@ -18,6 +18,9 @@ using System.Data;
 using System.Reflection;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using System.Net.Http;
+using Telerik.Web;
+using PPCP07302018.Models.Admin;
 
 namespace PPCP07302018.Controllers
 {
@@ -53,6 +56,13 @@ namespace PPCP07302018.Controllers
             }
             return sw.ToString();
         }
+        public ActionResult MemberLogin()
+        {
+            Login model = new Login();
+            model.LoginType = "Member";
+            return RedirectToAction("MPPLogin", "Account", model);
+        }
+
         // GET: Member
         public ActionResult Index()
         {
@@ -70,18 +80,6 @@ namespace PPCP07302018.Controllers
                 modelValue.Errors.Clear();
             }
             return View(model);
-        }
-
-
-        public ActionResult MemberLogin()
-        {
-            MasterController mas = new MasterController();
-            Session["SystemIPAddress"] = mas.GetIPAddress();
-            return View();
-        }
-        public ActionResult MemberCredentials()
-        {
-            return View();
         }
 
         public ActionResult FamilyRegistration(Models.Member.MemberDetails model)
@@ -186,35 +184,6 @@ namespace PPCP07302018.Controllers
             return View();
         }
 
-        public JsonResult VerifyUserOTP(string otp)
-        {
-            string returnString = "0";
-
-            if (!string.IsNullOrEmpty(otp))
-            {
-                int parsedValue;
-                if (!int.TryParse(otp, out parsedValue))
-                {
-                    returnString = "0";
-                }
-                else if (Convert.ToInt32(otp) == Convert.ToInt32(Session["loginOTP"]))
-                {
-                    if (Session["TermsAndConditionsFlag"] == "1")
-                    {
-                        returnString = "4";
-                    }
-                    else
-                    {
-                        returnString = "1";
-                    }
-                }
-                else
-                {
-                    returnString = "0";
-                }
-            }
-            return Json(returnString, JsonRequestBehavior.AllowGet);
-        }
         public ActionResult PlanDetails(Models.Member.MemberDetails model)
         {
             foreach (var modelValue in ModelState.Values)
@@ -369,123 +338,124 @@ namespace PPCP07302018.Controllers
             string returnData = xml.Replace("\"", "\'");
             return returnData;
         }
-        public JsonResult VerifyUser(PPCP07302018.Models.Organization.MemberLoginDetails model)
-        {
-            string returnString = "2";
-            string password = EncryptAndDecrypt.EncrypString(model.Password);
-            DataAccessLayer.ServiceCall<PPCP07302018.Models.Organization.MemberLoginDetails> objcall = new DataAccessLayer.ServiceCall<PPCP07302018.Models.Organization.MemberLoginDetails>();
-            ServiceData ServiceData = new ServiceData();
-            string[] ParameterName = new string[] { "Username", "PassWord", "IPAddress" };
-            string[] ParameterValue = new string[] { model.UserName, password, Convert.ToString(Session["SystemIPAddress"]) };
-            ServiceData.ParameterName = ParameterName;
-            ServiceData.ParameterValue = ParameterValue;
-            ServiceData.WebMethodName = "ValidateUser";
+        //public JsonResult VerifyUser(PPCP07302018.Models.Organization.MemberLoginDetails model)
+        //{
+        //    string returnString = "2";
+        //    string password = EncryptAndDecrypt.EncrypString(model.Password);
+        //    DataAccessLayer.ServiceCall<PPCP07302018.Models.Organization.MemberLoginDetails> objcall = new DataAccessLayer.ServiceCall<PPCP07302018.Models.Organization.MemberLoginDetails>();
+        //    ServiceData ServiceData = new ServiceData();
+        //    string[] ParameterName = new string[] { "Username", "PassWord", "IPAddress" };
+        //    string[] ParameterValue = new string[] { model.UserName, password, Convert.ToString(Session["SystemIPAddress"]) };
+        //    ServiceData.ParameterName = ParameterName;
+        //    ServiceData.ParameterValue = ParameterValue;
+        //    ServiceData.WebMethodName = "ValidateUser";
 
-            List<PPCP07302018.Models.Organization.MemberLoginDetails> List = objcall.CallService(Convert.ToInt32(0), "ValidateUser", ServiceData);
+        //    List<PPCP07302018.Models.Organization.MemberLoginDetails> List = objcall.CallService(Convert.ToInt32(0), "ValidateUser", ServiceData);
 
-            if (List.Count >= 1)
-            {
-                Session["MemberID"] = List[0].MemberID;
-                Session["MemberParentID"] = List[0].MemberParentID;
-                Session["FirstName"] = List[0].CredentialID;
-                Session["UserStatus"] = List[0].UserStatus;
-                Session["UserName"] = model.UserName;// List[0].UserName;
-                Session["MemberCountryCode"] = List[0].CountryCode;
-                Session["MemberPrimaryPhone"] = List[0].MobileNumber;
-                Session["MemberName"] = List[0].FirstName + " " + List[0].LastName;
-                Session["MemberDateOfBirth"] = List[0].DateOfBirth;
-                Session["MemberFirstName"] = List[0].FirstName;
-                Session["MI"] = List[0].MI;
-                Session["MemberLastName"] = List[0].LastName;
-                Session["MemberGender"] = List[0].Gender;
-                Session["MemberEmail"] = List[0].Email;
-                Session["MemberSubscriptionFlag"] = List[0].SubscriptionFlag;
-                Session["MemberRaceEthnicity"] = List[0].RaceEthnicity;
-                Session["Password"] = model.Password;
-                Session["StripeCustomerID"] = List[0].StripeCustomerID;
-                Session["OrganizationUserTandCFlag"] = List[0].OrganizationUserTandCFlag;
-                Session["OrganizationUserTandCFlag"] = List[0].OrganizationUserTandCFlag;
-                if (List[0].Street1 == null && List[0].Street2 == null)
-                {
-                    string Address = List[0].State_Name + "," + List[0].City + " , " + List[0].Zip;
-                    Session["MemberAddress"] = Address;
-                }
-                else if (List[0].Street1 != null && List[0].Street2 == null)
-                {
-                    string Address = List[0].State_Name + "," + List[0].City + " ," + List[0].Street1 + " ," + List[0].Zip;
-                    Session["MemberAddress"] = Address;
-                }
-                else if (List[0].Street1 != null && List[0].Street2 != null)
-                {
-                    string Address = List[0].State_Name + "," + List[0].City + " ," + List[0].Street1 + " ," + List[0].Street2 + " ," + List[0].Zip;
-                    Session["MemberAddress"] = Address;
-                }
-                Session["2F_Primary_Phone"] = List[0].Primary_Phone;
-                Session["2F_OTP"] = List[0].OTP;
+        //    if (List.Count >= 1)
+        //    {
+        //        Session["MemberID"] = List[0].MemberID;
+        //        Session["MemberParentID"] = List[0].MemberParentID;
+        //        Session["FirstName"] = List[0].CredentialID;
+        //        Session["UserStatus"] = List[0].UserStatus;
+        //        Session["UserName"] = model.UserName;// List[0].UserName;
+        //        Session["MemberCountryCode"] = List[0].CountryCode;
+        //        Session["MemberPrimaryPhone"] = List[0].MobileNumber;
+        //        Session["MemberName"] = List[0].FirstName + " " + List[0].LastName;
+        //        Session["MemberDateOfBirth"] = List[0].DateOfBirth;
+        //        Session["MemberFirstName"] = List[0].FirstName;
+        //        Session["MI"] = List[0].MI;
+        //        Session["MemberLastName"] = List[0].LastName;
+        //        Session["MemberGender"] = List[0].Gender;
+        //        Session["MemberEmail"] = List[0].Email;
+        //        Session["MemberSubscriptionFlag"] = List[0].SubscriptionFlag;
+        //        Session["MemberRaceEthnicity"] = List[0].RaceEthnicity;
+        //        Session["Password"] = model.Password;
+        //        Session["StripeCustomerID"] = List[0].StripeCustomerID;
+        //        Session["OrganizationUserTandCFlag"] = List[0].OrganizationUserTandCFlag;
+        //        Session["OrganizationUserTandCFlag"] = List[0].OrganizationUserTandCFlag;
+        //        Session["HeaderDisplayName"] = List[0].FirstName + " " + List[0].LastName;
+        //        if (List[0].Street1 == null && List[0].Street2 == null)
+        //        {
+        //            string Address = List[0].State_Name + "," + List[0].City + " , " + List[0].Zip;
+        //            Session["MemberAddress"] = Address;
+        //        }
+        //        else if (List[0].Street1 != null && List[0].Street2 == null)
+        //        {
+        //            string Address = List[0].State_Name + "," + List[0].City + " ," + List[0].Street1 + " ," + List[0].Zip;
+        //            Session["MemberAddress"] = Address;
+        //        }
+        //        else if (List[0].Street1 != null && List[0].Street2 != null)
+        //        {
+        //            string Address = List[0].State_Name + "," + List[0].City + " ," + List[0].Street1 + " ," + List[0].Street2 + " ," + List[0].Zip;
+        //            Session["MemberAddress"] = Address;
+        //        }
+        //        Session["2F_Primary_Phone"] = List[0].Primary_Phone;
+        //        Session["2F_OTP"] = List[0].OTP;
 
-                if (List[0].IsTwofactorAuthentication == true && List[0].TwoFactorType == 1)
-                {
-                    //OTP form
-                    if (List[0].OTP != null)
-                    {
-                        Session["loginOTP"] = Convert.ToInt32(List[0].OTP);
-                        returnString = "0";
+        //        if (List[0].IsTwofactorAuthentication == true && List[0].TwoFactorType == 1)
+        //        {
+        //            //OTP form
+        //            if (List[0].OTP != null)
+        //            {
+        //                Session["loginOTP"] = Convert.ToInt32(List[0].OTP);
+        //                returnString = "0";
 
-                        // redirect to OTP form
-                    }
+        //                // redirect to OTP form
+        //            }
 
-                }
-                else if (List[0].IsTwofactorAuthentication == true && List[0].TwoFactorType == 2)
-                {
-                    if (List[0].PreferredIP != Convert.ToString(Session["SystemIPAddress"]))
-                    {
-                        //OTP form
-                        if (List[0].OTP != null)
-                        {
+        //        }
+        //        else if (List[0].IsTwofactorAuthentication == true && List[0].TwoFactorType == 2)
+        //        {
+        //            if (List[0].PreferredIP != Convert.ToString(Session["SystemIPAddress"]))
+        //            {
+        //                //OTP form
+        //                if (List[0].OTP != null)
+        //                {
 
-                            Session["loginOTP"] = Convert.ToInt32(List[0].OTP);
-                            returnString = "0";
-                            // redirect to OTP form
-                        }
+        //                    Session["loginOTP"] = Convert.ToInt32(List[0].OTP);
+        //                    returnString = "0";
+        //                    // redirect to OTP form
+        //                }
 
-                    }
-                    else
-                    {
-                        if (List[0].OrganizationUserTandCFlag == 1 || List[0].OrganizationTandCFlag == 1)
-                        {
-                            returnString = "4";
-                        }
-                        else
-                        {
-                            returnString = "1";
-                            // redirect to form
-                        }
-                    }
-                }
-                else if (List[0].IsTwofactorAuthentication == false)
-                {
-                    if (List[0].OrganizationUserTandCFlag == 1 || List[0].OrganizationTandCFlag == 1)
-                    {
-                        returnString = "4";
-                    }
-                    else
-                    {
-                        returnString = "1";
-                        // redirect to form
-                    }
-                }
-                if (List[0].OrganizationUserTandCFlag == 1 || List[0].OrganizationTandCFlag == 1)
-                {
-                    returnString = "4";
-                }
-            }
-            else
-            {
-                returnString = "3";
-            }
+        //            }
+        //            else
+        //            {
+        //                if (List[0].OrganizationUserTandCFlag == 1 || List[0].OrganizationTandCFlag == 1)
+        //                {
+        //                    returnString = "4";
+        //                }
+        //                else
+        //                {
+        //                    returnString = "1";
+        //                    // redirect to form
+        //                }
+        //            }
+        //        }
+        //        else if (List[0].IsTwofactorAuthentication == false)
+        //        {
+        //            if (List[0].OrganizationUserTandCFlag == 1 || List[0].OrganizationTandCFlag == 1)
+        //            {
+        //                returnString = "4";
+        //            }
+        //            else
+        //            {
+        //                returnString = "1";
+        //                // redirect to form
+        //            }
+        //        }
+        //        if (List[0].OrganizationUserTandCFlag == 1 || List[0].OrganizationTandCFlag == 1)
+        //        {
+        //            returnString = "4";
+        //        }
+        //    }
+        //    else
+        //    {
+        //        returnString = "3";
+        //    }
 
-            return Json(returnString, JsonRequestBehavior.AllowGet);
-        }
+        //    return Json(returnString, JsonRequestBehavior.AllowGet);
+        //}
 
         public ActionResult SessionOut()
         {
@@ -543,7 +513,7 @@ namespace PPCP07302018.Controllers
                 OrganizationName.Name = "OrganizationName";
                 OrganizationName.Style.Font.Bold = true;
                 OrganizationName.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(3D), Telerik.Reporting.Drawing.Unit.Pixel(14));
-                string OrganizationNameDisplay = "Physician Primary Care Plan";
+                string OrganizationNameDisplay = "My Physician Plan";
                 OrganizationName.Value = OrganizationNameDisplay;
 
                 txtHeading.Name = "Heading";
@@ -1653,10 +1623,10 @@ namespace PPCP07302018.Controllers
         ///     To Get new Terms And conditions
         /// </summary>
         /// <returns></returns>
-        public ActionResult PatientsTermsAndConditions()
-        {
-            return View();
-        }
+        //public ActionResult PatientsTermsAndConditions()
+        //{
+        //    return View();
+        //}
 
         public ActionResult CancelPlans(string MemberPlanID)
         {

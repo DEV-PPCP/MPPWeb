@@ -150,7 +150,8 @@ $.ajax({
 }
 
 //Family Member Registarion by Ragini
-function FamilyMembeDetails(MemberRegistrationDetails, session, Url,MemberPatientId) {
+function FamilyMembeDetails(MemberRegistrationDetails, session, Url, MemberPatientId) {
+    debugger;
     MemberRegistrationDetails.MemberID = MemberPatientId;
     MemberRegistrationDetails.RelationshipID = $("#RelationshipID").val();
     MemberRegistrationDetails.RelationshipName = $("#Relationship").val();
@@ -181,6 +182,7 @@ function FamilyMembeDetails(MemberRegistrationDetails, session, Url,MemberPatien
     else {
         MemberRegistrationDetails.Zip = $("#Zip").val() + "-" + $("#ZipCode").val();
     }
+    MemberRegistrationDetails.IsCredentialCreated = $('#chkMemberCredentials').is(":checked");
     MemberRegistrationDetails.UserName = $("#UserName").val();
     MemberRegistrationDetails.Password = $("#Password").val();
     MemberRegistrationDetails.ConfirmPassword = $("#ConfirmPassword").val();

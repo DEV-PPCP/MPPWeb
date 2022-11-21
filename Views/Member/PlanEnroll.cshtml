@@ -8,15 +8,9 @@
     var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
     var AttachedLink = (System.Configuration.ConfigurationManager.AppSettings["AttachedLink"].ToString());
 }
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/jqueryval")
-@Scripts.Render("~/bundles/modernizr")
-@Scripts.Render("~/bundles/bootstrap")
-@Scripts.Render("~/bundles/KendoScripts")
-@Scripts.Render("~/bundles/custom-validator")
-@Styles.Render("~/bundles/Kendocss")
 @Scripts.Render("~/bundles/PlanEnrollScriptFiles")   @*For member script files*@
 @Styles.Render("~/bundles/Membercssfiles")       @*For member css files*@
+@Scripts.Render("~/bundles/TermsAndConditionScriptFiles")
 
 <style>
     .loadingSpinner {
@@ -68,7 +62,7 @@
 
                 if (stateID != 0) {
 
-                    var dropdownlist = $("#StateNameList").data("kendoDropDownList");
+                    var dropdownlist = $("#PlanStateNameList").data("kendoDropDownList");
 
                     dropdownlist.select(function (dataItem) {
                         $('#PlanStateNameList').data('kendoDropDownList').value("0");
@@ -78,7 +72,7 @@
                 }
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
-                
+
             },
         });
     }
@@ -107,9 +101,26 @@
 
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
-               
+
             },
         });
+    }
+
+    function chkTermsOnClick() {
+        if ($('#chkTerms').is(":checked") == true) {
+            $("#spnCheckTermsErrorMessages").hide(); EnrollTermsCondition
+        }
+        else {
+            $("#spnCheckTermsErrorMessages").show();
+        }
+    }
+
+    function EnrollTermsCondition(){
+        var tempfilePath = $("#hdnTAndConditions").val();
+        var Url = '@AttachedLink' + "PlanTerms/" + tempfilePath;
+
+        window.open(Url, "_newtab");
+        window.open(Url, "_newtab").focus();
     }
 </script>
 <script type="text/javascript">
@@ -122,6 +133,11 @@
         document.getElementById("OneTime").disabled = true;
 
         GetStripeCardDetails('@ServiceUrl');
+
+        //get update Terms and Conditions details
+        var Type = @Convert.ToInt32(PPCP07302018.Utils.GlobalFunctions.TermsAndConditons.Member);
+        GetUpdatedLink(Type,"@ServiceUrl"); 
+
         $("#ChangeSearchPlan").click(function(e){
             $("#PlansGrid").data("kendoGrid").dataSource.data("");
             $("#divSelectPlan").hide();
@@ -205,6 +221,13 @@
             debugger
             if ($('#chkPayNow').is(":checked") == true) {
                 debugger;
+                if ($('#chkTerms').is(":checked") == true) {
+                    $("#spnCheckTermsErrorMessages").hide();
+                }
+                else {
+                    $("#spnCheckTermsErrorMessages").show();
+                    return false;
+                }
                 if($("#TempSelectRadio").val()=="1" || $("#TempSelectRadio").val()==""){
                     // document.getElementById("SpnValidationErrorMessage").innerHTML = "";
 
@@ -213,13 +236,7 @@
                         var CardNo=$("#CardID").val();
                         $("#CardID").val("");
                         EnrollPlanDetails();
-                        //if($('#OneTime').is(":checked") == true){
-                        //    $("#spnCheckErrorMessages").hide();
-                        //    EnrollPlanDetails();
-                        //}
-                        //else{
-                        //    $("#spnCheckErrorMessages").show();
-                        //}
+                        
                     }
                     else{
 
@@ -297,9 +314,26 @@
     function btnErrorClose(){
         $("#divErrMessagePopup").hide();
     }
-    function btnchnagesearch()
+    function btnChangeSearch()
     {
-        buttonchangesrarch('@ServiceUrl');
+        @*btnChangesSearch('@ServiceUrl');*@
+        BindingPlansGridBasedOnFilters();
+    }
+
+    function btnClearSearch() {
+        $("#OrganizationID").val("");
+        $("#ProviderID").val("");
+        $("#PlanID").val("");
+        $("#PlanStateID").val("");
+        $("#PlanCityID").val("");
+        $("#PlanZip").val("");
+        $("#Zip").val("");
+        $('#PlanStateNameList').data('kendoDropDownList').value("0");
+        $('#PlanCityNameList').data('kendoDropDownList').value("0");
+        $("#OrganizationNames").data("kendoAutoComplete").value("");
+        $("#PlanNames").data("kendoAutoComplete").value("");
+        $("#ProviderNames").data("kendoAutoComplete").value("");
+        $("#PlansGrid").data("kendoGrid").dataSource.data("");
     }
 
     function EnrollPlanDetails()
@@ -478,7 +512,7 @@
         });
     }
 
-    function GetEnrollMemberDetails(memberId,firstname,lastname,DOb,Gender,individualFamily)
+    function GetEnrollMemberDetails(memberId, firstname, lastname, DOb, Gender, individualFamily)
     {
         $("#hdnFamilyIndividual").val(individualFamily);
         debugger;
@@ -515,7 +549,7 @@
                     }
                 }
                 BindPlanStates(1,'@ServiceUrl');
-                
+
 
             }
         });
@@ -726,7 +760,7 @@
     }
 </script>
 
-
+@Html.Hidden("hdnTAndConditions")
 <div class="pageheading_bar" align="center">
     <b>Enroll Plan</b>
 </div>
@@ -741,7 +775,7 @@
                         <div class="Bgheader" width="100%">
                             <div>
                                 <span id="SpnPopUpTitle" style="color: White; font-family: Verdana,Tahoma;
-                                font-size: 15px; font-weight: bold;">Physician Primary Care Plan</span>
+                                font-size: 15px; font-weight: bold;">My Physician Plan</span>
                             </div>
                         </div>
                         <div style="border: Solid 1px #33CCEE; width: 100%;">
@@ -775,16 +809,16 @@
                             <div class="row">
                                 <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
                                     <div class="row">
-                                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3" style="padding-left:60px;">
                                             <input type="radio" id="chkIndividuals" checked="checked" onclick="Individuals()" /> Select Individual
                                         </div>
                                         <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
 
-                                            <input type="radio" id="chkFamilyMember" onclick="FamilyMember()" />Select Family Members
+                                            <input type="radio" id="chkFamilyMember" onclick="FamilyMember()" /> Select Family Members
                                         </div>
                                     </div>
                                     <div>
-                                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" id="divIndividual" style="display:block;padding-left:60px;width:500px;">
+                                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" id="divIndividual" style="display: block; padding-left: 60px; width: 500px; padding-top: 5px;">
                                             @(Html.Kendo().Grid<PPCP07302018.Models.Member.MemberDetails>
                                                     ()
                                                     .Name("IndividualsMemberGrid")
@@ -856,7 +890,7 @@
                         <div class="Bgheader" width="100%">
                             <div align="center">
                                 <span id="SpanErrMsgTitle" style="color: White; font-family: Verdana,Tahoma; font-size: 15px;
-                        font-weight: bold;">Physician Primary Care Plan</span>
+                        font-weight: bold;">My Physician Plan</span>
                             </div>
                         </div>
                         <div style="border: Solid 1px #33CCEE; width: 100%;">
@@ -922,11 +956,11 @@
                                                     $("#PlanStateID").val(dataItem.StateID);
                                                     var StateID = $("#PlanStateID").val();
                                                     BindPlanCities(StateID,'@ServiceUrl',"1");
-                                                    BindingPlansGridBasedOnFilters();
+                                                    //BindingPlansGridBasedOnFilters();
                                                 }
                                             </script>
                                         </div>
-                                        
+
                                         <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                             @Html.Label("City", new { style = "font-weight:normal;", @class = "labelColor" })<br />
                                             @(Html.Kendo().DropDownListFor(m => m.PlanCityName)
@@ -956,14 +990,14 @@
                                                     var dataItem = e.sender.dataItem();
                                                     $("#PlanCityName").val(dataItem.CityName);
                                                     $("#PlanCityID").val(dataItem.CityID);
-                                                    BindingPlansGridBasedOnFilters();
+                                                    //BindingPlansGridBasedOnFilters();
                                                 }
                                             </script>
                                         </div>
-                                        
+
                                         <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                             @Html.Label("ZIP / Postal Code", new { style = "font-weight:normal;", @class = "classlabel" })<br />
-                                            @Html.TextBoxFor(m => m.Zip, new { style = "width:50%;Height:25px", maxlength = "5" })
+                                            @Html.TextBoxFor(m => m.Zip, new { @class = "customKendoTextBox", style = "width:50%;Height:25px", maxlength = "5" })
 
 
                                             <br />
@@ -1005,10 +1039,10 @@
                                                     var MemberGernder=$("#hdnGender").val();
                                                     var PlanType=$("#hdnFamilyIndividual").val();
 
-                                                    BindingPlansGrid(OrganizationID, ProviderID, PlanID,MemberAge,MemberGernder,PlanType,'@ServiceUrl');
+                                                    //BindingPlansGrid(OrganizationID, ProviderID, PlanID,MemberAge,MemberGernder,PlanType,'@ServiceUrl');
                                                 }
                                             </script>
-                                        </div>                                        
+                                        </div>
                                         <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                             @Html.Label("Provider Name", new { style = "font-weight:normal;", @class = "" })<br />
                                             @(Html.Kendo().AutoCompleteFor(model => model.ProviderName)
@@ -1052,7 +1086,7 @@
                                                     var MemberAge=$("#hdnAge").val();
                                                     var MemberGernder=$("#hdnGender").val();
                                                     var PlanType=$("#hdnFamilyIndividual").val();
-                                                    BindingPlansGrid(OrganizationID, ProviderID, PlanID,MemberAge,MemberGernder,PlanType,'@ServiceUrl');
+                                                    //BindingPlansGrid(OrganizationID, ProviderID, PlanID,MemberAge,MemberGernder,PlanType,'@ServiceUrl');
                                                 }
                                             </script>
                                         </div>
@@ -1087,7 +1121,7 @@
                                                     var MemberAge=$("#hdnAge").val();
                                                     var MemberGernder=$("#hdnGender").val();
                                                     var PlanType=$("#hdnFamilyIndividual").val();
-                                                    BindingPlansGrid(OrganizationID, ProviderID, PlanID,MemberAge,MemberGernder,PlanType,'@ServiceUrl');
+                                                    //BindingPlansGrid(OrganizationID, ProviderID, PlanID,MemberAge,MemberGernder,PlanType,'@ServiceUrl');
                                                 }
                                             </script>
                                         </div>
@@ -1102,11 +1136,11 @@
                         <br />
                         <div class="row" style="display:block">
                             <div class="col-xs-12 col-md-12 col-sm-12" align="center">
-                                <button class="button_blue" type="button" id="btnBack" title="Back" style="width: 100px;display:none" value="Back">
-                                    Back
+                                <button class="button_blue" type="button" id="btnBack" title="Back" style="width: 200px;" value="Back" onclick="btnClearSearch();">
+                                    Clear Search
                                 </button>
-                                <button class="button_blue" type="button" id="btnBack" title="Back" style="width: 135px;" value="Back" onclick="btnchnagesearch();">
-                                    Change search
+                                <button class="button_blue" type="button" id="btnBack" title="Back" style="width: 135px;" value="Back" onclick="btnChangeSearch();">
+                                    Search
                                 </button>
                             </div>
                             <br />
@@ -1340,7 +1374,7 @@
                     </div>
                     <div class="form-group">
                         <div class="row">
-                            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                            <div class="col-xs-11 col-md-11 col-sm-11 col-lg-11">
                                 @Html.CheckBox("chkPayNow", false, new { @disabled = "disabled" })&nbsp;<b>PayNow</b>
                             </div>
                         </div>
@@ -1348,7 +1382,7 @@
                             <div class="row">
                                 <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
                                     @Html.Label("Amount ", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;"> * </span>
-                                    @Html.TextBoxFor(model => model.AmountPaid, null, new { @readonly = "readonly", PlaceHolder = "", maxlength = 20, onchange = "ValidateAmountPaid(this.value);" })
+                                    @Html.TextBoxFor(model => model.AmountPaid, null, new { @class = "customKendoTextBox", @readonly = "readonly", PlaceHolder = "", maxlength = 20, onchange = "ValidateAmountPaid(this.value);" })
                                     @Html.ValidationMessageFor(model => model.AmountPaid, "", new { @style = "color:red" })
                                 </div>
                                 <div class="col-xs-0 col-md-6 col-sm-6 col-lg-6 col-md-pull-2 col-lg-pull-2">
@@ -1368,9 +1402,16 @@
                                         <div class="row">
                                             <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" id="divbankdetails" style="display:none">
                                                 <fieldset id="fsBankdetails" class="divbackdrop" style="border: solid 1px #CCC; width:100%; background-color:white;">
-                                                    <legend style="color: #4088B3; margin-bottom:0px; font-weight: bold; width:auto; font-size:17px">Card Details </legend>
+                                                    @*<legend style="color: #4088B3; margin-bottom:0px; font-weight: bold; width:auto; font-size:17px">Card Details </legend>*@
                                                     <div id="divbank" style="width:90%;">
                                                         <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12 col-lg-push-0">
+                                                            <div class="form-group">
+                                                                <div class="row">
+                                                                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12">
+                                                                        <span style="font-weight:bold; font-size:14px"><u>Card Details</u></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                             <div class="form-group">
                                                                 <div class="row">
                                                                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12">
@@ -1384,7 +1425,7 @@
                                                                         @Html.Label("Card Number", new { style = "font-weight:normal;", @class = "classlabel" })
                                                                         <span style="color: Red;">*</span>
                                                                         <br />
-                                                                        @Html.TextBoxFor(model => model.CardNumber, null, new { PlaceHolder = "", style = "width:100%;", maxlength = 16 })
+                                                                        @Html.TextBoxFor(model => model.CardNumber, null, new { @class = "customKendoTextBox", PlaceHolder = "", style = "width:100%;", maxlength = 16 })
                                                                         <br />
                                                                         <span id="spnUserName" style="color:red"></span>
                                                                         @Html.ValidationMessageFor(model => model.CardNumber, "", new { @style = "color:red" })
@@ -1394,7 +1435,7 @@
                                                                         @Html.Label("Name On Card", new { style = "font-weight:normal;", @class = "classlabel" })
                                                                         <span style="color: Red;">*</span>
                                                                         <br />
-                                                                        @Html.TextBoxFor(model => model.NameOnCard, null, new { PlaceHolder = "", style = "width:100%;", maxlength = 50 })
+                                                                        @Html.TextBoxFor(model => model.NameOnCard, null, new { @class = "customKendoTextBox", PlaceHolder = "", style = "width:100%;", maxlength = 50 })
                                                                         <br />
                                                                         <span id="spnUserName" style="color:red"></span>
                                                                         @Html.ValidationMessageFor(model => model.NameOnCard, "", new { @style = "color:red" })
@@ -1454,7 +1495,7 @@
                                                                         @Html.Label("CVV", new { style = "font-weight:normal;", @class = "classlabel" })
                                                                         <span style="color: Red;">*</span>
                                                                         <br />
-                                                                        @Html.TextBoxFor(model => model.CVV, null, new { PlaceHolder = "", style = "width:30%;", maxlength = 3 })
+                                                                        @Html.TextBoxFor(model => model.CVV, null, new { @class = "customKendoTextBox", PlaceHolder = "", style = "width:30%;", maxlength = 3 })
                                                                         <br />
                                                                         <span id="spnUserName" style="color:red"></span>
                                                                         @Html.ValidationMessageFor(model => model.CVV, "", new { @style = "color:red" })
@@ -1488,6 +1529,15 @@
                                     font-weight: normal;">
                         </span>
 
+                    </div>
+                    <br />
+                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-8" id="divEnrollTermsConditions" style="display:block">
+                        @Html.CheckBox("chkTerms", new { onclick = "chkTermsOnClick();" })
+                        <span>I Accept the <a onclick="EnrollTermsCondition()"><span id="\" style="color:blue;text-decoration:underline;cursor:pointer;">Terms & Conditions</span></a> for Member</span>
+                        <br />
+                    </div>
+                    <div class="col-xs-12 col-md-12 col-sm-12" align="left">
+                        <span id="spnCheckTermsErrorMessages" style="display:none; color:red !important; text-align:center;">Check Terms and Condition</span>
                     </div>
                     <br />
                     <div class="row">

@@ -47,6 +47,7 @@ namespace PPCP07302018.Models.Organization
 
         public string OrgZipCode { get; set; }
 
+        [Required(ErrorMessage = "This information is required.")]
         public string OrgAddress { get; set; }
 
         public int? UserID { get; set; }
@@ -619,7 +620,9 @@ namespace PPCP07302018.Models.Organization
         public string PreferredIP { get; set; }
         public int? TwoFactorType { get; set; }
         [Required(ErrorMessage = "This information is required.")]
+        public string PlanName { get; set; }
         public DateTime PlanStartDate { get; set; }
+        public DateTime PlanEndDate { get; set; }
 
         public decimal? AmountPaid { get; set; }
         [Required(ErrorMessage = "This Information is required")]

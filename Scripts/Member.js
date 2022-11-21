@@ -754,6 +754,7 @@ function GetRelationShip(url) {
 
 function MembeDetails(MemberRegistrationDetails, session, Url, CurrentMonth) {
     debugger;
+    MemberRegistrationDetails.MemberRegistrationType = "Anonymous";
     MemberRegistrationDetails.FirstName = $("#FirstName").val();
     MemberRegistrationDetails.LastName = $("#LastName").val();
     MemberRegistrationDetails.DOB = $("#DOB").val();

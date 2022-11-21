@@ -11,13 +11,6 @@
 
 }
 
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/jqueryval")
-@Scripts.Render("~/bundles/modernizr")
-@Scripts.Render("~/bundles/bootstrap")
-@Scripts.Render("~/bundles/KendoScripts")
-@Scripts.Render("~/bundles/custom-validator")
-@Styles.Render("~/bundles/Kendocss")
 @Scripts.Render("~/bundles/AddDoctorsScriptFiles")
 @Styles.Render("~/bundles/Organizationcssfiles")
 
@@ -100,7 +93,7 @@
     function GenderValidation() {
         var rbtnMale = $('input[id=rbtnGenderMale]:checked').val();
         var rbtnFEM = $('input[id=rbtnGenderFemale]:checked').val();
-     
+
         if (rbtnMale == 1 || rbtnFEM == 2) {
             document.getElementById("divGenderValidator").style.display = "none";
         }
@@ -146,7 +139,7 @@
             },
         });
     }
-   
+
     function CreateJosn(array) {
         jsonObj = [];
         var tempPayment = array.toString().split(',');
@@ -155,15 +148,18 @@
             item = {};
             item["SpecilizationID"] = temp[0];
             item["SpecializationName"] = temp[1];
-           
+
            jsonObj.push(item);
         }
         return jsonObj;
     }
 
-  
+
     function btnSaveDoctorDetails() {
         debugger;
+        if (document.getElementById("spnUserName").innerHTML != "") {
+            return false;
+        }
         var jsModel = {};
         jsModel.OrganizationID = "@Session["OrganizationID"]";
         jsModel.OrganizationName = "@Session["OrganizationName"]";
@@ -196,7 +192,7 @@
         else {
            jsModel.Zip = $("#Zip").val()+ "-"+ $("#ZipCode").val();
         }
-       
+
         jsModel.Address = $("#Address").val();
         jsModel.Fax = $("#Fax").val();
 
@@ -205,17 +201,17 @@
         jsModel.Password = $("#Password").val();
         jsModel.ConfirmPassword = $("#ConfirmPassword").val();
 
-       
+
         var SpecilizationID = "", SpecilizationName = "";
         var checkboxes = document.querySelectorAll('input[name="SPList"]:checked');
         for (var i = 0; i < checkboxes.length; i++) {
-           
+
             var tempSplit = checkboxes[i].value.split(";");
             SpecilizationID = SpecilizationID + "" + tempSplit[0] + ",";
             SpecilizationName = SpecilizationName + "" + tempSplit[1] + ",";
-           
+
         }
-      
+
         var array = [];
         var checkboxes = document.querySelectorAll('input[name="SPList"]:checked')
         for (var i = 0; i < checkboxes.length; i++) {
@@ -225,7 +221,7 @@
         jsModel.SpecializationName = SpecilizationName.substring(0, SpecilizationName.length - 1);
         var obj = CreateJosn(array);
         jsModel.Specialization = JSON.stringify(obj);
-       
+
         if ($('#chk2factor').is(":checked") == true) {
             jsModel.IsTwofactorAuthentication = true;
             jsModel.PreferredIP = '@Session["SystemIPAddress"]';
@@ -241,7 +237,7 @@
             jsModel.TwoFactorType = "0";
             jsModel.PreferredIP = "";
         }
-        
+
         SaveDoctorDetails(jsModel, "@ServiceUrl");
     }
 
@@ -252,7 +248,7 @@
 </script>
 
 <div class="pageheading_bar" align="center">
-    <b>Add Doctors</b>
+    <b>Add Provider</b>
 </div>
 
 <div class="Panel_bg" id="divMainAddDoctors">
@@ -265,7 +261,7 @@
                     <div>
                         <span id="SpnPopUpTitle" style="color: White; font-family: Verdana,Tahoma;
                                 font-size: 15px; font-weight: bold;"></span>
-                        @*Physician Primary Care Plan*@
+                        @*My Physician Plan*@
                     </div>
                 </div>
                 <div style="border: Solid 1px #33CCEE; width: 100%;">
@@ -299,7 +295,7 @@
                 <div class="Bgheader" width="100%">
                     <div align="center">
                         <span id="SpanErrMsgTitle" style="color: White; font-family: Verdana,Tahoma; font-size: 15px;
-                        font-weight: bold;">Physician Primary Care Plan</span>
+                        font-weight: bold;">My Physician Plan</span>
                     </div>
                 </div>
                 <div style="border: Solid 1px #33CCEE; width: 100%;">
@@ -347,19 +343,19 @@
                         <div class="row">
                             <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                 @Html.Label("Username", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                @Html.TextBoxFor(model => model.UserName, null, new { style = "width:100%;", maxlength = 25, onchange = "ValidateuserNames(this.value);" })
+                                @Html.TextBoxFor(model => model.UserName, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 25, onchange = "ValidateuserNames(this.value);" })
                                 @Html.ValidationMessageFor(model => model.UserName, "", new { @style = "color:red" })
                                 <span id="spnUserName" style="color:red"></span>
                             </div>
                             <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                 @Html.Label("Password", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                @Html.TextBoxFor(model => model.Password, null, new { style = "width:100%;", maxlength = 20, type = "password", onkeyup = "chkPasswordStrength(this.value,document.getElementById('strength'),document.getElementById('error'))", onpaste = "return false;", oncopy = "return false", oncut = "return false" })
+                                @Html.TextBoxFor(model => model.Password, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 20, type = "password", onkeyup = "chkPasswordStrength(this.value,document.getElementById('strength'),document.getElementById('error'))", onpaste = "return false;", oncopy = "return false", oncut = "return false" })
                                 @Html.ValidationMessageFor(model => model.Password, "", new { @style = "color:red" })
                                 <span id="strength" class="strength5"></span>
                             </div>
                             <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                 @Html.Label("Confirm Password", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                @Html.TextBoxFor(model => model.ConfirmPassword, null, new { style = "width:100%;", maxlength = 20, type = "password", onchange = "validatePassword()", onpaste = "return false;", oncopy = "return false", oncut = "return false" })
+                                @Html.TextBoxFor(model => model.ConfirmPassword, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 20, type = "password", onchange = "validatePassword()", onpaste = "return false;", oncopy = "return false", oncut = "return false" })
                                 @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @style = "color:red" })
                                 <span id="PasswordErrorMsg" style="color:red"></span>
                             </div>
@@ -369,7 +365,7 @@
                 </div>
             </div>
 
-            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;">@Html.CheckBox("chk2factor", false)<b>Enable 2-factor authentication</b>:</legend>
+            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;">@Html.CheckBox("chk2factor", false)<b> Enable 2-factor authentication</b>:</legend>
             <div class="row" id="divEnableFactor" style="display:none;">
                 <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12 ">
                     <label style="font-weight: normal;">
@@ -390,7 +386,7 @@
                 </div>
                 <br />
             </div>
-            
+
         </fieldset>
 
         <div class="row">

@@ -569,6 +569,7 @@ function buttonchangesrarch(url) {
     $("#OrganizationID").val("0");
     $("#PlanNames").data("kendoAutoComplete").value("");
     $("#PlanName").val("");
+    $("#StateID").val("0");
     $("#PlanID").val("0");
     $("#ProviderNames").data("kendoAutoComplete").value("");
     $("#ProviderName").val("");

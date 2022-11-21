@@ -308,7 +308,7 @@ namespace PPCP07302018.Controllers
             OrganizationName.Name = "OrganizationName";
             OrganizationName.Style.Font.Bold = true;
             OrganizationName.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(3D), Telerik.Reporting.Drawing.Unit.Pixel(14));
-            string OrganizationNameDisplay = "Physician Primary Care Plan";
+            string OrganizationNameDisplay = "My Physician Plan";
             OrganizationName.Value = OrganizationNameDisplay;
 
             txtHeading.Name = "Heading";
@@ -1195,124 +1195,124 @@ namespace PPCP07302018.Controllers
         }
 
        
-        public JsonResult VerifyUser(PPCP07302018.Models.Organization.MemberLoginDetails model)
-        {
-            string returnString = "2";
-            string password = EncryptAndDecrypt.EncrypString(model.Password);
-            DataAccessLayer.ServiceCall<PPCP07302018.Models.Organization.MemberLoginDetails> objcall = new DataAccessLayer.ServiceCall<PPCP07302018.Models.Organization.MemberLoginDetails>();
-            ServiceData ServiceData = new ServiceData();
-            string[] ParameterName = new string[] { "Username", "PassWord", "IPAddress" };
-            string[] ParameterValue = new string[] { model.UserName, password, Convert.ToString(Session["SystemIPAddress"]) };
-            ServiceData.ParameterName = ParameterName;
-            ServiceData.ParameterValue = ParameterValue;
-            ServiceData.WebMethodName = "ValidateUser";
+        //public JsonResult VerifyUser(PPCP07302018.Models.Organization.MemberLoginDetails model)
+        //{
+        //    string returnString = "2";
+        //    string password = EncryptAndDecrypt.EncrypString(model.Password);
+        //    DataAccessLayer.ServiceCall<PPCP07302018.Models.Organization.MemberLoginDetails> objcall = new DataAccessLayer.ServiceCall<PPCP07302018.Models.Organization.MemberLoginDetails>();
+        //    ServiceData ServiceData = new ServiceData();
+        //    string[] ParameterName = new string[] { "Username", "PassWord", "IPAddress" };
+        //    string[] ParameterValue = new string[] { model.UserName, password, Convert.ToString(Session["SystemIPAddress"]) };
+        //    ServiceData.ParameterName = ParameterName;
+        //    ServiceData.ParameterValue = ParameterValue;
+        //    ServiceData.WebMethodName = "ValidateUser";
 
-            List<PPCP07302018.Models.Organization.MemberLoginDetails> List = objcall.CallService(Convert.ToInt32(0), "ValidateUser", ServiceData);
+        //    List<PPCP07302018.Models.Organization.MemberLoginDetails> List = objcall.CallService(Convert.ToInt32(0), "ValidateUser", ServiceData);
 
-            if (List.Count >= 1)
-            {
-                Session["MemberID"] = List[0].MemberID;
-                Session["MemberParentID"] = List[0].MemberParentID;
-                Session["FirstName"] = List[0].CredentialID;
-                Session["UserStatus"] = List[0].UserStatus;
-                Session["UserName"] = List[0].UserName;
-                Session["MemberCountryCode"] = List[0].CountryCode;
-                Session["MemberPrimaryPhone"] = List[0].MobileNumber;
-                Session["MemberName"] = List[0].FirstName + " " + List[0].LastName;
-                Session["MemberDateOfBirth"] = List[0].DateOfBirth;
-                Session["MemberFirstName"] = List[0].FirstName;
-                Session["MI"] = List[0].MI;
-                Session["MemberLastName"] = List[0].LastName;
-                Session["MemberGender"] = List[0].Gender;
-                Session["MemberEmail"] = List[0].Email;
-                Session["MemberSubscriptionFlag"] = List[0].SubscriptionFlag;
-                Session["MemberRaceEthnicity"] = List[0].RaceEthnicity;
-                Session["Password"] = model.Password;
-                Session["StripeCustomerID"] = List[0].StripeCustomerID;
+        //    if (List.Count >= 1)
+        //    {
+        //        Session["MemberID"] = List[0].MemberID;
+        //        Session["MemberParentID"] = List[0].MemberParentID;
+        //        Session["FirstName"] = List[0].CredentialID;
+        //        Session["UserStatus"] = List[0].UserStatus;
+        //        Session["UserName"] = List[0].UserName;
+        //        Session["MemberCountryCode"] = List[0].CountryCode;
+        //        Session["MemberPrimaryPhone"] = List[0].MobileNumber;
+        //        Session["MemberName"] = List[0].FirstName + " " + List[0].LastName;
+        //        Session["MemberDateOfBirth"] = List[0].DateOfBirth;
+        //        Session["MemberFirstName"] = List[0].FirstName;
+        //        Session["MI"] = List[0].MI;
+        //        Session["MemberLastName"] = List[0].LastName;
+        //        Session["MemberGender"] = List[0].Gender;
+        //        Session["MemberEmail"] = List[0].Email;
+        //        Session["MemberSubscriptionFlag"] = List[0].SubscriptionFlag;
+        //        Session["MemberRaceEthnicity"] = List[0].RaceEthnicity;
+        //        Session["Password"] = model.Password;
+        //        Session["StripeCustomerID"] = List[0].StripeCustomerID;
 
-                if (List[0].Street1 == null && List[0].Street2 == null)
-                {
-                    string Address = List[0].State_Name + "," + List[0].City + " , " + List[0].Zip;
-                    Session["MemberAddress"] = Address;
-                }
-                else if (List[0].Street1 != null && List[0].Street2 == null)
-                {
-                    string Address = List[0].State_Name + "," + List[0].City + " ," + List[0].Street1 + " ," + List[0].Zip;
-                    Session["MemberAddress"] = Address;
-                }
-                else if (List[0].Street1 != null && List[0].Street2 != null)
-                {
-                    string Address = List[0].State_Name + "," + List[0].City + " ," + List[0].Street1 + " ," + List[0].Street2 + " ," + List[0].Zip;
-                    Session["MemberAddress"] = Address;
-                }
-                Session["2F_Primary_Phone"] = List[0].Primary_Phone;
-                Session["2F_OTP"] = List[0].OTP;
+        //        if (List[0].Street1 == null && List[0].Street2 == null)
+        //        {
+        //            string Address = List[0].State_Name + "," + List[0].City + " , " + List[0].Zip;
+        //            Session["MemberAddress"] = Address;
+        //        }
+        //        else if (List[0].Street1 != null && List[0].Street2 == null)
+        //        {
+        //            string Address = List[0].State_Name + "," + List[0].City + " ," + List[0].Street1 + " ," + List[0].Zip;
+        //            Session["MemberAddress"] = Address;
+        //        }
+        //        else if (List[0].Street1 != null && List[0].Street2 != null)
+        //        {
+        //            string Address = List[0].State_Name + "," + List[0].City + " ," + List[0].Street1 + " ," + List[0].Street2 + " ," + List[0].Zip;
+        //            Session["MemberAddress"] = Address;
+        //        }
+        //        Session["2F_Primary_Phone"] = List[0].Primary_Phone;
+        //        Session["2F_OTP"] = List[0].OTP;
 
-                if (List[0].IsTwofactorAuthentication == true && List[0].TwoFactorType == 1)
-                {
-                    //OTP form
-                    if (List[0].OTP != null)
-                    {
-                        returnString = "0";
-                        Session["loginOTP"] = Convert.ToInt32(List[0].OTP);
-                        // redirect to OTP form
-                    }
-                    else
-                    {
-                        returnString = "2";
-                        // Out of scope
-                    }
-                }
-                else if (List[0].IsTwofactorAuthentication == true && List[0].TwoFactorType == 2)
-                {
-                    if (List[0].PreferredIP != Convert.ToString(Session["SystemIPAddress"]))
-                    {
-                        //OTP form
-                        if (List[0].OTP != null)
-                        {
-                            returnString = "0";
-                            Session["loginOTP"] = Convert.ToInt32(List[0].OTP);
-                            // redirect to OTP form
-                        }
-                        else
-                        {
-                            returnString = "2";
-                            // Out of scope
-                        }
-                    }
-                    else
-                    {
-                        returnString = "1";
-                        // redirect to form
-                    }
-                }
-                else if (List[0].IsTwofactorAuthentication == false)
-                {
-                    returnString = "1";
-                    // redirect to form
-                }
-                else
-                {
-                    returnString = "1";
-                    // redirect to form
-                }
-            }
-            else
-            {
-                returnString = "3";
-                // Error
-            }
-            return Json(returnString, JsonRequestBehavior.AllowGet);
-        }
+        //        if (List[0].IsTwofactorAuthentication == true && List[0].TwoFactorType == 1)
+        //        {
+        //            //OTP form
+        //            if (List[0].OTP != null)
+        //            {
+        //                returnString = "0";
+        //                Session["loginOTP"] = Convert.ToInt32(List[0].OTP);
+        //                // redirect to OTP form
+        //            }
+        //            else
+        //            {
+        //                returnString = "2";
+        //                // Out of scope
+        //            }
+        //        }
+        //        else if (List[0].IsTwofactorAuthentication == true && List[0].TwoFactorType == 2)
+        //        {
+        //            if (List[0].PreferredIP != Convert.ToString(Session["SystemIPAddress"]))
+        //            {
+        //                //OTP form
+        //                if (List[0].OTP != null)
+        //                {
+        //                    returnString = "0";
+        //                    Session["loginOTP"] = Convert.ToInt32(List[0].OTP);
+        //                    // redirect to OTP form
+        //                }
+        //                else
+        //                {
+        //                    returnString = "2";
+        //                    // Out of scope
+        //                }
+        //            }
+        //            else
+        //            {
+        //                returnString = "1";
+        //                // redirect to form
+        //            }
+        //        }
+        //        else if (List[0].IsTwofactorAuthentication == false)
+        //        {
+        //            returnString = "1";
+        //            // redirect to form
+        //        }
+        //        else
+        //        {
+        //            returnString = "1";
+        //            // redirect to form
+        //        }
+        //    }
+        //    else
+        //    {
+        //        returnString = "3";
+        //        // Error
+        //    }
+        //    return Json(returnString, JsonRequestBehavior.AllowGet);
+        //}
         public JsonResult BindSalutation()
         {
             List<SelectListItem> items = new List<SelectListItem>();
 
             items.Add(new SelectListItem { Text = "Dr.", Value = "1" });
-            //items.Add(new SelectListItem { Text = "Mr.", Value = "2" });
-            //items.Add(new SelectListItem { Text = "Mrs.", Value = "3" });
-            //items.Add(new SelectListItem { Text = "Ms.", Value = "4" });
-            
+            items.Add(new SelectListItem { Text = "Mr.", Value = "2" });
+            items.Add(new SelectListItem { Text = "Mrs.", Value = "3" });
+            items.Add(new SelectListItem { Text = "Ms.", Value = "4" });
+
 
             return Json(items, JsonRequestBehavior.AllowGet);
         }
@@ -1559,7 +1559,7 @@ namespace PPCP07302018.Controllers
             htmlHeading.Style.Font.Bold = false;
             htmlHeading.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Center;
             htmlHeading.Style.Color = System.Drawing.Color.Black;
-            htmlHeading.Value = "<sub style='font-size:7px;'>Physician Primary Care Plans</sub><span style='font-size:3px;'>TM</span>";
+            htmlHeading.Value = "<sub style='font-size:7px;'>My Physician Plans</sub><span style='font-size:3px;'>TM</span>";
 
             htmlMemberIDHeading.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.6500000333786011D), Telerik.Reporting.Drawing.Unit.Inch(htmlHeading.Bottom.Value));
             htmlMemberIDHeading.Name = "htmlMemberIDHeading";

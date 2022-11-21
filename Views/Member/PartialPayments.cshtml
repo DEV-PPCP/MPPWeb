@@ -8,13 +8,7 @@
     var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
 
 }
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/jqueryval")
-@Scripts.Render("~/bundles/modernizr")
-@Scripts.Render("~/bundles/bootstrap")
-@Scripts.Render("~/bundles/KendoScripts")
-@Scripts.Render("~/bundles/custom-validator")
-@Styles.Render("~/bundles/Kendocss")
+
 @Styles.Render("~/bundles/Membercssfiles")    @*For member css files*@
 @Scripts.Render("~/bundles/PartialPaymentsScriptFiles")
 
@@ -155,8 +149,8 @@
                     var jsonResult = "";
                     for (var r in TestsList) {
                         jsonResult += "<input type='radio' name='" + "CardsList" + "' value='" + TestsList[r].Id + "," + TestsList[r].Last4 + "," + TestsList[r].Name + "' onclick='" + "check(this.value)" + "'  />" + "&nbsp;" + TestsList[r].Brand + " **** **** **** " + TestsList[r].Last4 + "&nbsp;&nbsp;&nbsp;&nbsp;" + "<br />" +
-                            "<label for='" + TestsList[r].Name + "'>" + TestsList[r].Name + "</label>" + "<br />" +
-                            "<label for='" + TestsList[r].Name + "'>" + "Expires " + +TestsList[r].ExpirationMonth + "/" + TestsList[r].ExpirationYear + "</label>" + "<br />" +
+                            "&nbsp;&nbsp;&nbsp;&nbsp;<label for='" + TestsList[r].Name + "'>" + TestsList[r].Name + "</label>" + "<br />" +
+                            "&nbsp;&nbsp;&nbsp;&nbsp;<label for='" + TestsList[r].Name + "'>" + "Expires " + +TestsList[r].ExpirationMonth + "/" + TestsList[r].ExpirationYear + "</label>" + "<br />" +
                             //"<label for='" + TestsList[r].Name + "'>" + "Amount Charged ($) " + ConsultFee + "</label>" + "<br />" +
                             //"<input type='text' name='" + TestsList[r].Id + "' value='" + "" + "' id='" + TestsList[r].Id + "' style='display:none;width:100px' maxlength='" + 3 + "' placeholder='" + "Enter CVV" + "' onchange='" + "onChangeTest(this.value)" + "'/>"
                              "<br />"
@@ -716,7 +710,7 @@
                 <div class="Bgheader" width="100%">
                     <div>
                         <span id="SpnPopUpTitle" style="color: White; font-family: Verdana,Tahoma;
-                                font-size: 15px; font-weight: bold;">Physician Primary Care Plan</span>
+                                font-size: 15px; font-weight: bold;">My Physician Plan</span>
                     </div>
                 </div>
                 <div style="border: Solid 1px #33CCEE; width: 100%;">
@@ -750,7 +744,7 @@
                 <div class="Bgheader" width="100%">
                     <div align="center">
                         <span id="SpanErrMsgTitle" style="color: White; font-family: Verdana,Tahoma; font-size: 15px;
-                        font-weight: bold;">Physician Primary Care Plan</span>
+                        font-weight: bold;">My Physician Plan</span>
                     </div>
                 </div>
                 <div style="border: Solid 1px #33CCEE; width: 100%;">

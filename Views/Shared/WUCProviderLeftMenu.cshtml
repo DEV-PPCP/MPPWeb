@@ -16,6 +16,20 @@
     <link href="~/Content/bootstrap.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/Content/bootstrap-leftmenu.css" />
 
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/KendoScripts")
+    @Scripts.Render("~/bundles/custom-validator")
+    @Styles.Render("~/bundles/Kendocss")
+
+    <link href="~/Content/kendo/2014.3.1316/kendo.common.min.css" rel="stylesheet" />
+    <link href="~/Content/kendo/2014.3.1316/kendo.mobile.all.min.css" rel="stylesheet" />
+    <link href="~/Content/kendo/2014.3.1316/kendo.dataviz.min.css" rel="stylesheet" />
+    <link href="~/Content/kendo/2014.3.1316/kendo.default.min.css" rel="stylesheet" />
+    <link href="~/Content/kendo/2014.3.1316/kendo.dataviz.default.min.css" rel="stylesheet" />
+
     <script src='https://www.google.com/recaptcha/api.js'></script>
     <link href="~/Content/login.css" rel="stylesheet" />
 </head>
@@ -38,7 +52,93 @@
                     </div>
                 </nav1>
                 <nav1 id="sidebar" class="">
-                    <ul class="list-unstyled components">
+                    <div class="row">
+                        <div class="panel-group" id="accordion">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseAdmin">
+                                        <h4 class="panel-title">
+                                            <span class="glyphicon glyphicon-user">
+                                            </span> Administration
+                                        </h4>
+                                    </a>
+                                </div>
+                                <div id="collapseAdmin" class="panel-collapse collapse in">
+                                    <div class="panel-body">
+                                        <table class="table">
+                                            <tr>
+                                                <td>
+                                                    <span class="glyphicon glyphicon-compressed text-info"></span>
+                                                    <a id="liViewSubscribedPlans" class="Organization_Color" href='@Url.Action("SubscribedPlans", "Provider")' ;> Plans</a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <span class="glyphicon glyphicon-plus-sign text-success"></span>
+                                                    <a id="liViewProvider" class="Organization_Color" href='@Url.Action("ViewProvider", "Provider")' ;> Providers</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseAccount">
+                                        <h4 class="panel-title">
+                                            <span class="glyphicon glyphicon-cog">
+                                            </span> Account
+                                        </h4>
+                                    </a>
+                                </div>
+                                <div id="collapseAccount" class="panel-collapse collapse in">
+                                    <div class="panel-body">
+                                        <table class="table">                                            
+                                            <tr>
+                                                <td>
+                                                    <span class="glyphicon glyphicon-lock"></span>
+                                                    <a id="liChangePassword" class="Organization_Color" href='@Url.Action("ChangePassword", "Provider")' ;> Change Password</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseDocuments">
+                                        <h4 class="panel-title">
+                                            <span class="glyphicon glyphicon-book">
+                                            </span> Documents
+                                        </h4>
+                                    </a>
+                                </div>
+                                <div id="collapseDocuments" class="panel-collapse collapse in">
+                                    <div class="panel-body">
+                                        <table class="table">
+                                            <tr>
+                                                <td>
+                                                    @{
+                                                        var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
+                                                        var AttachedLink = (System.Configuration.ConfigurationManager.AppSettings["AttachedLink"].ToString());
+                                                        var TermsAndConditionsFile = @Session["TermsAndConditionsFile"].ToString();
+                                                        var TermsURL = AttachedLink + "PlanTerms/" + TermsAndConditionsFile;
+                                                    }
+                                                    <span class="glyphicon glyphicon-file"></span>
+                                                    <a id="liTandC" class="Organization_Color" href='@TermsURL' target="_blank"> View Terms and Conditions</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    @*<ul class="list-unstyled components">
                         <li class="list-unstyled">
                             <ul class="list-unstyled" style="height:auto;margin-bottom:3px;font-size:16px;">
                                 <li><a id="liViewSubscribedPlans" class="Organization_Color" href='@Url.Action("SubscribedPlans", "Provider")' ;>Subscribed Plans</a></li>
@@ -49,9 +149,19 @@
                                 <li><a id="liViewProvider" class="Organization_Color" href='@Url.Action("ViewProvider", "Provider")' ;>View Provider</a></li>
                             </ul>
                         </li>
+                        <li class="list-unstyled">
+                            @{
+                                var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
+                                var AttachedLink = (System.Configuration.ConfigurationManager.AppSettings["AttachedLink"].ToString());
+                                var TermsAndConditionsFile = @Session["TermsAndConditionsFile"].ToString();
+                                var TermsURL = AttachedLink + "PlanTerms/" + TermsAndConditionsFile;
+                            }
+                            <ul class="list-unstyled" style="height:auto;margin-bottom:3px;font-size:16px;">
+                                <li><a id="liViewProvider" class="Organization_Color" href='@TermsURL' target="_blank">View Terms and Conditions</a></li>
+                            </ul>
+                        </li>
 
-                      
-                    </ul>
+                    </ul>*@
                 </nav1>
 
 
@@ -84,7 +194,7 @@
 </body>
 </html>
 @*<script src="~/Scripts/jquery-1.12.0.min.js" type="text/javascript"></script>*@
-<script src="~/Scripts/bootstrap-leftmenu.js" type="text/javascript"></script>
+@*<script src="~/Scripts/bootstrap-leftmenu.js" type="text/javascript"></script>*@
 
 <script type="text/javascript">
     $(document).ready(function () {
@@ -99,13 +209,25 @@
     }
     function highlightSelectedMenu() {
         var currentURL = window.location.href;
-        if (currentURL.includes("Provider/ViewProvider")) {
-            $("#liViewProvider").removeClass("Organization_Color");
-            $("#liViewProvider").addClass("stripePanel");
-        }
-        else if (currentURL.includes("Provider/SubscribedPlans")) {
+        if (currentURL.includes("Provider/SubscribedPlans")) {
+            //$('div[id^="collapse"]').removeClass("in");
+            //$("#collapseAdmin").addClass("in");
             $("#liViewSubscribedPlans").removeClass("Organization_Color");
             $("#liViewSubscribedPlans").addClass("stripePanel");
         } 
+        if (currentURL.includes("Provider/ViewProvider")) {
+            //$('div[id^="collapse"]').removeClass("in");
+            //$("#collapseAdmin").addClass("in");
+            $("#liViewProvider").removeClass("Organization_Color");
+            $("#liViewProvider").addClass("stripePanel");
+        }
+
+        //Account
+        if (currentURL.includes("Provider/ChangePassword")) {
+            //$('div[id^="collapse"]').removeClass("in");
+            //$("#collapseAccount").addClass("in");
+            $("#liChangePassword").removeClass("Organization_Color");
+            $("#liChangePassword").addClass("stripePanel");
+        }
     }
 </script>

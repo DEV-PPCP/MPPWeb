@@ -22,9 +22,14 @@ namespace PPCP07302018.Utils
         /// </summary>
         public enum TermsAndConditons
         {
-            Patient = 1,
-            Organization = 2,
-            User = 3
+            //Patient = 1,
+            //Organization = 2,
+            //User = 3
+
+            Organization = 1,
+            Member = 2,
+            Provider = 3,
+            User = 4
         }
     }
 }

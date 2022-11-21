@@ -22,8 +22,16 @@ namespace PPCP07302018.Controllers
     //[AdminSessionController]
     public class AdminController : Controller
     {
-        private string DownloadDocumentPath = System.Configuration.ConfigurationSettings.AppSettings["DownloadDocumentsPath"].ToString();
-        static string UploadDocumentPath = System.Configuration.ConfigurationSettings.AppSettings["UploadDocumentSignaturePath"].ToString();
+        private string DownloadDocumentPath = System.Configuration.ConfigurationManager.AppSettings["DownloadDocumentsPath"].ToString();
+        static string UploadDocumentPath = System.Configuration.ConfigurationManager.AppSettings["UploadDocumentSignaturePath"].ToString();
+
+        public ActionResult AdminLogin()
+        {
+            Models.Admin.Login model = new Models.Admin.Login();
+            model.LoginType = "MPP";
+            return RedirectToAction("MPPLogin", "Account", model);
+        }
+
         public ActionResult AddPlans()
         {
             //modelParameter.OrganizationTermsandCondition = Convert.ToString(Session["OrganiationTandCFilePath"]);
@@ -104,137 +112,7 @@ namespace PPCP07302018.Controllers
             return View();
 
         }
-        /// <summary>
-        /// Validate Organization User Credential at the time of login
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>        
-        public JsonResult VerifyOrganization(PPCP07302018.Models.Organization.MemberLoginDetails model)
-        {
-            string returnString = "0";
-            string password = EncryptAndDecrypt.EncrypString(model.Password);
-            DataAccessLayer.ServiceCall<PPCP07302018.Models.Organization.OrganizationDetails> objcall = new DataAccessLayer.ServiceCall<PPCP07302018.Models.Organization.OrganizationDetails>();
-            PPCP07302018.Models.Member.ServiceData ServiceData = new PPCP07302018.Models.Member.ServiceData();
-            string[] ParameterName = new string[] { "Username", "PassWord", "IPAddress" };
-            string[] ParameterValue = new string[] { model.UserName, password, Convert.ToString(Session["SystemIPAddress"]) };
-            ServiceData.ParameterName = ParameterName;
-            ServiceData.ParameterValue = ParameterValue;
-            ServiceData.WebMethodName = "ValidateOrganization";
-
-            List<PPCP07302018.Models.Organization.OrganizationDetails> List = objcall.CallServices(Convert.ToInt32(0), "ValidateOrganization", ServiceData);
-
-            if (List.Count >= 1)
-            {
-                if (List[0].OrganizationID != null && List[0].OrganizationID != 0)
-                {
-                    returnString = "1";
-                    Session["UserID"] = List[0].UserID;
-                    Session["FirstName"] = List[0].FirstName;
-                    Session["LastName"] = List[0].LastName;
-                    Session["Email"] = List[0].Email;
-                    Session["DOB"] = List[0].DOB;
-                    Session["CityID"] = List[0].CityID;
-                    Session["CityName"] = List[0].CityName;
-                    Session["StateID"] = List[0].StateID;
-                    Session["StateName"] = List[0].StateName;
-                    Session["OrganizationID"] = List[0].OrganizationID;
-                    Session["OrganizationName"] = List[0].OrganizationName;
-                    Session["UserMobileNumber"] = List[0].MobileNumber;
-                    Session["UserGender"] = List[0].Gender;
-                    Session["OrgPassword"] = model.Password;
-                    Session["OrgUserName"] = model.UserName;
-                    Session["OrganizationTandCFlag"] = List[0].OrganizationTandCFlag;
-                    Session["OrganizationUserTandCFlag"] = List[0].OrganizationUserTandCFlag;
-                    Session["HeaderDisplayName"] = List[0].OrganizationName;
-
-
-                    if (string.IsNullOrEmpty(List[0].Address))
-                    {
-                        string Address = List[0].CityName + "," + List[0].StateName + " , " + List[0].Zip;
-                        Session["UserAddress"] = Address;
-                    }
-                    else
-                    {
-                        string Address = List[0].Address + "," + List[0].CityName + "," + List[0].StateName + " , " + List[0].Zip;
-                        Session["MemberAddress"] = Address;
-                    }
-
-
-                    if (List[0].IsTwofactorAuthentication == true && List[0].TwoFactorType == 1)
-                    {
-                        //OTP form
-                        if (List[0].Otp != null)
-                        {
-                            returnString = "0";
-                            Session["OrgloginOTP"] = Convert.ToInt32(List[0].Otp);
-                            // redirect to OTP form
-                        }
-
-                    }
-                    else if (List[0].IsTwofactorAuthentication == true && List[0].TwoFactorType == 2)
-                    {
-                        if (List[0].PreferredIP != Convert.ToString(Session["SystemIPAddress"]))
-                        {
-                            //OTP form
-                            if (List[0].Otp != null)
-                            {
-                                Session["OrgloginOTP"] = Convert.ToInt32(List[0].Otp);
-                                returnString = "0";
-
-                                // redirect to OTP form
-                            }
-
-                            else
-                            {
-                                if (List[0].OrganizationTandCFlag == 1 || List[0].OrganizationUserTandCFlag == 1)
-                                {
-                                    returnString = "4";
-                                }
-                                else
-                                {
-                                    returnString = "1";
-                                    // redirect to form
-                                }
-                            }
-                        }
-
-                        else if (List[0].IsTwofactorAuthentication == false)
-                        {
-                            if (List[0].OrganizationTandCFlag == 1 || List[0].OrganizationUserTandCFlag == 1)
-                            {
-                                returnString = "4";
-                            }
-                            else
-                            {
-                                returnString = "1";
-                                //redirect to form
-                            }
-                        }
-                    }
-                }
-                if (List[0].OrganizationTandCFlag == 1 || List[0].OrganizationUserTandCFlag == 1)
-                {
-                    returnString = "4";
-                }
-            }
-            else
-            {
-                returnString = "3";
-
-            }
-            return Json(returnString, JsonRequestBehavior.AllowGet);
-            //string AdminUsername = System.Configuration.ConfigurationSettings.AppSettings["AdminUsername"].ToString();
-            //string AdminPassword = System.Configuration.ConfigurationSettings.AppSettings["AdminPassword"].ToString();
-
-            //if (AdminUsername == model.UserName && AdminPassword == model.Password)
-            //{
-            //    return Json("1", JsonRequestBehavior.AllowGet);
-            //}
-            //else {
-            //    return Json("2", JsonRequestBehavior.AllowGet);
-            //}
-        }
-
+        
         public ActionResult ViewOrganizations()
         {
             return View();
@@ -287,10 +165,6 @@ namespace PPCP07302018.Controllers
             return View();
         }
 
-        public ActionResult AdminLogin()
-        {
-            return View();
-        }
         public ActionResult ViewPayments()
         {
             return View();
@@ -2447,36 +2321,6 @@ shapeFooter, PageNumbers
         {
 
             return View();
-        }
-        public JsonResult VerifyOrgOTP(string otp)
-        {
-            string returnString = "0";
-
-            if (!string.IsNullOrEmpty(otp))
-            {
-                int parsedValue;
-                if (!int.TryParse(otp, out parsedValue))
-                {
-                    returnString = "0";
-                }
-                else if (Convert.ToInt32(otp) == Convert.ToInt32(Session["OrgloginOTP"]))
-                {
-                    if (Session["OrganizationTandCFlag"] == "1" || Session["OrganizationUserTandCFlag"] == "1")
-
-                    {
-                        returnString = "4";
-                    }
-                    else
-                    {
-                        returnString = "1";
-                    }
-                }
-                else
-                {
-                    returnString = "0";
-                }
-            }
-            return Json(returnString, JsonRequestBehavior.AllowGet);
         }
     }
 }

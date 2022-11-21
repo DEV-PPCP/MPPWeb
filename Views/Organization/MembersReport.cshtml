@@ -26,13 +26,7 @@
     Layout = "~/Views/Shared/WUCOrgLeftMenu.cshtml";
     var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
 }
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/jqueryval")
-@Scripts.Render("~/bundles/modernizr")
-@Scripts.Render("~/bundles/bootstrap")
-@Scripts.Render("~/bundles/KendoScripts")
-@Scripts.Render("~/bundles/custom-validator")
-@Styles.Render("~/bundles/Kendocss")
+
 @Scripts.Render("~/bundles/ViewPaymentDetailsScriptFiles")   @*For ViewPaymentDetails script files*@
 @Styles.Render("~/bundles/Membercssfiles")       @*For member css files*@
 <style type="text/css">
@@ -63,7 +57,8 @@
         margin-top: 7px;
         margin-right: 5px;
     }
-     .loadingSpinner {
+
+    .loadingSpinner {
         position: absolute;
         z-index: 1000;
         top: 0;
@@ -74,55 +69,47 @@
     }
 </style>
 
-    <div class="pageheading_bar" align="center">
-        <b>Members Report</b>
-    </div>
-    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" id="divMainRegistration" style="margin-top:0px;">
-        <div class="Panel_bg">
-            <div class="form-group">
-                <fieldset id="fsLabOrderSearch" style="display:block">
-                    <div class="form-group" style="display:none">
-                        <div id="dvSearchFilterHeader" style="cursor: pointer;" onclick="CollapsiblePanels(document.getElementById('dvSearchFilterHeader'),document.getElementById('dvSearchFilter'));"
-                             class="PanelTopBar">
-                            <span id="4_lblSearchPat" style="font-size:15px;font-weight:normal;color: White;">Search</span>
-                            <div style="float: right; margin-top: -5px; color: White; padding: 5px 5px 0 0">
-                            </div>
-                            <div id="arrow" class="ArrowClose"></div>
+<div class="pageheading_bar" align="center">
+    <b>Members Report</b>
+</div>
+<div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" id="divMainRegistration" style="margin-top:0px;">
+    <div class="Panel_bg">
+        <div class="form-group">
+            <fieldset id="fsLabOrderSearch" style="display:block">
+                <div class="form-group" style="display:none">
+                    <div id="dvSearchFilterHeader" style="cursor: pointer;" onclick="CollapsiblePanels(document.getElementById('dvSearchFilterHeader'),document.getElementById('dvSearchFilter'));"
+                         class="PanelTopBar">
+                        <span id="4_lblSearchPat" style="font-size:15px;font-weight:normal;color: White;">Search</span>
+                        <div style="float: right; margin-top: -5px; color: White; padding: 5px 5px 0 0">
                         </div>
+                        <div id="arrow" class="ArrowClose"></div>
                     </div>
+                </div>
 
-                    <div id="dvSearchFilter" style="display: block;">
-                        <div class="Page_Dimmer1">
-                        </div>
-                        <div class="PopupHolder2" style="height:auto;">
+                <div id="dvSearchFilter" style="display: block;">
+                    <div class="Page_Dimmer1">
+                    </div>
+                    <div class="PopupHolder2" style="height:auto;">
 
-                            <div class="Panel_bg_Sub">
-                                <div style="width: 100%;height:auto;">
-                                    <div class="col-xs-0 col-md-3 col-sm-0 col-lg-3"></div>
-                                    <div class="row">
-                                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                            @( Html.Label("From", new { style = "font-weight:normal;" }))<span style="color: Red;">*</span><br />
-                                            @( Html.Kendo().DatePicker().Format("MM/dd/yyyy").Name("FromDate").Events(e => e.Change("startChange")).Value("")
+                        <div class="Panel_bg_Sub">
+                            <div style="width: 100%;height:auto;">
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                        @( Html.Label("From", new { style = "font-weight:normal;" }))<span style="color: Red;">*</span><br />
+                                        @( Html.Kendo().DatePicker().Format("MM/dd/yyyy").Name("FromDate").Events(e => e.Change("startChange")).Value("")
        .HtmlAttributes(new { PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text" }))<br />
-
-
-                                            <span style="color: Red"><span id="Span3"></span></span>
-                                        </div>
-                                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                            @( Html.Label("To", new { style = "font-weight:normal;" }))<span style="color: Red;">*</span><br />
-                                            @( Html.Kendo().DatePicker().Format("MM/dd/yyyy").Name("ToDate").Events(e => e.Change("endChange")).Value("").Max(DateTime.Today).HtmlAttributes(new { PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text" }))<br />
-
-
-                                            <span style="color: Red">
-                                                <span id="Span7"></span>
-                                            </span>
-                                        </div>
+                                        <span style="color: Red"><span id="Span3"></span></span>
                                     </div>
-                                    <div class="col-xs-0 col-md-3 col-sm-0 col-lg-3"></div>
-                                    <div class="row">
-                                        <div class="col-xs-6 col-md-3 col-sm-6 col-lg-3">
-                                            @Html.Label("Select Provider Name", new { style = "font-weight:normal;", @class = "classlabel" })<br />
-                                            @(Html.Kendo().DropDownListFor(m => m.ProviderName)
+                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                        @( Html.Label("To", new { style = "font-weight:normal;" }))<span style="color: Red;">*</span><br />
+                                        @( Html.Kendo().DatePicker().Format("MM/dd/yyyy").Name("ToDate").Events(e => e.Change("endChange")).Value("").Max(DateTime.Today).HtmlAttributes(new { PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text" }))<br />
+                                        <span style="color: Red">
+                                            <span id="Span7"></span>
+                                        </span>
+                                    </div>
+                                    <div class="col-xs-6 col-md-3 col-sm-6 col-lg-3">
+                                        @Html.Label("Select Provider Name", new { style = "font-weight:normal;", @class = "classlabel" })<br />
+                                        @(Html.Kendo().DropDownListFor(m => m.ProviderName)
     .Name("ProviderNames").HtmlAttributes(new { style = "width:100%;" })
     .OptionLabel("--Select--")
     .Events(events =>
@@ -138,54 +125,56 @@
         {
         });
     }))
-                                            <br />
+                                        <br />
 
-                                            @*@Html.HiddenFor(model => model.OrganizationID)*@
-                                            @Html.HiddenFor(model => model.ProviderID)
-                                            @Html.Hidden("hdnProviderName")
-                                        </div>
-                                        <script type="text/javascript">
+                                        @*@Html.HiddenFor(model => model.OrganizationID)*@
+                                        @Html.HiddenFor(model => model.ProviderID)
+                                        @Html.Hidden("hdnProviderName")
+                                    </div>
+                                    <script type="text/javascript">
 
-                                function onSelectProvider(e) {
-                                    $("#hdnProviderName").val("");
-                                    $("#ProviderID").val("");
-                                    var dataItem = this.dataItem(e.item.index());
-                                    $("#ProviderID").val(dataItem.ProviderID);
-                                    $("#ProviderNames").val(dataItem.ProviderName);
+                                        function onSelectProvider(e) {
+                                            $("#hdnProviderName").val("");
+                                            $("#ProviderID").val("");
+                                            var dataItem = this.dataItem(e.item.index());
+                                            $("#ProviderID").val(dataItem.ProviderID);
+                                            $("#ProviderNames").val(dataItem.ProviderName);
 
-                                }
-                                        </script>
-                                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-4">
-                                            <label style="font-weight: normal;">
-                                                @Html.Label("Plan Type", new { style = "font-weight:normal;", @class = "classlabel" })<br />
-                                                @(Html.RadioButtonFor(m => m.PlanType, "1", new
+                                        }
+                                    </script>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
+                                        <label style="font-weight: normal;">
+                                            @Html.Label("Plan Type: ", new { style = "font-weight:normal;", @class = "classlabel" })
+                                            @(Html.RadioButtonFor(m => m.PlanType, "1", new
                                         {
                                             id = "rbtnIndividual",
-                                           
+
                                         }))
-                                                Individual
-                                            </label>
-                                            <label style="font-weight: normal; margin-left:20px">
-                                                @(Html.RadioButtonFor(m => m.PlanType, "2", new
+                                            Individual
+                                        </label>
+                                        <label style="font-weight: normal; margin-left:20px">
+                                            @(Html.RadioButtonFor(m => m.PlanType, "2", new
                                         {
                                             id = "rbtnFamily",
                                             // onchange = "SearchEnrollPlans()"
                                         }))
-                                                Family Members
-                                            </label>
-                                            <label style="font-weight: normal; margin-left:20px">
-                                                @(Html.RadioButtonFor(m => m.PlanType, "3", new
+                                            Family Members
+                                        </label>
+                                        <label style="font-weight: normal; margin-left:20px">
+                                            @(Html.RadioButtonFor(m => m.PlanType, "3", new
                                             {
                                                 id = "rbtnAll",
                                                 @checked="true"
                                             }))
-                                                All
-                                            </label>
-                                            </div>
-                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3" style="display:none">
-                                                @Html.Label("Payment Status", new { style = "font-weight:normal;", @class = "classlabel" })<br />
+                                            All
+                                        </label>
+                                    </div>
+                                    <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6" style="display:none">
+                                        @Html.Label("Payment Status", new { style = "font-weight:normal;", @class = "classlabel" })<br />
 
-                                                @(Html.Kendo().DropDownListFor(m => m.PaymentStatus)
+                                        @(Html.Kendo().DropDownListFor(m => m.PaymentStatus)
                     .Name("PaymentStatus").HtmlAttributes(new { style = "width:100%;" })
                     .OptionLabel("--Select--")
                     .Events(events =>
@@ -218,98 +207,91 @@
                                                         }
 
                     })
-                                                )<br />
+                                                )
 
-                                                @Html.Hidden("PaymentStatusID")
-                                                <script type="text/javascript">
+                                        @Html.Hidden("PaymentStatusID")
+                                        <script type="text/javascript">
 
                                             function onSelectPaymentStatus(e) {
 
                                                 $("#PaymentStatus").val("");
-                                                    var dataItem = e.sender.dataItem();
-                                                    $("#PaymentStatus").val(dataItem.Text);
-                                                    $("#PaymentStatusID").val(dataItem.Value);
-                                                    if ($("#PaymentStatus").val() == "--Select--") {
-                                                        $("#PaymentStatus").val("");
-                                                    }
+                                                var dataItem = e.sender.dataItem();
+                                                $("#PaymentStatus").val(dataItem.Text);
+                                                $("#PaymentStatusID").val(dataItem.Value);
+                                                if ($("#PaymentStatus").val() == "--Select--") {
+                                                    $("#PaymentStatus").val("");
                                                 }
-                                                </script>
-                                            </div>
-                                        </div>
-                                    <div class="col-xs-0 col-md-3 col-sm-0 col-lg-3"></div>
-                                    <div class="row">
-                                        
-
-                                    </div>
-
-                                    <div class="col-xs-0 col-md-3 col-sm-0 col-lg-3"></div>
-                                    <div class="col-xs-0 col-md-3 col-sm-0 col-lg-3"></div>
-                                    <div class="row">
-                                        <div align="center">
-                                            <span id="DateValidationMessage" style="color: Red"></span>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div align="center">
-                                            <div class="col-xs-0 col-md-3 col-sm-3 col-lg-3"></div>
-                                            <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
-                                                <br />
-                                                <button type="button" id="btnSearch" title="Search" style="width: 100px;" class="button_blue" value="Search" onclick="btnDownLoad()">
-                                                    @*onclick="btnDownLoad()"*@
-                                                Search
-                                            </button>
-                                            <button type="button" id="btnClear" title="Clear" value="Clear" style="width: 100px;display:none" class="button_blue">
-                                                Clear
-                                            </button>
-                                            <button type="button" id="btnClosed" title="Close" value="Close" style="width: 100px;display:none" class="button_blue">
-                                                Close
-                                            </button>
-                                        </div>
-                                        <div class="col-xs-0 col-md-3 col-sm-3 col-lg-3"></div>
+                                            }
+                                        </script>
                                     </div>
                                 </div>
-
                             </div>
+
+                            <div class="row">
+                                <div align="center">
+                                    <span id="DateValidationMessage" style="color: Red"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div align="center">
+                                    <div class="col-xs-0 col-md-3 col-sm-3 col-lg-3"></div>
+                                    <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
+                                        <button type="button" id="btnSearch" title="Search" style="width: 100px;" class="button_blue" value="Search" onclick="btnDownLoad()">
+                                            @*onclick="btnDownLoad()"*@
+                                            Search
+                                        </button>
+                                        <button type="button" id="btnClear" title="Clear" value="Clear" style="width: 100px;display:none" class="button_blue">
+                                            Clear
+                                        </button>
+                                        <button type="button" id="btnClosed" title="Close" value="Close" style="width: 100px;display:none" class="button_blue">
+                                            Close
+                                        </button>
+                                    </div>
+                                    <div class="col-xs-0 col-md-3 col-sm-3 col-lg-3"></div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
-               
-                    @*Report Preview code*@
-                    <div class="row" id="divpdfviewprescriptionpopup" style="display: none; align-content:center;">
-                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
-                            @*<div class="Page_Dimmer1">
-                </div>*@
-                            @*<div class="PopupHolder2" style="top:72%;">*@
-                            @*<div class="Bgheader" width="100%">
-                    <div>
-                        <span id="SpnPopUpTitle" style="color: White; font-family: Verdana,Tahoma;
-                    font-size: 15px; font-weight: bold;">LabScore</span>
-                    </div>
-                </div>*@
-                            <div style="border: Solid 1px #33CCEE; width: 100%;">
-                                <div id="divotherpdfview"></div>
+        </div>
 
-                                <div class="row">
-                                    <div class="col-xs-12 col-md-12 col-sm-12 ">
-                                        <div id="divImagePrescription" style="height: 643px; width: 100%; ">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="divbtnrereshOK" align="center" style="display:none">
-                                    <button type="button" id="btnSuccess" onclick="OkPDFFile();" class="button_Sky_blue"
-                                            style="width: 70px;">
-                                        Ok
-                                    </button>
+        @*Report Preview code*@
+        <div class="row" id="divpdfviewprescriptionpopup" style="display: none; align-content:center;">
+            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                @*<div class="Page_Dimmer1">
+                    </div>*@
+                @*<div class="PopupHolder2" style="top:72%;">*@
+                @*<div class="Bgheader" width="100%">
+                        <div>
+                            <span id="SpnPopUpTitle" style="color: White; font-family: Verdana,Tahoma;
+                        font-size: 15px; font-weight: bold;">LabScore</span>
+                        </div>
+                    </div>*@
+                <div style="border: Solid 1px #33CCEE; width: 100%;">
+                    <div id="divotherpdfview"></div>
 
-                                </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12 col-sm-12 ">
+                            <div id="divImagePrescription" style="height: 643px; width: 100%; ">
                             </div>
-                            @*</div>*@
                         </div>
                     </div>
-            </fieldset>
-           
+                    <div id="divbtnrereshOK" align="center" style="display:none">
+                        <button type="button" id="btnSuccess" onclick="OkPDFFile();" class="button_Sky_blue"
+                                style="width: 70px;">
+                            Ok
+                        </button>
+
+                    </div>
+                </div>
+                @*</div>*@
+            </div>
         </div>
+        </fieldset>
+
     </div>
+</div>
 </div>
 
 <script type="text/javascript">

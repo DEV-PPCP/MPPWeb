@@ -168,12 +168,12 @@ function GetSpecilization(Url) {
             for (var r in objlist) {
                 if (r % 2 == 0 || r == 0) {
                     jsonResult += "<input type='checkbox' onclick = '" + "SpecializationValidation();" + "' name='" + "SPList" + "' value='" + objlist[r].SpecializationID + ";" + objlist[r].SpecializationName + "' onclick='" + "check(this.value)" + "'  />" +
-                    "<label for='" + objlist[r].SpecializationName + "'>" + objlist[r].SpecializationName + "</label>" + "<br />"
+                        "<label for='" + objlist[r].SpecializationName + "'> &nbsp;" + objlist[r].SpecializationName + "</label>" + "<br />"
                     $("#divSpecializationList").html(jsonResult);
                 }
                 else {
                     jsonResults += "<input type='checkbox' onclick = '" + "SpecializationValidation();" + "' name='" + "SPList" + "' value='" + objlist[r].SpecializationID + ";" + objlist[r].SpecializationName + "' onclick='" + "check(this.value)" + "'  />" +
-                   "<label for='" + objlist[r].SpecializationName + "'>" + objlist[r].SpecializationName + "</label>" + "<br />"
+                        "<label for='" + objlist[r].SpecializationName + "'> &nbsp;" + objlist[r].SpecializationName + "</label>" + "<br />"
                     $("#divSpecializationListRight").html(jsonResults);
                 }
             }
@@ -184,89 +184,86 @@ function GetSpecilization(Url) {
 }
 
 //Add Doctors Saving Details
-function SaveDoctorDetails(jsModel, url) {
-    debugger;
-    $.ajax({
-        type: 'POST',
-        cache: false,
-        url: '/Organization/SaveDoctorDetailsxml',
-        data: jsModel,
-        success: function (data, textStatus, jqXHR) {
-            CallSaveAddDotors(data, url);
-        },
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(XMLHttpRequest, textStatus, errorThrown);
-        },
-    });
+//function SaveDoctorDetails(jsModel, url) {
+//    debugger;
+//    $.ajax({
+//        type: 'POST',
+//        cache: false,
+//        url: '/Organization/SaveDoctorDetailsxml',
+//        data: jsModel,
+//        success: function (data, textStatus, jqXHR) {
+//            CallSaveAddDotors(data, url);
+//        },
+//        error: function (XMLHttpRequest, textStatus, errorThrown) {
+//            alert(XMLHttpRequest, textStatus, errorThrown);
+//        },
+//    });
 
 
-}
+//}
 
-function CallSaveAddDotors(data, url) {
-    debugger;
-    var webMethodName = "AddDoctorDetails";
-    var ParameterName = data;
-    var jsonPostString = setParameter(ParameterName, webMethodName);
-    var Url = url + "Organization";
-    $("<div class='loadingSpinner'></div>").appendTo($("#divMainAddDoctors"));
-    $.ajax({
-        type: "POST",
-        url: Url,
-        data: jsonPostString,
-        dataType: "json",
-        contentType: "application/json",
-        success: function (result) {
-            var obj = result[0];
-            $("#divMainAddDoctors").find(".loadingSpinner:first").remove();
-            if (obj[0].result == null && obj[0].UserID != null) {
-                document.getElementById("divSignupPopup").style.display = "block";
-                document.getElementById("spnPopupMessage").innerHTML = "You are registered successfully.";
-                document.getElementById("divSignupPopup").scrollIntoView();
-            }
-            else {
-                document.getElementById("divErrMessagePopup").style.display = "block";
-                document.getElementById("spnPopupErrMessage").innerHTML = obj[0].result + ". Please try again.";
-                document.getElementById("divErrMessagePopup").scrollIntoView();
-            }
-        },
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
-        },
-    });
-}
+//function CallSaveAddDotors(data, url) {
+//    debugger;
+//    var webMethodName = "AddDoctorDetails";
+//    var ParameterName = data;
+//    var jsonPostString = setParameter(ParameterName, webMethodName);
+//    var Url = url + "Organization";
+//    $("<div class='loadingSpinner'></div>").appendTo($("#divMainAddDoctors"));
+//    $.ajax({
+//        type: "POST",
+//        url: Url,
+//        data: jsonPostString,
+//        dataType: "json",
+//        contentType: "application/json",
+//        success: function (result) {
+//            var obj = result[0];
+//            $("#divMainAddDoctors").find(".loadingSpinner:first").remove();
+//            if (obj[0].result == null && obj[0].UserID != null) {
+//                document.getElementById("divSignupPopup").style.display = "block";
+//                document.getElementById("spnPopupMessage").innerHTML = "You are registered successfully.";
+//                document.getElementById("divSignupPopup").scrollIntoView();
+//            }
+//            else {
+//                document.getElementById("divErrMessagePopup").style.display = "block";
+//                document.getElementById("spnPopupErrMessage").innerHTML = obj[0].result + ". Please try again.";
+//                document.getElementById("divErrMessagePopup").scrollIntoView();
+//            }
+//        },
+//        error: function (XMLHttpRequest, textStatus, errorThrown) {
+//        },
+//    });
+//}
 //AddDoctors :Ragini 11-09-2019
-function ValidateuserName(UserName, Url) {
-    if ($("#UserName").val() == "") {
-        $("#spnUserName").hide();
-    }
-    var webMethodName = "ValidateProviderUserName";
-    var ParameterNames = new Array();
-    var ParameterValues = new Array();
-    ParameterNames[0] = "Username";
-    ParameterValues[0] = UserName;
-    var Url = Url + "OrganizationServices";
-    var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
-    $.ajax({
-        type: "POST",
-        url: Url,
-        data: jsonPostString,
-        dataType: "json",
-        contentType: "application/json",
-        success: function (result) {
-            if (result == 0) {
 
-                document.getElementById("spnUserName").innerHTML = " ";
-            }
+//function ValidateuserName(UserName, Url) {
+//    if ($("#UserName").val() == "") {
+//        $("#spnUserName").hide();
+//    }
+//    var webMethodName = "ValidateProviderUserName";
+//    var ParameterNames = new Array();
+//    var ParameterValues = new Array();
+//    ParameterNames[0] = "Username";
+//    ParameterValues[0] = UserName;
+//    var Url = Url + "OrganizationServices";
+//    var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
+//    $.ajax({
+//        type: "POST",
+//        url: Url,
+//        data: jsonPostString,
+//        dataType: "json",
+//        contentType: "application/json",
+//        success: function (result) {
+//            if (result == 0) {
+//                document.getElementById("spnUserName").innerHTML = " ";
+//            } else {
+//                document.getElementById("spnUserName").innerHTML = "Username already exists"; return false;
+//            }
+//        },
+//        error: function (XMLHttpRequest, textStatus, errorThrown) {
 
-            else {
-                document.getElementById("spnUserName").innerHTML = "Username already exists"; return false;
-
-            }
-        },
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
-
-        },
-    });
-}
+//        },
+//    });
+//}
 
 /// PasswordValidation in AddDoctors : Ragini on 13-09-2019 ///
 function validatePassword() {

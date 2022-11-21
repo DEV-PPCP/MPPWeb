@@ -7,13 +7,7 @@
     Layout = "~/Views/Shared/BaseMaster.cshtml";
     var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
 }
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/jqueryval")
-@Scripts.Render("~/bundles/modernizr")
-@Scripts.Render("~/bundles/bootstrap")
-@Scripts.Render("~/bundles/KendoScripts")
-@Scripts.Render("~/bundles/custom-validator")
-@Styles.Render("~/bundles/Kendocss")
+
 @Scripts.Render("~/bundles/FamilyMeberScriptFiles")
 @Styles.Render("~/bundles/Membercssfiles")
 
@@ -73,7 +67,7 @@
                                                     {
                                                         //columns.Bound(p => p.FirstName+""+p.LastName).ClientTemplate("<input type='radio' name='PlanID' value='#= PlanID #' />").Title("Select").Filterable(false).Width(50);
                                                         //columns.Bound(p => p.Specialization).Title("Specialization").Filterable(true).Visible(false);
-                                                        columns.Bound(p => p.FirstName).Title("Name").ClientTemplate(" #: LastName # #: FirstName # ").Filterable(false).Width(150);
+                                                        columns.Bound(p => p.FirstName).Title("Name").ClientTemplate(" #: FirstName # #: LastName #").Filterable(false).Width(150);
                                                         // columns.Bound(p => p.FirstName).Title("Name").Filterable(true).Width(100);
                                                         columns.Bound(p => p.RelationshipName).Title("Relation").Filterable(false).Width(100);
                                                         columns.Bound(p => p.Email).Title("Email").Filterable(false).Width(100);

@@ -1,6 +1,14 @@
 ﻿body {
 }
 
+.row {
+    margin-top: 5px;
+}
+
+span.k-icon.k-i-calendar {
+    margin-top: 8px;
+}
+
 #modalPage {
     display: none;
     width: 100%;
@@ -72,6 +80,11 @@
         background-color: #242424;
         height: 45px;
     }
+    .loginFooter {
+        bottom: 0;
+        position: fixed;
+        width: 100%;
+    }
 }
 
 @media only screen and (min-width:1024px) and (max-width:768px) /*style for desktop view*/
@@ -80,6 +93,11 @@
         background-color: #242424;
         height: 45px;
     }
+    .loginFooter {
+        bottom: 0;
+        position: fixed;
+        width: 100%;
+    }
 }
 
 @media only screen and (min-width:768px) /*style for desktop view*/
@@ -87,6 +105,11 @@
     .thememount-topbar {
         background-color: #242424;
         height: 45px;
+    }
+    .loginFooter {
+        bottom: 0;
+        position: fixed;
+        width: 100%;
     }
 }
 

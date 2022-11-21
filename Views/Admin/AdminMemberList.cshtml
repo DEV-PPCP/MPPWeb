@@ -29,13 +29,7 @@
     Layout = "~/Views/Shared/WUCAdminLeftMenu.cshtml";
     var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
 }
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/jqueryval")
-@Scripts.Render("~/bundles/modernizr")
-@Scripts.Render("~/bundles/bootstrap")
-@Scripts.Render("~/bundles/KendoScripts")
-@Scripts.Render("~/bundles/custom-validator")
-@Styles.Render("~/bundles/Kendocss")
+
 @Styles.Render("~/bundles/Membercssfiles")       @*For member css files*@
 @Scripts.Render("~/bundles/AdminMemberListScriptFiles")
 
@@ -173,7 +167,7 @@
         function MembeDetail()
         {
             var MemberRegistrationDetails = {};
-           
+
             MemberRegistrationDetails.OrganizationID = $("#OrganizationID").val();//'@Session["OrganizationID"]';
             MemberRegistrationDetails.OrganizationName = $("#OrganizationName").val();//'@Session["OrganizationName"]';
             MemberRegistrationDetails.RelationshipID = "0";
@@ -264,7 +258,7 @@
                     <div class="Bgheader" width="100%">
                         <div>
                             <span id="SpnPopUpTitle" style="color: White; font-family: Verdana,Tahoma;
-                                font-size: 15px; font-weight: bold;">Physician Primary Care Plan</span>
+                                font-size: 15px; font-weight: bold;">My Physician Plan</span>
                         </div>
                     </div>
                     <div style="border: Solid 1px #33CCEE; width: 100%;">
@@ -283,6 +277,7 @@
                                     style="width: 70px;">
                                 Ok
                             </button>
+                            <br />
                             <a id="loginUrl" href="@Html.AttributeEncode(Url.Action("AdminMemberList", "Admin" ))">
                             </a>
                         </div>
@@ -298,7 +293,7 @@
                     <div class="Bgheader" width="100%">
                         <div align="center">
                             <span id="SpanErrMsgTitle" style="color: White; font-family: Verdana,Tahoma; font-size: 15px;
-                        font-weight: bold;">Physician Primary Care Plan</span>
+                        font-weight: bold;">My Physician Plan</span>
                         </div>
                     </div>
                     <div style="border: Solid 1px #33CCEE; width: 100%;">
@@ -352,9 +347,8 @@
                         <div class="Panel_bg_Sub">
                             <div style="width: 100%;height:auto;">
                                 <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" style="display:block">
-                                    <div class="col-xs-0 col-md-2 col-sm-0 col-lg-2"></div>
                                     <div class="row">
-                                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-4">
+                                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                             @*@Html.Label("Organization Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />*@
                                             @(Html.Kendo().AutoCompleteFor(model => model.OrganizationName)
                                                     .Name("OrganizationNames")
@@ -376,19 +370,18 @@
                                             @Html.HiddenFor(m => m.OrganizationID)
 
                                             <script type="text/javascript">
-                                                            function OnOrganizationSelectChange(e) {
-                                                                var dataItem = this.dataItem(e.item.index());
-                                                                $("#OrganizationName").val(dataItem.OrganizationName);
-                                                                $("#OrganizationID").val(dataItem.OrganizationID);
-                                                              //  var OrganizationID = $("#OrganizationID").val();
-                                                             //   var ProviderID = $("#ProviderID").val();
-                                                              //  var PlanID = $("#PlanID").val();
-                                                              //  BindingPlansGrid(OrganizationID, ProviderID, PlanID,$("#hdnGender").val(),$("#hdnAge").val());
-                                                            }
+                                                function OnOrganizationSelectChange(e) {
+                                                    var dataItem = this.dataItem(e.item.index());
+                                                    $("#OrganizationName").val(dataItem.OrganizationName);
+                                                    $("#OrganizationID").val(dataItem.OrganizationID);
+                                                    //  var OrganizationID = $("#OrganizationID").val();
+                                                    //   var ProviderID = $("#ProviderID").val();
+                                                    //  var PlanID = $("#PlanID").val();
+                                                    //  BindingPlansGrid(OrganizationID, ProviderID, PlanID,$("#hdnGender").val(),$("#hdnAge").val());
+                                                }
                                             </script>
                                         </div>
-                                        <div class="col-xs-6 col-md-3 col-sm-6 col-lg-4">
-
+                                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                             @(Html.Kendo().AutoComplete()
                                                     .Name("MemberName")
                                                     .Placeholder("First Name/Last Name/Mobile Number")
@@ -408,37 +401,36 @@
                                                         }).ServerFiltering(true);
                                                     }))
                                         </div>
-                                    </div>
-                                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" align="center">
-                                        <br />
-                                        <button type="button" id="btnSearch" title="Search" style="width: 100px;" class="button_blue" value="Search" onclick="btnSearch()">
-                                            Search
-                                        </button>
-                                        <button type="button" id="btnClear" title="Clear" value="Clear" style="width: 100px;" class="button_blue" onclick="btnClear()">
-                                            Clear
-                                        </button>
-                                        <br />
-                                        @Html.ValidationMessageFor(model => model.MemberName)
-                                        @Html.Hidden("MemberId")
-                                        <script type="text/javascript">
-                                                    function OnMemberNameSelectChange(e) {
-                                                       $("#MemberId").val("0");
-                                                        var dataItem = this.dataItem(e.item.index());
-                                                        $("#MemberName").val(dataItem.MemberName);
-                                                        $("#MemberId").val(dataItem.MemberID);
-                                                        var MemberID = $("#MemberId").val();
-                                                    }
-                                                    function OnMemberchangeEvent() {
+                                        <div class="col-xs-12 col-md-6 col-sm-12 col-lg-6" align="center">
+                                            <button type="button" id="btnSearch" title="Search" style="width: 100px;" class="button_blue" value="Search" onclick="btnSearch()">
+                                                Search
+                                            </button>
+                                            <button type="button" id="btnClear" title="Clear" value="Clear" style="width: 100px;" class="button_blue" onclick="btnClear()">
+                                                Clear
+                                            </button>
+                                            @Html.ValidationMessageFor(model => model.MemberName)
+                                            @Html.Hidden("MemberId")
+                                            <script type="text/javascript">
+                                                function OnMemberNameSelectChange(e) {
+                                                    $("#MemberId").val("0");
+                                                    var dataItem = this.dataItem(e.item.index());
+                                                    $("#MemberName").val(dataItem.MemberName);
+                                                    $("#MemberId").val(dataItem.MemberID);
+                                                    var MemberID = $("#MemberId").val();
+                                                }
+                                                function OnMemberchangeEvent() {
 
-                                                    }
-                                                    function onAdditionalData() {
-                                                        return {
-                                                            text: $("#MemberName").val()
-                                                        };
-                                                    }
+                                                }
+                                                function onAdditionalData() {
+                                                    return {
+                                                        text: $("#MemberName").val()
+                                                    };
+                                                }
 
-                                        </script>
+                                            </script>
+                                        </div>
                                     </div>
+
                                 </div>
                             </div>
 
@@ -487,14 +479,15 @@
 
                                                     })
                                                     .Scrollable()
+                                                    .Sortable()
                                                     .Pageable()
                                                     .Filterable()
                                                     .AutoBind(false)
-                                                    .HtmlAttributes(new { })
+                                                    .HtmlAttributes(new { style = "height: 500px; min-height: 300px;" })
                                                     .Selectable()
                                                     .DataSource(dataSource => dataSource
                                                     .Ajax()
-                                                    .PageSize(5)
+                                                    .PageSize(50)
                                                     .ServerOperation(false)))
                     </div>
                 </div>
@@ -507,7 +500,7 @@
                         <div class="Bgheader" width="100%">
                             <div align="center">
                                 <span id="SpanErrMsgTitle" style="color: White; font-family: Verdana,Tahoma; font-size: 15px;
-                        font-weight: bold;">Physician Primary Care Plan</span>
+                        font-weight: bold;">My Physician Plan</span>
                             </div>
                         </div>
                         <div style="border: Solid 1px #33CCEE; width: 100%;">
@@ -559,12 +552,12 @@
                                             <div class="row">
                                                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                     @Html.Label("First Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                                    @Html.TextBoxFor(model => model.FirstName, null, new { style = "width:100%;", maxlength = 50 })
+                                                    @Html.TextBoxFor(model => model.FirstName, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
                                                     @*@Html.ValidationMessageFor(model => model.FirstName, "", new { @style = "color:red" })*@
                                                 </div>
                                                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                     @Html.Label("Last Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                                    @Html.TextBoxFor(model => model.LastName, null, new { style = "width:100%;", maxlength = 50 })
+                                                    @Html.TextBoxFor(model => model.LastName, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
                                                     @*@Html.ValidationMessageFor(model => model.LastName, "", new { @style = "color:red" })*@
                                                 </div>
                                                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
@@ -577,7 +570,7 @@
                                                 </div>
                                                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                     @Html.Label("Age", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                                    @Html.TextBoxFor(model => model.Age, null, new { style = "width:100%;", maxlength = 20, disabled = "disabled", @readonly = "readonly" })
+                                                    @Html.TextBoxFor(model => model.Age, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 20, disabled = "disabled", @readonly = "readonly" })
                                                     @*@Html.ValidationMessageFor(model => model.Age, "", new { @style = "color:red" })*@
                                                 </div>
                                             </div>
@@ -617,25 +610,25 @@
                                                     @Html.Hidden("SalutationID")
                                                     @Html.HiddenFor(m => m.Salutation)
                                                     <script type="text/javascript">
-                                                                //Salutation change event to get SalutationID and Salutation
-                                                                function onSelectSalutation(e) {
-                                                                    $("#SalutationID").val("");
-                                                                    var dataItem = this.dataItem(e.item.index());
-                                                                    $("#Salutation").val(dataItem.Text);
-                                                                    $("#SalutationID").val(dataItem.Value);
-                                                                }
+                                                        //Salutation change event to get SalutationID and Salutation
+                                                        function onSelectSalutation(e) {
+                                                            $("#SalutationID").val("");
+                                                            var dataItem = this.dataItem(e.item.index());
+                                                            $("#Salutation").val(dataItem.Text);
+                                                            $("#SalutationID").val(dataItem.Value);
+                                                        }
                                                     </script>
                                                 </div>
                                                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                     @Html.Label("Email", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                                    @Html.TextBoxFor(model => model.Email, null, new { style = "width:100%;", maxlength = 50 })
+                                                    @Html.TextBoxFor(model => model.Email, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
                                                     @*@Html.ValidationMessageFor(model => model.Email, "", new { @style = "color:red" })*@
                                                 </div>
                                                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                     @Html.Label("Mobile Number", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                                    @Html.TextBoxFor(model => model.CountryCode, null, new { style = "width:15%;", maxlength = 2 })
+                                                    @Html.TextBoxFor(model => model.CountryCode, null, new { @class = "customKendoTextBox", style = "width:15%;", maxlength = 2 })
                                                     @Html.Label("-", new { style = "font-weight:normal;", @class = "labelColor" })
-                                                    @Html.TextBoxFor(model => model.MobileNumber, null, new { style = "width:75%;", maxlength = 10, @class = "Text" })
+                                                    @Html.TextBoxFor(model => model.MobileNumber, null, new { @class = "customKendoTextBox Text", style = "width:75%;", maxlength = 10 })
                                                     @*@Html.ValidationMessageFor(model => model.CountryCode, "", new { @style = "color:red" })
                                                         @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @style = "color:red" })*@
                                                 </div>
@@ -734,21 +727,22 @@
                                                     @Html.HiddenFor(m => m.CityID)
                                                     @Html.HiddenFor(m => m.CityName)
                                                     <script type="text/javascript">
-                                                                //City change event to get CityName and CityID
-                                                                function OnCitySelectChange(e) {
-                                                                    $("#CityID").val("");
-                                                                    var dataItem = this.dataItem(e.item.index());
-                                                                    $("#CityName").val(dataItem.CityName);
-                                                                    $("#CityID").val(dataItem.CityID);
-                                                                }
+                                                        //City change event to get CityName and CityID
+                                                        function OnCitySelectChange(e) {
+                                                            $("#CityID").val("");
+                                                            var dataItem = this.dataItem(e.item.index());
+                                                            $("#CityName").val(dataItem.CityName);
+                                                            $("#CityID").val(dataItem.CityID);
+                                                        }
                                                     </script>
                                                 </div>
                                                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                     @Html.Label("ZIP / Postal Code", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
-                                                    @Html.TextBoxFor(m => m.Zip, new { style = "width:50%;Height:25px", maxlength = "5" })-
-                                                    @Html.TextBoxFor(m => m.ZipCode, new { style = "width:40%;Height:25px", maxlength = "4" })
+                                                    @Html.TextBoxFor(m => m.Zip, new { @class = "customKendoTextBox", style = "width:50%;Height:25px", maxlength = "5" }) -
+                                                    @Html.TextBoxFor(m => m.ZipCode, new { @class = "customKendoTextBox", style = "width:40%;Height:25px", maxlength = "4" })
                                                     <br />
-                                                   
+                                                    <span style="font-weight:normal;">5-digit ZIP</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    <span style="font-weight:normal;"> 4-digit ZIP </span><br />
                                                     @*@Html.ValidationMessageFor(m => m.Zip)
                                                         @Html.ValidationMessageFor(m => m.ZipCode)*@
                                                 </div>
@@ -806,7 +800,7 @@
                                 <button class="button_blue" type="submit" id="btnSubmit" title="Submit" style="width: 100px;" value="Submit">
                                     Update
                                 </button>
-                                <button class="button_blue" type="button" id="btnCancel" title="Cancel" value="Cancel" style="width: 100px;" onclick="@("window.location.href='" + @Url.Action("ViewMemberDetails", "Organization") + "'");">
+                                <button class="button_blue" type="button" id="btnCancel" title="Cancel" value="Cancel" style="width: 100px;" onclick="@("window.location.href='" + @Url.Action("AdminMemberList", "Admin") + "'");">
                                     Cancel
                                 </button>
                             </div>

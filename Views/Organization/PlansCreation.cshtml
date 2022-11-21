@@ -6,18 +6,11 @@
     Layout = "~/Views/Shared/WUCOrgLeftMenu.cshtml";
     var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
 }
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/jqueryval")
-@Scripts.Render("~/bundles/modernizr")
-@Scripts.Render("~/bundles/bootstrap")
-@Scripts.Render("~/bundles/KendoScripts")
-@Scripts.Render("~/bundles/custom-validator")
-@Styles.Render("~/bundles/Kendocss")
 @Scripts.Render("~/bundles/OrganizationScriptFiles")
 @Styles.Render("~/bundles/Organizationcssfiles")
 
 <style>
-     .loadingSpinner {
+    .loadingSpinner {
         position: absolute;
         z-index: 1000;
         top: 0;

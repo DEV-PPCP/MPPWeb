@@ -546,12 +546,12 @@ function GetSpecilization(Url) {
             for (var r in objlist) {
                 if (r % 2 == 0 || r == 0) {
                     jsonResult += "<input type='checkbox' onclick = '" + "SpecializationValidation();" + "' name='" + "SPList" + "' value='" + objlist[r].SpecializationID + ";" + objlist[r].SpecializationName + "' onclick='" + "check(this.value)" + "'  />" +
-                    "<label for='" + objlist[r].SpecializationName + "'>" + objlist[r].SpecializationName + "</label>" + "<br />"
+                        "<label for='" + objlist[r].SpecializationName + "'> &nbsp;" + objlist[r].SpecializationName + "</label>" + "<br />"
                     $("#divSpecializationList").html(jsonResult);
                 }
                 else {
                     jsonResults += "<input type='checkbox' onclick = '" + "SpecializationValidation();" + "' name='" + "SPList" + "' value='" + objlist[r].SpecializationID + ";" + objlist[r].SpecializationName + "' onclick='" + "check(this.value)" + "'  />" +
-                   "<label for='" + objlist[r].SpecializationName + "'>" + objlist[r].SpecializationName + "</label>" + "<br />"
+                        "<label for='" + objlist[r].SpecializationName + "'> &nbsp;" + objlist[r].SpecializationName + "</label>" + "<br />"
                     $("#divSpecializationListRight").html(jsonResults);
                 }
             }

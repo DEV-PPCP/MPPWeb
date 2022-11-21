@@ -21,13 +21,6 @@
     }
 </style>
 
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/jqueryval")
-@Scripts.Render("~/bundles/modernizr")
-@Scripts.Render("~/bundles/bootstrap")
-@Scripts.Render("~/bundles/KendoScripts")
-@Scripts.Render("~/bundles/custom-validator")
-@Styles.Render("~/bundles/Kendocss")
 @Scripts.Render("~/bundles/SubscribePlanScriptFiles")   @*For Subscribe script files*@
 @Styles.Render("~/bundles/Organizationcssfiles")       @*For member css files*@
 @Html.Hidden("hdnOrganizationID")
@@ -89,6 +82,7 @@
         $("#divCheckTwoTime").hide();
         $("#btnProviderSubmit").hide();
         $("#btnOrgSubscribePlans").hide();
+        $("#btnCancel").hide();
         //   $("#hdnOrganizationTAndConditions").val(OrganizationTAndConditions);
         $("#hdnOrganizationTAndConditions").val("90/13092019013049Income Report - Complete snapshot (4).pdf");
         //
@@ -132,8 +126,10 @@
         $("#divOrgStartDate").show();
         $("#divOnetime").hide();
         $("#divCheckTwoTime").hide();
+        $("#PaymentScheduleDiv").show();
         $("#btnProviderSubmit").hide();
         $("#btnOrgSubscribePlans").show();
+        $("#btnCancel").show();
      //   $("#hdnOrganizationTAndConditions").val(OrganizationTAndConditions);
         $("#hdnOrganizationTAndConditions").val("90/13092019013049Income Report - Complete snapshot (4).pdf");
         //
@@ -226,7 +222,7 @@
         var PlanID = $("#hdnPlanId").val();
         var PlanStartDate = $("#ProviderPlanStartDate").val();
         if (PlanStartDate == "") {
-            document.getElementById("spnProviderPlanStartDate").innerHTML = "Please Select PlanStartDate";
+            document.getElementById("spnProviderPlanStartDate").innerHTML = "Please Select Plan Start Date";
             return false;
         }
         else {
@@ -280,9 +276,11 @@
         $("#divOrgStartDate").hide();
         $("#divProviderStartDate").show();
         $("#divOnetime").hide();
-        $("#divCheckTwoTime").show();
+        $("#divCheckTwoTime").hide();
+        $("#PaymentScheduleDiv").hide();
         $("#btnOrgSubscribePlans").hide();
         $("#btnProviderSubmit").show();
+        $("#btnCancel").show();
         $("#hdnProviderTAndConditions").val(ProviderTAndC);
 
     }
@@ -331,13 +329,15 @@
         <div class="pageheading_bar" style="width: 100%; height: 70%;">
             <div style="vertical-align: middle">
                 <div style="vertical-align: middle">
-                    Physician Primary Care Plan<span style="float: right; color: Red;
+                    My Physician Plan<span style="float: right; color: Red;
                             margin-right: 5px;"></span>
                 </div>
             </div>
         </div>
         <div style="border: Solid 1px #33CCEE; width: 100%;">
             <div align="center">
+                <br />
+                <br />
                 <span id="lblMsg" style="color: Green; font-family: Verdana,Tahoma; font-size: 15px;
                         font-weight: bold; text-align: center; margin-top: 8px; margin-left: 3px; display: none;">
                 </span>
@@ -351,6 +351,7 @@
                 <button id="btnClose" title="Close" style="width: 80px" class="button_blue" onclick="divClose();">
                     OK
                 </button>
+                <br /><br />
             </div>
         </div>
     </div>
@@ -358,8 +359,6 @@
 <div class="Panel_bg" id="divMainPlan">
     <div id="divSubscribePlan" style="display:block;">
         <div class="row Panel_bg_Sub">
-
-
             <div class="col-xs-12 col-md-12 col-sm-12" align="center" id="divPlanTypeschk">
                 <label style="font-weight: normal;">
                     @(Html.RadioButton("Subscribe", 1, true, new
@@ -410,10 +409,6 @@
                 <br />
             </div>
 
-
-
-
-
             <div class="form-group" id="divSubscribeGrid" style="display:none">
                 <div class="row">
                     <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
@@ -444,9 +439,7 @@
                               "# if (OrgID== 0) { #" + "<a onclick='EditOptions(#=PlanID#,#=PaymentIntervals#,\"#=FromAge#\",\"#=ToAge#\",\"#=PlanName#\",\"#=EnrollFee#\",\"#=MonthlyFee#\",\"#=VisitFee#\",\"#=EffectiveDate#\",\"#=GenderID#\",\"#=PlanTermName#\",\"#=PlanDescription#\",\"#=PlanType#\",\"#=OrgID#\",\"#=OrganizationTAndCPath#\");' <span style='cursor:pointer'>Subscribe</a>" + "# } else { #" + "<a onclick='UnSubscribed(#=PlanID#,#=MapID#,\"#=PlanName#\",);'<span style='cursor:pointer'>UnSubscribe</a>" + "# } #").Title("Action").Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(150);
 
                                 })
-
-
-                                                    .Scrollable()
+                                                    .Scrollable().Sortable()
                                                     .Pageable()
                                                     .Filterable()
                                                     .AutoBind(false)
@@ -474,7 +467,7 @@
                                     {
                                         events.Select("onSelectProvider");
                                     })
-                                    .DataValueField("ProviderID")                                 
+                                    .DataValueField("ProviderID")
                                     .DataTextField("ProviderName")
 
                                     .DataSource(source =>
@@ -490,7 +483,6 @@
                             @Html.Hidden("hdnProviderName")
 
                             <script type="text/javascript">
-
                                 function onSelectProvider(e) {
                                     $("#hdnProviderName").val("");
                                     $("#ProviderID").val("");
@@ -498,7 +490,7 @@
                                     $("#ProviderID").val(dataItem.ProviderID);
                                     $("#ProviderNames").val(dataItem.ProviderName);
                                     $("#hdnProviderName").val(dataItem.ProviderName);
-                                    $("#divdisplayProviderPlans").show(); 
+                                    $("#divdisplayProviderPlans").show();
                                     $("#divProviderSearchPlans").show();
                                     var Type="2";
                                     OrganizationplanProviders($("#ProviderID").val(), "@Session["OrganizationID"]", Type, "@ServiceUrl");
@@ -562,7 +554,7 @@
                                                         columns.Bound(p => p).ClientTemplate(
                                                      "# if (OrgID== 0) { #" + "<a onclick='UnSubscribedProviderPlan(#=MapID#);' <span style='cursor:pointer'>UnSubscribe</a>" + "# } else { #" + "<a onclick='ProviderPlan(#=PlanID#,#=PaymentIntervals#,\"#=FromAge#\",\"#=ToAge#\",\"#=PlanName#\",\"#=EnrollFee#\",\"#=MonthlyFee#\",\"#=VisitFee#\",\"#=EffectiveDate#\",\"#=GenderID#\",\"#=PlanTermName#\",\"#=PlanDescription#\",\"#=PlanType#\",\"#=OrgID#\",\"#=ProviderTAndCPath#\");' <span style='cursor:pointer'>Subscribe</a>" + "# }  #").Title("Action").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(150);
                                                     })
-                                                    .Scrollable()
+                                                    .Scrollable().Sortable()
                                                     .Pageable()
                                                     .Filterable()
                                                     .AutoBind(false)
@@ -576,8 +568,6 @@
                 </div>
 
             </div>
-
-
             <br />
             <div class="row">
                 <div class="col-xs-12 col-md-12 col-sm-12" align="center">
@@ -589,17 +579,11 @@
             </div>
             <br />
 
-
             <div class="col-xs-12 col-md-12 col-sm-12" align="center">
                 @*<button class="button_blue" type="submit" id="btnCancel" title="Cancel" style="width: 100px; display:none;" value="Cancel" onclick="CancelData();">
                         Cancel
                     </button>*@
-
             </div>
-
-
-
-
 
             <div id="divPlanEnrollDetails" style="display:none">
 
@@ -709,33 +693,29 @@
                         </div>
                     </div>
 
-
-                    <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>
-    Allow Member Payment Schedules
-</b></legend>
-
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-12" id="divPaymentSchedule">
+                    <div id="PaymentScheduleDiv">
+                        <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Allow Member Payment Schedules</b></legend>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-12" id="divPaymentSchedule">
+                                </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-12" align="center">
-                                <button class="button_blue" type="button" id="btnviewClose" title="Cancel" style="width: 100px; display:none;" value="Close" onclick="CloseViiewdPlans();">
-                                    Close
-                                </button>
+                            <div class="row">
+                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-12" align="center">
+                                    <button class="button_blue" type="button" id="btnviewClose" title="Cancel" style="width: 100px; display:none;" value="Close" onclick="@("window.location.href='" + @Url.Action("SubscribePlans", "Organization") + "'");" @*onclick="CloseViiewdPlans();"*@>
+                                        Close
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-
-
                     <div class="col-xs-12 col-md-3 col-sm-6 col-lg-8" id="divOnetime" style="display:none;">
-                        @Html.CheckBox("OneTime")<span>I Accept the <a onclick="OrgTermsCondition();">Terms & Conditions</a> for Organization Subscription</span>
+                        @Html.CheckBox("OneTime")<span> I Accept the <a onclick="OrgTermsCondition();">Terms & Conditions</a> for Organization Subscription</span>
                         <br />
                     </div>
                     <div class="col-xs-12 col-md-3 col-sm-6 col-lg-8" id="divCheckTwoTime" style="display:none;">
-                        @Html.CheckBox("TwoTime")<span>I Accept the <a onclick="ProviderTermsCondition();">Terms & Conditions</a> for Provider Subscription</span>
+                        @Html.CheckBox("TwoTime")<span> I Accept the <a onclick="ProviderTermsCondition();">Terms & Conditions</a> for Provider Subscription</span>
                         <br />
                     </div>
                     <div class="col-xs-12 col-md-12 col-sm-12" align="center">
@@ -744,16 +724,17 @@
 
                 </div>
                 <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" align="center">
-                    <button class="button_blue" type="submit" id="btnOrgSubscribePlans" style="display:none;" title="Submit" value="Submit" onclick="GetOrganizationPlans();">
-                        Submit
-                    </button>
+
                 </div>
                 <div class="row">
                     <div class="col-xs-12 col-md-12 col-sm-12" align="center">
+                        <button class="button_blue" type="submit" id="btnOrgSubscribePlans" style="display:none;" title="Submit" value="Submit" onclick="GetOrganizationPlans();">
+                            Subscribe
+                        </button>
                         <button class="button_blue" type="submit" id="btnProviderSubmit" title="Submit" style="width: 100px; display:none;" value="Submit" onclick="GetSubscribePlan();">
                             Subscribe
                         </button>
-                        <button class="button_blue" type="submit" id="btnCancel" title="Cancel" style="width: 100px; display:none;" value="Cancel" onclick="CancelData();">
+                        <button class="button_blue" type="submit" id="btnCancel" title="Cancel" style="width: 100px; display:none;" value="Cancel" onclick="@("window.location.href='" + @Url.Action("SubscribePlans", "Organization") + "'");" @*onclick="CancelData();*@>
                             Cancel
                         </button>
                     </div>

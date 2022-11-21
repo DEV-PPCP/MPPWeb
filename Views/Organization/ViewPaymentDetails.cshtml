@@ -26,13 +26,7 @@
     Layout = "~/Views/Shared/WUCOrgLeftMenu.cshtml";
     var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
 }
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/jqueryval")
-@Scripts.Render("~/bundles/modernizr")
-@Scripts.Render("~/bundles/bootstrap")
-@Scripts.Render("~/bundles/KendoScripts")
-@Scripts.Render("~/bundles/custom-validator")
-@Styles.Render("~/bundles/Kendocss")
+
 @Scripts.Render("~/bundles/ViewPaymentDetailsScriptFiles")   @*For ViewPaymentDetails script files*@
 @Styles.Render("~/bundles/Membercssfiles")       @*For member css files*@
 <style type="text/css">
@@ -63,7 +57,8 @@
         margin-top: 7px;
         margin-right: 5px;
     }
-     .loadingSpinner {
+
+    .loadingSpinner {
         position: absolute;
         z-index: 1000;
         top: 0;
@@ -90,7 +85,7 @@
                         <div id="arrow" class="ArrowClose"></div>
                     </div>
                 </div>
-                
+
                 <div id="dvSearchFilter" style="display: block;">
                     <div class="Page_Dimmer1">
                     </div>
@@ -98,13 +93,12 @@
 
                         <div class="Panel_bg_Sub">
                             <div style="width: 100%;height:auto;">
-                                <div class="col-xs-0 col-md-3 col-sm-0 col-lg-3"></div>
+                                @*<div class="col-xs-0 col-md-3 col-sm-0 col-lg-3"></div>*@
                                 <div class="row">
                                     <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                         @( Html.Label("From", new { style = "font-weight:normal;" }))<span style="color: Red;">*</span><br />
                                         @( Html.Kendo().DatePicker().Format("MM/dd/yyyy").Name("FromDate").Events(e => e.Change("startChange")).Value("")
                                        .Max(DateTime.Today).HtmlAttributes(new { PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text" }))<br />
-
 
                                         <span style="color: Red"><span id="Span3"></span></span>
                                     </div>
@@ -112,16 +106,12 @@
                                         @( Html.Label("To", new { style = "font-weight:normal;" }))<span style="color: Red;">*</span><br />
                                         @( Html.Kendo().DatePicker().Format("MM/dd/yyyy").Name("ToDate").Events(e => e.Change("endChange")).Value("").HtmlAttributes(new { PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text" }))<br />
 
-
                                         <span style="color: Red">
                                             <span id="Span7"></span>
                                         </span>
                                     </div>
-                                </div>
-                                <div class="col-xs-0 col-md-3 col-sm-0 col-lg-3"></div>
-                                <div class="row">
                                     <div class="col-xs-6 col-md-3 col-sm-6 col-lg-3">
-                                        @Html.Label("Member Details", new { style = "font-weight:normal;" })<br/>
+                                        @Html.Label("Member Details", new { style = "font-weight:normal;" })<br />
                                         @(Html.Kendo().AutoComplete()
                                                     .Name("MemberName")
                                                     .Placeholder("First/Last Name/Mobile Number")
@@ -144,26 +134,26 @@
                                     </div>
                                     <script type="text/javascript">
                                         function OnMemberNameSelectChange(e) {
-                                            
-                                                       $("#MemberId").val("0");
-                                                        var dataItem = this.dataItem(e.item.index());
-                                                        $("#MemberName").val(dataItem.MemberName);
-                                                        $("#MemberId").val(dataItem.MemberID);
-                                                        var MemberID = $("#MemberId").val();
-                                                    }
-                                                    function OnMemberchangeEvent() {
 
-                                                    }
-                                                    function onAdditionalData() {
-                                                        return {
-                                                            text: $("#MemberName").val()
-                                                        };
-                                                    }
+                                            $("#MemberId").val("0");
+                                            var dataItem = this.dataItem(e.item.index());
+                                            $("#MemberName").val(dataItem.MemberName);
+                                            $("#MemberId").val(dataItem.MemberID);
+                                            var MemberID = $("#MemberId").val();
+                                        }
+                                        function OnMemberchangeEvent() {
+
+                                        }
+                                        function onAdditionalData() {
+                                            return {
+                                                text: $("#MemberName").val()
+                                            };
+                                        }
 
                                     </script>
                                     <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                         @Html.Label("Payment Status", new { style = "font-weight:normal;", @class = "classlabel" })<br />
-                                       
+
                                         @(Html.Kendo().DropDownListFor(m => m.PaymentStatus)
                                                     .Name("ddlpaymentstatus").HtmlAttributes(new { style = "width:100%;" })
                                                     .OptionLabel("--Select--")
@@ -190,23 +180,23 @@
                                                             Text = "Pending",
                                                             Value = "3"
                                                         }
-                                                        
+
                                                     })
                                         )<br />
-                                        
+
                                         @Html.Hidden("PaymentStatusID")
                                         <script type="text/javascript">
-                                                
+
                                             function onSelectPaymentStatus(e) {
-                                               
+
                                                 $("#ddlpaymentstatus").val("");
-                                                    var dataItem = e.sender.dataItem();
-                                                    $("#ddlpaymentstatus").val(dataItem.Text);
-                                                    $("#PaymentStatusID").val(dataItem.Value);
-                                                    if ($("#ddlpaymentstatus").val() == "--Select--") {
-                                                        $("#ddlpaymentstatus").val("");
-                                                    }
+                                                var dataItem = e.sender.dataItem();
+                                                $("#ddlpaymentstatus").val(dataItem.Text);
+                                                $("#PaymentStatusID").val(dataItem.Value);
+                                                if ($("#ddlpaymentstatus").val() == "--Select--") {
+                                                    $("#ddlpaymentstatus").val("");
                                                 }
+                                            }
                                         </script>
                                     </div>
                                 </div>
@@ -269,23 +259,23 @@
                             <div class="row">
                                 <div class="col-xs-12 col-md-4 col-sm-4 col-lg-4">
                                     <span><b>Total Amount</b></span>
-                                 : $
+                                    : $
                                     <span id="spnSelectedTotalAmount"></span>
                                 </div>
                                 <div class="col-xs-12 col-md-4 col-sm-4 col-lg-4 ">
                                     <span><b>Paid Amount</b></span>
-                                   : $
+                                    : $
                                     <span id="spnSelectedPaidAmount"></span>
                                 </div>
                                 <div class="col-xs-12 col-md-4 col-sm-4 col-lg-4 ">
                                     <span><b>Due Amount</b></span>
-                                   : $
+                                    : $
                                     <span id="spnSelectedDueAmount"></span>
-                                </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
             </fieldset>
             <div class="form-group">
@@ -299,7 +289,7 @@
                                                         columns.Bound(p => p.MemberName).Title("Member Name").Filterable(false).Visible(true).Width(100);
                                                         columns.Bound(p => p.MemberName).ClientTemplate(
                                                            "<a onclick='ViewMember(#=MemberID#,#=Plan_Code#,\"#=OrganizationID#\",\"#=MemberPlanID#\",\"#=PlanType#\");' <span style='cursor:pointer'>#=MemberName#</a>").Title("Member Name").Width(150).Filterable(false).Visible(false);
-                                                          
+
                                                         columns.Bound(p => p.MemberPlanID).Title("MemPlanID").Filterable(false).Visible(false);
                                                         columns.Bound(p => p.MemberID).Title("MemID").Filterable(false).Visible(false);
                                                         columns.Bound(p => p.PlanID).Title("PlanID").Filterable(false).Visible(false);
@@ -505,7 +495,7 @@
 
 
         var dt = new Date();
-        
+
         dt.setMonth(dt.getMonth() - 1);
         var dd = dt.getDate();
         var mm = dt.getMonth()+1;
@@ -514,8 +504,8 @@
 
          $("#FromDate").val(FromDate);
 
-       
-       
+
+
 
       //  $("#FromDate").val(ToDate);
 

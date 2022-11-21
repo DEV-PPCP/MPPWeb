@@ -14,6 +14,7 @@ using System.Data;
 using System.Reflection;
 using PPCP07302018.Controllers.Session;
 using Telerik.Reporting.Processing;
+using PPCP07302018.Models.Admin;
 
 namespace PPCP07302018.Controllers
 {
@@ -21,6 +22,13 @@ namespace PPCP07302018.Controllers
     public class OrganizationController : Controller
     {
         private string DownloadDocumentPath = System.Configuration.ConfigurationSettings.AppSettings["DownloadDocumentsPath"].ToString();
+        public ActionResult OrganizationLogin()
+        {
+            Login model = new Login();
+            model.LoginType = "Organization";
+            return RedirectToAction("MPPLogin", "Account", model);
+        }
+
         // GET: Organization
         public ActionResult Index()
         {
@@ -121,12 +129,7 @@ namespace PPCP07302018.Controllers
             return View();
         }
 
-        public ActionResult OrganizationLogin()
-        {
-            MasterController mas = new MasterController();
-            Session["SystemIPAddress"] = mas.GetIPAddress();
-            return View();
-        }
+        
         public ActionResult PlansCreation()
         {
             return View();
@@ -137,10 +140,6 @@ namespace PPCP07302018.Controllers
             return View();
         }
 
-        public ActionResult OrganizationCredentials()
-        {
-            return View();
-        }
         public ActionResult ChangePassword()
         {
            
@@ -568,7 +567,7 @@ namespace PPCP07302018.Controllers
                 OrganizationName.Name = "OrganizationName";
                 OrganizationName.Style.Font.Bold = true;
                 OrganizationName.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(3D), Telerik.Reporting.Drawing.Unit.Pixel(14));
-                string OrganizationNameDisplay = "Physician Primary Care Plan";
+                string OrganizationNameDisplay = "My Physician Plan";
                 OrganizationName.Value = OrganizationNameDisplay;
 
                 txtHeading.Name = "Heading";
@@ -1531,16 +1530,16 @@ namespace PPCP07302018.Controllers
 
             return dataTable;
         }
-        /// <summary>
-        ///     To Get new Terms And conditions
-        /// </summary>
-        /// <returns></returns>
-        public ActionResult OrganizationTermsAndConditions(Models.Organization.TermsAndConditions model)
-        {
-            model.Organization=Convert.ToString(Session["OrganizationTandCFlag"]);
-            model.OrganizationUsers= Convert.ToString(Session["OrganizationUserTandCFlag"] );         
-            return View(model);
-        }
+        ///// <summary>
+        /////     To Get new Terms And conditions
+        ///// </summary>
+        ///// <returns></returns>
+        //public ActionResult OrganizationTermsAndConditions(Models.Organization.TermsAndConditions model)
+        //{
+        //    model.Organization=Convert.ToString(Session["OrganizationTandCFlag"]);
+        //    model.OrganizationUsers= Convert.ToString(Session["OrganizationUserTandCFlag"] );         
+        //    return View(model);
+        //}
 
         public JsonResult MemberSearchAutoComplete(string Text)
         {
@@ -3412,6 +3411,18 @@ shapeFooter, PageNumbers
 
             return Json(files, JsonRequestBehavior.AllowGet);
         }
+
+        #region Billing
+        public ActionResult BillingDashboard()
+        {
+            return View();
+        }
+
+        public ActionResult ClaimSubmission()
+        {
+            return View();
+        }
+        #endregion
     }
 
 }

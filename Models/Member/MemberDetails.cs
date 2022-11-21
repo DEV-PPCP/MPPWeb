@@ -66,6 +66,8 @@ namespace PPCP07302018.Models.Member
         [RegularExpression(@"^\d{4}$", ErrorMessage = "Incorrect Format")]
         public string ZipCode { get; set; }
 
+        public bool IsCredentialCreated { get; set; }
+
         [RegularExpression(@"^[A-Za-z0-9_@./#&+-]*$", ErrorMessage = "Invalid  Username")]
         public string UserName { get; set; }
         public string ConfirmUserName { get; set; }
@@ -266,6 +268,7 @@ namespace PPCP07302018.Models.Member
         public Nullable<int> Plan_Code { get; set; }
         public int? PlanType { get; set; }
         public string DOB { get; set; }
+        public string PatientTAndCPath { get; set; }
     }
 
 

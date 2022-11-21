@@ -1,5 +1,27 @@
 ﻿body {
 }
+
+
+.row {
+    margin-top: 5px;
+}
+
+span.k-icon.k-i-calendar {
+    margin-top: 8px;
+}
+
+.customKendoTextBox {
+    background-color: #fff;
+    border-color: #c5c5c5;
+    border-width: 1px;
+    border-style: solid;
+    height: 2.13em;
+    text-indent: 0.33em;
+    border-radius: 4px;
+    outline: 0;
+    padding: 2px 0.3em;
+    line-height: 1.6em;
+}
     .Initial {
         display: block;
         padding: 5px 10px;

@@ -9,13 +9,6 @@
     var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
 }
 
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/jqueryval")
-@Scripts.Render("~/bundles/modernizr")
-@Scripts.Render("~/bundles/bootstrap")
-@Scripts.Render("~/bundles/KendoScripts")
-@Scripts.Render("~/bundles/custom-validator")
-@Styles.Render("~/bundles/Kendocss")
 @Styles.Render("~/bundles/Organizationcssfiles")
 @Scripts.Render("~/bundles/ViewProvidersScriptFiles")
 
@@ -239,7 +232,7 @@
                 <div>
                     <span id="SpnPopUpTitle" style="color: White; font-family: Verdana,Tahoma;
                                 font-size: 15px; font-weight: bold;"></span>
-                    @*Physician Primary Care Plan*@
+                    @*My Physician Plan*@
                 </div>
             </div>
             <div style="border: Solid 1px #33CCEE; width: 100%;">
@@ -258,6 +251,7 @@
                             style="width: 70px;">
                         Ok
                     </button>
+                    <br />
                     <a id="loginUrl" href="@Html.AttributeEncode(Url.Action("ViewProviders", "Organization" ))">
                     </a>
                 </div>
@@ -274,7 +268,7 @@
             <div class="Bgheader" width="100%">
                 <div align="center">
                     <span id="SpanErrMsgTitle" style="color: White; font-family: Verdana,Tahoma; font-size: 15px;
-                        font-weight: bold;">Physician Primary Care Plan</span>
+                        font-weight: bold;">My Physician Plan</span>
                 </div>
             </div>
             <div style="border: Solid 1px #33CCEE; width: 100%;">
@@ -324,9 +318,7 @@
                         <div style="width: 100%;height:auto;">
                             <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" id="divSearch" style="display:block">
                                 <div class="row">
-                                    <div class="col-xs-6 col-md-6 col-sm-6 col-lg-3">
-                                    </div>
-                                    <div class="col-xs-6 col-md-6 col-sm-6 col-lg-3">
+                                    <div class="col-xs-6 col-md-3 col-sm-6 col-lg-3">
                                         @Html.Label("Organization Name", new { style = "font-weight:normal;", @class = "" })<br />
                                         @(Html.Kendo().AutoCompleteFor(model => model.OrganizationName)
                                                     .Name("OrganizationName")
@@ -371,7 +363,7 @@
                                             }
                                         </script>
                                     </div>
-                                    <div class="col-xs-6 col-md-6 col-sm-6 col-lg-3">
+                                    <div class="col-xs-6 col-md-3 col-sm-6 col-lg-3">
                                         @Html.Label("Provider Name", new { style = "font-weight:normal;", @class = "" })<br />
                                         @*@(Html.Kendo().AutoComplete()
                                             .Name("ProviderNames")
@@ -408,52 +400,50 @@
                                                         }).ServerFiltering(true);
                                                     }))
                                     </div>
-
-                                </div>
-                                <div class="col-xs-6 col-md-6 col-sm-6 col-lg-12" align="center">
-                                    <br />
-                                    <span id="lblErrorMsgSearch" style="color:red; font-family: Verdana,Tahoma; font-size: 15px;
+                                    <div class="col-xs-6 col-md-6 col-sm-6 col-lg-6" align="center">
+                                        <span id="lblErrorMsgSearch" style="color:red; font-family: Verdana,Tahoma; font-size: 15px;
                         font-weight: bold; text-align: center; margin-top: 8px; margin-left: 3px; ">
-                                    </span>
-                                    <br />
-                                    <button type="button" id="btnSearch" title="Search" style="width: 100px;" class="button_blue" value="Search" onclick="btnSearch()">
-                                        Search
-                                    </button>
-                                    <button type="button" id="btnClear" title="Clear" value="Clear" style="width: 100px;" class="button_blue" onclick="btnClear()">
-                                        Clear
-                                    </button>
-                                    <br />
-                                    @Html.ValidationMessageFor(model => model.ProviderName)
-                                    @Html.Hidden("ProviderId")
-                                    @Html.Hidden("TxtProviderId")
-                                    <script type="text/javascript">
-                                        //function OnProviderSelectChange(e) {
-                                        //    $("#ProviderId").val("");
-                                        //    $("#TxtProviderId").val("");
-                                        //    var dataItem = this.dataItem(e.item.index());
-                                        //    $("#ProviderName").val(dataItem.ProviderName);
-                                        //    $("#ProviderId").val(dataItem.ProviderID);
-                                        //    var ProviderID = $("#ProviderId").val();
-                                        //    $("#TxtProviderId").val(dataItem.ProviderID);
-                                        //}
-                                        function OnProviderSelectChange(e) {
-                                            $("#ProviderId").val("");
-                                            var dataItem = this.dataItem(e.item.index());
-                                            $("#ProviderName").val(dataItem.ProviderName);
-                                            $("#ProviderId").val(dataItem.ProviderID);
-                                            var ProviderID = $("#ProviderId").val();
+                                        </span>
+                                        <br />
+                                        <button type="button" id="btnSearch" title="Search" style="width: 100px;" class="button_blue" value="Search" onclick="btnSearch()">
+                                            Search
+                                        </button>
+                                        <button type="button" id="btnClear" title="Clear" value="Clear" style="width: 100px;" class="button_blue" onclick="btnClear()">
+                                            Clear
+                                        </button>
+                                        @Html.ValidationMessageFor(model => model.ProviderName)
+                                        @Html.Hidden("ProviderId")
+                                        @Html.Hidden("TxtProviderId")
+                                        <script type="text/javascript">
+                                            //function OnProviderSelectChange(e) {
+                                            //    $("#ProviderId").val("");
+                                            //    $("#TxtProviderId").val("");
+                                            //    var dataItem = this.dataItem(e.item.index());
+                                            //    $("#ProviderName").val(dataItem.ProviderName);
+                                            //    $("#ProviderId").val(dataItem.ProviderID);
+                                            //    var ProviderID = $("#ProviderId").val();
+                                            //    $("#TxtProviderId").val(dataItem.ProviderID);
+                                            //}
+                                            function OnProviderSelectChange(e) {
+                                                $("#ProviderId").val("");
+                                                var dataItem = this.dataItem(e.item.index());
+                                                $("#ProviderName").val(dataItem.ProviderName);
+                                                $("#ProviderId").val(dataItem.ProviderID);
+                                                var ProviderID = $("#ProviderId").val();
 
-                                        }
-                                        function onAdditionalData() {
+                                            }
+                                            function onAdditionalData() {
 
-                                            return { text: $("#ProviderName").val() }
+                                                return { text: $("#ProviderName").val() }
 
-                                        }
-                                        function OnchangeEvent() {
+                                            }
+                                            function OnchangeEvent() {
 
-                                        }
-                                    </script>
+                                            }
+                                        </script>
+                                    </div>
                                 </div>
+
                             </div>
                         </div>
 
@@ -482,13 +472,13 @@
                                                 .Columns(columns =>
                                                 {
                                                     columns.Bound(p => p.ProviderID).Title("ProviderID").Filterable(false).Width(120).Visible(false);
-                                                    columns.Bound(p => p.FirstName).Title("Provider Name").ClientTemplate("#: FirstName # #: LastName #").Filterable(false).Width(150);
-                                                    columns.Bound(p => p.OrganizationName).Title("OrganizationName").Filterable(false).Width(100).Visible(true);
+                                                    columns.Bound(p => p.FirstName).Title("Provider Name").ClientTemplate("#: FirstName # #: LastName #").Filterable(false).Width(200);
+                                                    columns.Bound(p => p.OrganizationName).Title("Organization Name").Filterable(false).Visible(true).Width(300);
                                                     columns.Bound(p => p.Specialization).Title("Specialization").Filterable(false).Width(120).Visible(false);
                                                     columns.Bound(p => p.FirstName).Title("First Name").Filterable(false).Width(130).Visible(false);
                                                     columns.Bound(p => p.LastName).Title("Last Name").Filterable(false).Width(120).Visible(false);
                                                     columns.Bound(p => p.CountryCode).Title("CountryCode").Filterable(false).Width(120).Visible(false);
-                                                    columns.Bound(p => p.MobileNumber).Title("MobileNumber").Filterable(false).Width(120);
+                                                    columns.Bound(p => p.MobileNumber).Title("Mobile Number").Filterable(false).Width(120);
                                                     columns.Bound(p => p.DOB).Title("DOB").Filterable(false).Width(130).Visible(false);
                                                     columns.Bound(p => p.Gender).Title("Gender").Filterable(false).Width(120).Visible(false);
                                                     columns.Bound(p => p.Salutation).Title("Salutation").Filterable(false).Width(130).Visible(false);
@@ -498,24 +488,24 @@
                                                     columns.Bound(p => p.CityName).Title("CityName").Filterable(false).Width(120).Visible(false);
                                                     columns.Bound(p => p.Zip).Title("Zip").Filterable(false).Width(120).Visible(false);
                                                     columns.Bound(p => p.NPI).Title("NPI").Filterable(false).Width(120).Visible(false);
-                                                    columns.Bound(p => p.SpecializationName).Title("Specialization").Filterable(false).Width(120).Visible(true);
+                                                    columns.Bound(p => p.SpecializationName).Title("Specialization").Filterable(false).Visible(true);
                                                     columns.Bound(p => p.CountryID).Title("CountryId").Filterable(false).Width(120).Visible(false);
                                                     columns.Bound(p => p.StateID).Title("StateID").Filterable(false).Width(120).Visible(false);
                                                     columns.Bound(p => p.CityID).Title("CityID").Filterable(false).Width(120).Visible(false);
                                                     // columns.Bound(p => p.SalutationID).Title("SalutationID").Filterable(false).Width(120).Visible(false);
                                                     columns.Bound(p => p).ClientTemplate(
-                                                        "<a onclick='EditOptions(#=ProviderID#,\"#=FirstName#\",\"#=LastName#\",\"#=CountryCode#\",\"#=MobileNumber#\",\"#=DOB#\",\"#=Gender#\",\"#=Email#\",\"#=CountryName#\",\"#=StateName#\",\"#=CityName#\",\"#=Zip#\",\"#=Salutation#\",\"#=NPI#\",\"#=CountryID#\",\"#=StateID#\",\"#=CityID#\",\"#=SpecializationID#\");' <span style='cursor:pointer' >View</a>").Title("Action").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(50);
+                                                        "<a onclick='EditOptions(#=ProviderID#,\"#=FirstName#\",\"#=LastName#\",\"#=CountryCode#\",\"#=MobileNumber#\",\"#=DOB#\",\"#=Gender#\",\"#=Email#\",\"#=CountryName#\",\"#=StateName#\",\"#=CityName#\",\"#=Zip#\",\"#=Salutation#\",\"#=NPI#\",\"#=CountryID#\",\"#=StateID#\",\"#=CityID#\",\"#=SpecializationID#\");' <span style='cursor:pointer' >View</a>").Title("Action").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(100);
 
                                                 })
-                                                .Scrollable()
+                                                .Scrollable().Sortable()
                                                 .AutoBind(false)
                                                 .Pageable()
-                                                .HtmlAttributes(new { })
+                                                .HtmlAttributes(new { style = "height: 400px; min-height: 300px;" })
                                                 .Selectable()
                                                 .Filterable()
                                                 .DataSource(dataSource => dataSource
                                                 .Ajax()
-                                                .PageSize(5)
+                                                .PageSize(10)
                                                 .ServerOperation(false)))
                 </div>
             </div>
@@ -534,12 +524,12 @@
                         <div class="row">
                             <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                 @Html.Label("Last Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                @Html.TextBoxFor(model => model.LastName, null, new { style = "width:100%;", maxlength = 50 })
+                                @Html.TextBoxFor(model => model.LastName, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
                                 @Html.ValidationMessageFor(model => model.LastName, "", new { @style = "color:red" })
                             </div>
                             <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                 @Html.Label("First Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                @Html.TextBoxFor(model => model.FirstName, null, new { style = "width:100%;", maxlength = 50 })
+                                @Html.TextBoxFor(model => model.FirstName, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
                                 @Html.ValidationMessageFor(model => model.FirstName, "", new { @style = "color:red" })
                             </div>
 
@@ -614,9 +604,9 @@
 
                             <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
                                 @Html.Label("Mobile Number", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                @Html.TextBoxFor(model => model.CountryCode, null, new { style = "width:15%;", maxlength = 2 })
+                                @Html.TextBoxFor(model => model.CountryCode, null, new { @class = "customKendoTextBox", style = "width:15%;", maxlength = 2 })
                                 @Html.Label("-", new { style = "font-weight:normal;", @class = "labelColor" })
-                                @Html.TextBoxFor(model => model.MobileNumber, null, new { style = "width:75%;", maxlength = 10 })
+                                @Html.TextBoxFor(model => model.MobileNumber, null, new { @class = "customKendoTextBox", style = "width:75%;", maxlength = 10 })
                                 @Html.ValidationMessageFor(model => model.CountryCode, "", new { @style = "color:red" })
                                 @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @style = "color:red" })
                             </div>
@@ -624,12 +614,12 @@
 
                             <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                 @Html.Label("Email", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                @Html.TextBoxFor(model => model.Email, null, new { style = "width:100%;", maxlength = 50 })
+                                @Html.TextBoxFor(model => model.Email, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
                                 @Html.ValidationMessageFor(model => model.Email, "", new { @style = "color:red" })
                             </div>
                             <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
                                 @Html.Label("NPI Number", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                @Html.TextBoxFor(model => model.NPI, null, new { style = "width:100%;", maxlength = 10 })
+                                @Html.TextBoxFor(model => model.NPI, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 10 })
                                 @Html.ValidationMessageFor(model => model.NPI, "", new { @style = "color:red" })
                             </div>
 
@@ -755,10 +745,11 @@
 
                             <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                 @Html.Label("ZIP / Postal Code", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
-                                @Html.TextBoxFor(m => m.Zip, new { style = "width:50%;Height:25px", maxlength = "5" })-
-                                @Html.TextBoxFor(m => m.ZipCode, new { style = "width:40%;Height:25px", maxlength = "4" })
+                                @Html.TextBoxFor(m => m.Zip, new { @class = "customKendoTextBox", style = "width:50%;Height:25px", maxlength = "5" }) -
+                                @Html.TextBoxFor(m => m.ZipCode, new { @class = "customKendoTextBox", style = "width:40%;Height:25px", maxlength = "4" })
                                 <br />
-                               
+                                <span style="font-weight:normal;">5-digit ZIP</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                                <span style="font-weight:normal;"> 4-digit ZIP </span><br />
                                 @Html.ValidationMessageFor(m => m.Zip)
                                 @Html.ValidationMessageFor(m => m.ZipCode)
                             </div>

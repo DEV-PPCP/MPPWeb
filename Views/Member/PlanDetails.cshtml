@@ -8,13 +8,7 @@
     var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
 
 }
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/jqueryval")
-@Scripts.Render("~/bundles/modernizr")
-@Scripts.Render("~/bundles/bootstrap")
-@Scripts.Render("~/bundles/KendoScripts")
-@Scripts.Render("~/bundles/custom-validator")
-@Styles.Render("~/bundles/Kendocss")
+
 @Scripts.Render("~/bundles/PlanDetailsScriptFiles")
 @Styles.Render("~/bundles/Membercssfiles")
 @Html.Hidden("TempMemberID")
@@ -112,6 +106,13 @@
     }
     function ViewPaymentReport(MemberID, PlanID, OrganizationID) {
         ViewPaymentReports(MemberID, PlanID, OrganizationID,'@ServiceUrl');
+
+    }
+    function ViewTermsCondition(PatientTAndCPath) {
+        var Url = "https://services.myphysicianplan.com/PlanTerms/" + PatientTAndCPath;
+
+        window.open(Url, "_newtab");
+        window.open(Url, "_newtab").focus();
 
     }
     function ViewMemberCard(MemberID, PlanCode, OrganizationID,MemberPlanID){
@@ -332,6 +333,8 @@
 
                                                         columns.Bound(p => p).ClientTemplate(
                                                            "<a onclick='CancelMemberPlan(#=MemberID#,#=Plan_Code#,\"#=OrganizationID#\");' <span style='cursor:pointer'>Cancel Plan</a>").Title("Cancel Plan").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(100).Visible(false);
+                                                        //columns.Bound(p => p).ClientTemplate(
+                                                          // "<a onclick='ViewTermsCondition(\"#=PatientTAndCPath#\");' <span style='cursor:pointer'>View</a>").Title("Terms & Conditions").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(100);
                                                     })
                                                     .Scrollable()
                                                     .Pageable()
@@ -514,7 +517,7 @@
                         <div class="Bgheader" width="100%">
                             <div>
                                 <span id="SpnPopUpTitle" style="color: White; font-family: Verdana,Tahoma;
-                                font-size: 15px; font-weight: bold;">Physician Primary Care Plan</span>
+                                font-size: 15px; font-weight: bold;">My Physician Plan</span>
                             </div>
                         </div>
                         <div style="border: Solid 1px #33CCEE; width: 100%;">
@@ -548,7 +551,7 @@
                         <div class="Bgheader" width="100%">
                             <div align="center">
                                 <span id="SpanErrMsgTitle" style="color: White; font-family: Verdana,Tahoma; font-size: 15px;
-                        font-weight: bold;">Physician Primary Care Plan</span>
+                        font-weight: bold;">My Physician Plan</span>
                             </div>
                         </div>
                         <div style="border: Solid 1px #33CCEE; width: 100%;">

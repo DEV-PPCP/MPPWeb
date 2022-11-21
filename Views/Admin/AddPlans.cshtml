@@ -8,13 +8,7 @@
     var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
 
 }
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/jqueryval")
-@Scripts.Render("~/bundles/modernizr")
-@Scripts.Render("~/bundles/bootstrap")
-@Scripts.Render("~/bundles/KendoScripts")
-@Scripts.Render("~/bundles/custom-validator")
-@Styles.Render("~/bundles/Kendocss")
+
 @Scripts.Render("~/bundles/AddPlansScriptFiles")
 @Styles.Render("~/bundles/Organizationcssfiles")       @*For member css files*@
 
@@ -445,46 +439,46 @@
                                 <div class="row">
                                     <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                         @Html.Label("Plan Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                        @Html.TextBoxFor(model => model.PlanName, null, new { style = "width:100%;", maxlength = 50, onchange = "ValidatePlanName(this.value);" }) <span id="spnPlanNamevalidator" style="color:red !important;display:none;">Plan Name Already Exists</span>
+                                        @Html.TextBoxFor(model => model.PlanName, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50, onchange = "ValidatePlanName(this.value);" }) <span id="spnPlanNamevalidator" style="color:red !important;display:none;">Plan Name Already Exists</span>
                                         @Html.ValidationMessageFor(model => model.PlanName, "", new { @style = "color:red" })
                                     </div>
                                     <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                         @Html.Label("Plan Code", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                        @Html.TextBoxFor(model => model.PlanCode, null, new { style = "width:100%;", maxlength = 50 })
+                                        @Html.TextBoxFor(model => model.PlanCode, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
                                         @Html.ValidationMessageFor(model => model.PlanCode, "", new { @style = "color:red" })
                                     </div>
 
                                     <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                         @Html.Label("Minimum Age(Years)", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                        @Html.TextBoxFor(model => model.FromAge, null, new { style = "width:100%;", maxlength = 50 })
+                                        @Html.TextBoxFor(model => model.FromAge, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
                                         @Html.ValidationMessageFor(model => model.FromAge, "", new { @style = "color:red" })
                                     </div>
                                     <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
                                         @Html.Label("Maximum Age(Years)", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                        @Html.TextBoxFor(model => model.ToAge, null, new { style = "width:100%;", maxlength = 50 })
+                                        @Html.TextBoxFor(model => model.ToAge, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
                                         @Html.ValidationMessageFor(model => model.ToAge, "", new { @style = "color:red" })
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                         @Html.Label("Enrollment Fee($)", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                        @Html.TextBoxFor(model => model.EnrollFee, null, new { style = "width:100%;", maxlength = 50 })
+                                        @Html.TextBoxFor(model => model.EnrollFee, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
                                         @Html.ValidationMessageFor(model => model.EnrollFee, "", new { @style = "color:red" })
                                     </div>
                                     <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
                                         @Html.Label("Plan Amount($)", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                        @Html.TextBoxFor(model => model.MonthlyFee, null, new { style = "width:100%;", maxlength = 50 })
+                                        @Html.TextBoxFor(model => model.MonthlyFee, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
                                         @Html.ValidationMessageFor(model => model.MonthlyFee, "", new { @style = "color:red" })
                                     </div>
 
                                     <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                         @Html.Label("Co pay($)", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                        @Html.TextBoxFor(model => model.VisitFee, null, new { style = "width:100%;", maxlength = 50 })
+                                        @Html.TextBoxFor(model => model.VisitFee, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
                                         @Html.ValidationMessageFor(model => model.VisitFee, "", new { @style = "color:red" })
                                     </div>
                                     <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                         @Html.Label("Installment Fee($)", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                        @Html.TextBoxFor(model => model.InstalmentFee, null, new { style = "width:100%;", maxlength = 10 })
+                                        @Html.TextBoxFor(model => model.InstalmentFee, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 10 })
                                         @Html.ValidationMessageFor(model => model.InstalmentFee, "", new { @style = "color:red" })
                                     </div>
                                     
@@ -657,14 +651,14 @@
                                     </div>
                                     <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                         @Html.Label("Amount for Practice($)", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                        @Html.TextBoxFor(model => model.CommPrimaryMember, null, new { style = "width:100%;", maxlength = 50 })
+                                        @Html.TextBoxFor(model => model.CommPrimaryMember, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
                                         @Html.ValidationMessageFor(model => model.CommPrimaryMember, "", new { @style = "color:red" })
 
                                     </div>
                                     
                                     <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                         @Html.Label("Amount for PPCP($)", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                        @Html.TextBoxFor(model => model.CommPPCP, null, new { style = "width:100%;", maxlength = 50 })
+                                        @Html.TextBoxFor(model => model.CommPPCP, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
                                         @Html.ValidationMessageFor(model => model.CommPPCP, "", new { @style = "color:red" })
 
                                     </div>
@@ -673,14 +667,14 @@
                                 <div class="row" id="divMemberPlan">
                                     <div class="col-xs-12 col-md-3 col-sm-6 col-lg-4 " id="divAdditionalMemberAmt" style="display:none">
                                         @Html.Label("Amount for Practice(Additional Member) $", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                        @Html.TextBoxFor(model => model.CommAdditionalMember, null, new { style = "width:100%;", maxlength = 50 })
+                                        @Html.TextBoxFor(model => model.CommAdditionalMember, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
                                         <div id="divAdditionalMemberValidator" style="display:none">
                                             <span style="color:red !important" id="CommAdditionalMember_validationMessage">This Information is Requried</span>
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 " id="divPlanMemberFee" style="display:none">
                                         @Html.Label("Amount for Member Plan Fee($)", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                        @Html.TextBoxFor(model => model.PlanFeeAddMember, null, new { style = "width:100%;", maxlength = 50 })
+                                        @Html.TextBoxFor(model => model.PlanFeeAddMember, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
                                         <div id="divPlanFeeAddMemberValidator" style="display:none">
                                             <span style="color:red !important" id="PlanFeeAddMember_validationMessage"> This Information is Requried</span>
                                         </div>
@@ -697,7 +691,7 @@
                                 <div class="row">
                                     <div class="col-xs-12 col-md-3 col-sm-6 col-lg-4" style="display:none">
                                         @Html.Label("Primary Url", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                        @Html.TextBoxFor(model => model.PrimaryUrl, null, new { style = "width:100%;", maxlength = 50 })
+                                        @Html.TextBoxFor(model => model.PrimaryUrl, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
                                         @Html.ValidationMessageFor(model => model.PrimaryUrl, "", new { @style = "color:red" })
                                     </div>
 
@@ -715,7 +709,7 @@
                     <div class="pageheading_bar" style="width: 100%; height: 70%;">
                         <div style="vertical-align: middle">
                             <div style="vertical-align: middle">
-                                Physician Primary Care Plan<span style="float: right; color: Red;
+                                My Physician Plan<span style="float: right; color: Red;
                             margin-right: 5px;"></span>
                             </div>
                         </div>
@@ -742,7 +736,7 @@
                     <div class="pageheading_bar" style="width: 100%; height: 70%;">
                         <div style="vertical-align: middle">
                             <div style="vertical-align: middle">
-                                Physician Primary Care Plan<span style="float: right; color: Red;
+                                My Physician Plan<span style="float: right; color: Red;
                             margin-right: 5px;"></span>
                             </div>
                         </div>
@@ -769,7 +763,7 @@
                     <div class="pageheading_bar" style="width: 100%; height: 70%;">
                         <div style="vertical-align: middle">
                             <div style="vertical-align: middle">
-                                Physician Primary Care Plan<span style="float: right; color: Red;
+                                My Physician Plan<span style="float: right; color: Red;
                             margin-right: 5px;"></span>
                             </div>
                         </div>

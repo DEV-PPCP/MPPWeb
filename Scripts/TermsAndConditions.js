@@ -133,7 +133,7 @@ function UpdateOrgTermsAndCondition(OrgID, UserID, OrgType, UserType, Url) {
         success: function (result) {
             $("#divGrid").hide();
             if (result.ResultID != 0) {
-                var url = $("#RedirectTo").val();
+                var url = $("#RedirectTo").val();                
                 location.href = url;
             }
             else {
@@ -198,13 +198,66 @@ function GetUpdatedLink(Type,Url){
         dataType: "text",
         contentType: "application/json",
         success: function (result) {
+            debugger;
             var obj = jQuery.parseJSON(result);
             var Path = obj[0];
-            document.getElementById("spnUserTCName").innerHTML = Path[0].TermsAndConditionsName; 
+            //document.getElementById("spnUserTCName").innerHTML = Path[0].TermsAndConditionsName; 
        //     document.getElementById("spnTCName").innerHTML = Path[0].TermsAndConditionsName;
 
             $("#hdnTAndConditions").val(Path[0].TempletPath);
            
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+        },
+
+    });
+}
+
+//Update Terms And condtions in user 
+function UpdateUserTermsAndCondition(ID, Url) {
+    var webMethodName = "UpdateTermsandConditions";
+    var ParameterNames = new Array();
+    var ParameterValues = new Array();
+    ParameterNames[0] = "UserID";
+    ParameterValues[0] = ID;
+    var Url = Url + "DefaultService";
+    var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
+    $.ajax({
+        type: "POST",
+        url: Url,
+        data: jsonPostString,
+        dataType: "text",
+        contentType: "application/json",
+        success: function (result) {
+            debugger;
+            $("#divGrid").hide();
+            if (result.ResultID != 0) {
+                var type = $("#Type").val();
+                var url = $("#RedirectTo").val();
+                location.href = url;
+
+                //switch ($("#Type").val()) {
+                //    case "4": //MPP
+                //        url = '@Url.Action("ViewPlans", "Admin")';
+                //        break;
+                //    case "2": //Member
+                //        url = '@Url.Action("PlanDetails", "Member")';
+                //        break;
+                //    case "1": //Organization
+                //        url = '@Url.Action("ViewPaymentDetails", "Organization")';
+                //        break;
+                //    case "3": //Provider
+                //        url = '@Url.Action("SubscribedPlans", "Provider")';
+                //        break;
+                //}
+                //window.location = url;                
+            }
+            else {
+                document.getElementById("divErrMessagePopup").style.display = "block";
+                document.getElementById("spnPopupErrMessage").innerHTML = result.ResultName + " Please try Again.";
+                document.getElementById("divErrMessagePopup").scrollIntoView();
+            }
+
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
         },

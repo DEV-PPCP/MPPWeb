@@ -7,13 +7,7 @@
     Layout = "~/Views/Shared/BaseMaster.cshtml";
     var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
 }
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/jqueryval")
-@Scripts.Render("~/bundles/modernizr")
-@Scripts.Render("~/bundles/bootstrap")
-@Scripts.Render("~/bundles/KendoScripts")
-@Scripts.Render("~/bundles/custom-validator")
-@Styles.Render("~/bundles/Kendocss")
+
 @Scripts.Render("~/bundles/PaymentDetailsFiles")   @*For PaymentDetails script files*@
 @Styles.Render("~/bundles/Membercssfiles")       @*For member css files*@
 <script type="text/javascript">

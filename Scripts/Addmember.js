@@ -182,6 +182,7 @@ function AddMembeDetails(MemberRegistrationDetails, session, Url) {
     debugger;
     if ($('#chkEnroll').is(":checked") == true) {
         //Added by akhil
+        MemberRegistrationDetails.MemberRegistrationType = "ByOrg";
         MemberRegistrationDetails.OrganizationName = document.getElementById("spnSelectedOrganization").innerText;
         MemberRegistrationDetails.OrganizationID = document.getElementById("SpOrganizationID").innerText;
         MemberRegistrationDetails.ProviderName = document.getElementById("SpProviderName").innerText;

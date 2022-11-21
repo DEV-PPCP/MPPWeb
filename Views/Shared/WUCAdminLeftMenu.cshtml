@@ -16,6 +16,20 @@
     <link href="~/Content/bootstrap.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/Content/bootstrap-leftmenu.css" />
 
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/KendoScripts")
+    @Scripts.Render("~/bundles/custom-validator")
+    @Styles.Render("~/bundles/Kendocss")
+
+    <link href="~/Content/kendo/2014.3.1316/kendo.common.min.css" rel="stylesheet" />
+    <link href="~/Content/kendo/2014.3.1316/kendo.mobile.all.min.css" rel="stylesheet" />
+    <link href="~/Content/kendo/2014.3.1316/kendo.dataviz.min.css" rel="stylesheet" />
+    <link href="~/Content/kendo/2014.3.1316/kendo.default.min.css" rel="stylesheet" />
+    <link href="~/Content/kendo/2014.3.1316/kendo.dataviz.default.min.css" rel="stylesheet" />
+
     <script src='https://www.google.com/recaptcha/api.js'></script>
     <link href="~/Content/login.css" rel="stylesheet" />
 </head>
@@ -38,8 +52,105 @@
                     </div>
                 </nav1>
                 <nav1 id="sidebar" class="">
-                    <ul class="list-unstyled components">
-                        
+                    <div class="row">
+                        <div class="panel-group" id="accordion">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseAdmin">
+                                        <h4 class="panel-title">
+                                            <span class="glyphicon glyphicon-user">
+                                            </span> Administration
+                                        </h4>
+                                    </a>
+                                </div>
+                                <div id="collapseAdmin" class="panel-collapse collapse in">
+                                    <div class="panel-body">
+                                        <table class="table">
+                                            <tr>
+                                                <td>
+                                                    <span class="glyphicon glyphicon-compressed text-info"></span>
+                                                    <a id="liViewPlans" class="Organization_Color" href='@Url.Action("ViewPlans", "Admin")' ;> Plans</a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <span class="glyphicon glyphicon-file text-primary"></span>
+                                                    <a id="liMemberList" class="Organization_Color" href='@Url.Action("AdminMemberList", "Admin")' ;> Members</a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <span class="glyphicon glyphicon-tasks"></span>
+                                                    <a id="liViewOrganizations" class="Organization_Color" href='@Url.Action("ViewOrganizations", "Admin")' ;> Organizations</a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <span class="glyphicon glyphicon-plus-sign text-success"></span>
+                                                    <a id="liViewProviders" class="Organization_Color" href='@Url.Action("ViewProviders", "Admin")' ;> Providers</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseReports">
+                                        <h4 class="panel-title">
+                                            <span class="glyphicon glyphicon-book">
+                                            </span> Reports
+                                        </h4>
+                                    </a>
+                                </div>
+                                <div id="collapseReports" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <table class="table">
+                                            <tr>
+                                                <td>
+                                                    <span class="glyphicon glyphicon-file"></span>
+                                                    <a id="liMemberReport" class="Organization_Color" href='@Url.Action("AdminMemberReport", "Admin")' ;> Members Report</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseAccount">
+                                        <h4 class="panel-title">
+                                            <span class="glyphicon glyphicon-cog">
+                                            </span> Account
+                                        </h4>
+                                    </a>
+                                </div>
+                                <div id="collapseAccount" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <table class="table">
+                                            <tr>
+                                                <td>
+                                                    <span class="glyphicon glyphicon-globe"></span>
+                                                    <a id="liViewUsers" class="Organization_Color" href='@Url.Action("ViewUsers", "Admin")' ;> Users</a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <span class="glyphicon glyphicon-lock"></span>
+                                                    <a id="liChangePassword" class="Organization_Color" href='@Url.Action("ChangePassword", "Admin")' ;> Change Password</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    @*<ul class="list-unstyled components">
+
                         <li class="list-unstyled" style="display:none">
                             <ul class="list-unstyled" style="height:auto;margin-bottom:3px;font-size:16px;">
                                 <li><a id="liAddPlans" class="Organization_Color" href='@Url.Action("AddPlans", "Admin")' ;>Add Plans</a></li>
@@ -95,16 +206,6 @@
                                 <li><a id="liViewProviders" class="Organization_Color" href='@Url.Action("ViewProviders", "Admin")' ;>View Providers</a></li>
                             </ul>
                         </li>
-                        @*<li class="list-unstyled">
-                            <ul class="list-unstyled" style="height:auto;margin-bottom:3px;font-size:16px;">
-                                <li><a id="liViewMembers" class="Organization_Color" href='@Url.Action("ViewMembers", "Admin")' ;>View Members</a></li>
-                            </ul>
-                        </li>*@
-                        @*<li class="list-unstyled">
-                            <ul class="list-unstyled" style="height:auto;margin-bottom:3px;font-size:16px;">
-                                <li><a id="liViewPayments" class="Organization_Color" href='@Url.Action("ViewPayments", "Admin")' ;>View Payments</a></li>
-                            </ul>
-                        </li>*@
                         <li class="list-unstyled" style="display:none">
                             <ul class="list-unstyled" style="height:auto;margin-bottom:3px;font-size:16px;">
                                 <li><a id="liDiabledOrganizations" class="Organization_Color" href='@Url.Action("DiabledOrganizations", "Admin")' ;>Disabled Organizations</a></li>
@@ -115,49 +216,7 @@
                                 <li><a id="liTermsAndConditions" class="Organization_Color" href='@Url.Action("TermsAndConditions", "Admin")' ;>Terms & Condition</a></li>
                             </ul>
                         </li>
-
-                        @*<li class="Organization_Color">
-                            @Html.ActionLink("Add Plans", "AddPlans", "Admin")
-                        </li>*@
-                        @*<li class="Organization_Color">
-                            @Html.ActionLink("View Plans", "ViewPlans", "Admin")
-                        </li>*@
-                        @*<li class="Organization_Color">
-                            @Html.ActionLink("Plan Mapping", "PlanMapping", "Admin")
-                        </li>*@
-                        @*<li class="Organization_Color">
-                            @Html.ActionLink("Withdraw Plans", "WithdrawPlans", "Admin")
-                        </li>*@                    
-                         @*veena on 25/10/2019*@
-                        @*<li class="Organization_Color">
-                            @Html.ActionLink("Subscribe Plans", "SubscribePlans", "Admin")
-                        </li>*@
-                        @*<li class="Organization_Color">
-                            @Html.ActionLink("View Organizations", "ViewOrganizations", "Admin")
-                        </li>*@
-                        @*<li class="Organization_Color">
-                            @Html.ActionLink("View Providers", "ViewProviders", "Admin")
-                        </li>*@ 
-                        @*veena on 04/11/2019*@      
-                        @*<li class="Organization_Color">
-                            @Html.ActionLink("View Members", "ViewMembers", "Admin")
-                        </li>*@                 
-                        @*veena on 04/11/2019*@
-                        @*<li class="Organization_Color">
-                            @Html.ActionLink("View Payments", "ViewPayments", "Admin")
-                        </li>*@
-                        @*veena on 05/11/2019*@
-                        @*<li class="Organization_Color">
-                            @Html.ActionLink("Disabled Organizations", "DiabledOrganizations", "Admin")
-                        </li>*@
-                        @*<li class="Organization_Color">
-                            @Html.ActionLink("View Users", "ViewUser", "Admin")
-                        </li>*@
-                        @*<li class="Organization_Color">
-                            @Html.ActionLink("Terms & Condition", "TermsAndConditions", "Admin")
-                        </li>*@
-                         
-                    </ul>
+                    </ul>*@
                 </nav1>
 
 
@@ -205,19 +264,61 @@
     }
     function highlightSelectedMenu() {
         var currentURL = window.location.href;
-        if (currentURL.includes("Admin/AddPlans")) {
-            $("#liAddPlans").removeClass("Organization_Color");
-            $("#liAddPlans").addClass("stripePanel");
+        //Administration
+        if (currentURL.includes("Admin/ViewPlans")) {
+            $('div[id^="collapse"]').removeClass("in");
+            $("#collapseAdmin").addClass("in");
+            $("#liViewPlans").removeClass("Organization_Color");
+            $("#liViewPlans").addClass("stripePanel");
         }
-        else if (currentURL.includes("Admin/AdminMemberList")) {
+        if (currentURL.includes("Admin/AddPlans")) {
+            $('div[id^="collapse"]').removeClass("in");
+            $("#collapseAdmin").addClass("in");
+            $("#liViewPlans").removeClass("Organization_Color");
+            $("#liViewPlans").addClass("stripePanel");
+        }
+        if (currentURL.includes("Admin/AdminMemberList")) {
+            $('div[id^="collapse"]').removeClass("in");
+            $("#collapseAdmin").addClass("in");
             $("#liMemberList").removeClass("Organization_Color");
             $("#liMemberList").addClass("stripePanel");
+        }        
+        if (currentURL.includes("Admin/ViewOrganizations")) {
+            $('div[id^="collapse"]').removeClass("in");
+            $("#collapseAdmin").addClass("in");
+            $("#liViewOrganizations").removeClass("Organization_Color");
+            $("#liViewOrganizations").addClass("stripePanel");
         }
-        else if (currentURL.includes("Admin/AdminMemberReport")) {
+        if (currentURL.includes("Admin/ViewProviders")) {
+            $('div[id^="collapse"]').removeClass("in");
+            $("#collapseAdmin").addClass("in");
+            $("#liViewProviders").removeClass("Organization_Color");
+            $("#liViewProviders").addClass("stripePanel");
+        }
+        //Reports
+        if (currentURL.includes("Admin/AdminMemberReport")) {
+            $('div[id^="collapse"]').removeClass("in");
+            $("#collapseReports").addClass("in");
             $("#liMemberReport").removeClass("Organization_Color");
             $("#liMemberReport").addClass("stripePanel");
         }
-        else if (currentURL.includes("Admin/AdminViewPaymentDetails")) {
+
+        //Account
+        if (currentURL.includes("Organization/ViewUsers")) {
+            $('div[id^="collapse"]').removeClass("in");
+            $("#collapseAccount").addClass("in");
+            $("#liViewUsers").removeClass("Organization_Color");
+            $("#liViewUsers").addClass("stripePanel");
+        }
+        if (currentURL.includes("Organization/ChangePassword")) {
+            $('div[id^="collapse"]').removeClass("in");
+            $("#collapseAccount").addClass("in");
+            $("#liChangePassword").removeClass("Organization_Color");
+            $("#liChangePassword").addClass("stripePanel");
+        }
+
+        //unused as of now
+        if (currentURL.includes("Admin/AdminViewPaymentDetails")) {
             $("#liPaymentsdashboard").removeClass("Organization_Color");
             $("#liPaymentsdashboard").addClass("stripePanel");
         }
@@ -229,10 +330,6 @@
             $("#liPaymentsTransactionReport").removeClass("Organization_Color");
             $("#liPaymentsTransactionReport").addClass("stripePanel");
         }
-        else if (currentURL.includes("Admin/ViewPlans")) {
-            $("#liViewPlans").removeClass("Organization_Color");
-            $("#liViewPlans").addClass("stripePanel");
-        }
         else if (currentURL.includes("Admin/WithdrawPlans")) {
             $("#liWithdrawPlans").removeClass("Organization_Color");
             $("#liWithdrawPlans").addClass("stripePanel");
@@ -241,14 +338,8 @@
             $("#liSubscribePlans").removeClass("Organization_Color");
             $("#liSubscribePlans").addClass("stripePanel");
         }
-        else if (currentURL.includes("Admin/ViewOrganizations")) {
-            $("#liViewOrganizations").removeClass("Organization_Color");
-            $("#liViewOrganizations").addClass("stripePanel");
-        }
-        else if (currentURL.includes("Admin/ViewProviders")) {
-            $("#liViewProviders").removeClass("Organization_Color");
-            $("#liViewProviders").addClass("stripePanel");
-        }
+        
+        
         else if (currentURL.includes("Admin/ViewMembers")) {
             $("#liViewMembers").removeClass("Organization_Color");
             $("#liViewMembers").addClass("stripePanel");
