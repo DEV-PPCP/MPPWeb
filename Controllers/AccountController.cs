@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
+using System.Web.Security;
 using System.Xml;
 using System.Xml.Serialization;
 using Telerik.Reporting.Processing;
@@ -21,6 +22,7 @@ using WebGrease.Configuration;
 
 namespace PPCP07302018.Controllers
 {
+    
     public class AccountController : Controller
     {
         public ActionResult MPPLogin(Login model)
@@ -33,6 +35,15 @@ namespace PPCP07302018.Controllers
         public ActionResult ForgotCredentials()
         {
             return View();
+        }
+
+        public ActionResult Logout()
+        {
+            Response.Cache.SetCacheability(HttpCacheability.NoCache);
+            Response.Cache.SetExpires(DateTime.UtcNow.AddHours(-1));
+            Response.Cache.SetNoStore();
+            Session.Clear();
+            return RedirectToAction("MPPLogin", "Account", new Login { LoginType = "Member" });
         }
 
         public JsonResult ValidateCredentials(PPCP07302018.Models.Organization.MemberLoginDetails model)

@@ -27,7 +27,7 @@ namespace PPCP07302018.Controllers
 
      [MemberSessionController]
     //  [MyErrorHandlerController]
-    public class MemberController : Controller
+    public class MemberController : BaseController
     {
         //Comments
         private object objmember;

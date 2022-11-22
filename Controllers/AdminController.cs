@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using PPCP07302018.Controllers.Session;
 using PPCP07302018.DataAccessLayer;
+using PPCP07302018.Models.Admin;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -16,14 +17,22 @@ using System.Web.Mvc;
 using System.Xml;
 using System.Xml.Serialization;
 using Telerik.Reporting.Processing;
+using static PPCP07302018.Utils.GlobalFunctions;
 
 namespace PPCP07302018.Controllers
 {
     //[AdminSessionController]
-    public class AdminController : Controller
+    public class AdminController : BaseController
     {
         private string DownloadDocumentPath = System.Configuration.ConfigurationManager.AppSettings["DownloadDocumentsPath"].ToString();
         static string UploadDocumentPath = System.Configuration.ConfigurationManager.AppSettings["UploadDocumentSignaturePath"].ToString();
+
+
+        protected override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+            if (!base.UserIsInRole(RoleType.MPP, RoleName.Admin))
+                filterContext.Result = RedirectToAction("Logout", "Account");
+        }
 
         public ActionResult AdminLogin()
         {
@@ -107,7 +116,6 @@ namespace PPCP07302018.Controllers
 
         public ActionResult ViewPlans()
         {
-
             Session["HeaderDisplayName"] = "Admin";
             return View();
 

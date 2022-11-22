@@ -60,6 +60,14 @@ namespace PPCP07302018.Models.Admin
 
     }
 
+    public class lkpRole
+    {
+        public int RoleID { get; set; }
+        public string RoleType { get; set; }
+        public string RoleName { get; set; }
+
+    }
+
     public class Login
     {
         public string LoginType { get; set; }

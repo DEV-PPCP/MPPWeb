@@ -255,6 +255,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\EmployerController.cs" />
     <Compile Include="Controllers\MasterController.cs" />
     <Compile Include="Controllers\MemberController.cs" />
@@ -1358,6 +1359,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\AdminSession\" />
+    <Folder Include="Views\Base\" />
     <Folder Include="Views\Employeer\" />
     <Folder Include="Views\OrganizationSession\" />
   </ItemGroup>

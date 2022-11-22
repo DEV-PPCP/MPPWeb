@@ -7,6 +7,18 @@ namespace PPCP07302018.Utils
 {
     public class GlobalFunctions
     {
+        public static class RoleType
+        {
+            public const string MPP = "MPP";
+            public const string Organization = "Organization";
+            public const string Provider = "Provider";
+            public const string Member = "Member";
+        }
+        public static class RoleName
+        {
+            public const string Admin = "Admin";
+            public const string ReadOnly = "ReadOnly";
+        }
 
         /// <summary>
         /// In Member Table Type Column is their we have to save the Type
