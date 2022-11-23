@@ -43,5 +43,12 @@ namespace PPCP07302018.Utils
             Provider = 3,
             User = 4
         }
+
+        public enum LookupType
+        {
+            ClaimStatus = 2,
+            VisitType = 3,
+            PaymentType = 4,
+        }
     }
 }

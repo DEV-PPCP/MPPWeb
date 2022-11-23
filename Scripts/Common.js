@@ -1,4 +1,45 @@
-﻿function divPopUpSuccessClose() {
+﻿function setJsonParameter(parameterName, parameterValue, methodName) {
+    var obj = new Object();
+    obj.ParameterName = parameterName;
+    obj.ParameterValue = parameterValue;
+    obj.WebMethodName = methodName;
+    var resultData = JSON.stringify(obj);
+    resultData = getformattedJsonFromArray(resultData);
+    return resultData;
+}
+
+function getformattedJsonFromArray(arrayObj) {
+    arrayObj = arrayObj.replace(/"/g, "'");
+    return arrayObj + "";
+}
+
+function BindDropdown(LookupTypeId, dropdownName, Url) {
+    debugger;
+    var webMethodName = "GetLookupValues";
+    var ParameterNames = new Array();
+    var ParameterValues = new Array();
+    ParameterNames[0] = "LookupTypeId";
+    ParameterValues[0] = LookupTypeId;
+
+    var Url = Url + "DefaultService";
+    var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
+    $.ajax({
+        type: "POST",
+        url: Url,
+        data: jsonPostString,
+        dataType: "text",
+        contentType: "application/json",
+        success: function (result) {
+            var obj = jQuery.parseJSON(result);
+            var lookupValueList = obj[0];
+            $('#' + dropdownName).data('kendoDropDownList').dataSource.data(lookupValueList);
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+        },
+    });
+}
+
+function divPopUpSuccessClose() {
     debugger;
     $.ajax({
         url: '@Url.Action("VerifyOrgOTP", "Account")',

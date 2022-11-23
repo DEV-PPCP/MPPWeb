@@ -273,6 +273,7 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Admin\AddPlans.cs" />
     <Compile Include="Models\Admin\Login.cs" />
+    <Compile Include="Models\ClaimBilling.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Member\MemberDetails.cs" />
@@ -956,6 +957,7 @@
     </None>
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\ChangePassword.js" />
+    <Content Include="Scripts\ClaimBilling.js" />
     <Content Include="Scripts\Common.js" />
     <Content Include="Scripts\DiabledOrganizations.js" />
     <Content Include="Scripts\EmployerForgotPassword.js" />

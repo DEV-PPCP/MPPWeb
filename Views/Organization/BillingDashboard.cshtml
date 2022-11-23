@@ -4,6 +4,171 @@
     Layout = "~/Views/Shared/WUCOrgLeftMenu.cshtml";
     var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
 }
-<div class="pageheading_bar" align="center">
-    <b>Billing Dashboard</b>
+@Styles.Render("~/bundles/Membercssfiles")
+@Scripts.Render("~/bundles/CommonScriptFiles")
+<script src="~/Scripts/ClaimBilling.js"></script>
+
+<style>
+    .k-grid .k-grid-header .k-header .k-link {
+        height: auto;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        white-space: normal;
+    }
+
+    .k-grid-content {
+        overflow-x: scroll;
+    }
+</style>
+
+<div style="width: 100%">
+    <div class="pageheading_bar" align="center">
+        <b>Billing Dashboard</b>
+    </div>
+    <div class="Panel_bg" id="divMainMemberDetails" style="width: 100%">
+        <div id="divSelectPlan">
+            <div class="form-group" id="divAddMember">
+                <div class="row">
+                    <div align="right" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <button type="submit" title="Submit" style="width: 150px;" class="button_blue" value="AddClaim" onclick="@("window.location.href='" + @Url.Action("ClaimSubmission", "Organization") + "'");">
+                            Add Claim
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" style="display:none">
+                <div id="dvSearchFilterHeader" style="cursor: pointer;" onclick="CollapsiblePanels(document.getElementById('dvSearchFilterHeader'),document.getElementById('dvSearchFilter'));"
+                     class="PanelTopBar">
+                    <span id="4_lblSearchPat" style="font-size:15px;font-weight:normal;color: White;">Search</span>
+                    <div style="float: right; margin-top: -5px; color: White; padding: 5px 5px 0 0">
+                    </div>
+                    <div id="arrow" class="ArrowClose"></div>
+                </div>
+            </div>
+
+            <div id="dvSearchFilter" style="display: block;">
+                <div class="Page_Dimmer1">
+                </div>
+                <div class="PopupHolder2" style="height:auto;">
+                    <div class="Panel_bg_Sub">
+                        <div style="width: 100%;height:auto;">
+                            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" style="display:block">
+                                <div class="row">
+                                    <div class="row">
+                                        <div class="col-xs-6 col-md-4 col-sm-6 col-lg-4">
+                                            @Html.Label("Claim Start Date", new { style = "font-weight:normal;", @class = "" })<br />
+                                            @( Html.Kendo().DatePicker().Format("MM/dd/yyyy").Name("ClaimStartDate").Value("").Max(DateTime.Today)
+                                                        .HtmlAttributes(new { PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text", onkeydown = "return true;" }))
+                                        </div>
+                                        <div class="col-xs-6 col-md-4 col-sm-6 col-lg-4">
+                                            @Html.Label("Claim End Date", new { style = "font-weight:normal;", @class = "" })<br />
+                                            @( Html.Kendo().DatePicker().Format("MM/dd/yyyy").Name("ClaimEndDate").Value("").Max(DateTime.Today)
+                                                        .HtmlAttributes(new { PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text", onkeydown = "return true;" }))
+                                        </div>
+                                        <div class="col-xs-6 col-md-4 col-sm-6 col-lg-4">
+                                            @Html.Label("Claim Status", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
+                                            @(Html.Kendo().DropDownList()
+                                                    .Name("ClaimStatus").HtmlAttributes(new { style = "width:100%;" })
+                                                    .OptionLabel("--Select--")
+                                                    .DataValueField("Id")
+                                                    .DataTextField("Name")                                )
+                                        </div>
+                                    </div>
+                                    <div class="row" style="text-align: right">
+                                        <button type="button" id="btnSearch" title="Search" style="width: 100px;" class="button_blue" value="Search" onclick="btnSearch()">
+                                            Search
+                                        </button>
+                                        <button type="button" id="btnClear" title="Clear" value="Clear" style="width: 100px;" class="button_blue" onclick="btnClear()">
+                                            Clear
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="row">
+                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                        @(Html.Kendo().Grid<PPCP07302018.Models.MemberVisit>()
+                        .Name("gridClaims")
+                        .Columns(columns =>
+                        {
+                            columns.Bound(p => p.MemberName).Width(100).Width(150).Title("Member Name").Width(120);
+                            columns.Bound(p => p.DateOfService).Title("Date of Service").ClientTemplate("#= kendo.toString(kendo.parseDate(DateOfService,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') #").Width(120);
+                            columns.Bound(p => p.ProviderName).Title("Provider Name").Width(120);
+                            columns.Bound(p => p.ProviderNPI).Title("Provider NPI").Width(100);
+                            columns.Bound(p => p.VisitType).Title("Visit type").Width(100);
+                            columns.Bound(p => p.AllowedFee).Title("Allowed Fee").Width(75);
+                            columns.Bound(p => p.CoPayFee).Title("Plan CoPay").Width(75);
+                            columns.Bound(p => p.SubmitDate).Title("Submitted Date").ClientTemplate("#= SubmitDate != null ? kendo.toString(kendo.parseDate(SubmitDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') : '' #").Width(100);
+                            columns.Bound(p => p.DatePaid).Title("Date Paid").ClientTemplate("#= DatePaid != null ? kendo.toString(kendo.parseDate(DatePaid,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') : '' #").Width(120);
+                            columns.Bound(p => p.PlanPaidAmount).Title("Plan Paid").Width(75);
+                            columns.Bound(p => p.ClaimStatus).Title("Claim Status").Width(120);
+
+                            columns.Bound(p => p.SubmitDate).Title("Action").Width(60).Width(75).HtmlAttributes(new { style = "text-align: center" }).ClientTemplate(
+                                "#if(SubmitDate == null){# " +
+                                    "<a title='View' style='text-decoration: none; cursor: pointer; ' href=/Organization/ClaimSubmission?mode=view&VisitId=${VisitId}><span class=\"glyphicon glyphicon-eye-open\"></span></a> " +
+                                "#} else {# " +
+                                    "<a title='Edit' style='text-decoration: none; cursor: pointer; ' href=/Organization/ClaimSubmission?mode=edit&VisitId=${VisitId}><span class=\"glyphicon glyphicon-pencil\"></span></a> " +
+                                "#}#");
+
+                            //columns.Bound(p => p.SubmitDate).Title("Action").Width(60).Width(75).HtmlAttributes(new { style = "text-align: center" }).ClientTemplate(
+                            //    "#if(SubmitDate == null){# " +
+                            //        "<a title='View' style='text-decoration: none; cursor: pointer; ' onclick=\"EditOptions('view', '#=VisitId#');\"><span class=\"glyphicon glyphicon-eye-open\"></span></a> " +
+                            //    "#} else {# " +
+                            //        "<a title='Edit' style='text-decoration: none; cursor: pointer; ' onclick=\"EditOptions('edit', '#=VisitId#');\"><span class=\"glyphicon glyphicon-pencil\"></span></a> " +
+                            //    "#}#");
+
+                        })
+                        .Scrollable(s => s.Enabled(true)).Sortable()
+                        .Pageable()
+                        .AutoBind(false)
+                        .HtmlAttributes(new { style = "height:400px; " })
+                        //.Selectable()
+                        .DataSource(dataSource => dataSource
+                        .Ajax()
+                        .PageSize(50)
+                        .ServerOperation(false)))
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>
+
+
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        BindDropdown(2, 'ClaimStatus', '@ServiceUrl');
+        btnClear();
+    });
+
+    function btnSearch() {
+       GetClaims('@ServiceUrl', '@Session["OrganizationID"]', $("#ClaimStartDate").val(), $("#ClaimEndDate").val(), $("#ClaimStatus").val());
+
+    }
+    function btnClear() {
+        //set start and end dates in search filter
+        var ToDate = kendo.toString(kendo.parseDate(new Date()), 'MM/dd/yyyy');
+        $("#ClaimEndDate").data("kendoDatePicker").value(ToDate);
+        var dt = new Date();
+        dt.setMonth(dt.getMonth() - 1);
+        var dd = dt.getDate();
+        var mm = dt.getMonth() + 1;
+        var y = dt.getFullYear();
+        var FromDate = mm + '/' + dd + '/' + y;
+        $("#ClaimStartDate").val(FromDate);
+        //to clear grid
+        GetClaims('@ServiceUrl', '@Session["OrganizationID"]', $("#ClaimStartDate").val(), $("#ClaimEndDate").val(), $("#ClaimStatus").val());
+    }
+
+</script>

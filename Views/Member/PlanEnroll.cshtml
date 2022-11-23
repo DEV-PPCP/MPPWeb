@@ -437,9 +437,10 @@
         // debugger;
         var grid = this;
         $("[name='PlanID']").change(function (e) {
+            debugger;
             var row = $(e.target).closest("tr");
             var dataItem = grid.dataItem(row);
-            grid.select(row);
+            //grid.select(row);
             var PlanID = dataItem.PlanID;
 
             document.getElementById("PlanID").innerHTML = PlanID;
@@ -478,7 +479,7 @@
         });
     }
     function onPlansPaymentDataBound() {
-        // debugger;
+         debugger;
         var Paymentgrid = this;
         $("[name='Paymentschedule']").change(function (e) {
             var row = $(e.target).closest("tr");
@@ -505,6 +506,7 @@
             //document.getElementById("Installments").innerHTML = dataItem.NoofInstallments;
 
             $("#divValidator").hide();
+            $("#btnstepNext").show();
             document.getElementById("PlanPaymentValidation").innerHTML = "";
             var Months=document.getElementById("spnPlanTermMonths").innerHTML;
             AddMonths(Months);
@@ -610,6 +612,7 @@
 </script>
 
 <script type="text/javascript">
+    var FilteredPlans;
     function BindingPlansGridBasedOnFilters() {
         debugger;
         var OrganizationID = $("#OrganizationID").val();
@@ -644,8 +647,29 @@
                 $("#divSelectPlan").show();
                 var obj = jQuery.parseJSON(result);
                 var PlansList = obj[0];
-                $("#PlansGrid").data("kendoGrid").dataSource.data(PlansList);
-                $("#PlansPayment").data("kendoGrid").dataSource.data(PlansList);
+
+                //select distinct providers
+                var providerList = (function (a) {
+                    var seen = {};
+                    return a.filter(function (e) {
+                        return seen[e.ProviderID, e.OrganizationID] ? false : (seen[e.ProviderID, e.OrganizationID] = true);
+                    }).map(function (e) {
+                        return {
+                            OrganizationID: e.OrganizationID,
+                            OrganizationName: e.OrganizationName,
+                            ProviderID: e.ProviderID,
+                            ProviderName: e.ProviderName,
+                            ProviderAddress: e.ProviderAddress
+                        }
+                    });
+                })(PlansList);
+                $("#gridProviders").data("kendoGrid").dataSource.data(providerList);
+
+                FilteredPlans = PlansList;
+
+               // $("#PlansGrid").data("kendoGrid").dataSource.data(PlansList);
+               // $("#PlansPayment").data("kendoGrid").dataSource.data(PlansList);
+
                 //let group = PlansList.map((item) => item.OrganizationName).filter((item, i, ar) => ar.indexOf(item) === i).sort((a, b) => a - b).map(item => {
                 //    let new_list = PlansList.filter(itm => itm.OrganizationName == item).map(itm => itm.OrganizationID);
                 //    return { group: item, color: new_list }
@@ -659,6 +683,17 @@
             },
         });
     }
+
+    function BindPlansGrid(OrganizationID, ProviderID) {
+        debugger;
+        var plansList = FilteredPlans.filter(element => {
+            return element.OrganizationID == OrganizationID && element.ProviderID == ProviderID;
+        });
+        $("#PlansGrid").data("kendoGrid").dataSource.data(plansList);
+        $("#PlansPayment").data("kendoGrid").dataSource.data("");
+        $("#btnstepNext").hide();
+    }
+
     function GetStripeCardDetails(ServiceUrl) {
         debugger;
         //var ConsultFee = $("#eConsultfee").val();
@@ -804,7 +839,7 @@
             <div id="divGetEnroll" class="form-group" style="width:100%;">
                 <div class="row">
                     <div class="row Panel_bg_Sub">
-                        <b>Select Members to enroll</b><br /><br />
+                        <b>Select Members to Enroll</b><br /><br />
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
@@ -1146,12 +1181,39 @@
                             <br />
                         </div>
                         <div class="row" id="divSelectPlan" style="display:none;">
+                            <b>Select a provider</b><br /><br />
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                        @(Html.Kendo().Grid<PPCP07302018.Models.Member.MemberDetails> ()
+                                                    .Name("gridProviders")
+                                                    .Columns(columns =>
+                                                    {
+                                                        columns.Bound(p => p.ProviderID).ClientTemplate("<input type='radio' name='ProviderID' value='#= ProviderID #' onclick=\"BindPlansGrid('#=OrganizationID#', '#=ProviderID#');\" />").Title("Select").Filterable(false).Width(50);
+                                                        columns.Bound(p => p.OrganizationName).Title("Organization Name").Filterable(true).Width(100);
+                                                        columns.Bound(p => p.ProviderName).Title("Provider Name").Filterable(true).Width(100);
+                                                        columns.Bound(p => p.ProviderAddress).Title("ProviderAddress").Filterable(true).Width(150);
+                                                    })
+                                                    .Scrollable().Sortable()
+                                                    //.Filterable()
+                                                    .Pageable()
+                                                    .AutoBind(false)
+                                                    .HtmlAttributes(new { })
+                                                    //.Selectable()
+                                                    .DataSource(dataSource => dataSource
+                                                    .Ajax()
+                                                    .PageSize(5)
+                                                    .ServerOperation(false)))
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+
                             <b>Select a plan</b><br /><br />
                             <div class="form-group">
                                 <div class="row">
                                     <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
-                                        @(Html.Kendo().Grid<PPCP07302018.Models.Member.MemberDetails>
-                                                    ()
+                                        @(Html.Kendo().Grid<PPCP07302018.Models.Member.MemberDetails> ()
                                                     .Name("PlansGrid")
                                                     .Events(e => e.DataBound("onDataBound"))
                                                     .Columns(columns =>
@@ -1176,8 +1238,8 @@
                                                         //documnet.getElementBYId("spnPlanAmount").innerHTML=dataItem.Amount;
                                                         //documnet.getElementBYId("spnVisitFee").innerHTML=dataItem.VisitFee;
                                                     })
-                                                    .Scrollable()
-                                                    .Filterable()
+                                                    .Scrollable().Sortable()
+                                                    //.Filterable()
                                                     .Pageable()
                                                     .AutoBind(false)
                                                     .HtmlAttributes(new { })
@@ -1205,8 +1267,7 @@
                                     <br />
                                     <div class="row">
                                         <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
-                                            @(Html.Kendo().Grid<PPCP07302018.Models.Member.MemberDetails>
-                                                        ()
+                                            @(Html.Kendo().Grid<PPCP07302018.Models.Member.MemberDetails> ()
                                                         .Name("PlansPayment")
                                                         .Events(e => e.DataBound("onPlansPaymentDataBound"))
                                                         .Columns(columns =>
@@ -1218,9 +1279,9 @@
                                                             columns.Bound(p => p.InstallmentFee).Title("Installment Fee").Filterable(false).Width(150);
                                                             columns.Bound(p => p.Savings).Title("Savings").Filterable(false).Width(100).Visible(false);
                                                         })
-                                                        .Scrollable()
+                                                        .Scrollable().Sortable()
                                                         .Pageable()
-                                                        .Filterable()
+                                                        //.Filterable()
                                                         .AutoBind(false)
                                                         .HtmlAttributes(new { })
                                                         .Selectable()

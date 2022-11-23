@@ -15,6 +15,7 @@ using System.Reflection;
 using PPCP07302018.Controllers.Session;
 using Telerik.Reporting.Processing;
 using PPCP07302018.Models.Admin;
+using PPCP07302018.Models;
 
 namespace PPCP07302018.Controllers
 {
@@ -3418,9 +3419,21 @@ shapeFooter, PageNumbers
             return View();
         }
 
-        public ActionResult ClaimSubmission()
+        public ActionResult ClaimSubmission(string mode, int VisitId)
         {
-            return View();
+            DataAccessLayer.ServiceCall<PPCP07302018.Models.MemberVisit> objcall = new DataAccessLayer.ServiceCall<PPCP07302018.Models.MemberVisit>();
+            PPCP07302018.Models.Member.ServiceData ServiceData = new PPCP07302018.Models.Member.ServiceData();
+            string[] ParameterName = new string[] { "VisitId" };
+
+            string[] ParameterValue = new string[] { VisitId.ToString() };
+            ServiceData.ParameterName = ParameterName;
+            ServiceData.ParameterValue = ParameterValue;
+            ServiceData.WebMethodName = "GetVisitById";
+            List<PPCP07302018.Models.MemberVisit> List = objcall.CallServices(Convert.ToInt32(0), "GetVisitById", ServiceData);
+
+            MemberVisit model = List.FirstOrDefault();
+
+            return View(model);
         }
         #endregion
     }

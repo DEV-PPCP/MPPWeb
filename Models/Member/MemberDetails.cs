@@ -77,9 +77,11 @@ namespace PPCP07302018.Models.Member
         [Required(ErrorMessage = "This information is required.")]
         public string OrganizationName { get; set; }
         public int OrganizationID { get; set; }
+        public string OrganizationAddress { get; set; }
         public string ProviderName { get; set; }
         public int ProviderID { get; set; }
         public string PlanName { get; set; }
+        public string ProviderAddress { get; set; }
         public int PlanID { get; set; }
         public string Specialization { get; set; }
         [Required(ErrorMessage = "This information is required.")]

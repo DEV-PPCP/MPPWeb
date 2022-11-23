@@ -201,6 +201,22 @@
             }
         });
     }
+    function ViewMemberCard(MemberID, PlanCode, MemberPlanID,PlanType){
+        debugger;
+
+        if (PlanType == 1 || PlanType == "null" || PlanType=="") {
+            @*var getUrl = '@Url.Action("GenerateMemberCard", "Member")';*@
+            var getUrl = '@Url.Action("MemberPlanCardReport", "Master")';
+            var uurl = getUrl + "?MemberID=" + MemberID +"&PlanID="+PlanCode;
+            window.location = uurl;
+
+        }
+        else if (PlanType == 2) {
+            debugger;
+            $("#TempPlanCode").val(PlanCode);
+            GetFamilyPlanMemberDetails('@ServiceUrl',MemberPlanID);
+        }
+    }
     function calulateage(date) {
         var birthDate = $("#DOB").val();
         $.ajax({
@@ -452,7 +468,8 @@
                                                         columns.Bound(p => p).ClientTemplate(
                                                             "<a onclick='EditOptions(#=MemberID#,\"#=FirstName#\",\"#=LastName#\",\"#=CountryCode#\",\"#=MobileNumber#\",\"#=DOB#\",\"#=Gender#\",\"#=Email#\",\"#=CountryName#\",\"#=StateName#\",\"#=CityName#\",\"#=Zip#\",\"#=Salutation#\",\"#=CountryID#\",\"#=StateID#\",\"#=CityID#\",\"#=IsTwofactorAuthentication#\",\"#=TwoFactorType#\");' <span style='cursor:pointer'>View</a>").Title("Action").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(50);
 
-
+                                                        columns.Bound(p => p).ClientTemplate(
+                                                                                           "<a onclick='ViewMemberCard(#=MemberID#,#=Plan_Code#,\"#=MemberPlanID#\",\"#=PlanType#\");' <span style='cursor:pointer'>Download</a>").Title("ID Card").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(80);
 
                                                     })
                                                     .Scrollable()

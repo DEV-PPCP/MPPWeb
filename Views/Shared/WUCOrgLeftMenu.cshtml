@@ -432,6 +432,12 @@
             $("#liViewUsers").removeClass("Organization_Color");
             $("#liViewUsers").addClass("stripePanel");
         }
+        if (currentURL.includes("Organization/AddUser")) {
+            $('div[id^="collapse"]').removeClass("in");
+            $("#collapseAccount").addClass("in");
+            $("#liViewUsers").removeClass("Organization_Color");
+            $("#liViewUsers").addClass("stripePanel");
+        }
         if (currentURL.includes("Organization/ChangePassword")) {
             $('div[id^="collapse"]').removeClass("in");
             $("#collapseAccount").addClass("in");
