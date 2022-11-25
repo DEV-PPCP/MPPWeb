@@ -14,6 +14,7 @@ namespace PPCP07302018.Models.Member
 
         public int LoginMemberID { get; set; }
         public string MemberCode { get; set; }
+        public string MemberCardID { get; set; }
         public int MemberParentID { get; set; }
         public string MemberName { get; set; }
         [Required(ErrorMessage = "This information is required.")]
@@ -77,6 +78,8 @@ namespace PPCP07302018.Models.Member
         [Required(ErrorMessage = "This information is required.")]
         public string OrganizationName { get; set; }
         public int OrganizationID { get; set; }
+        public int BillingTypeID { get; set; }
+        public int MaxAllowedClaims { get; set; }
         public string OrganizationAddress { get; set; }
         public string ProviderName { get; set; }
         public int ProviderID { get; set; }

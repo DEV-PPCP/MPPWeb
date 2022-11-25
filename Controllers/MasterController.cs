@@ -20,6 +20,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 using Newtonsoft.Json;
+using Telerik.Reporting;
 
 namespace PPCP07302018.Controllers
 {
@@ -1410,7 +1411,6 @@ namespace PPCP07302018.Controllers
         //Added by akhil to download report
         public ActionResult MemberPlanCardReport(string MemberID, string PlanID)
         {
-
             DataAccessLayer.ServiceCall<PPCP07302018.Models.Member.MemberDetails> objcall = new DataAccessLayer.ServiceCall<PPCP07302018.Models.Member.MemberDetails>();
             PPCP07302018.Models.Member.ServiceData ServiceData = new PPCP07302018.Models.Member.ServiceData();
             string[] ParameterName = new string[] { "strMemberID" };
@@ -1420,486 +1420,399 @@ namespace PPCP07302018.Controllers
             ServiceData.WebMethodName = "GetMemberDetails";
             List<PPCP07302018.Models.Member.MemberDetails> objMemberDetails = objcall.CallService(Convert.ToInt32(0), "GetMemberDetails", ServiceData);
 
-            DataAccessLayer.ServiceCall<PPCP07302018.Models.Member.MemberPaymentsDetails> objcallMemberPlanDetails = new DataAccessLayer.ServiceCall<PPCP07302018.Models.Member.MemberPaymentsDetails>();
-            PPCP07302018.Models.Member.ServiceData ServiceData1 = new PPCP07302018.Models.Member.ServiceData();
-            string[] ParameterName1 = new string[] { "strPlanCode" };
-            string[] ParameterValue1 = new string[] { PlanID };
-            ServiceData.ParameterName = ParameterName1;
-            ServiceData.ParameterValue = ParameterValue1;
-            ServiceData.WebMethodName = "GetMemberPlanAndPaymentsDetails";
-            List<PPCP07302018.Models.Member.MemberPaymentsDetails> objMemberPlanDetails = objcallMemberPlanDetails.CallService(Convert.ToInt32(0), "GetMemberPlanAndPaymentsDetails", ServiceData);
+            List<PPCP07302018.Models.Member.MemberPaymentsDetails> objMemberPlanDetails = new List<MemberPaymentsDetails>();
+            List<PPCP07302018.Models.Provider.Provider> objProvider = new List<Models.Provider.Provider>();
 
-            DataAccessLayer.ServiceCall<PPCP07302018.Models.Provider.Provider> objcallProvierDetails = new DataAccessLayer.ServiceCall<PPCP07302018.Models.Provider.Provider>();
-            PPCP07302018.Models.Member.ServiceData ServiceData2 = new PPCP07302018.Models.Member.ServiceData();
-          
-            string[] ParameterName2 = new string[] { "strOrganizationID" , "strProviderID" };
-            string[] ParameterValue2 = new string[] { Convert.ToString(objMemberPlanDetails[0].OrganizationID),objMemberPlanDetails[0].ProviderID };
-         
-            ServiceData.ParameterName = ParameterName2;
-            ServiceData.ParameterValue = ParameterValue2;
-            ServiceData.WebMethodName = "GetProviderDetails";
-
-
-      
-            List<PPCP07302018.Models.Provider.Provider> objProvider = objcallProvierDetails.CallServices(Convert.ToInt32(0), "GetProviderDetails", ServiceData);
-
-            string specializationname = "";
-            if (!string.IsNullOrEmpty(objProvider[0].Specialization))
+            if (!string.IsNullOrEmpty(PlanID) && PlanID != "null") //Member in Plan
             {
+                DataAccessLayer.ServiceCall<PPCP07302018.Models.Member.MemberPaymentsDetails> objcallMemberPlanDetails = new DataAccessLayer.ServiceCall<PPCP07302018.Models.Member.MemberPaymentsDetails>();
+                PPCP07302018.Models.Member.ServiceData ServiceData1 = new PPCP07302018.Models.Member.ServiceData();
+                string[] ParameterName1 = new string[] { "strPlanCode" };
+                string[] ParameterValue1 = new string[] { PlanID };
+                ServiceData.ParameterName = ParameterName1;
+                ServiceData.ParameterValue = ParameterValue1;
+                ServiceData.WebMethodName = "GetMemberPlanAndPaymentsDetails";
+                objMemberPlanDetails = objcallMemberPlanDetails.CallService(Convert.ToInt32(0), "GetMemberPlanAndPaymentsDetails", ServiceData);
 
-                string json = "{\"Specializations\":" + objProvider[0].Specialization + "}";
-                var result1 = JsonConvert.DeserializeObject<SpecializationList>(json);
-                for (int i = 0; i < result1.Specializations.Count; i++)
+                DataAccessLayer.ServiceCall<PPCP07302018.Models.Provider.Provider> objcallProvierDetails = new DataAccessLayer.ServiceCall<PPCP07302018.Models.Provider.Provider>();
+                PPCP07302018.Models.Member.ServiceData ServiceData2 = new PPCP07302018.Models.Member.ServiceData();
+
+                string[] ParameterName2 = new string[] { "strOrganizationID", "strProviderID" };
+                string[] ParameterValue2 = new string[] { Convert.ToString(objMemberPlanDetails[0].OrganizationID), objMemberPlanDetails[0].ProviderID };
+
+                ServiceData.ParameterName = ParameterName2;
+                ServiceData.ParameterValue = ParameterValue2;
+                ServiceData.WebMethodName = "GetProviderDetails";
+
+                objProvider = objcallProvierDetails.CallServices(Convert.ToInt32(0), "GetProviderDetails", ServiceData);
+
+                string specializationname = "";
+                if (!string.IsNullOrEmpty(objProvider[0].Specialization))
                 {
-                    PPCP07302018.Models.Provider.Provider obj = new PPCP07302018.Models.Provider.Provider();
-                    obj.SpecializationName = result1.Specializations[i].SpecializationName;
-                    specializationname = specializationname + result1.Specializations[i].SpecializationName + ",";
+                    string json = "{\"Specializations\":" + objProvider[0].Specialization + "}";
+                    var result1 = JsonConvert.DeserializeObject<SpecializationList>(json);
+                    for (int i = 0; i < result1.Specializations.Count; i++)
+                    {
+                        PPCP07302018.Models.Provider.Provider obj = new PPCP07302018.Models.Provider.Provider();
+                        obj.SpecializationName = result1.Specializations[i].SpecializationName;
+                        specializationname = specializationname + result1.Specializations[i].SpecializationName + ",";
+                    }
+
+                    specializationname = specializationname.Substring(specializationname.Length - 1).Equals(",") ? specializationname.TrimEnd(',') : specializationname;
+                }
+            }            
+
+            string msg = TrelerikReportDownload(objMemberDetails, objMemberPlanDetails, objProvider);
+            return View();
+        }
+
+        private string TrelerikReportDownload(List<PPCP07302018.Models.Member.MemberDetails> objMemberDetails, List<PPCP07302018.Models.Member.MemberPaymentsDetails> objMemberPlanDetails, List<PPCP07302018.Models.Provider.Provider> objProvider)
+        {
+            Telerik.Reporting.ReportBook rptbook1 = new Telerik.Reporting.ReportBook();
+            int i = 1;
+            string EffectiveperiodValue = string.Empty;
+            string PlanName = string.Empty;
+            string MemberId = string.Empty;
+            if (objMemberPlanDetails.Count > 0)
+            {
+                i = 0;
+
+                PlanName = objMemberPlanDetails[0].PlanName;
+                if (objMemberPlanDetails[0].PlanStartDate != null && objMemberPlanDetails[0].PlanStartDate != "" &&
+                objMemberPlanDetails[0].PlanEndDate != null && objMemberPlanDetails[0].PlanEndDate != "")
+                {
+                    DateTime plandatestart = Convert.ToDateTime(objMemberPlanDetails[0].PlanStartDate);
+                    string startpalndate = plandatestart.ToString("MM/dd/yyyy");
+                    DateTime planenddate = Convert.ToDateTime(objMemberPlanDetails[0].PlanEndDate);
+                    string endplandate = planenddate.ToString("MM/dd/yyyy");
+                    EffectiveperiodValue = startpalndate + " " + "to" + " " + endplandate;//"11/27/2018 to 05/31/2019";
 
                 }
-
-                specializationname = specializationname.Substring(specializationname.Length - 1).Equals(",") ? specializationname.TrimEnd(',') : specializationname;
             }
-            Telerik.Reporting.Report rptirDCS = new Telerik.Reporting.Report();
+
+            string PCPname = string.Empty;
+            string OrganizationName = string.Empty;
+            string OrgPhone = string.Empty;
+            string Address = string.Empty;
+
+            string MemberName = (objMemberDetails[0].LastName + " " + objMemberDetails[0].FirstName).ToUpper();
+            //MemberId = "MPP0" + objMemberDetails[0].MobileNumber;
+            MemberId = objMemberDetails[0].MemberCardID;
+            if (objProvider.Count > 0)
+            {
+                Address = objProvider[0].Address + "," + objProvider[0].CityName + "," + objProvider[0].StateName + "," + objProvider[0].Zip;
+                OrgPhone = objProvider[0].OrgPhone;
+                OrganizationName = objProvider[0].OrganizationName;
+                PCPname = "Dr. " + (objProvider[0].LastName + " " + objProvider[0].FirstName).ToUpper(); //+ ", " + objProvider[0].Degree).ToUpper();
+            }
+
+            string fontname = "Glacial Indifference";
+
+            string imgName = "IDCardLogo.png";
+            var dir = Server.MapPath("/images");
+            string LogoImage = Path.Combine(dir, imgName);
+
+            string capitalRxLogoFile = "Capital-Rx.png";
+            string capitalRxImage = Path.Combine(dir, capitalRxLogoFile);
+            //string LogoImage = System.Configuration.ConfigurationManager.AppSettings["MemberCardImage"].ToString();
+
             Telerik.Reporting.ReportBook rptbook = new Telerik.Reporting.ReportBook();
-            Telerik.Reporting.Report rpti = new Telerik.Reporting.Report();
-            Telerik.Reporting.Report rptfooter = new Telerik.Reporting.Report();
+            Telerik.Reporting.Report rptirDCS = new Telerik.Reporting.Report();
             Telerik.Reporting.DetailSection detail = new Telerik.Reporting.DetailSection();
             detail = new Telerik.Reporting.DetailSection();
-            #region parameters
-            Telerik.Reporting.Shape shapeTop = new Telerik.Reporting.Shape();
-            shapeTop = new Telerik.Reporting.Shape();
-            Telerik.Reporting.Shape shapemiddledashed = new Telerik.Reporting.Shape();
-            shapemiddledashed = new Telerik.Reporting.Shape();
-            Telerik.Reporting.Shape shapeLeft = new Telerik.Reporting.Shape();
-            shapeLeft = new Telerik.Reporting.Shape();
-            Telerik.Reporting.Shape shapebottom = new Telerik.Reporting.Shape();
-            shapebottom = new Telerik.Reporting.Shape();
-            Telerik.Reporting.Shape shapebottomfirst = new Telerik.Reporting.Shape();
-            shapebottomfirst = new Telerik.Reporting.Shape();
-            Telerik.Reporting.Shape shapeRight = new Telerik.Reporting.Shape();
-            shapeRight = new Telerik.Reporting.Shape();
-            Telerik.Reporting.HtmlTextBox htmlHeading = new Telerik.Reporting.HtmlTextBox();
-            htmlHeading = new Telerik.Reporting.HtmlTextBox();
-            Telerik.Reporting.HtmlTextBox htmlMemberIDHeading = new Telerik.Reporting.HtmlTextBox();
-            htmlMemberIDHeading = new Telerik.Reporting.HtmlTextBox();
-            Telerik.Reporting.HtmlTextBox htmlProvidereading = new Telerik.Reporting.HtmlTextBox();
-            htmlProvidereading = new Telerik.Reporting.HtmlTextBox();
-            Telerik.Reporting.HtmlTextBox htmlName = new Telerik.Reporting.HtmlTextBox();
-            htmlName = new Telerik.Reporting.HtmlTextBox();
-            Telerik.Reporting.HtmlTextBox htmlNameValue = new Telerik.Reporting.HtmlTextBox();
-            htmlNameValue = new Telerik.Reporting.HtmlTextBox();
-            Telerik.Reporting.HtmlTextBox htmlEmail = new Telerik.Reporting.HtmlTextBox();
-            htmlEmail = new Telerik.Reporting.HtmlTextBox();
-            Telerik.Reporting.HtmlTextBox htmlEmailValue = new Telerik.Reporting.HtmlTextBox();
-            htmlEmailValue = new Telerik.Reporting.HtmlTextBox();
-            Telerik.Reporting.HtmlTextBox htmlpcpname = new Telerik.Reporting.HtmlTextBox();
-            htmlpcpname = new Telerik.Reporting.HtmlTextBox();
-            Telerik.Reporting.HtmlTextBox htmlpcpnameValue = new Telerik.Reporting.HtmlTextBox();
-            htmlpcpnameValue = new Telerik.Reporting.HtmlTextBox();
-            Telerik.Reporting.HtmlTextBox htmlFax = new Telerik.Reporting.HtmlTextBox();
-            htmlFax = new Telerik.Reporting.HtmlTextBox();
-            Telerik.Reporting.HtmlTextBox htmlFaxValue = new Telerik.Reporting.HtmlTextBox();
-            htmlFaxValue = new Telerik.Reporting.HtmlTextBox();
-            Telerik.Reporting.HtmlTextBox htmlPhone = new Telerik.Reporting.HtmlTextBox();
-            htmlPhone = new Telerik.Reporting.HtmlTextBox();
-            Telerik.Reporting.HtmlTextBox htmlPhoneValue = new Telerik.Reporting.HtmlTextBox();
-            htmlPhoneValue = new Telerik.Reporting.HtmlTextBox();
-            Telerik.Reporting.HtmlTextBox htmlAddress = new Telerik.Reporting.HtmlTextBox();
-            htmlAddress = new Telerik.Reporting.HtmlTextBox();
-            Telerik.Reporting.HtmlTextBox htmlAddressValue = new Telerik.Reporting.HtmlTextBox();
-            htmlAddressValue = new Telerik.Reporting.HtmlTextBox();
-            Telerik.Reporting.HtmlTextBox htmlCity = new Telerik.Reporting.HtmlTextBox();
-            Telerik.Reporting.HtmlTextBox htmlCityValue = new Telerik.Reporting.HtmlTextBox();
-            Telerik.Reporting.HtmlTextBox htmlZip = new Telerik.Reporting.HtmlTextBox();
-            Telerik.Reporting.HtmlTextBox htmlZipValue = new Telerik.Reporting.HtmlTextBox();
-            Telerik.Reporting.HtmlTextBox htmlHeadingMemberdetails = new Telerik.Reporting.HtmlTextBox();
-            Telerik.Reporting.HtmlTextBox htmlText = new Telerik.Reporting.HtmlTextBox();
-            Telerik.Reporting.HtmlTextBox htmlText2 = new Telerik.Reporting.HtmlTextBox();
-            Telerik.Reporting.HtmlTextBox htmlMemberID = new Telerik.Reporting.HtmlTextBox();
-            Telerik.Reporting.HtmlTextBox htmlMemberIDValue = new Telerik.Reporting.HtmlTextBox();
-            Telerik.Reporting.HtmlTextBox htmlMemberName = new Telerik.Reporting.HtmlTextBox();
-            Telerik.Reporting.HtmlTextBox htmlMemberNameValue = new Telerik.Reporting.HtmlTextBox();
-            Telerik.Reporting.HtmlTextBox htmlPlaneName = new Telerik.Reporting.HtmlTextBox();
-            Telerik.Reporting.HtmlTextBox htmlPlaneNameValue = new Telerik.Reporting.HtmlTextBox();
-            Telerik.Reporting.HtmlTextBox htmlEffectiveperiod = new Telerik.Reporting.HtmlTextBox();
-            Telerik.Reporting.HtmlTextBox htmlEffectiveperiodValue = new Telerik.Reporting.HtmlTextBox();
-            Telerik.Reporting.HtmlTextBox htmlUrl = new Telerik.Reporting.HtmlTextBox();
-            #endregion
-            shapeLeft.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.38D), Telerik.Reporting.Drawing.Unit.Inch(0.44D));
-            shapeLeft.Name = "shapeLeft";
-            shapeLeft.ShapeType = new Telerik.Reporting.Drawing.Shapes.LineShape(Telerik.Reporting.Drawing.Shapes.LineDirection.NS);
-            shapeLeft.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.05D), Telerik.Reporting.Drawing.Unit.Inch(2.0D));
-            shapeLeft.Stretch = true;
-            shapeLeft.Style.Font.Bold = false;
-            shapeLeft.Style.LineWidth = Telerik.Reporting.Drawing.Unit.Point(1D);
+            rptbook1.DocumentName = "MemberCard"; //Filename
+            rptirDCS.Name = "MemberCard";
 
-            Telerik.Reporting.HtmlTextBox htmlDateTop = new Telerik.Reporting.HtmlTextBox();
-            htmlDateTop.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.4D), Telerik.Reporting.Drawing.Unit.Inch(0.2D));
-            htmlDateTop.Name = "htmlDateTop";
-            htmlDateTop.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.3D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlDateTop.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(7D);
-            htmlDateTop.Style.Font.Bold = false;
-            htmlDateTop.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            htmlDateTop.Value = DateTime.Now.ToString("MM/dd/yyyy");
-
-
-            shapeTop.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.4D), Telerik.Reporting.Drawing.Unit.Inch(0.4D));
-            // shapeHeader.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.200000333786011D), Telerik.Reporting.Drawing.Unit.Inch(txtOrganziationPhone.Bottom.Value));
-            shapeTop.Name = "shapeTop";
-            shapeTop.ShapeType = new Telerik.Reporting.Drawing.Shapes.LineShape(Telerik.Reporting.Drawing.Shapes.LineDirection.EW);
-            shapeTop.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.35D), Telerik.Reporting.Drawing.Unit.Inch(0.0520833320915699D));
-            shapeTop.Stretch = true;
-            shapeTop.Style.Font.Bold = false;
-            shapeTop.Style.LineWidth = Telerik.Reporting.Drawing.Unit.Point(1D);
-
-            htmlHeading.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.450000333786011D), Telerik.Reporting.Drawing.Unit.Inch(shapeTop.Bottom.Value));
-            htmlHeading.Name = "htmlHeading";
-            htmlHeading.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.3D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlHeading.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(7D);
-            htmlHeading.Style.Font.Bold = false;
-            htmlHeading.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Center;
-            htmlHeading.Style.Color = System.Drawing.Color.Black;
-            htmlHeading.Value = "<sub style='font-size:7px;'>My Physician Plans</sub><span style='font-size:3px;'>TM</span>";
-
-            htmlMemberIDHeading.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.6500000333786011D), Telerik.Reporting.Drawing.Unit.Inch(htmlHeading.Bottom.Value));
-            htmlMemberIDHeading.Name = "htmlMemberIDHeading";
-            htmlMemberIDHeading.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.8D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlMemberIDHeading.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(5D);
-            htmlMemberIDHeading.Style.Font.Bold = false;
-            htmlMemberIDHeading.Style.Color = System.Drawing.Color.Black;
-            htmlMemberIDHeading.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Center;
-            htmlMemberIDHeading.Value = "Member ID Card";
-
-            htmlProvidereading.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.45D), Telerik.Reporting.Drawing.Unit.Inch(htmlMemberIDHeading.Bottom.Value));
-            htmlProvidereading.Name = "htmlProvidereading";
-            htmlProvidereading.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.5D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlProvidereading.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(5D);
-            htmlProvidereading.Style.Font.Bold = true;
-            htmlProvidereading.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            htmlProvidereading.Value = " Practice / Provider Details";
-
-            htmlName.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.45D), Telerik.Reporting.Drawing.Unit.Inch(htmlProvidereading.Bottom.Value));
-            htmlName.Name = "htmlTextBoxPatientName";
-            htmlName.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.5D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlName.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(5D);
-            htmlName.Style.Font.Bold = false;
-            htmlName.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            htmlName.Value = "Facility Name";
-
-            htmlNameValue.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(1.2D), Telerik.Reporting.Drawing.Unit.Inch(htmlProvidereading.Bottom.Value));
-            htmlNameValue.Name = "htmlNameValue";
-            htmlNameValue.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.5D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlNameValue.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(5D);
-            htmlNameValue.Style.Font.Bold = true;
-            htmlNameValue.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            htmlNameValue.Value = objProvider[0].OrganizationName;//"Akhil kumar raikanti burugupally medak";
-
-            htmlpcpname.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.45D), Telerik.Reporting.Drawing.Unit.Inch(htmlName.Bottom.Value));
-            htmlpcpname.Name = "htmlpcpname ";
-            htmlpcpname.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.5D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlpcpname.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(5D);
-            htmlpcpname.Style.Font.Bold = false;
-            htmlpcpname.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            htmlpcpname.Value = "PCP Name";
-
-            htmlpcpnameValue.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(1.2D), Telerik.Reporting.Drawing.Unit.Inch(htmlNameValue.Bottom.Value));
-            htmlpcpnameValue.Name = "htmlpcpnameValue ";
-            htmlpcpnameValue.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.5D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlpcpnameValue.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(5D);
-            htmlpcpnameValue.Style.Font.Bold = true;
-            htmlpcpnameValue.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            htmlpcpnameValue.Value = "Dr. " + (objProvider[0].LastName + " " + objProvider[0].FirstName + ", " + objProvider[0].Degree).ToUpper();//+" "+ specializationname; //"Akhil kumar raikanti burugupally medak";
-
-            htmlEmail.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.45D), Telerik.Reporting.Drawing.Unit.Inch(htmlpcpname.Bottom.Value));
-            htmlEmail.Name = "htmlEmail  ";
-            htmlEmail.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.5D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlEmail.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(5D);
-            htmlEmail.Style.Font.Bold = false;
-            htmlEmail.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            htmlEmail.Value = "Email";
-
-            htmlEmailValue.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(1.2D), Telerik.Reporting.Drawing.Unit.Inch(htmlpcpnameValue.Bottom.Value));
-            htmlEmailValue.Name = "htmlEmailValue  ";
-            htmlEmailValue.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.5D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlEmailValue.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(5D);
-            htmlEmailValue.Style.Font.Bold = true;
-            htmlEmailValue.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            htmlEmailValue.Value = objProvider[0].OrgEmail;//"akhil.raikanti.iphysicianhub.com";
-
-            htmlPhone.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.45D), Telerik.Reporting.Drawing.Unit.Inch(htmlEmail.Bottom.Value));
-            htmlPhone.Name = "htmlPhone    ";
-            htmlPhone.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.5D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlPhone.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(5D);
-            htmlPhone.Style.Font.Bold = false;
-            htmlPhone.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            htmlPhone.Value = "Phone";
-
-            htmlPhoneValue.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(1.2D), Telerik.Reporting.Drawing.Unit.Inch(htmlEmailValue.Bottom.Value));
-            htmlPhoneValue.Name = "htmlPhoneValue    ";
-            htmlPhoneValue.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.1D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlPhoneValue.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(5D);
-            htmlPhoneValue.Style.Font.Bold = true;
-            htmlPhoneValue.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            htmlPhoneValue.Value = objProvider[0].OrgPhone;//"955-081-8739";
-
-
-            htmlFax.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.45D), Telerik.Reporting.Drawing.Unit.Inch(htmlPhone.Bottom.Value));
-            htmlFax.Name = "htmlFax   ";
-            htmlFax.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.5D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlFax.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(5D);
-            htmlFax.Style.Font.Bold = false;
-            htmlFax.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            htmlFax.Value = "Fax";
-
-            htmlFaxValue.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(1.2D), Telerik.Reporting.Drawing.Unit.Inch(htmlPhoneValue.Bottom.Value));
-            htmlFaxValue.Name = "htmlFaxValue   ";
-            htmlFaxValue.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.1D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlFaxValue.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(5D);
-            htmlFaxValue.Style.Font.Bold = true;
-            htmlFaxValue.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            htmlFaxValue.Value = objProvider[0].Fax;//732-274-6777";
-
-         
-
-            htmlAddress.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.45D), Telerik.Reporting.Drawing.Unit.Inch(htmlPhone.Bottom.Value));
-            htmlAddress.Name = "htmlAddress";
-            htmlAddress.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.5D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlAddress.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(5D);
-            htmlAddress.Style.Font.Bold = false;
-            htmlAddress.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            htmlAddress.Value = "Street Address";
-
-            htmlAddressValue.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(1.2D), Telerik.Reporting.Drawing.Unit.Inch(htmlPhoneValue.Bottom.Value));
-            htmlAddressValue.Name = "htmlAddressValue    ";
-            htmlAddressValue.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.5D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlAddressValue.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(5D);
-            htmlAddressValue.Style.Font.Bold = true;
-            htmlAddressValue.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            htmlAddressValue.Value = objProvider[0].Address;//"462 NEW ROAD";
-
-            htmlCity.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.45D), Telerik.Reporting.Drawing.Unit.Inch(htmlAddress.Bottom.Value));
-            htmlCity.Name = "htmlCity ";
-            htmlCity.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.5D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlCity.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(5D);
-            htmlCity.Style.Font.Bold = false;
-            htmlCity.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            htmlCity.Value = "City";
-
-            htmlCityValue.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(1.2D), Telerik.Reporting.Drawing.Unit.Inch(htmlAddressValue.Bottom.Value));
-            htmlCityValue.Name = "htmlCityValue     ";
-            htmlCityValue.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.5D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlCityValue.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(5D);
-            htmlCityValue.Style.Font.Bold = true;
-            htmlCityValue.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            htmlCityValue.Value = objProvider[0].CityName;//"MONMOUTH JUNCTION";
-
-            htmlZip.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.45D), Telerik.Reporting.Drawing.Unit.Inch(htmlCity.Bottom.Value));
-            htmlZip.Name = "htmlZip ";
-            htmlZip.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.5D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlZip.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(5D);
-            htmlZip.Style.Font.Bold = false;
-            htmlZip.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            htmlZip.Value = "State / ZIP";
-
-            htmlZipValue.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(1.2D), Telerik.Reporting.Drawing.Unit.Inch(htmlCityValue.Bottom.Value));
-            htmlZipValue.Name = "htmlZipValue      ";
-            htmlZipValue.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.5D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlZipValue.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(5D);
-            htmlZipValue.Style.Font.Bold = true;
-            htmlZipValue.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            htmlZipValue.Value = objProvider[0].StateName + "/" + " " + objProvider[0].Zip;// NEW JERSEY / 08852";
-
-            shapemiddledashed.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.4D), Telerik.Reporting.Drawing.Unit.Inch(htmlZipValue.Bottom.Value));
-            shapemiddledashed.Name = "shapemiddledashed";
-            shapemiddledashed.ShapeType = new Telerik.Reporting.Drawing.Shapes.LineShape(Telerik.Reporting.Drawing.Shapes.LineDirection.EW);
-            shapemiddledashed.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.35D), Telerik.Reporting.Drawing.Unit.Inch(0.0520833320915699D));
-            shapemiddledashed.Stretch = true;
-            shapemiddledashed.Style.Font.Bold = false;
-            shapemiddledashed.Style.LineStyle = Telerik.Reporting.Drawing.LineStyle.Dashed;
-            shapemiddledashed.Style.LineWidth = Telerik.Reporting.Drawing.Unit.Point(1D);
-
-            htmlHeadingMemberdetails.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.45D), Telerik.Reporting.Drawing.Unit.Inch(shapemiddledashed.Bottom.Value));
-            htmlHeadingMemberdetails.Name = "htmlHeadingMemberdetails ";
-            htmlHeadingMemberdetails.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.9D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlHeadingMemberdetails.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(5D);
-            htmlHeadingMemberdetails.Style.Font.Bold = true;
-            htmlHeadingMemberdetails.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            htmlHeadingMemberdetails.Value = "Member Details";
-
-            htmlText.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.45D), Telerik.Reporting.Drawing.Unit.Inch(htmlHeadingMemberdetails.Bottom.Value));
-            htmlText.Name = "htmlText ";
-            htmlText.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.0D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlText.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(5D);
-            htmlText.Style.Font.Bold = false;
-            htmlText.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            htmlText.Value = "Recommended to upload photo. If the photo is not uploaded, ";
-
-            htmlText2.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.45D), Telerik.Reporting.Drawing.Unit.Inch(htmlText.Bottom.Value));
-            htmlText2.Name = "htmlText2 ";
-            htmlText2.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.8D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlText2.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(5D);
-            htmlText2.Style.Font.Bold = false;
-            htmlText2.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            htmlText2.Value = "photo ID is required at the time of visit ";
-
-            htmlMemberID.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.45D), Telerik.Reporting.Drawing.Unit.Inch(htmlHeadingMemberdetails.Bottom.Value));
-            htmlMemberID.Name = "htmlMemberID ";
-            htmlMemberID.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.5D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlMemberID.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(5D);
-            htmlMemberID.Style.Font.Bold = false;
-            htmlMemberID.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            htmlMemberID.Value = "Member ID";
-
-            htmlMemberIDValue.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(1.2D), Telerik.Reporting.Drawing.Unit.Inch(htmlHeadingMemberdetails.Bottom.Value));
-            htmlMemberIDValue.Name = "htmlMemberIDValue      ";
-            htmlMemberIDValue.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.1D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlMemberIDValue.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(4D);
-            htmlMemberIDValue.Style.Font.Bold = true;
-            htmlMemberIDValue.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            htmlMemberIDValue.Value = Convert.ToString(objMemberPlanDetails[0].PlanCode) + "/" + Convert.ToString(objMemberDetails[0].MemberCode); //"PGH/0010281118";
-
-            htmlMemberName.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.45D), Telerik.Reporting.Drawing.Unit.Inch(htmlMemberID.Bottom.Value));
-            htmlMemberName.Name = "htmlMemberName ";
-            htmlMemberName.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.5D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlMemberName.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(5D);
-            htmlMemberName.Style.Font.Bold = false;
-            htmlMemberName.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            htmlMemberName.Value = "Member Name";
-
-            htmlMemberNameValue.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(1.2D), Telerik.Reporting.Drawing.Unit.Inch(htmlMemberIDValue.Bottom.Value));
-            htmlMemberNameValue.Name = "htmlMemberNameValue      ";
-            htmlMemberNameValue.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.5D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlMemberNameValue.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(5D);
-            htmlMemberNameValue.Style.Font.Bold = true;
-            htmlMemberNameValue.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            htmlMemberNameValue.Value = (objMemberDetails[0].LastName + " " + objMemberDetails[0].FirstName).ToUpper(); ;//"LUPIA URSULA";
-
-            htmlPlaneName.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.45D), Telerik.Reporting.Drawing.Unit.Inch(htmlMemberName.Bottom.Value));
-            htmlPlaneName.Name = "htmlPlaneName ";
-            htmlPlaneName.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.5D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlPlaneName.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(5D);
-            htmlPlaneName.Style.Font.Bold = false;
-            htmlPlaneName.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            htmlPlaneName.Value = "Plan Name";
-
-            htmlPlaneNameValue.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(1.2D), Telerik.Reporting.Drawing.Unit.Inch(htmlMemberNameValue.Bottom.Value));
-            htmlPlaneNameValue.Name = "htmlMemberNameValue      ";
-            htmlPlaneNameValue.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.5D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlPlaneNameValue.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(5D);
-            htmlPlaneNameValue.Style.Font.Bold = true;
-            htmlPlaneNameValue.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            htmlPlaneNameValue.Value = objMemberPlanDetails[0].PlanName;// + " " + objMemberPlanDetails[0].Duration + " " + "Plan";//"PPCP 6-Month Plan[Self - Pay]";
-
-            htmlEffectiveperiod.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.45D), Telerik.Reporting.Drawing.Unit.Inch(htmlPlaneName.Bottom.Value));
-            htmlEffectiveperiod.Name = "htmlEffectiveperiod ";
-            htmlEffectiveperiod.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.5D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlEffectiveperiod.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(5D);
-            htmlEffectiveperiod.Style.Font.Bold = false;
-            htmlEffectiveperiod.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            htmlEffectiveperiod.Value = "Effective Period";
-
-            htmlEffectiveperiodValue.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(1.2D), Telerik.Reporting.Drawing.Unit.Inch(htmlPlaneNameValue.Bottom.Value));
-            htmlEffectiveperiodValue.Name = "htmlEffectiveperiodValue      ";
-            htmlEffectiveperiodValue.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.5D), Telerik.Reporting.Drawing.Unit.Inch(0.10000000715255737D));
-            htmlEffectiveperiodValue.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(5D);
-            htmlEffectiveperiodValue.Style.Font.Bold = true;
-            htmlEffectiveperiodValue.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            if (objMemberPlanDetails[0].PlanStartDate != null && objMemberPlanDetails[0].PlanStartDate != "" &&
-                objMemberPlanDetails[0].PlanEndDate != null && objMemberPlanDetails[0].PlanEndDate != "")
+            if (i == 0)
             {
-                DateTime plandatestart = Convert.ToDateTime(objMemberPlanDetails[0].PlanStartDate);
-                string startpalndate = plandatestart.ToString("MM/dd/yyyy");
-                DateTime planenddate = Convert.ToDateTime(objMemberPlanDetails[0].PlanEndDate);
-                string endplandate = planenddate.ToString("MM/dd/yyyy");
-                htmlEffectiveperiodValue.Value = startpalndate + " " + "to" + " " + endplandate;//"11/27/2018 to 05/31/2019";
+                i = 1;
+                # region Combined card                
 
+                Telerik.Reporting.PictureBox pictureBox = new Telerik.Reporting.PictureBox();
+                pictureBox.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.1D), Telerik.Reporting.Drawing.Unit.Inch(0D));
+                pictureBox.MimeType = "";
+                pictureBox.Name = "pictureBox3";
+                pictureBox.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.2D), Telerik.Reporting.Drawing.Unit.Inch(0.5D));
+                pictureBox.Sizing = Telerik.Reporting.Drawing.ImageSizeMode.ScaleProportional;
+                pictureBox.Value = LogoImage;//"= Parameters.Logo.Value";
+
+                Telerik.Reporting.HtmlTextBox txtorgName = new Telerik.Reporting.HtmlTextBox();
+                txtorgName.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(2.5D), Telerik.Reporting.Drawing.Unit.Inch(0.2D));
+                txtorgName.Name = "txtorgName";
+                txtorgName.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.0D), Telerik.Reporting.Drawing.Unit.Inch(0.5D)); //new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.1800000667572021D), Telerik.Reporting.Drawing.Unit.Inch(0.15000000596046448D));
+                txtorgName.Value = "<span style='color: white'><b>Primary Care Plan </b> </span>";//                      : " + Convert.ToString(dtPatientDetails.Rows[0]["EntityName"]);
+                txtorgName.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                txtorgName.Style.Font.Name = fontname;
+                txtorgName.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(8.5D);
+
+                Telerik.Reporting.Shape horizantalShape = new Telerik.Reporting.Shape();
+                horizantalShape = new Telerik.Reporting.Shape();
+                horizantalShape.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.0D), Telerik.Reporting.Drawing.Unit.Inch(pictureBox.Bottom.Value + 0.01D));
+                horizantalShape.Name = "horizantalShape";
+                horizantalShape.ShapeType = new Telerik.Reporting.Drawing.Shapes.LineShape(Telerik.Reporting.Drawing.Shapes.LineDirection.EW);
+                horizantalShape.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(3.80082919692993164D), Telerik.Reporting.Drawing.Unit.Inch(0.0520833320915699D));
+                horizantalShape.Style.LineWidth = Telerik.Reporting.Drawing.Unit.Point(0.5D);
+                horizantalShape.Style.Color = System.Drawing.Color.White;
+
+                Telerik.Reporting.HtmlTextBox txtMemberId = new Telerik.Reporting.HtmlTextBox();
+                txtMemberId.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.1D), Telerik.Reporting.Drawing.Unit.Inch(horizantalShape.Bottom.Value + 0.1));
+                txtMemberId.Name = "txtMemberId";
+                txtMemberId.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(3.5D), Telerik.Reporting.Drawing.Unit.Inch(0.29996060132980347D)); //new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.1800000667572021D), Telerik.Reporting.Drawing.Unit.Inch(0.15000000596046448D));
+                txtMemberId.Value = "<span style='color: white;'>Member ID: <b>" + MemberId + "</b>" 
+                                    + "<br/>Member Name: <b>" + MemberName + "</b></span> ";//                      : " + Convert.ToString(dtPatientDetails.Rows[0]["EntityName"]);
+                txtMemberId.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                txtMemberId.Style.Font.Name = fontname;
+
+                //Telerik.Reporting.HtmlTextBox txtMemberName = new Telerik.Reporting.HtmlTextBox();
+                //txtMemberName.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.1D), Telerik.Reporting.Drawing.Unit.Inch(txtMemberId.Bottom.Value));
+                //txtMemberName.Name = "txtMemberName";
+                //txtMemberName.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.5D), Telerik.Reporting.Drawing.Unit.Inch(0.29996060132980347D)); //new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.1800000667572021D), Telerik.Reporting.Drawing.Unit.Inch(0.15000000596046448D));
+                //txtMemberName.Value = "<span style='color: white;'>Member Name :</span> <span style='color: white; font-weight:bold'>" + MemberName + "</span>";//                      : " + Convert.ToString(dtPatientDetails.Rows[0]["EntityName"]);
+                //txtMemberName.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                //txtMemberName.Style.Font.Name = "Arial";
+
+                Telerik.Reporting.HtmlTextBox txtPlanName = new Telerik.Reporting.HtmlTextBox();
+                txtPlanName.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.1D), Telerik.Reporting.Drawing.Unit.Inch(txtMemberId.Bottom.Value + 0.1D));
+                txtPlanName.Name = "txtPlanName";
+                txtPlanName.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.4D), Telerik.Reporting.Drawing.Unit.Inch(0.29996060132980347D)); //new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.1800000667572021D), Telerik.Reporting.Drawing.Unit.Inch(0.15000000596046448D));
+                txtPlanName.Value = "<span style='color: white;'>Plan: " + PlanName + "<br/>Effective: " + EffectiveperiodValue + "</span>";//                      : " + Convert.ToString(dtPatientDetails.Rows[0]["EntityName"]);
+                txtPlanName.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                txtPlanName.Style.Font.Name = fontname;
+
+                Telerik.Reporting.HtmlTextBox txtPlanAmount = new Telerik.Reporting.HtmlTextBox();
+                txtPlanAmount.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(2.4D), Telerik.Reporting.Drawing.Unit.Inch(txtMemberId.Bottom.Value + 0.1D));
+                txtPlanAmount.Name = "txtPlanAmount";
+                txtPlanAmount.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.2D), Telerik.Reporting.Drawing.Unit.Inch(0.29996060132980347D)); //new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.1800000667572021D), Telerik.Reporting.Drawing.Unit.Inch(0.15000000596046448D));
+                txtPlanAmount.Value = "<span style='color: white;'><b>Copay</b><br/> In-Person: $35<br/>Tele-Visit: $25</span>";//                      : " + Convert.ToString(dtPatientDetails.Rows[0]["EntityName"]);
+                txtPlanAmount.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                txtPlanAmount.Style.Font.Name = fontname;
+
+                //Telerik.Reporting.HtmlTextBox txtEffectiveDate = new Telerik.Reporting.HtmlTextBox();
+                //txtEffectiveDate.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.1D), Telerik.Reporting.Drawing.Unit.Inch(txtPlanAmount.Bottom.Value));
+                //txtEffectiveDate.Name = "txtEffectiveDate";
+                //txtEffectiveDate.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.5D), Telerik.Reporting.Drawing.Unit.Inch(0.29996060132980347D)); //new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.1800000667572021D), Telerik.Reporting.Drawing.Unit.Inch(0.15000000596046448D));
+                //txtEffectiveDate.Value = "<span style='color: white;'>Effective : </span><span style='color: white; font-weight:bold'>" + EffectiveperiodValue + "</span>";//                      : " + Convert.ToString(dtPatientDetails.Rows[0]["EntityName"]);
+                //txtEffectiveDate.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                //txtEffectiveDate.Style.Font.Name = "Arial";
+
+                Telerik.Reporting.HtmlTextBox txtPCPName = new Telerik.Reporting.HtmlTextBox();
+                txtPCPName.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.1D), Telerik.Reporting.Drawing.Unit.Inch(txtPlanAmount.Bottom.Value + 0.1D));
+                txtPCPName.Name = "txtPCPName";
+                txtPCPName.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.4D), Telerik.Reporting.Drawing.Unit.Inch(0.29996060132980347D)); //new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.1800000667572021D), Telerik.Reporting.Drawing.Unit.Inch(0.15000000596046448D));
+                txtPCPName.Value = "<span style='color: white;'>PCP Name: " + PCPname + "<br/>Facility Name: " + OrganizationName + "</span>";//                      : " + Convert.ToString(dtPatientDetails.Rows[0]["EntityName"]);
+                txtPCPName.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                txtPCPName.Style.Font.Name = fontname;
+
+                Telerik.Reporting.HtmlTextBox txtPhone = new Telerik.Reporting.HtmlTextBox();
+                txtPhone.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(2.4D), Telerik.Reporting.Drawing.Unit.Inch(txtPlanAmount.Bottom.Value + 0.1D));
+                txtPhone.Name = "txtPhone";
+                txtPhone.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.2D), Telerik.Reporting.Drawing.Unit.Inch(0.29996060132980347D)); //new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.1800000667572021D), Telerik.Reporting.Drawing.Unit.Inch(0.15000000596046448D));
+                txtPhone.Value = "<span style='color: white;'>Phone: " + OrgPhone + "</span>";
+                txtPhone.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                txtPhone.Style.Font.Name = fontname;
+
+                //Telerik.Reporting.HtmlTextBox txtFacilityName = new Telerik.Reporting.HtmlTextBox();
+                //txtFacilityName.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.1D), Telerik.Reporting.Drawing.Unit.Inch(txtPhone.Bottom.Value));
+                //txtFacilityName.Name = "txtFacilityName";
+                //txtFacilityName.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.5D), Telerik.Reporting.Drawing.Unit.Inch(0.29996060132980347D)); //new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.1800000667572021D), Telerik.Reporting.Drawing.Unit.Inch(0.15000000596046448D));
+                //txtFacilityName.Value = "<span style='color: white;'>Facility Name : " + OrganizationName + "</span>";
+                //txtFacilityName.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                //txtFacilityName.Style.Font.Name = "Arial";
+
+                Telerik.Reporting.HtmlTextBox txtFacilityAddress = new Telerik.Reporting.HtmlTextBox();
+                txtFacilityAddress.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.1D), Telerik.Reporting.Drawing.Unit.Inch(txtPhone.Bottom.Value));
+                txtFacilityAddress.Name = "txtFacilityAddress";
+                txtFacilityAddress.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(3.7D), Telerik.Reporting.Drawing.Unit.Inch(0.19996060132980347D)); //new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.1800000667572021D), Telerik.Reporting.Drawing.Unit.Inch(0.15000000596046448D));
+                txtFacilityAddress.Value = "<span style='color: white;'>Address: " + Address + "<br/><br/>MyPhysicianPlan is a primary care plan and not insurance.</span>";
+                txtFacilityAddress.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                txtFacilityAddress.Style.Font.Name = fontname;
+
+                detail.Items.AddRange(new Telerik.Reporting.ReportItemBase[] {
+                                         pictureBox,
+                                         txtorgName,
+                                         horizantalShape,
+                                         txtMemberId,
+                                         //txtMemberName,
+                                         txtPlanName,
+                                         txtPlanAmount,
+                                         //txtEffectiveDate,
+                                         txtPCPName,
+                                         txtPhone,
+                                         //txtFacilityName,
+                                         txtFacilityAddress
+                                    });
+
+                #endregion
             }
-            else htmlEffectiveperiodValue.Value = "";
+            if (i == 1)
+            {
+                #region RX card
 
-            // htmlEffectiveperiodValue.Value = (objMemberPlanDetails[0].PlanStartDate) +" "+ "to" + " " + objMemberPlanDetails[0].PlanEndDate;//"11/27/2018 to 05/31/2019";
+                double startX = 2.3D;
 
-            shapebottomfirst.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.4D), Telerik.Reporting.Drawing.Unit.Inch(htmlEffectiveperiod.Bottom.Value));
-            shapebottomfirst.Name = "shapebottomfirst";
-            shapebottomfirst.ShapeType = new Telerik.Reporting.Drawing.Shapes.LineShape(Telerik.Reporting.Drawing.Shapes.LineDirection.EW);
-            shapebottomfirst.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.35D), Telerik.Reporting.Drawing.Unit.Inch(0.0520833320915699D));
-            shapebottomfirst.Stretch = true;
-            shapebottomfirst.Style.Font.Bold = false;
-            shapebottomfirst.Style.LineWidth = Telerik.Reporting.Drawing.Unit.Point(1D);
+                if (objMemberPlanDetails.Count == 0)
+                {
+                    startX = 0D;
+                    rptirDCS.Name = "RxCard";
+                    rptbook1.DocumentName = "RxCard"; //Filename
+                }
+                if (objMemberPlanDetails.Count > 0)
+                { 
+                    Telerik.Reporting.Shape dividerLine = new Telerik.Reporting.Shape();
+                    dividerLine = new Telerik.Reporting.Shape();
+                    dividerLine.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.0D), Telerik.Reporting.Drawing.Unit.Inch(startX));
+                    dividerLine.Name = "dividerLine";
+                    dividerLine.ShapeType = new Telerik.Reporting.Drawing.Shapes.LineShape(Telerik.Reporting.Drawing.Shapes.LineDirection.EW);
+                    dividerLine.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(3.80082919692993164D), Telerik.Reporting.Drawing.Unit.Inch(0.0520833320915699D));
+                    dividerLine.Style.LineStyle = Telerik.Reporting.Drawing.LineStyle.Dashed;
+                    dividerLine.Style.LineWidth = Telerik.Reporting.Drawing.Unit.Point(0.5D);
+                    dividerLine.Style.Color = System.Drawing.Color.White;
 
+                    detail.Items.AddRange(new Telerik.Reporting.ReportItemBase[] { dividerLine });
+                }
 
-            htmlUrl.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.45D), Telerik.Reporting.Drawing.Unit.Inch(shapebottomfirst.Bottom.Value));
-            htmlUrl.Name = "htmlUrl ";
-            htmlUrl.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.85D), Telerik.Reporting.Drawing.Unit.Inch(0.12000000715255737D));
-            htmlUrl.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(5D);
-            htmlUrl.Style.Font.Bold = false;
-            htmlUrl.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            htmlUrl.Value = "For plan information, visit:";
+                Telerik.Reporting.PictureBox pictureBoxrx = new Telerik.Reporting.PictureBox();
+                pictureBoxrx.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.1D), Telerik.Reporting.Drawing.Unit.Inch(startX + 0.1D));
+                pictureBoxrx.MimeType = "";
+                pictureBoxrx.Name = "pictureBox3";
+                pictureBoxrx.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.2D), Telerik.Reporting.Drawing.Unit.Inch(0.5D));
+                pictureBoxrx.Sizing = Telerik.Reporting.Drawing.ImageSizeMode.ScaleProportional;
+                pictureBoxrx.Value = LogoImage;
 
-            Telerik.Reporting.HtmlTextBox htmlUrlText = new Telerik.Reporting.HtmlTextBox();
-            htmlUrlText.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(1.25D), Telerik.Reporting.Drawing.Unit.Inch(shapebottomfirst.Bottom.Value));
-            htmlUrlText.Name = "htmlUrlText ";
-            htmlUrlText.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.4D), Telerik.Reporting.Drawing.Unit.Inch(0.12000000715255737D));
-            htmlUrlText.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(5D);
-            htmlUrlText.Style.Font.Bold = false;
-            htmlUrlText.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
-            htmlAddress.Style.VerticalAlign = Telerik.Reporting.Drawing.VerticalAlign.Top;
-            htmlUrlText.Value = "<strong> www.myphysicianplan.com</strong> ";// "<strong> www.myphysicianplan.com</strong> ";
+                Telerik.Reporting.HtmlTextBox txtRxorgName = new Telerik.Reporting.HtmlTextBox();
+                txtRxorgName.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(2D), Telerik.Reporting.Drawing.Unit.Inch(startX + 0.2D));
+                txtRxorgName.Name = "txtRxorgName";
+                txtRxorgName.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.7D), Telerik.Reporting.Drawing.Unit.Inch(0.5D)); //new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.1800000667572021D), Telerik.Reporting.Drawing.Unit.Inch(0.15000000596046448D));
+                txtRxorgName.Value = "<span style='color: white;'><b>Prescription Savings Card</b><br/> FREE CARD - NO EXPIRY</span>";//                      : " + Convert.ToString(dtPatientDetails.Rows[0]["EntityName"]);
+                txtRxorgName.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                txtRxorgName.Style.Font.Name = fontname;
 
-            shapeRight.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(2.72D), Telerik.Reporting.Drawing.Unit.Inch(0.44D));
-            shapeRight.Name = "shapeRight";
-            shapeRight.ShapeType = new Telerik.Reporting.Drawing.Shapes.LineShape(Telerik.Reporting.Drawing.Shapes.LineDirection.NS);
-            shapeRight.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.05D), Telerik.Reporting.Drawing.Unit.Inch(2.0D));
-            shapeRight.Stretch = true;
-            shapeRight.Style.Font.Bold = false;
-            shapeRight.Style.LineWidth = Telerik.Reporting.Drawing.Unit.Point(1D);
+                Telerik.Reporting.Shape horizantalShaperx = new Telerik.Reporting.Shape();
+                horizantalShaperx = new Telerik.Reporting.Shape();
+                horizantalShaperx.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.0D), Telerik.Reporting.Drawing.Unit.Inch(pictureBoxrx.Bottom.Value + 0.01D));
+                horizantalShaperx.Name = "horizantalShaperx";
+                horizantalShaperx.ShapeType = new Telerik.Reporting.Drawing.Shapes.LineShape(Telerik.Reporting.Drawing.Shapes.LineDirection.EW);
+                horizantalShaperx.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(3.80082919692993164D), Telerik.Reporting.Drawing.Unit.Inch(0.0520833320915699D));
+                horizantalShaperx.Style.LineWidth = Telerik.Reporting.Drawing.Unit.Point(0.5D);
+                horizantalShaperx.Style.Color = System.Drawing.Color.White;
 
+                Telerik.Reporting.HtmlTextBox txtPharmasist = new Telerik.Reporting.HtmlTextBox();
+                txtPharmasist.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.1D), Telerik.Reporting.Drawing.Unit.Inch(horizantalShaperx.Bottom.Value + 0.1));
+                txtPharmasist.Name = "txtPharmasist";
+                txtPharmasist.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.8D), Telerik.Reporting.Drawing.Unit.Inch(0.29996060132980347D)); //new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.1800000667572021D), Telerik.Reporting.Drawing.Unit.Inch(0.15000000596046448D));
+                txtPharmasist.Value = "<span style='color: white;'>Show to your pharmacist</span>";//                      : " + Convert.ToString(dtPatientDetails.Rows[0]["EntityName"]);
+                txtPharmasist.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                txtPharmasist.Style.Font.Name = fontname;
 
+                Telerik.Reporting.HtmlTextBox txtPharmaPlan = new Telerik.Reporting.HtmlTextBox();
+                txtPharmaPlan.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(1.8D), Telerik.Reporting.Drawing.Unit.Inch(horizantalShaperx.Bottom.Value + 0.1));
+                txtPharmaPlan.Name = "txtPharmaPlan";
+                txtPharmaPlan.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.9D), Telerik.Reporting.Drawing.Unit.Inch(0.29996060132980347D)); //new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.1800000667572021D), Telerik.Reporting.Drawing.Unit.Inch(0.15000000596046448D));
+                txtPharmaPlan.Value = "<span style='color: white;'>Pharmacies Call: 844-722-7794</span>";//                      : " + Convert.ToString(dtPatientDetails.Rows[0]["EntityName"]);
+                txtPharmaPlan.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                txtPharmaPlan.Style.Font.Name = fontname;
 
-            shapebottom.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.4D), Telerik.Reporting.Drawing.Unit.Inch(2.4D));//2.8D
-            shapebottom.Name = "shapebottom";
-            shapebottom.ShapeType = new Telerik.Reporting.Drawing.Shapes.LineShape(Telerik.Reporting.Drawing.Shapes.LineDirection.EW);
-            shapebottom.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.35D), Telerik.Reporting.Drawing.Unit.Inch(0.0520833320915699D));
-            shapebottom.Stretch = true;
-            shapebottom.Style.Font.Bold = false;
-            shapebottom.Style.LineWidth = Telerik.Reporting.Drawing.Unit.Point(1D);
+                Telerik.Reporting.HtmlTextBox txtRxDetails = new Telerik.Reporting.HtmlTextBox();
+                txtRxDetails.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.1D), Telerik.Reporting.Drawing.Unit.Inch(txtPharmaPlan.Bottom.Value));
+                txtRxDetails.Name = "txtRxDetails";
+                txtRxDetails.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.5D), Telerik.Reporting.Drawing.Unit.Inch(0.29996060132980347D)); //new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.1800000667572021D), Telerik.Reporting.Drawing.Unit.Inch(0.15000000596046448D));
+                txtRxDetails.Value = "<span style='color: white; font-weight:bold'>RxBin: 610852<br/> RxPCN: CAPLRX <br/>RxGRP: CRA23</span> ";//                      : " + Convert.ToString(dtPatientDetails.Rows[0]["EntityName"]);
+                txtRxDetails.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                txtRxDetails.Style.Font.Name = fontname;
 
+                Telerik.Reporting.HtmlTextBox txtRxMemberId = new Telerik.Reporting.HtmlTextBox();
+                txtRxMemberId.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.1D), Telerik.Reporting.Drawing.Unit.Inch(txtRxDetails.Bottom.Value + 0.1));
+                txtRxMemberId.Name = "txtRxMemberId";
+                txtRxMemberId.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(3.5D), Telerik.Reporting.Drawing.Unit.Inch(0.29996060132980347D)); //new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.1800000667572021D), Telerik.Reporting.Drawing.Unit.Inch(0.15000000596046448D));
+                txtRxMemberId.Value = "<span style='color: white'>Member ID: </span> <span style='color: white; font-weight:bold'>" + MemberId + "</span>";//                      : " + Convert.ToString(dtPatientDetails.Rows[0]["EntityName"]);
+                txtRxMemberId.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                txtRxMemberId.Style.Font.Name = fontname;
 
+                Telerik.Reporting.HtmlTextBox txtRxNote = new Telerik.Reporting.HtmlTextBox();
+                txtRxNote.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.1D), Telerik.Reporting.Drawing.Unit.Inch(txtRxMemberId.Bottom.Value + 0.1));
+                txtRxNote.Name = "txtRxNote";
+                txtRxNote.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(3.5D), Telerik.Reporting.Drawing.Unit.Inch(0.29996060132980347D)); //new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.1800000667572021D), Telerik.Reporting.Drawing.Unit.Inch(0.15000000596046448D));
+                txtRxNote.Value = "<span style='color: white; font-weight:bold'>This Saving card is not an insurance program<br/> and canot be combined with insurance</span>";
+                txtRxNote.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                txtRxNote.Style.Font.Name = fontname;
 
-            detail.Items.AddRange(new Telerik.Reporting.ReportItemBase[] {
-                                      shapeTop,htmlHeading,htmlMemberIDHeading,htmlProvidereading,htmlName,
-                                      htmlNameValue,shapeLeft,shapeRight,shapebottom,htmlpcpname,htmlpcpnameValue,htmlEmail,htmlEmailValue,htmlPhone,htmlPhoneValue
-                                      ,htmlAddress,htmlAddressValue,htmlCity,htmlCityValue,htmlZip,htmlZipValue,shapemiddledashed,htmlHeadingMemberdetails,
-                                      htmlMemberID,htmlMemberIDValue,htmlMemberName,htmlMemberNameValue,htmlPlaneName,htmlPlaneNameValue,
-                                      htmlEffectiveperiod,htmlEffectiveperiodValue,shapebottomfirst,htmlUrlText,htmlUrl
-                                      ,htmlDateTop
-            });
+                Telerik.Reporting.HtmlTextBox txtRxTermNote = new Telerik.Reporting.HtmlTextBox();
+                txtRxTermNote.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.1D), Telerik.Reporting.Drawing.Unit.Inch(txtRxNote.Bottom.Value + 0.1));
+                txtRxTermNote.Name = "txtRxTermNote";
+                txtRxTermNote.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(3.5D), Telerik.Reporting.Drawing.Unit.Inch(0.29996060132980347D)); //new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.1800000667572021D), Telerik.Reporting.Drawing.Unit.Inch(0.15000000596046448D));
+                txtRxTermNote.Value = "<span style='color: white; font-weight:bold; font-size: 8px;'>This is a free card and may not be sold. <br/> Void where prohibited by law.</span>";
+                txtRxTermNote.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                txtRxTermNote.Style.Font.Name = fontname;
 
-            rptirDCS.Items.AddRange(new Telerik.Reporting.ReportItemBase[] { detail });
-            rptirDCS.Name = "Attendant Card";
+                Telerik.Reporting.HtmlTextBox txtRximgtoptext = new Telerik.Reporting.HtmlTextBox();
+                txtRximgtoptext.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(3D), Telerik.Reporting.Drawing.Unit.Inch(txtRxNote.Bottom.Value ));
+                txtRximgtoptext.Name = "txtRximgtoptext";
+                txtRximgtoptext.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.5D), Telerik.Reporting.Drawing.Unit.Inch(0.1D)); //new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.1800000667572021D), Telerik.Reporting.Drawing.Unit.Inch(0.15000000596046448D));
+                txtRximgtoptext.Value = "<span style='color: white; font-weight:bold; font-size: 8px;'>Powered By</span>";
+                //txtRximgtoptext.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                txtRximgtoptext.Style.Font.Name = fontname;
+
+                Telerik.Reporting.PictureBox rximgBox = new Telerik.Reporting.PictureBox();
+                rximgBox.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(3D), Telerik.Reporting.Drawing.Unit.Inch(txtRximgtoptext.Bottom.Value));
+                rximgBox.MimeType = "";
+                rximgBox.Name = "rximgBox";
+                rximgBox.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.4D), Telerik.Reporting.Drawing.Unit.Inch(0.1D));
+                rximgBox.Sizing = Telerik.Reporting.Drawing.ImageSizeMode.ScaleProportional;
+                rximgBox.Value = capitalRxImage;
+
+                detail.Items.AddRange(new Telerik.Reporting.ReportItemBase[] {
+                                         pictureBoxrx,
+                                         txtRxorgName,
+                                         horizantalShaperx,
+                                         txtRxDetails,
+                                         txtRxMemberId,
+                                         txtPharmasist,
+                                         txtPharmaPlan,
+                                         txtRxNote,
+                                         txtRxTermNote,
+                                         txtRximgtoptext,
+                                         rximgBox
+                                    });
+
+                i = 1;
+                #endregion
+            }
+            detail.Style.BackgroundColor = System.Drawing.ColorTranslator.FromHtml("#9c55c4");
+
+            rptirDCS.Items.AddRange(new Telerik.Reporting.ReportItemBase[] { detail });            
+
             rptirDCS.PageSettings.Margins = new Telerik.Reporting.Drawing.MarginsU(Telerik.Reporting.Drawing.Unit.Inch(0D), Telerik.Reporting.Drawing.Unit.Inch(0D), Telerik.Reporting.Drawing.Unit.Inch(0D), Telerik.Reporting.Drawing.Unit.Inch(0D));//new Telerik.Reporting.Drawing.MarginsU(Telerik.Reporting.Drawing.Unit.Inch(0.20000000298023224D), Telerik.Reporting.Drawing.Unit.Inch(0.20000000298023224D), Telerik.Reporting.Drawing.Unit.Inch(0.20000000298023224D), Telerik.Reporting.Drawing.Unit.Inch(0.20000000298023224D));
-            rptirDCS.PageSettings.PaperKind = System.Drawing.Printing.PaperKind.Letter;
-            rptirDCS.Width = Telerik.Reporting.Drawing.Unit.Inch(7.087535572052002D);//7.087535572052002D
-            rptbook.Reports.Add(rptirDCS);
+            rptirDCS.PageSettings.PaperKind = System.Drawing.Printing.PaperKind.Prc32K;
+            rptirDCS.Width = Telerik.Reporting.Drawing.Unit.Inch(3.587535572052002D);
+            rptbook1.Reports.Add(rptirDCS);
 
             ReportProcessor reportProcessor = new ReportProcessor();
-            RenderingResult result = reportProcessor.RenderReport("PDF", rptbook, null);
-            rptbook.DocumentName = "Member Plan Card";
-            string fileName = rptbook.DocumentName + "." + result.Extension;
+            RenderingResult result = reportProcessor.RenderReport("PDF", rptbook1, null);
+            
+            string fileName = rptbook1.DocumentName + "." + result.Extension;
             Response.Clear();
             Response.ContentType = result.MimeType;
             Response.Cache.SetCacheability(HttpCacheability.Private);
             Response.Expires = -1;
             Response.Buffer = true;
             Response.AddHeader("Content-Disposition",
-                           string.Format("{0};FileName=\"{1}\"",
-                                          "attachment",
+                               string.Format("{0};FileName=\"{1}\"",
+                                             "attachment",
 
-                     fileName));
-
+                        fileName));
             Response.BinaryWrite(result.DocumentBytes);
-            Response.End();
-            return View();
+            if (Response.IsClientConnected)
+            {
+                Response.End();
+
+            }
+            else
+            {
+
+            }
+            return "";
         }
+
         public class SpecializationList
         {
             public List<Specialization> Specializations { get; set; }

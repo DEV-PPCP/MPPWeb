@@ -789,6 +789,7 @@ function MembeDetails(MemberRegistrationDetails, session, Url, CurrentMonth) {
     MemberRegistrationDetails.ConfirmPassword = $("#ConfirmPassword").val();
     MemberRegistrationDetails.OrganizationName = document.getElementById("spnSelectedOrganization").innerText;
     MemberRegistrationDetails.OrganizationID = document.getElementById("SpOrganizationID").innerText;
+    MemberRegistrationDetails.BillingTypeID = document.getElementById("SpBillingTypeID").innerText;
     MemberRegistrationDetails.ProviderName = document.getElementById("SpProviderName").innerText;
     MemberRegistrationDetails.ProviderID = document.getElementById("SpProviderID").innerText;
     MemberRegistrationDetails.PlanName = document.getElementById("spnSelectedPlan").innerText;

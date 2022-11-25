@@ -50,6 +50,8 @@ namespace PPCP07302018.Models.Organization
         [Required(ErrorMessage = "This information is required.")]
         public string OrgAddress { get; set; }
 
+        public int BillingTypeId { get; set; }
+
         public int? UserID { get; set; }
 
         [Required(ErrorMessage = "This information is required.")]

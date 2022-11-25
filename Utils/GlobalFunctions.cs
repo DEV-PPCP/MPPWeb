@@ -20,6 +20,12 @@ namespace PPCP07302018.Utils
             public const string ReadOnly = "ReadOnly";
         }
 
+        public static class BillingType
+        {
+            public const int Lumpsum = 25;
+            public const int PPV = 26;
+        }
+
         /// <summary>
         /// In Member Table Type Column is their we have to save the Type
         /// </summary>

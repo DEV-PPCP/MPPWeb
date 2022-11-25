@@ -129,6 +129,7 @@ namespace PPCP07302018.Controllers
                         objmember.PlanName = modelParameter.PlanName;
                         objmember.OrganizationID = modelParameter.OrganizationID;
                         objmember.OrganizationName = modelParameter.OrganizationName;
+                        objmember.BillingTypeID = modelParameter.BillingTypeID;
                         objmember.ProviderID = modelParameter.ProviderID;
                         objmember.ProviderName = modelParameter.ProviderName;
                         objmember.Status = modelParameter.Status;

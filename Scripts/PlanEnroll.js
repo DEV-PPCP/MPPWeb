@@ -378,9 +378,10 @@ function BindingPlansGrid(OrganizationID, ProviderID, PlanID,MemberAge,MemberGen
 function MembeDetails(MemberRegistrationDetails,url)
 {
    
-   
+    debugger;
     MemberRegistrationDetails.OrganizationName=document.getElementById("SelectedOrganization").innerText;
-    MemberRegistrationDetails.OrganizationID=document.getElementById("SpOrganizationID").innerText;
+    MemberRegistrationDetails.OrganizationID = document.getElementById("SpOrganizationID").innerText;
+    MemberRegistrationDetails.BillingTypeID = document.getElementById("SpBillingTypeID").innerText;
     MemberRegistrationDetails.ProviderName=document.getElementById("SpProviderName").innerText;
     MemberRegistrationDetails.ProviderID=document.getElementById("SpProviderID").innerText;
     MemberRegistrationDetails.PlanName=document.getElementById("SelectedPlan").innerText;

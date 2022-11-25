@@ -649,6 +649,9 @@
     <Content Include="Images\ArrowTransparent.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Images\Capital-Rx.PNG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Images\collapse_blue.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -665,6 +668,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\icons8-logout-26.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\IDCardLogo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\Inner-Logo.png">
@@ -1357,6 +1363,7 @@
     <Content Include="_EventSourceUsersGuide.docx" />
     <Content Include="Views\Organization\BillingDashboard.cshtml" />
     <Content Include="Views\Organization\ClaimSubmission.cshtml" />
+    <Content Include="Views\Shared\_PlansSubscribe.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

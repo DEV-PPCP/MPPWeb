@@ -334,6 +334,8 @@
         $("#PlanNames").data("kendoAutoComplete").value("");
         $("#ProviderNames").data("kendoAutoComplete").value("");
         $("#PlansGrid").data("kendoGrid").dataSource.data("");
+        $("#gridProviders").data("kendoGrid").dataSource.data("");
+        $("#PlansPayment").data("kendoGrid").dataSource.data("");
     }
 
     function EnrollPlanDetails()
@@ -345,7 +347,8 @@
         MemberRegistrationDetails.MemberName='@Session["MemberName"]';
         MemberRegistrationDetails.MemberParentID='@Session["MemberParentID"]';
         MemberRegistrationDetails.OrganizationName=document.getElementById("spnSelectedOrganization").innerText;
-        MemberRegistrationDetails.OrganizationID=document.getElementById("SpOrganizationID").innerText;
+        MemberRegistrationDetails.OrganizationID = document.getElementById("SpOrganizationID").innerText;
+        MemberRegistrationDetails.BillingTypeID = document.getElementById("SpBillingTypeID").innerText;
         MemberRegistrationDetails.ProviderName=document.getElementById("SpProviderName").innerText;
         MemberRegistrationDetails.ProviderID=document.getElementById("SpProviderID").innerText;
         MemberRegistrationDetails.PlanName=document.getElementById("spnSelectedPlan").innerText;
@@ -448,6 +451,7 @@
             document.getElementById("spnSelectedOrganization").innerHTML = dataItem.OrganizationName;
             document.getElementById("SpProviderName").innerHTML = dataItem.ProviderName;
             document.getElementById("SpOrganizationID").innerHTML = dataItem.OrganizationID;
+            document.getElementById("SpBillingTypeID").innerHTML = dataItem.BillingTypeID;
             document.getElementById("SpProviderID").innerHTML = dataItem.ProviderID;
             document.getElementById("spnVisitFee").innerHTML = dataItem.VisitFee;
             document.getElementById("spnEnrollFee").innerHTML = dataItem.EnrollFee;
@@ -565,6 +569,10 @@
         document.getElementById('chkFamilyMember').checked=false;
         Uncheck();
         RemoveUncheck();
+
+        $("#gridProviders").data("kendoGrid").dataSource.data("");
+        $("#PlansGrid").data("kendoGrid").dataSource.data("");
+        $("#PlansPayment").data("kendoGrid").dataSource.data("");
     }
     function FamilyMember() {
         debugger;
@@ -573,6 +581,10 @@
         document.getElementById('chkIndividuals').checked=false;
         UncheckRadio();
         RemoveUncheck();
+
+        $("#gridProviders").data("kendoGrid").dataSource.data("");
+        $("#PlansGrid").data("kendoGrid").dataSource.data("");
+        $("#PlansPayment").data("kendoGrid").dataSource.data("");
 
     }
     function Uncheck() {
@@ -618,6 +630,10 @@
         var OrganizationID = $("#OrganizationID").val();
         var ProviderID = $("#ProviderID").val();
         var PlanID = $("#PlanID").val();
+
+        var oid = $("#OrganizationNames").data("kendoAutoComplete").value();
+        if (oid == "") { OrganizationID = 0; }
+
         var webMethodName = "GetPPCPOrganizationProviderPlansBasedonFilters";
         var ParameterNames = new Array();
         var ParameterValues = new Array();
@@ -847,10 +863,10 @@
                                         <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3" style="padding-left:60px;">
                                             <input type="radio" id="chkIndividuals" checked="checked" onclick="Individuals()" /> Select Individual
                                         </div>
-                                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                        @*<div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
 
                                             <input type="radio" id="chkFamilyMember" onclick="FamilyMember()" /> Select Family Members
-                                        </div>
+                                        </div>*@
                                     </div>
                                     <div>
                                         <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" id="divIndividual" style="display: block; padding-left: 60px; width: 500px; padding-top: 5px;">
@@ -982,7 +998,7 @@
                                             @Html.ValidationMessageFor(m => m.PlanStateName)
                                             @Html.HiddenFor(m => m.PlanStateID)
                                             @Html.HiddenFor(m => m.PlanStateName)
-                                            <script type="text/javascript">
+                                        <script type="text/javascript">
                                                 //Country State event to get StateName and StateID
                                                 function OnStatePlanSelectChange(e) {
                                                     $("#PlanStateID").val("");
@@ -990,10 +1006,14 @@
                                                     $("#PlanStateName").val(dataItem.StateName);
                                                     $("#PlanStateID").val(dataItem.StateID);
                                                     var StateID = $("#PlanStateID").val();
-                                                    BindPlanCities(StateID,'@ServiceUrl',"1");
+                                                    if (StateID > 0) {
+                                                        BindPlanCities(StateID,'@ServiceUrl',"1");
+                                                    } else {
+                                                        $("#PlanCityNameList").data("kendoDropDownList").dataSource.data("");
+                                                    }
                                                     //BindingPlansGridBasedOnFilters();
                                                 }
-                                            </script>
+                                        </script>
                                         </div>
 
                                         <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
@@ -1181,7 +1201,7 @@
                             <br />
                         </div>
                         <div class="row" id="divSelectPlan" style="display:none;">
-                            <b>Select a provider</b><br /><br />
+                            <b>Select a Provider</b><br /><br />
                             <div class="form-group">
                                 <div class="row">
                                     <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
@@ -1209,7 +1229,7 @@
                             </div>
                             <br />
 
-                            <b>Select a plan</b><br /><br />
+                            <b>Select a Plan</b><br /><br />
                             <div class="form-group">
                                 <div class="row">
                                     <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
@@ -1298,6 +1318,7 @@
                                 <div>
                                     <span id="PlanID" style="display:none;"></span>
                                     <span id="SpOrganizationID" style="display:none;"></span>
+                                    <span id="SpBillingTypeID" style="display:none;"></span>
                                     <span id="SpProviderID" style="display:none;"></span>
                                     <span id="spnSelectedOrganization" style="display:none;"></span>
                                     <span id="SpProviderName" style="display:none;"></span>

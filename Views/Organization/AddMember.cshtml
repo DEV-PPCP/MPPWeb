@@ -232,7 +232,7 @@
             debugger;
             var MemberRegistrationDetails =@Html.Raw(Json.Encode(@Model));
             MemberRegistrationDetails.OrganizationID='@Session["OrganizationID"]';
-            MemberRegistrationDetails.OrganizationName='@Session["OrganizationName"]';
+            MemberRegistrationDetails.OrganizationName = '@Session["OrganizationName"]';            
             MemberRegistrationDetails.RelationshipID = "0";
             MemberRegistrationDetails.RelationshipName ="Self";
             AddMembeDetails(MemberRegistrationDetails,"@Session["SystemIPAddress"]",'@ServiceUrl');
@@ -349,6 +349,7 @@
             document.getElementById("spnSelectedOrganization").innerHTML = dataItem.OrganizationName;
             document.getElementById("SpProviderName").innerHTML = dataItem.ProviderName;
             document.getElementById("SpOrganizationID").innerHTML = dataItem.OrganizationID;
+            document.getElementById("SpBillingTypeID").innerHTML = dataItem.BillingTypeID;
             document.getElementById("SpProviderID").innerHTML = dataItem.ProviderID;
             document.getElementById("spnVisitFee").innerHTML = dataItem.VisitFee;
             document.getElementById("spnEnrollFee").innerHTML = dataItem.EnrollFee;
@@ -962,7 +963,7 @@
                                             <div class="row Panel_bg_Sub" id="fssearchplan" style="margin:0px;width:100%;">
                                                 <br />
                                                 <div id="divSelectPlan" style="display:block;">
-                                                    <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Select a plan</b>:</legend>
+                                                    <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Select a Plan</b>:</legend>
                                                     <div class="form-group">
                                                         <div class="row">
                                                             <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
@@ -1040,6 +1041,7 @@
                                                                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                                     <span id="PlanID" style="display:none;"></span>
                                                                     <span id="SpOrganizationID" style="display:none;"></span>
+                                                                    <span id="SpBillingTypeID" style="display:none;"></span>
                                                                     <span id="spnSelectedOrganization" style="display:none;"></span>
                                                                     <span id="spnMonthlyPlanFee" style="display:none;"></span>
                                                                     <span id="TotalAmount" style="display:none;"></span>
@@ -1202,7 +1204,7 @@
                                                             <div class="row">
                                                                 <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
                                                                     @Html.Label("Amount", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;"> * </span>
-                                                                    @Html.TextBoxFor(model => model.AmountPaid, null, new { @class = "customKendoTextBox", PlaceHolder = "", maxlength = 20, onchange = "ValidateAmountPaid(this.value);" })
+                                                                    @Html.TextBoxFor(model => model.AmountPaid, null, new { @class = "customKendoTextBox", @readonly = "readonly", PlaceHolder = "", maxlength = 20, onchange = "ValidateAmountPaid(this.value);" })
                                                                     @Html.ValidationMessageFor(model => model.AmountPaid, "", new { @style = "color:red" })
                                                                 </div>
                                                                 <div class="col-xs-0 col-md-6 col-sm-6 col-lg-6 col-md-pull-2 col-lg-pull-2">

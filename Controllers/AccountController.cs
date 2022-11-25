@@ -83,6 +83,7 @@ namespace PPCP07302018.Controllers
                 //Session["StateName"] = List[0].StateName;
                 Session["OrganizationID"] = List[0].OrganizationID;
                 Session["OrganizationName"] = List[0].OrganizationName;
+                Session["BillingTypeID"] = List[0].BillingTypeID;
                 Session["UserCountryCode"] = List[0].CountryCode;
                 Session["UserMobileNumber"] = List[0].MobileNumber;
                 //Session["UserGender"] = List[0].Gender;
