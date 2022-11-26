@@ -501,7 +501,7 @@
                                             Select one of the provider payment reimbursement options available below
                                             <div class="row">
                                                 @Html.RadioButton("chkBillingType", PPCP07302018.Utils.GlobalFunctions.BillingType.Lumpsum, new { @checked = true })
-                                                <span>Lump Sum Fee [<b>80%</b> of the member <b>plan amount</b> paid upfront <b>plus copy: #35</b> (In Person)/<b>$25</b> (Tele-visit)]</span>
+                                                <span>Lump Sum Fee [<b>80%</b> of the member <b>plan amount</b> paid upfront <b>plus copy: $35</b> (In Person)/<b>$25</b> (Tele-visit)]</span>
                                                 <br /><br />
                                                 <center><b>OR</b></center>
                                                 <br /><br />
@@ -1159,6 +1159,38 @@
         </div>
     </div>
 </section>
+<div id="divSuccessPopup" style="display: none; position: relative" align="center">
+    <div class="Page_Dimmer">
+    </div>
+    <div class="PopupHolder" style="top: 30%;left: 40%; width: 400px">
+        <div class="pageheading_bar" style="width: 100%; height: 70%;">
+            <div style="vertical-align: middle">
+                <div style="vertical-align: middle">
+                    My Physician Plan<span style="float: right; color: Red;
+                            margin-right: 5px;"></span>
+                </div>
+            </div>
+        </div>
+        <div style="border: Solid 1px #33CCEE; width: 100%;">
+            <div align="center">
+                <span id="lblUserMessagee" style="color: Green; font-family: Verdana,Tahoma; font-size: 15px;
+                        font-weight: bold; text-align: center; margin-top: 8px; margin-left: 3px; display: none;">
+                </span><span id="lblUserMessag" style="color: red; font-family: Verdana,Tahoma; font-size: 15px;
+                        font-weight: bold; text-align: center; margin-top: 8px; margin-left: 3px; display: none;">
+                </span>
+            </div>
+            <div align="center">
+                <br />
+                <button id="btnClose" title="Close" style="width: 80px" class="button_blue" onclick="divPopUpSuccessClose();">
+                    OK
+                </button>
+                <br />
+                <br />
+            </div>
+        </div>
+    </div>
+</div>
+
 <script type="text/javascript">
     $(document).ready(function () {
         var OrgType = @Convert.ToInt32(GlobalFunctions.TermsAndConditons.Organization);
@@ -1174,6 +1206,14 @@
 
         $("#btnSubmitClick").click(function (e) {
             debugger;
+            var username = $("#UserName").val();
+            ValidateUserNames(username, '@ServiceUrl');
+            if (document.getElementById("spnUserName").innerHTML != "") {
+                return false;
+            }
+            if (($("#UserName").val()) != ($("#ConfirmUserName").val())) {
+                document.getElementById("spnConfirmUserName").innerHTML = "Username and Confirm Username must match.";
+            }
             var EnrollPlanValidator = $("#divMain").kendoValidator().data("kendoValidator");
             if (EnrollPlanValidator.validate()) {
                 //  if ($('#ckhOrg').is(":checked") == true && $('#ckhUser').is(":checked")) {
@@ -1198,6 +1238,12 @@
         });
 
     });
+    function divPopUpSuccessClose() {
+        $("#divSuccessPopup").hide();
+        if (document.getElementById("lblUserMessagee").innerHTML == "Organization Details Saved Successfully") {
+            window.location = '@Url.Action("OrganizationLogin", "Organization")';
+        }
+    }
     function GenderValidation() {
         var rbtnMale = $('input[id=rbtnGenderMale]:checked').val();
         var rbtnFEM = $('input[id=rbtnGenderFemale]:checked').val();

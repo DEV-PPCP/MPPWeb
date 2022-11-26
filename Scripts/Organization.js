@@ -319,10 +319,11 @@ function CallWebApiService(data, Url) {
         dataType: "json",
         contentType: "application/json",
         success: function (result) {
+            debugger;
             var obj = result[0];
             $("#divMain").find(".loadingSpinner:first").remove();
             if (obj[0].UserID > 0 && obj[0].Result == null) {
-                $("#divOTPAfterLogin").show();
+                $("#divSuccessPopup").show();
                 $("#lblUserMessagee").show();
                 $("#btnSuccessClose").show();
                 $("#lblUserMessag").hide();
@@ -330,13 +331,13 @@ function CallWebApiService(data, Url) {
                 document.getElementById("lblUserMessagee").innerHTML = "Organization Details Saved Successfully";
             }
             else if (obj[0].Result != "") {
-                $("#divOTPAfterLogin").show();
+                $("#divSuccessPopup").show();
                 $("#lblUserMessag").show();
                 $("#btnErrorClose").show();
                 document.getElementById("lblUserMessag").innerHTML = obj[0].Result +".Please Enter Valid Details! ";
             }
             else {
-                $("#divOTPAfterLogin").show();
+                $("#divSuccessPopup").show();
                 $("#lblUserMessag").show();
                 $("#btnErrorClose").show();
                 document.getElementById("lblUserMessag").innerHTML = "Please Enter Valid Details. ";

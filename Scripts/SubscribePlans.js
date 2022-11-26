@@ -64,7 +64,7 @@ function BindSubscribeDetails(url, OrganizationID, Type) {
 }
 
 /**/
-function SaveEnrollPlans(OrgId, PlanId, PlanStartDate, Url) {
+function SaveEnrollPlans(OrgId, PlanId, PlanStartDate, ModifiedBy, Url) {
     var webMethodName = "InsertOrganizationPlans";
     var ParameterNames = new Array();
     var ParameterValues = new Array();
@@ -74,6 +74,8 @@ function SaveEnrollPlans(OrgId, PlanId, PlanStartDate, Url) {
     ParameterValues[1] = PlanId;
     ParameterNames[2] = "StartDate";
     ParameterValues[2] = PlanStartDate;
+    ParameterNames[3] = "ModifiedBy";
+    ParameterValues[3] = ModifiedBy;
     var Url = Url + "OrganizationServices";
     $("<div class='loadingSpinner'></div>").appendTo($("#divMainPlan"));
     var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);

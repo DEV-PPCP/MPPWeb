@@ -152,6 +152,7 @@
         BindSalutation(Salutation);
         BindDegree(Degree);
         GetSpecilization("@ServiceUrl", SpecializationID);
+        OrganizationplanProviders(ProviderID, "@Session["OrganizationID"]", "2", "@ServiceUrl");
     }
     function calulateage(date) {
         var birthDate = $("#DOB").val();
@@ -494,30 +495,31 @@
             </div>
         </div>
         @*to view provider by veena*@
-        <div id="divMain" style="display:none;">
-            @*id="row Panel_bg_Sub"*@
-            <fieldset id="fsAddDoctors" class="Panel_bg_Sub">
-                <div>
-                    &nbsp;
-                </div>
-                <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Personal Information</b>:</legend>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12 ">
-                            <div class="row">
-                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                    @Html.Label("First Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                    @Html.TextBoxFor(model => model.FirstName, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
-                                    @Html.ValidationMessageFor(model => model.FirstName, "", new { @style = "color:red" })
-                                </div>
-                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                    @Html.Label("Last Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                    @Html.TextBoxFor(model => model.LastName, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
-                                    @Html.ValidationMessageFor(model => model.LastName, "", new { @style = "color:red" })
-                                </div>
-                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                    @Html.Label("Salutation", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
-                                    @(Html.Kendo().DropDownListFor(m => m.Salutation)
+    <div id="divMain" style="display:none;">
+        @*id="row Panel_bg_Sub"*@
+        <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Personal Information</b></legend>
+        <fieldset id="fsAddDoctors" class="Panel_bg_Sub">
+            <div>
+                &nbsp;
+            </div>
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12 ">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                @Html.Label("First Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                @Html.TextBoxFor(model => model.FirstName, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
+                                @Html.ValidationMessageFor(model => model.FirstName, "", new { @style = "color:red" })
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                @Html.Label("Last Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                @Html.TextBoxFor(model => model.LastName, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
+                                @Html.ValidationMessageFor(model => model.LastName, "", new { @style = "color:red" })
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                @Html.Label("Salutation", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
+                                @(Html.Kendo().DropDownListFor(m => m.Salutation)
                                                     .Name("SalutationList").HtmlAttributes(new { style = "width:100%;" })
                                                     .OptionLabel("--Select--")
                                                     .Events(events =>
@@ -532,22 +534,22 @@
                                                         {
                                                         });
                                                     }))
-                                    <br />
-                                    @*@Html.ValidationMessageFor(model => model.Salutation)*@
-                                    <script type="text/javascript">
-                                        //Salutation change event to get SalutationID and Salutation
-                                        function onSelectSalutation(e) {
-                                            $("#SalutationID").val("");
-                                            var dataItem = this.dataItem(e.item.index());
-                                            $("#Salutation").val(dataItem.Text);
-                                            $("#SalutationID").val(dataItem.Value);
+                                <br />
+                                @*@Html.ValidationMessageFor(model => model.Salutation)*@
+                                <script type="text/javascript">
+                                    //Salutation change event to get SalutationID and Salutation
+                                    function onSelectSalutation(e) {
+                                        $("#SalutationID").val("");
+                                        var dataItem = this.dataItem(e.item.index());
+                                        $("#Salutation").val(dataItem.Text);
+                                        $("#SalutationID").val(dataItem.Value);
 
-                                        }
-                                    </script>
-                                </div>
-                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                    @Html.Label("Degree", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
-                                    @(Html.Kendo().DropDownListFor(m => m.Degree)
+                                    }
+                                </script>
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                @Html.Label("Degree", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
+                                @(Html.Kendo().DropDownListFor(m => m.Degree)
                                                     .Name("Degree").HtmlAttributes(new { style = "width:100%;" })
                                                     .Events(events =>
                                                     {
@@ -561,88 +563,88 @@
                                                         {
                                                         });
                                                     }))
-                                    <br />
-                                    <script type="text/javascript">
-                                        function onSelectDegree(e) {
-                                            var dataItem = e.sender.dataItem();
-                                            $("#Degree").val(dataItem.Text);
-                                        }
-                                    </script>
-                                </div>
+                                <br />
+                                <script type="text/javascript">
+                                    function onSelectDegree(e) {
+                                        var dataItem = e.sender.dataItem();
+                                        $("#Degree").val(dataItem.Text);
+                                    }
+                                </script>
                             </div>
+                        </div>
 
-                            <div class="row">
-                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
-                                    @Html.Label("NPI Number", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                    @Html.TextBoxFor(model => model.NPI, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 10 })
-                                    @Html.ValidationMessageFor(model => model.NPI, "", new { @style = "color:red" })
-                                </div>
-                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                    @Html.Label("Email", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                    @Html.TextBoxFor(model => model.Email, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
-                                    @Html.ValidationMessageFor(model => model.Email, "", new { @style = "color:red" })
-                                </div>
-                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
-                                    @Html.Label("Mobile Number", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                    @Html.TextBoxFor(model => model.CountryCode, null, new { @class = "customKendoTextBox", style = "width:15%;", maxlength = 2 })
-                                    @Html.Label("-", new { style = "font-weight:normal;", @class = "labelColor" })
-                                    @Html.TextBoxFor(model => model.MobileNumber, null, new { @class = "customKendoTextBox", style = "width:75%;", maxlength = 10 })
-                                    @Html.ValidationMessageFor(model => model.CountryCode, "", new { @style = "color:red" })
-                                    @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @style = "color:red" })
-                                </div>
-                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
-                                    @Html.Label("Fax", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                    @Html.TextBoxFor(model => model.Fax, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 10 })
-                                </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
+                                @Html.Label("NPI Number", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                @Html.TextBoxFor(model => model.NPI, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 10 })
+                                @Html.ValidationMessageFor(model => model.NPI, "", new { @style = "color:red" })
                             </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                @Html.Label("Email", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                @Html.TextBoxFor(model => model.Email, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
+                                @Html.ValidationMessageFor(model => model.Email, "", new { @style = "color:red" })
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
+                                @Html.Label("Mobile Number", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                @Html.TextBoxFor(model => model.CountryCode, null, new { @class = "customKendoTextBox", style = "width:15%;", maxlength = 2 })
+                                @Html.Label("-", new { style = "font-weight:normal;", @class = "labelColor" })
+                                @Html.TextBoxFor(model => model.MobileNumber, null, new { @class = "customKendoTextBox", style = "width:75%;", maxlength = 10 })
+                                @Html.ValidationMessageFor(model => model.CountryCode, "", new { @style = "color:red" })
+                                @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @style = "color:red" })
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
+                                @Html.Label("Fax", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                @Html.TextBoxFor(model => model.Fax, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 10 })
+                            </div>
+                        </div>
 
-                            <div class="row">
-                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
-                                    @Html.Label("Date of Birth", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                    @( Html.Kendo().DatePickerFor(model => model.DOB).Format("MM/dd/yyyy").Name("DOB").Value("").Max(DateTime.Today)
+                        <div class="row">
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
+                                @Html.Label("Date of Birth", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                @( Html.Kendo().DatePickerFor(model => model.DOB).Format("MM/dd/yyyy").Name("DOB").Value("").Max(DateTime.Today)
                                                     .HtmlAttributes(new { PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text", onkeydown = "return false;" })
                                                     .Events(e => e.Change("DateSelectionChanged"))
                                     )
-                                    @Html.ValidationMessageFor(model => model.DOB, "", new { @style = "color:red" })
-                                </div>
-                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                    @Html.Label("Gender", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                    <label style="font-weight: normal;">
-                                        @(Html.RadioButton("Gender", 1, new
+                                @Html.ValidationMessageFor(model => model.DOB, "", new { @style = "color:red" })
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                @Html.Label("Gender", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                <label style="font-weight: normal;">
+                                    @(Html.RadioButton("Gender", 1, new
                                     {
                                         id = "rbtnGenderMale",
                                         @onclick = "GenderValidation();"
 
                                     }))
-                                        Male
-                                    </label>
-                                    <label style="font-weight: normal; margin-left:20px">
-                                        @(Html.RadioButton("Gender", 2, new
+                                    Male
+                                </label>
+                                <label style="font-weight: normal; margin-left:20px">
+                                    @(Html.RadioButton("Gender", 2, new
                                     {
                                         id = "rbtnGenderFemale",
                                         @onclick = "GenderValidation();"
                                     }))
-                                        Female
-                                    </label>
-                                    <br />
-                                    <div id="divGenderValidator" style="display:none">
-                                        <span class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="Gender" data-valmsg-for="DOB" role="alert"><span class="k-icon k-warning"> </span> This Information is Requried</span>
-                                    </div>
+                                    Female
+                                </label>
+                                <br />
+                                <div id="divGenderValidator" style="display:none">
+                                    <span class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="Gender" data-valmsg-for="DOB" role="alert"><span class="k-icon k-warning"> </span> This Information is Requried</span>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="row">
-                                <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
-                                    @Html.Label("Address", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
-                                    @Html.TextBoxFor(m => m.Address, new { @class = "customKendoTextBox", style = "width:100%;Height:25px", maxlength = "150" })
-                                    <br />
-                                </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
+                                @Html.Label("Address", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
+                                @Html.TextBoxFor(m => m.Address, new { @class = "customKendoTextBox", style = "width:100%;Height:25px", maxlength = "150" })
+                                <br />
                             </div>
+                        </div>
 
-                            <div class="row">
-                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
-                                    @Html.Label("Country", new { style = "font-weight:normal;", @class = "labelColor" })<span style="color: Red;">*</span><br />
-                                    @(Html.Kendo().DropDownListFor(model => model.CountryName)
+                        <div class="row">
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
+                                @Html.Label("Country", new { style = "font-weight:normal;", @class = "labelColor" })<span style="color: Red;">*</span><br />
+                                @(Html.Kendo().DropDownListFor(model => model.CountryName)
                                                 .Name("CountryName")
                                                 .OptionLabel("--Select--")
                                                 .HtmlAttributes(new { style = "width:100%;" })
@@ -658,11 +660,11 @@
                                                     {
                                                     });
                                                 }))
-                                    <br />
-                                    @Html.ValidationMessageFor(model => model.CountryName)
-                                    @Html.HiddenFor(model => model.CountryID)
-                                    @Html.HiddenFor(model => model.CountryName)
-                                    <script type="text/javascript">
+                                <br />
+                                @Html.ValidationMessageFor(model => model.CountryName)
+                                @Html.HiddenFor(model => model.CountryID)
+                                @Html.HiddenFor(model => model.CountryName)
+                                <script type="text/javascript">
                                         //Country change event to get CountryName and CountryId
                                         function OnCountrySelectChange(e) {
                                             $("#CountryID").val("")
@@ -676,11 +678,11 @@
                                             @*BindStates(CountryID,'@ServiceUrl');*@
                                             BindStates('@ServiceUrl', CountryID, 0)
                                         }
-                                    </script>
-                                </div>
-                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                    @Html.Label("State", new { style = "font-weight:normal;", @class = "labelColor" })<span style="color: Red;">*</span><br />
-                                    @(Html.Kendo().DropDownListFor(m => m.StateName)
+                                </script>
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                @Html.Label("State", new { style = "font-weight:normal;", @class = "labelColor" })<span style="color: Red;">*</span><br />
+                                @(Html.Kendo().DropDownListFor(m => m.StateName)
                                                 .Name("StateName")
                                                 .OptionLabel("--Select--")
                                                 .HtmlAttributes(new { style = "width:100%;" })
@@ -696,12 +698,12 @@
                                                     {
                                                     });
                                                 }))
-                                    <br />
-                                    @Html.ValidationMessageFor(m => m.StateName)
-                                    @Html.HiddenFor(m => m.StateID)
-                                    @Html.HiddenFor(m => m.StateName)
+                                <br />
+                                @Html.ValidationMessageFor(m => m.StateName)
+                                @Html.HiddenFor(m => m.StateID)
+                                @Html.HiddenFor(m => m.StateName)
 
-                                    <script type="text/javascript">
+                                <script type="text/javascript">
                                         //Country State event to get StateName and StateID
                                         function OnStateSelectChange(e) {
                                             $("#StateID").val("");
@@ -714,12 +716,12 @@
                                             @*BindCities(StateID,'@ServiceUrl');*@
                                             BindCites('@ServiceUrl', StateID, 0)
                                         }
-                                    </script>
-                                </div>
-                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
-                                    @Html.Label("City", new { style = "font-weight:normal;", @class = "labelColor" })<span style="color: Red;">*</span><br />
+                                </script>
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
+                                @Html.Label("City", new { style = "font-weight:normal;", @class = "labelColor" })<span style="color: Red;">*</span><br />
 
-                                    @(Html.Kendo().DropDownListFor(m => m.CityName)
+                                @(Html.Kendo().DropDownListFor(m => m.CityName)
                                                 .Name("CityName")
                                                 .OptionLabel("--Select--")
                                                 .HtmlAttributes(new { style = "width:100%;" })
@@ -735,100 +737,45 @@
                                                     {
                                                     });
                                                 }))
-                                    <br />
-                                    @Html.ValidationMessageFor(m => m.CityName)
-                                    @Html.HiddenFor(m => m.CityID)
-                                    @Html.HiddenFor(m => m.CityName)
-                                    <script type="text/javascript">
-                                        //City change event to get CityName and CityID
-                                        function OnCitySelectChange(e) {
-                                            $("#hdnCityName").val("");
-                                            $("#CityID").val("");
-                                            var dataItem = this.dataItem(e.item.index());
-                                            $("#CityName").val(dataItem.CityName);
-                                            $("#hdnCityName").val(dataItem.CityName);
-                                            $("#CityID").val(dataItem.CityID);
-                                        }
-                                    </script>
-                                </div>
-
-                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                    @Html.Label("ZIP / Postal Code", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
-                                    @Html.TextBoxFor(m => m.Zip, new { @class = "customKendoTextBox", style = "width:50%;Height:25px", maxlength = "5" }) -
-                                    @Html.TextBoxFor(m => m.ZipCode, new { @class = "customKendoTextBox", style = "width:40%;Height:25px", maxlength = "4" })
-                                    <br />
-                                    
-                                    @Html.ValidationMessageFor(m => m.Zip)
-                                    @Html.ValidationMessageFor(m => m.ZipCode)
-                                </div>
+                                <br />
+                                @Html.ValidationMessageFor(m => m.CityName)
+                                @Html.HiddenFor(m => m.CityID)
+                                @Html.HiddenFor(m => m.CityName)
+                                <script type="text/javascript">
+                                    //City change event to get CityName and CityID
+                                    function OnCitySelectChange(e) {
+                                        $("#hdnCityName").val("");
+                                        $("#CityID").val("");
+                                        var dataItem = this.dataItem(e.item.index());
+                                        $("#CityName").val(dataItem.CityName);
+                                        $("#hdnCityName").val(dataItem.CityName);
+                                        $("#CityID").val(dataItem.CityID);
+                                    }
+                                </script>
                             </div>
 
-                            <div class="row" style="display:block;">
-                                @Html.Label("Specialization", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3" id="divSpecializationList"></div>
-                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 " id="divSpecializationListRight"></div>
-                            </div>
-                            <div id="divSpecializationValidator" style="display:none">
-                                <span class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="SpecitizationName" data-valmsg-for="SpecitizationName" style="display:none" id="SpecitizationName_validationMessage" role="alert"><span class="k-icon k-warning"> </span> This Information is Requried</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </fieldset>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                @Html.Label("ZIP / Postal Code", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
+                                @Html.TextBoxFor(m => m.Zip, new { @class = "customKendoTextBox", style = "width:50%;Height:25px", maxlength = "5" }) -
+                                @Html.TextBoxFor(m => m.ZipCode, new { @class = "customKendoTextBox", style = "width:40%;Height:25px", maxlength = "4" })
+                                <br />
 
-
-            <fieldset id="fsAddDoctorsLogin" class="Panel_bg_Sub" " style="display:none;">
-                <legend class="Legendtxtcolor" style="float: left; font-size: 14px;display:none;"><b>Login Credentials</b>:</legend>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12 ">
-                            <div class="row">
-                                @*<div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                        @Html.Label("Username", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                        @Html.TextBoxFor(model => model.UserName, null, new { style = "width:100%;", maxlength = 25, onchange = "ValidateuserNames(this.value);" })
-                                        @Html.ValidationMessageFor(model => model.UserName, "", new { @style = "color:red" })
-                                        <span id="spnUserName" style="color:red"></span>
-                                    </div>
-                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                        @Html.Label("Password", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                        @Html.TextBoxFor(model => model.Password, null, new { style = "width:100%;", maxlength = 20, type = "password", onkeyup = "chkPasswordStrength(this.value,document.getElementById('strength'),document.getElementById('error'))", onpaste = "return false;", oncopy = "return false", oncut = "return false" })
-                                        @Html.ValidationMessageFor(model => model.Password, "", new { @style = "color:red" })
-                                        <span id="strength" class="strength5"></span>
-                                    </div>
-                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                        @Html.Label("Confirm Password", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                        @Html.TextBoxFor(model => model.ConfirmPassword, null, new { style = "width:100%;", maxlength = 20, type = "password", onchange = "validatePassword()", onpaste = "return false;", oncopy = "return false", oncut = "return false" })
-                                        @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @style = "color:red" })
-                                        <span id="PasswordErrorMsg" style="color:red"></span>
-                                    </div>*@
+                                @Html.ValidationMessageFor(m => m.Zip)
+                                @Html.ValidationMessageFor(m => m.ZipCode)
                             </div>
                         </div>
 
+                        <div class="row" style="display:block;">
+                            @Html.Label("Specialization", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3" id="divSpecializationList"></div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 " id="divSpecializationListRight"></div>
+                        </div>
+                        <div id="divSpecializationValidator" style="display:none">
+                            <span class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="SpecitizationName" data-valmsg-for="SpecitizationName" style="display:none" id="SpecitizationName_validationMessage" role="alert"><span class="k-icon k-warning"> </span> This Information is Requried</span>
+                        </div>
                     </div>
                 </div>
-
-                <legend class="Legendtxtcolor" style="float: left; font-size: 14px;">@Html.CheckBox("chk2factor", false)<b>Enable 2-factor authentication</b>:</legend>
-                <div class="row" id="divEnableFactor" style="display:none;">
-                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12 ">
-                        <label style="font-weight: normal;">
-                            @(Html.RadioButton("ChkList", 1, new
-                        {
-                            id = "rbtnEverytime",
-                        }))
-                            Everytime
-                        </label>&nbsp;&nbsp;&nbsp;&nbsp;
-                        <label style="font-weight: normal;">
-                            @(Html.RadioButton("ChkList", 2, new
-                        {
-                            id = "rbtnOnlySysChange"
-                        }))
-                            Only when system change
-                        </label>
-                        <br />
-                    </div>
-                    <br />
-                </div>
-            </fieldset>
+            </div>
 
             <div class="row">
                 <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
@@ -836,7 +783,6 @@
                         <button type="submit" class="button_blue" id="btnUpdateProviderSubmit" title="Submit" style="width: 100px;" onclick="UpdateProviderSubmit()">
                             Update
                         </button>
-
                         <button type="button" class="button_blue" id="btnCancel" title="Cancel" value="addUser" style="width: 100px;" onclick="@("window.location.href='" + @Url.Action("ViewProviders", "Organization") + "'");">
                             Cancel
                         </button>
@@ -844,8 +790,72 @@
                     <br />
                 </div>
             </div>
-        </div>
+        </fieldset>
+
+        <fieldset id="fsAddDoctorsLogin" class="Panel_bg_Sub" " style="display:none;">
+            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;display:none;"><b>Login Credentials</b>:</legend>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12 ">
+                        <div class="row">
+                            @*<div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                @Html.Label("Username", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                @Html.TextBoxFor(model => model.UserName, null, new { style = "width:100%;", maxlength = 25, onchange = "ValidateuserNames(this.value);" })
+                                @Html.ValidationMessageFor(model => model.UserName, "", new { @style = "color:red" })
+                                <span id="spnUserName" style="color:red"></span>
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                @Html.Label("Password", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                @Html.TextBoxFor(model => model.Password, null, new { style = "width:100%;", maxlength = 20, type = "password", onkeyup = "chkPasswordStrength(this.value,document.getElementById('strength'),document.getElementById('error'))", onpaste = "return false;", oncopy = "return false", oncut = "return false" })
+                                @Html.ValidationMessageFor(model => model.Password, "", new { @style = "color:red" })
+                                <span id="strength" class="strength5"></span>
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                @Html.Label("Confirm Password", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                @Html.TextBoxFor(model => model.ConfirmPassword, null, new { style = "width:100%;", maxlength = 20, type = "password", onchange = "validatePassword()", onpaste = "return false;", oncopy = "return false", oncut = "return false" })
+                                @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @style = "color:red" })
+                                <span id="PasswordErrorMsg" style="color:red"></span>
+                            </div>*@
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;">@Html.CheckBox("chk2factor", false)<b>Enable 2-factor authentication</b>:</legend>
+            <div class="row" id="divEnableFactor" style="display:none;">
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12 ">
+                    <label style="font-weight: normal;">
+                        @(Html.RadioButton("ChkList", 1, new
+                        {
+                            id = "rbtnEverytime",
+                        }))
+                        Everytime
+                    </label>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <label style="font-weight: normal;">
+                        @(Html.RadioButton("ChkList", 2, new
+                        {
+                            id = "rbtnOnlySysChange"
+                        }))
+                        Only when system change
+                    </label>
+                    <br />
+                </div>
+                <br />
+            </div>
+        </fieldset>
+
+        @*<legend class="Legendtxtcolor" style="float: left; font-size: 14px; margin-top: 20px;"><b>Plans</b></legend>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12 ">
+                    @Html.Partial("_PlansSubscribe")
+                </div>
+            </div>
+        </div>*@
+    </div>
         @*End view provider by veena*@
 
     </div>
 </div>
+

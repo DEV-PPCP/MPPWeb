@@ -652,6 +652,7 @@
     <Content Include="Images\Capital-Rx.PNG">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Images\CapitalRx.png" />
     <Content Include="Images\collapse_blue.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

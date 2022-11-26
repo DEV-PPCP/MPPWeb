@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using PPCP07302018.Controllers.Session;
 using PPCP07302018.DataAccessLayer;
 using PPCP07302018.Models.Admin;
+using PPCP07302018.Utils;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -94,7 +95,21 @@ namespace PPCP07302018.Controllers
                 Session["TermsAndConditionsFile"] = List[0].TermsAndConditionsFile;
                 //Session["OrganizationTandCFlag"] = List[0].OrganizationTandCFlag;
                 //Session["OrganizationUserTandCFlag"] = List[0].OrganizationUserTandCFlag;
-                Session["HeaderDisplayName"] = string.IsNullOrEmpty(List[0].OrganizationName) ? List[0].FirstName + " " + List[0].LastName : List[0].OrganizationName;
+                switch(List[0].RoleType)
+                {
+                    case GlobalFunctions.RoleType.Organization:
+                        Session["HeaderDisplayName"] = List[0].OrganizationName;
+                        break;
+                    case GlobalFunctions.RoleType.Provider:
+                        Session["HeaderDisplayName"] = List[0].OrganizationName + " - " + List[0].FirstName + " " + List[0].LastName;
+                        break;
+                    case GlobalFunctions.RoleType.Member:
+                        Session["HeaderDisplayName"] = List[0].FirstName + " " + List[0].LastName;
+                        break;
+                    case GlobalFunctions.RoleType.MPP:
+                        Session["HeaderDisplayName"] = "Administrator - " + List[0].FirstName + " " + List[0].LastName;
+                        break;
+                }
 
                 //member related session data
                 Session["MemberPrimaryPhone"] = List[0].MobileNumber;

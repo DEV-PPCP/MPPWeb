@@ -880,7 +880,7 @@
                                                         columns.Bound(p => p).ClientTemplate("<a onclick=\"GetEnrollMemberDetails('#= MemberID #','#= FirstName #','#= LastName #','#= DOB #','#=Gender#','1')\"> <span style='cursor:pointer'><input type='radio' value='#= MemberID #' name='MemberID' id='check'></a>").Title("Select").Width(50).Filterable(false);
                                                         //  columns.Bound(p => p.FirstName).Title("Name").Filterable(true).Width(50);
 
-                                                        columns.Bound(p => p.FirstName).Title("Name").ClientTemplate(" #: LastName  # #: FirstName # ").Filterable(false).Width(200);
+                                                        columns.Bound(p => p.FirstName).Title("Name").ClientTemplate(" #: FirstName # #: LastName # ").Filterable(false).Width(200);
 
                                                     })
                                                     .Scrollable()

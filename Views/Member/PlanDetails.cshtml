@@ -321,7 +321,7 @@
                                                         columns.Bound(p => p.OrganizationID).Title("OrganizationID").Filterable(false).Visible(false);
                                                         columns.Bound(p => p.MemberName).Title("Member Name").Filterable(false).Width(130);
                                                         columns.Bound(p => p.PlanName).Title("Plan Name")
-                                                                        .ClientTemplate("#if (PlanName == '' ) { #" + "<text>No Enrolled Plan</text>" + " # } else { PlanName } #").Filterable(false).Width(100);
+                                                                        .ClientTemplate("#if (PlanName == '' ) { #" + "<text>No Enrolled Plan</text>" + " # } else { PlanName } #").Filterable(false);
                                                         columns.Bound(p => p.PlanStartDate).Title("Plan Start Date").Filterable(false).Encoded(true).ClientTemplate("#= PlanStartDate != null ? kendo.toString(kendo.parseDate(PlanStartDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') : '' #").Width(120);
                                                         columns.Bound(p => p.Duration).Title("Duration(in months)").Filterable(false).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
                                                         columns.Bound(p => p.ProviderName).Title("Provider Name").Filterable(false).Width(150);

@@ -1500,7 +1500,7 @@ namespace PPCP07302018.Controllers
             MemberId = objMemberDetails[0].MemberCardID;
             if (objProvider.Count > 0)
             {
-                Address = objProvider[0].Address + "," + objProvider[0].CityName + "," + objProvider[0].StateName + "," + objProvider[0].Zip;
+                Address = objProvider[0].Address + ", " + objProvider[0].CityName + ", " + objProvider[0].StateName + ", " + objProvider[0].Zip;
                 OrgPhone = objProvider[0].OrgPhone;
                 OrganizationName = objProvider[0].OrganizationName;
                 PCPname = "Dr. " + (objProvider[0].LastName + " " + objProvider[0].FirstName).ToUpper(); //+ ", " + objProvider[0].Degree).ToUpper();
@@ -1512,7 +1512,7 @@ namespace PPCP07302018.Controllers
             var dir = Server.MapPath("/images");
             string LogoImage = Path.Combine(dir, imgName);
 
-            string capitalRxLogoFile = "Capital-Rx.png";
+            string capitalRxLogoFile = "CapitalRx.png";
             string capitalRxImage = Path.Combine(dir, capitalRxLogoFile);
             //string LogoImage = System.Configuration.ConfigurationManager.AppSettings["MemberCardImage"].ToString();
 
@@ -1744,19 +1744,19 @@ namespace PPCP07302018.Controllers
                 txtRxTermNote.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
                 txtRxTermNote.Style.Font.Name = fontname;
 
-                Telerik.Reporting.HtmlTextBox txtRximgtoptext = new Telerik.Reporting.HtmlTextBox();
-                txtRximgtoptext.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(3D), Telerik.Reporting.Drawing.Unit.Inch(txtRxNote.Bottom.Value ));
-                txtRximgtoptext.Name = "txtRximgtoptext";
-                txtRximgtoptext.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.5D), Telerik.Reporting.Drawing.Unit.Inch(0.1D)); //new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.1800000667572021D), Telerik.Reporting.Drawing.Unit.Inch(0.15000000596046448D));
-                txtRximgtoptext.Value = "<span style='color: white; font-weight:bold; font-size: 8px;'>Powered By</span>";
-                //txtRximgtoptext.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
-                txtRximgtoptext.Style.Font.Name = fontname;
+                //Telerik.Reporting.HtmlTextBox txtRximgtoptext = new Telerik.Reporting.HtmlTextBox();
+                //txtRximgtoptext.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(3D), Telerik.Reporting.Drawing.Unit.Inch(txtRxNote.Bottom.Value ));
+                //txtRximgtoptext.Name = "txtRximgtoptext";
+                //txtRximgtoptext.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.5D), Telerik.Reporting.Drawing.Unit.Inch(0.1D)); //new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.1800000667572021D), Telerik.Reporting.Drawing.Unit.Inch(0.15000000596046448D));
+                //txtRximgtoptext.Value = "<span style='color: white; font-weight:bold; font-size: 8px;'>Powered By</span>";
+                ////txtRximgtoptext.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                //txtRximgtoptext.Style.Font.Name = fontname;
 
                 Telerik.Reporting.PictureBox rximgBox = new Telerik.Reporting.PictureBox();
-                rximgBox.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(3D), Telerik.Reporting.Drawing.Unit.Inch(txtRximgtoptext.Bottom.Value));
+                rximgBox.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(3D), Telerik.Reporting.Drawing.Unit.Inch(txtRxNote.Bottom.Value));
                 rximgBox.MimeType = "";
                 rximgBox.Name = "rximgBox";
-                rximgBox.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.4D), Telerik.Reporting.Drawing.Unit.Inch(0.1D));
+                rximgBox.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.8D), Telerik.Reporting.Drawing.Unit.Inch(0.2D));
                 rximgBox.Sizing = Telerik.Reporting.Drawing.ImageSizeMode.ScaleProportional;
                 rximgBox.Value = capitalRxImage;
 
@@ -1770,14 +1770,14 @@ namespace PPCP07302018.Controllers
                                          txtPharmaPlan,
                                          txtRxNote,
                                          txtRxTermNote,
-                                         txtRximgtoptext,
+                                         //txtRximgtoptext,
                                          rximgBox
                                     });
 
                 i = 1;
                 #endregion
             }
-            detail.Style.BackgroundColor = System.Drawing.ColorTranslator.FromHtml("#9c55c4");
+            detail.Style.BackgroundColor = System.Drawing.ColorTranslator.FromHtml("#8a56a1"); //#9c55c4
 
             rptirDCS.Items.AddRange(new Telerik.Reporting.ReportItemBase[] { detail });            
 
