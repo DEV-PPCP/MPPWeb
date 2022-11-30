@@ -1366,7 +1366,7 @@
     <Content Include="Views\Organization\BillingDashboard.cshtml" />
     <Content Include="Views\Organization\ClaimSubmission.cshtml" />
     <Content Include="Views\Shared\_PlansSubscribe.cshtml" />
-    <Content Include="Views\Shared\_ClaimSearchAndSubmission.cshtml" />
+    <Content Include="Views\Shared\_Claim.cshtml" />
     <Content Include="Views\Admin\ClaimSubmission.cshtml" />
     <Content Include="Views\Admin\BillingDashboard.cshtml" />
     <Content Include="Views\Account\ClaimConfirm.cshtml" />
