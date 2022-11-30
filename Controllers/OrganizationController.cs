@@ -3429,9 +3429,9 @@ shapeFooter, PageNumbers
             {
                 DataAccessLayer.ServiceCall<PPCP07302018.Models.MemberVisit> objcall = new DataAccessLayer.ServiceCall<PPCP07302018.Models.MemberVisit>();
                 PPCP07302018.Models.Member.ServiceData ServiceData = new PPCP07302018.Models.Member.ServiceData();
-                string[] ParameterName = new string[] { "VisitId" };
+                string[] ParameterName = new string[] { "OrganizationID", "VisitId" };
 
-                string[] ParameterValue = new string[] { VisitId.ToString() };
+                string[] ParameterValue = new string[] { Session["OrganizationID"].ToString(), VisitId.ToString() };
                 ServiceData.ParameterName = ParameterName;
                 ServiceData.ParameterValue = ParameterValue;
                 ServiceData.WebMethodName = "GetVisitById";

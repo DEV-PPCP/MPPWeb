@@ -88,12 +88,12 @@
                 columns.Bound(p => p.AllowedFee).Title("Allowed Fee").Width(75);
                 columns.Bound(p => p.CoPayFee).Title("Plan CoPay").Width(75);
                 columns.Bound(p => p.SubmitDate).Title("Submitted Date").Width(100).ClientTemplate("#= SubmitDate != null ? kendo.toString(kendo.parseDate(SubmitDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') : '' #");
-                columns.Bound(p => p.DatePaid).Title("Date Paid").Width(120).ClientTemplate("#= DatePaid != null ? kendo.toString(kendo.parseDate(DatePaid,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') : '' #");
+                columns.Bound(p => p.PlanPaidDate).Title("Date Paid").Width(120).ClientTemplate("#= PlanPaidDate != null ? kendo.toString(kendo.parseDate(PlanPaidDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') : '' #");
                 columns.Bound(p => p.PlanPaidAmount).Title("Plan Paid").Width(75);
                 columns.Bound(p => p.ClaimStatus).Title("Claim Status").Width(120);
 
                 columns.Bound(p => p.SubmitDate).Title("Action").Width(60).HtmlAttributes(new { style = "text-align: center" }).ClientTemplate(
-                    "#if(SubmitDate == null){# " +
+                    "#if(ClaimStatus == 'Approved' || ClaimStatus == 'Paid'){# " +
                         "<a title='View' style='text-decoration: none; cursor: pointer; ' href=/Admin/ClaimSubmission?mode=view&VisitId=${VisitId}><span class=\"glyphicon glyphicon-eye-open\"></span></a> " +
                     "#} else {# " +
                         "<a title='Edit' style='text-decoration: none; cursor: pointer; ' href=/Admin/ClaimSubmission?mode=edit&VisitId=${VisitId}><span class=\"glyphicon glyphicon-pencil\"></span></a> " +
