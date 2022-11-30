@@ -1,7 +1,8 @@
-﻿@using Kendo.Mvc.UI
+﻿
+@using Kendo.Mvc.UI
 @{
     ViewBag.Title = "Billing";
-    Layout = "~/Views/Shared/WUCOrgLeftMenu.cshtml";
+    Layout = "~/Views/Shared/WUCAdminLeftMenu.cshtml";
     var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
 }
 @Styles.Render("~/bundles/Membercssfiles")
@@ -28,13 +29,13 @@
 </div>
 
 <div class="Panel_bg" id="divMainMemberDetails" style="width: 100%">
-    <div class="row">
+    @*<div class="row">
         <div align="right" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <button type="submit" title="Submit" style="width: 150px;" class="button_blue" value="AddClaim" onclick="@("window.location.href='" + @Url.Action("ClaimSubmission", "Organization") + "?mode=add&VisitId=0'");">
+            <button type="submit" title="Submit" style="width: 150px;" class="button_blue" value="AddClaim" onclick="@("window.location.href='" + @Url.Action("ClaimSubmission", "Admin") + "?mode=add&VisitId=0'");">
                 Add Claim
             </button>
         </div>
-    </div>
+    </div>*@
 
     <div class="Panel_bg_Sub">
         <div style="width: 100%;height:auto;">
@@ -74,7 +75,7 @@
     </div>
 
     <div class="row">
-        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" >
+        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
             @(Html.Kendo().Grid<PPCP07302018.Models.MemberVisit>()
             .Name("gridClaims")
             .Columns(columns =>
@@ -93,9 +94,9 @@
 
                 columns.Bound(p => p.SubmitDate).Title("Action").Width(60).HtmlAttributes(new { style = "text-align: center" }).ClientTemplate(
                     "#if(SubmitDate == null){# " +
-                        "<a title='View' style='text-decoration: none; cursor: pointer; ' href=/Organization/ClaimSubmission?mode=view&VisitId=${VisitId}><span class=\"glyphicon glyphicon-eye-open\"></span></a> " +
+                        "<a title='View' style='text-decoration: none; cursor: pointer; ' href=/Admin/ClaimSubmission?mode=view&VisitId=${VisitId}><span class=\"glyphicon glyphicon-eye-open\"></span></a> " +
                     "#} else {# " +
-                        "<a title='Edit' style='text-decoration: none; cursor: pointer; ' href=/Organization/ClaimSubmission?mode=edit&VisitId=${VisitId}><span class=\"glyphicon glyphicon-pencil\"></span></a> " +
+                        "<a title='Edit' style='text-decoration: none; cursor: pointer; ' href=/Admin/ClaimSubmission?mode=edit&VisitId=${VisitId}><span class=\"glyphicon glyphicon-pencil\"></span></a> " +
                     "#}#");
 
             })
@@ -126,7 +127,7 @@
     });
 
     function btnSearch() {
-       GetClaims('@ServiceUrl', '@Session["OrganizationID"]', $("#ClaimStartDate").val(), $("#ClaimEndDate").val(), $("#ClaimStatus").val());
+       GetClaims('@ServiceUrl', 0, $("#ClaimStartDate").val(), $("#ClaimEndDate").val(), $("#ClaimStatus").val());
 
     }
     function btnClear() {
@@ -134,14 +135,14 @@
         var ToDate = kendo.toString(kendo.parseDate(new Date()), 'MM/dd/yyyy');
         $("#ClaimEndDate").data("kendoDatePicker").value(ToDate);
         var dt = new Date();
-        dt.setMonth(dt.getMonth() - 3);
+        dt.setMonth(dt.getMonth() - 1);
         var dd = dt.getDate();
         var mm = dt.getMonth() + 1;
         var y = dt.getFullYear();
         var FromDate = mm + '/' + dd + '/' + y;
         $("#ClaimStartDate").val(FromDate);
         //to clear grid
-        GetClaims('@ServiceUrl', '@Session["OrganizationID"]', $("#ClaimStartDate").val(), $("#ClaimEndDate").val(), $("#ClaimStatus").val());
+        GetClaims('@ServiceUrl', 0, $("#ClaimStartDate").val(), $("#ClaimEndDate").val(), $("#ClaimStatus").val());
     }
 
 </script>

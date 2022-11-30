@@ -1,0 +1,766 @@
+﻿@model PPCP07302018.Models.MemberVisit
+@using Kendo.Mvc.UI
+
+@{
+    var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
+}
+
+<style>
+    .loadingSpinner {
+        position: absolute;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background: rgba( 255, 255, 255, .8 ) url('../../Images/loading-spinner-red.gif') 50% 50% no-repeat;
+    }
+
+    .claimStatusButton {
+        cursor: pointer;
+        font-family: Verdana;
+        color: #ffffff;
+        font-size: 14px;
+        height: 25px;
+        text-decoration: none;
+        padding-left: 30px;
+        padding-right: 30px;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        border-radius: 12px;
+    }
+
+    .claimStatusButtonGreen {
+        border: solid #00a884 2px;
+        border-color: #00a884 #00a884 #00a884 #00a884;
+        background: #718ca1; /* Old browsers */
+        background: -moz-linear-gradient(top, #00a884 14%, #00a884 47%, #00a884 79%); /* FF3.6+ */
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(14%,#00a884), color-stop(47%,#00a884), color-stop(79%,#00a884)); /* Chrome,Safari4+ */
+        background: -webkit-linear-gradient(top, #00a884 14%,#00a884 47%,#00a884 79%); /* Chrome10+,Safari5.1+ */
+        background: -o-linear-gradient(top, #00a884 14%,#00a884 47%,#00a884 79%); /* Opera 11.10+ */
+        background: -ms-linear-gradient(top, #00a884 14%,#00a884 47%,#00a884 79%); /* IE10+ */
+        background: linear-gradient(to bottom, #00a884 14%,#00a884 47%,#00a884 79%); /* W3C */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='##00a884', endColorstr='##00a884',GradientType=0 ); /* IE6-9 */
+    }
+
+    .claimStatusButtonRed {
+        border: solid #FF5050 2px;
+        border-color: #FF5050 #FF5050 #FF5050 #FF5050;
+        background: #718ca1; /* Old browsers */
+        background: -moz-linear-gradient(top, #FF5050 14%, #FF5050 47%, #FF5050 79%); /* FF3.6+ */
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(14%,#FF5050), color-stop(47%,#FF5050), color-stop(79%,#FF5050)); /* Chrome,Safari4+ */
+        background: -webkit-linear-gradient(top, #FF5050 14%,#FF5050 47%,#FF5050 79%); /* Chrome10+,Safari5.1+ */
+        background: -o-linear-gradient(top, #FF5050 14%,#FF5050 47%,#FF5050 79%); /* Opera 11.10+ */
+        background: -ms-linear-gradient(top, #FF5050 14%,#FF5050 47%,#FF5050 79%); /* IE10+ */
+        background: linear-gradient(to bottom, #FF5050 14%,#FF5050 47%,#FF5050 79%); /* W3C */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='##FF5050', endColorstr='##FF5050',GradientType=0 ); /* IE6-9 */
+    }
+
+    .claimStatusButtonBlue {
+        border: solid #1434A4 2px;
+        border-color: #1434A4 #1434A4 #1434A4 #1434A4;
+        background: #718ca1; /* Old browsers */
+        background: -moz-linear-gradient(top, #1434A4 14%, #1434A4 47%, #1434A4 79%); /* FF3.6+ */
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(14%,#1434A4), color-stop(47%,#1434A4), color-stop(79%,#1434A4)); /* Chrome,Safari4+ */
+        background: -webkit-linear-gradient(top, #1434A4 14%,#1434A4 47%,#1434A4 79%); /* Chrome10+,Safari5.1+ */
+        background: -o-linear-gradient(top, #1434A4 14%,#1434A4 47%,#1434A4 79%); /* Opera 11.10+ */
+        background: -ms-linear-gradient(top, #1434A4 14%,#1434A4 47%,#1434A4 79%); /* IE10+ */
+        background: linear-gradient(to bottom, #1434A4 14%,#1434A4 47%,#1434A4 79%); /* W3C */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='##1434A4', endColorstr='##1434A4',GradientType=0 ); /* IE6-9 */
+    }
+
+    .claimStatusButtonYellow {
+        border: solid #FFBF00 2px;
+        border-color: #FFBF00 #FFBF00 #FFBF00 #FFBF00;
+        background: #718ca1; /* Old browsers */
+        background: -moz-linear-gradient(top, #FFBF00 14%, #FFBF00 47%, #FFBF00 79%); /* FF3.6+ */
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(14%,#FFBF00), color-stop(47%,#FFBF00), color-stop(79%,#FFBF00)); /* Chrome,Safari4+ */
+        background: -webkit-linear-gradient(top, #FFBF00 14%,#FFBF00 47%,#FFBF00 79%); /* Chrome10+,Safari5.1+ */
+        background: -o-linear-gradient(top, #FFBF00 14%,#FFBF00 47%,#FFBF00 79%); /* Opera 11.10+ */
+        background: -ms-linear-gradient(top, #FFBF00 14%,#FFBF00 47%,#FFBF00 79%); /* IE10+ */
+        background: linear-gradient(to bottom, #FFBF00 14%,#FFBF00 47%,#FFBF00 79%); /* W3C */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='##FFBF00', endColorstr='##FFBF00',GradientType=0 ); /* IE6-9 */
+    }
+</style>
+
+<div class="pageheading_bar" align="center">
+    <b>Claim Submission</b>
+</div>
+
+@Html.HiddenFor(m => m.VisitId)
+@Html.HiddenFor(m => m.OrganizationID)
+
+<div id="memberSearch">
+    <div class="Panel_bg">
+
+        <div>
+            <fieldset style="display:block">
+                <div style="display: block;">
+                    <div class="Page_Dimmer1">
+                    </div>
+                    <div class="PopupHolder2" style="height:auto;">
+
+                        <div class="Panel_bg_Sub">
+                            <div style="width: 100%;height:auto;">
+                                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" style="display:block">
+                                    <div class="row">
+                                        <div class="col-xs-6 col-md-3 col-sm-6 col-lg-4">
+                                            @Html.TextBox("searchFilter", null, new { @class = "customKendoTextBox", placeholder = "First Name/Last Name/Mobile Number", style = "width:100%;", maxlength = 100 })
+                                        </div>
+                                        <div class="col-xs-6 col-md-6 col-sm-6 col-lg-6">
+                                            <button type="button" title="Search" style="width: 150px;" class="button_blue" value="Search" onclick="searchMember()">
+                                                Search Member
+                                            </button>
+                                            <button type="button" title="Clear" value="Clear" style="width: 100px;" class="button_blue" onclick="searchClear()">
+                                                Clear
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                        @Html.Hidden("RedirectTo", Url.Action("ViewMemberDetails", "Organization"))
+                        @(Html.Kendo().Grid<PPCP07302018.Models.Organization.AddMemberDetails> ()
+                                .Name("memberGrid")
+                                .Columns(columns =>
+                                {
+                                    columns.Bound(p => p.MemberName).Width(100).ClientTemplate(" <a onclick='SelectPat(#= Member_Id # );' <span style=' cursor:pointer'>#: Member_name #</a>").Width(150).Title("Name").Visible(false);
+                                    columns.Bound(p => p.OrganizationName).Title("Organization Name").Filterable(true).Width(100).Visible(false);
+                                    columns.Bound(p => p.MemberID).Title("MemberID").Filterable(true).Width(130).Visible(false);
+                                    columns.Bound(p => p.FirstName).Title("FirstName").Filterable(true).Width(130).Visible(false);
+                                    columns.Bound(p => p.LastName).Title("Last Name").Filterable(true).Width(120).Visible(false);
+                                    columns.Bound(p => p.MemberName).Title("Member Name").ClientTemplate("#: FirstName # #: LastName #").Filterable(true).Width(150);
+                                    columns.Bound(p => p.CountryCode).Title("Country Code").Filterable(true).Width(120).Visible(false);
+                                    columns.Bound(p => p.MobileNumber).Title("Mobile Number").Filterable(true).Width(120);
+                                    columns.Bound(p => p.PlanStartDate).Title("Plan Start Date").ClientTemplate("#= kendo.toString(kendo.parseDate(PlanStartDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') #").Filterable(true).Width(120);
+                                    columns.Bound(p => p.PlanEndDate).Title("Plan End Date").ClientTemplate("#= kendo.toString(kendo.parseDate(PlanEndDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') #").Filterable(true).Width(120);
+                                    columns.Bound(p => p.DOB).Title("DOB").Filterable(true).Width(130).Visible(false);
+                                    columns.Bound(p => p.Age).Title("Age").Filterable(true).Width(120).Visible(false);
+                                    columns.Bound(p => p.Gender).Title("Gender").Filterable(true).Width(120).Visible(false);
+                                    columns.Bound(p => p.Salutation).Title("Salutation").Filterable(true).Width(130).Visible(false);
+                                    // columns.Bound(p => p.SalutationID).Title("SalutationID").Filterable(true).Width(130).Visible(false);
+                                    columns.Bound(p => p.Email).Title("Email").Filterable(true).Width(120).Visible(false);
+                                    columns.Bound(p => p.CountryName).Title("CountryName").Filterable(true).Width(120).Visible(false);
+                                    columns.Bound(p => p.StateName).Title("StateName").Filterable(true).Width(130).Visible(false);
+                                    columns.Bound(p => p.CityName).Title("CityName").Filterable(true).Width(120).Visible(false);
+                                    columns.Bound(p => p.Zip).Title("Zip").Filterable(true).Width(120).Visible(false);
+                                    columns.Bound(p => p.MemberID).Title("MemberID").Filterable(false).Width(100).Visible(false);
+                                    columns.Bound(p => p.CountryID).Title("CountryID").Filterable(false).Width(100).Visible(false);
+                                    columns.Bound(p => p.StateID).Title("StateID").Filterable(false).Width(100).Visible(false);
+                                    columns.Bound(p => p.CityID).Title("CityID").Filterable(false).Width(100).Visible(false);
+                                    columns.Bound(p => p.IsTwofactorAuthentication).Title("IsTwofactorAuthentication").Filterable(false).Width(100).Visible(false);
+                                    columns.Bound(p => p.TwoFactorType).Title("TwoFactorType").Filterable(false).Width(100).Visible(false);
+
+                                    columns.Bound(p => p.IsPlanActive).Width(100)
+                                                .ClientTemplate("#if(IsPlanActive) {# " +
+                                                                      "Active" +
+                                                                  "#} else {#" +
+                                                                      "<span style='color:red; font-weight:bold'>In-Active</span>" +
+                                                                  "#} #");
+
+                                    if (System.Web.HttpContext.Current.Request.RequestContext.RouteData.Values["action"].ToString() == "ClaimSubmission")
+                                    {
+                                        columns.Bound(p => p).Title("Action").Width(60)
+                                        .ClientTemplate("<a onclick='SubmitNewClaim(#=MemberID#,\"#=MemberCardID#\", \"#=FirstName#\",\"#=LastName#\",\"#=CountryCode#\",\"#=MobileNumber#\",\"#=DOB#\",\"#=PlanName#\",\"#=PlanStartDate#\",\"#=PlanEndDate#\",\"#=IsPlanActive#\");' <span style='cursor:pointer'>Submit Claim</a>");
+                                    }
+                                    //columns.Bound(p => p).ClientTemplate(
+                                    //    "<a onclick='EditOptions(#=MemberID#,\"#=FirstName#\",\"#=LastName#\",\"#=CountryCode#\",\"#=MobileNumber#\",\"#=DOB#\",\"#=Gender#\",\"#=Email#\",\"#=CountryName#\",\"#=StateName#\",\"#=CityName#\",\"#=Zip#\",\"#=Salutation#\",\"#=CountryID#\",\"#=StateID#\",\"#=CityID#\",\"#=IsTwofactorAuthentication#\",\"#=TwoFactorType#\");' <span style='cursor:pointer'>View</a>").Title("Action").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(50);
+
+                                    //columns.Bound(p => p).ClientTemplate(
+                                    //                                    "<a onclick='ViewMemberCard(#=MemberID#,#=Plan_Code#,\"#=MemberPlanID#\",\"#=PlanType#\");' <span style='cursor:pointer'>Download</a>").Title("ID Card").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(80);
+
+                                })
+                                .Scrollable()
+                                .Pageable()
+                                .Filterable()
+                                .AutoBind(false)
+                                .HtmlAttributes(new { style = "height: 500px; min-height: 300px;" })
+                                .Selectable()
+                                .DataSource(dataSource => dataSource
+                                .Ajax()
+                                .PageSize(50)
+                                .ServerOperation(false)))
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="Panel_bg" id="divMainMemberDetails" style="width: 100%">
+    <div class="row Panel_bg_Sub">
+        @{ var blueStatusList = new List<int> { 1, 2 }; var yellowStatusList = new List<int> { 3 }; var redStatusList = new List<int> { 4 }; var greenStatusList = new List<int> { 5, 6 }; }
+        <div style="float: right"> <button type="submit" title="Claim Status" style=" " disabled
+                                            class="claimStatusButton @(Model.ClaimStatus == "New" || blueStatusList.Contains(Model.ClaimStatusId) ? "claimStatusButtonBlue" : "") 
+                                            @(yellowStatusList.Contains(Model.ClaimStatusId) ? "claimStatusButtonYellow" : "") 
+                                            @(redStatusList.Contains(Model.ClaimStatusId) ? "claimStatusButtonRed" : "") 
+                                            @(greenStatusList.Contains(Model.ClaimStatusId) ? "claimStatusButtonGreen" :"" )">@Model.ClaimStatus</button></div>
+
+        <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Member Details</b></legend>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                            @Html.HiddenFor(m => m.MemberId)
+                            @Html.Label("Member Id", new { style = "font-weight:normal;", @class = "" })<br />
+                            @Html.TextBoxFor(model => model.MemberCardID, null, new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;", maxlength = 50 })
+                        </div>
+                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                            @Html.Label("Member Name", new { style = "font-weight:normal;", @class = "" })<br />
+                            @Html.TextBoxFor(model => model.MemberName, null, new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;", maxlength = 50 })
+                        </div>
+
+                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                            @Html.Label("Date of Birth", new { style = "font-weight:normal;", @class = "" })<br />
+                            @Html.TextBoxFor(model => model.MemberDOB, "{0:MM/dd/yyyy}", new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;", maxlength = 50 })
+                            @*@( Html.Kendo().DatePickerFor(model => model.MemberDOB).Format("MM/dd/yyyy").Enable(false)
+                                .HtmlAttributes(new {  PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text" }))*@
+                        </div>
+                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                            @Html.Label("Mobile Number", new { style = "font-weight:normal;", @class = "" })<br />
+                            @Html.TextBoxFor(model => model.MemberMobileNumber, null, new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;", maxlength = 20 })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <legend class="Legendtxtcolor" style="float: left; font-size: 14px; "><b>Current Plan</b></legend>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                            @Html.Label("Plan Name", new { style = "font-weight:normal;", @class = "" })<br />
+                            @Html.TextBoxFor(model => model.PlanName, null, new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;", maxlength = 50 })
+                        </div>
+                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                            @Html.Label("Plan Start Date", new { style = "font-weight:normal;", @class = "" })<br />
+                            @Html.TextBoxFor(model => model.PlanStartDate, "{0:MM/dd/yyyy}", new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;", maxlength = 50 })
+                        </div>
+
+                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                            @Html.Label("Plan End Date", new { style = "font-weight:normal;", @class = "" })<br />
+                            @Html.TextBoxFor(model => model.PlanEndDate, "{0:MM/dd/yyyy}", new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;", maxlength = 50 })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row Panel_bg_Sub">
+        <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Encounter Detail</b></legend>
+        <span style="color: orangered">@(Model.IsPlanExistingOnDOS ? "" : "Please check the Date of Service. No active member plan found.")</span>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                    @Html.Label("Date of Service", new { style = "font-weight:normal;", @class = "" })<br />
+                    @( Html.Kendo().DatePickerFor(model => model.DateOfService).Format("MM/dd/yyyy").Max(DateTime.Today).HtmlAttributes(new {  PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text" }))
+                    <span id="errDateOfService" style="color:red"></span>
+                </div>
+                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                    @Html.Label("Visit Type", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                    <label style="font-weight: normal;">
+                        @(Html.RadioButtonFor(m => m.VisitTypeId, PPCP07302018.Utils.GlobalFunctions.VisitType.InPerson, Model.VisitTypeId == @PPCP07302018.Utils.GlobalFunctions.VisitType.InPerson ? new { @checked = "checked", id="rbInPerson" } : null))
+                        In Person
+                    </label>
+                    <label style="font-weight: normal; margin-left:20px">
+                        @(Html.RadioButtonFor(m => m.VisitTypeId, PPCP07302018.Utils.GlobalFunctions.VisitType.TeleVisit, Model.VisitTypeId == @PPCP07302018.Utils.GlobalFunctions.VisitType.TeleVisit ? new { @checked = "checked" } : null))
+                        Tele Visit
+                    </label>
+                    <br />
+                    <span id="errVisitTypeId" style="color:red"></span>
+                </div>
+                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                    @Html.Label("Provider", new { style = "font-weight:normal;", @class = "" })<br />
+                    @(Html.Kendo().DropDownListFor(model => model.ProviderId)
+                            .Name("providerList")
+                            .OptionLabel("--Select--")
+                            .HtmlAttributes(new { style = "width:100%;" })
+                            .DataValueField("ProviderID")
+                            .DataTextField("ProviderName")
+                            .Events(e =>
+                            {
+                                e.DataBound("onProviderDropdownDataBound");
+                            })
+                            .DataSource(source =>
+                            {
+                                source.Read(read =>
+                                {
+                                });
+                            }))
+                    <span id="errProviderID" style="color:red"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                    @Html.Label("Primary Procedure Code", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                    @Html.TextBoxFor(model => model.PrimaryProcedureCode, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 10 })
+                    <span id="errPrimaryProcedureCode" style="color:red"></span>
+                </div>
+                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                    @Html.Label("Primary Diagnosis Code", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                    @Html.TextBoxFor(model => model.PrimaryDiagnosisCode, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 10 })
+                    <span id="errPrimaryDiagnosisCode" style="color:red"></span>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 30px;">
+                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                    @Html.Label("Addl. Procedure Code", new { style = "font-weight:normal;", @class = "" })
+                </div>
+                <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
+                    @Html.Label("Modifier1", new { style = "font-weight:normal;", @class = "" })
+                </div>
+                <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
+                    @Html.Label("Modifier2", new { style = "font-weight:normal;", @class = "" })
+                </div>
+                <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
+                    @Html.Label("Modifier3", new { style = "font-weight:normal;", @class = "" })
+                </div>
+                <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
+                    @Html.Label("Modifier4", new { style = "font-weight:normal;", @class = "" })
+                </div>
+            </div>
+            <div class="row">
+                @for (int i = 0; i < Model.ProcedureLines.Count; i++)
+                {
+                    <div class="row">
+                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                            @Html.TextBoxFor(model => model.ProcedureLines[i].ProcCode, null, new { @class = "customKendoTextBox proclines", style = "width:100%;", maxlength = 10 })
+                        </div>
+                        <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
+                            @Html.TextBoxFor(model => model.ProcedureLines[i].Modifier1, null, new { @class = "customKendoTextBox proclines", style = "width:100%;", maxlength = 10 })
+                        </div>
+                        <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
+                            @Html.TextBoxFor(model => model.ProcedureLines[i].Modifier2, null, new { @class = "customKendoTextBox proclines", style = "width:100%;", maxlength = 10 })
+                        </div>
+                        <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
+                            @Html.TextBoxFor(model => model.ProcedureLines[i].Modifier3, null, new { @class = "customKendoTextBox proclines", style = "width:100%;", maxlength = 10 })
+                        </div>
+                        <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
+                            @Html.TextBoxFor(model => model.ProcedureLines[i].Modifier4, null, new { @class = "customKendoTextBox proclines", style = "width:100%;", maxlength = 10 })
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <legend class="Legendtxtcolor" style="float: left; font-size: 14px; margin-top: 15px;"><b>Fees</b></legend>
+            <div class="row">
+                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                    @Html.Label("Co-Pay Paid", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                    @Html.TextBoxFor(model => model.Copay, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 10, onchange = "CalculateTotalPaid();" })
+                    <span id="errCopay" style="color:red"></span>
+                </div>
+                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                    @Html.Label("Other Charges Paid", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                    @Html.TextBoxFor(model => model.OtherCharges, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 10, onchange = "CalculateTotalPaid();" })
+                    <span id="errOtherCharges" style="color:red"></span>
+                </div>
+                <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
+                    @Html.Label("Payment Type", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                    <label style="font-weight: normal;">
+                        @(Html.RadioButtonFor(m => m.PaymentTypeId, PPCP07302018.Utils.GlobalFunctions.PaymentType.Credit, Model.PaymentTypeId == @PPCP07302018.Utils.GlobalFunctions.PaymentType.Credit ? new { @checked = "checked" } : null))
+                        Credit Card
+                    </label>
+                    <label style="font-weight: normal; margin-left:20px">
+                        @(Html.RadioButtonFor(m => m.PaymentTypeId, PPCP07302018.Utils.GlobalFunctions.PaymentType.Cash, Model.PaymentTypeId == @PPCP07302018.Utils.GlobalFunctions.PaymentType.Cash ? new { @checked = "checked" } : null))
+                        Cash
+                    </label>
+                    <label style="font-weight: normal; margin-left:20px">
+                        @(Html.RadioButtonFor(m => m.PaymentTypeId, PPCP07302018.Utils.GlobalFunctions.PaymentType.Check, Model.PaymentTypeId == @PPCP07302018.Utils.GlobalFunctions.PaymentType.Check ? new { @checked = "checked" } : null))
+                        Check
+                    </label><br/>
+                    <span id="errPaymentTypeId" style="color:red"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                    @Html.Label("Total Paid", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                    @Html.TextBox("TotalPaid", null, new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;", maxlength = 50 })
+                </div>
+                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3"></div>
+                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                    @Html.Label("Payment Date", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                    @( Html.Kendo().DatePickerFor(model => model.PaymentDate).Format("MM/dd/yyyy").Max(DateTime.Today).HtmlAttributes(new {  PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text" }))
+                    <span id="errPaymentDate" style="color:red"></span>
+                </div>
+                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                    @Html.Label("Receipt/Transaction Number", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                    @Html.TextBoxFor(model => model.ReceiptNumber, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
+                    <span id="errReceiptNumber" style="color:red"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: 20px;">
+        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+            <div align="center">
+                @if (Model.ClaimStatus == "New" || blueStatusList.Contains(Model.ClaimStatusId))
+                {
+                <button type="submit" class="button_blue" title="Submit" style="width: 100px;" onclick="SaveClaim()">
+                    Save
+                </button>
+                <button type="submit" class="button_blue" title="Submit" style="width: 100px;" onclick="SubmitClaim()">
+                    Submit
+                </button>
+                }
+                <button id="btnClose" title="Close" style="width: 100px" class="button_blue" onclick="CancelClaimSubmission()">
+                    Cancel
+                </button>
+            </div>
+            <br />
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        GetMemberDetails($("#OrganizationID").val(), "0", "", '@ServiceUrl');
+
+        BindProviders();
+
+        var v = $("#VisitId").val();
+        if ($("#VisitId").val() == 0) {
+            $("#memberSearch").show();
+            $("#divMainMemberDetails").hide();
+        } else {
+            $("#memberSearch").hide();
+            $("#divMainMemberDetails").show();
+            CalculateTotalPaid();
+        }
+    });
+
+    function searchClear() {
+        $("#searchFilter").val(null);
+        //to clear grid
+        GetMemberDetails($("#OrganizationID").val(), "0", "", '@ServiceUrl');
+    }
+
+    function searchMember() {
+        var searchFilter = $("#searchFilter").val();
+        GetMemberDetails('@Session["OrganizationID"]', "0", searchFilter, '@ServiceUrl');
+    }
+
+    function GetMemberDetails(OrganizationID, strMemberID, searchText, Url) {
+        var webMethodName = "GetMembersList";//GetOrganizationMemberDetails
+        var ParameterNames = new Array();
+        var ParameterValues = new Array();
+        ParameterNames[0] = "OrganizationID";
+        ParameterValues[0] = OrganizationID;
+        ParameterNames[1] = "strMemberID";
+        ParameterValues[1] = strMemberID;
+        ParameterNames[2] = "searchtext";
+        ParameterValues[2] = searchText;
+        var Url = Url + "OrganizationServices";
+        var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
+        $.ajax({
+            type: "POST",
+            url: Url,
+            data: jsonPostString,
+            dataType: "text",
+            contentType: "application/json",
+            success: function (result) {
+                var obj = jQuery.parseJSON(result);
+                var list = obj[0];
+
+                $("#memberGrid").data("kendoGrid").dataSource.data(list);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+            },
+        });
+    }
+
+    function SubmitNewClaim(MemberID, MemberCardID, FirstName, LastName, CountryCode, MobileNumber, DOB, PlanName, PlanStartDate, PlanEndDate, IsPlanActive) {
+        $("#memberSearch").hide();
+        $("#divMainMemberDetails").show()
+
+        $("#MemberId").val(MemberID);
+        $("#MemberCardID").val(MemberCardID);
+        $("#MemberName").val(FirstName + " " + LastName);
+        $("#MemberDOB").val(getDate(DOB));
+        $("#MemberMobileNumber").val(MobileNumber);
+        if (IsPlanActive == "true") {
+            $("#PlanName").val(PlanName);
+            $("#PlanStartDate").val(getDate(PlanStartDate));
+            $("#PlanEndDate").val(getDate(PlanEndDate));
+        } else {
+            $("#PlanName").val("");
+            $("#PlanStartDate").val("");
+            $("#PlanEndDate").val("");
+        }
+
+        $("#Copay").val("");
+        $("#OtherCharges").val("");
+    }
+
+    function onProviderDropdownDataBound() {
+        this.value('@Model.ProviderId');
+        @*var dropdownlist = $("#dropdownlist").data("kendoDropDownList");
+        dropdownlist.value('@Model.ProviderId');*@
+        this.trigger("change");
+    }
+
+    function BindProviders() {
+        var webMethodName = "GetProviderDetails";
+        var ParameterNames = new Array();
+        var ParameterValues = new Array();
+        ParameterNames[0] = "strOrganizationID";
+        ParameterValues[0] = $("#OrganizationID").val();
+        ParameterNames[1] = "strProviderID";
+        ParameterValues[1] = 0;
+        var Url = '@ServiceUrl' + "OrganizationServices";
+        var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
+        $.ajax({
+
+            type: "POST",
+            url: Url,
+            data: jsonPostString,
+            dataType: "text",
+            contentType: "application/json",
+            success: function (result) {
+                debugger;
+                var obj = jQuery.parseJSON(result);
+                var list = obj[0];
+                $('#providerList').data('kendoDropDownList').dataSource.data(list);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+            },
+        });
+    }
+
+    function CalculateTotalPaid() {
+        var total = parseFloat($("#Copay").val()) + parseFloat($("#OtherCharges").val());
+        $("#TotalPaid").val(total.toFixed(2));
+    }
+
+    function CancelClaimSubmission() {
+        debugger;
+        var actionName = '@System.Web.HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString()';
+        if(actionName == "Admin") {
+            var getUrl = '@Url.Action("BillingDashboard", "Admin")';
+            window.location.href = getUrl;
+        }
+
+        if(actionName == "Organization") {
+            if($("#VisitId").val() > 0) {
+                var getUrl = '@Url.Action("BillingDashboard", "Organization")';
+                window.location.href = getUrl;
+            } else {
+                $("#memberSearch").show();
+                $("#divMainMemberDetails").hide();
+
+                //Clear Encounter section
+                var value = 15
+                //$('input:radio[name="VisitTypeId"]').filter('[value=15]').attr('checked', true);;
+                //$('input:radio[name=VisitTypeId][value=15]').click();
+               // $("input[id=VisitTypeId][value=" + value + "]").prop('checked', true);
+                //$("#VisitTypeId").attr('checked', true);
+                // document.querySelector('input[name=VisitTypeId][value=15]').checked = true;
+
+                $("#DateOfService").val(null);
+                $("#PrimaryProcedureCode").val("");
+                $("#PrimaryDiagnosisCode").val("");
+                $("#Copay").val("");
+                $("#OtherCharges").val("");
+                $("#TotalPaid").val("");
+                $("#ReceiptNumber").val("");
+                $("#PaymentDate").val(null);
+                //$("#providerList").data("kendoDropDownList").values(null);
+                $(".proclines").val("");
+
+            }
+        }
+    }
+
+
+    function clearErrors() {
+        $("#errDateOfService").html("");
+        $("#errPrimaryProcedureCode").html("");
+        $("#errPrimaryDiagnosisCode").html("");
+        $("#errProviderID").html("");
+        $("#errCopay").html("");
+        $("#errOtherCharges").html("");
+        $("#errPaymentDate").html("");
+        $("#errReceiptNumber").html("");
+        $("#errVisitTypeId").html("");
+        $("#errPaymentTypeId").html("");
+    }
+
+    function SaveClaim() {
+        clearErrors();
+        var isError=0;;
+        if($("#DateOfService").val() == ""){
+            $("#errDateOfService").html("Required");
+            isError = 1;
+        };
+
+        if(isError == 1) {
+            return false;
+        }
+
+        GetMemberXML(@PPCP07302018.Utils.GlobalFunctions.ClaimStatus.Saved);
+    }
+
+    function SubmitClaim() {
+
+        clearErrors();
+        var isError=0;
+        if($("#DateOfService").val() == ""){
+            $("#errDateOfService").html("Required");
+            isError = 1;
+        };
+        if($('input[name="VisitTypeId"]:checked').val() == ""  || $('input[name="VisitTypeId"]:checked').val() == undefined){
+            $("#errVisitTypeId").html("Required");
+            isError = 1;
+        };
+        if($("#PrimaryProcedureCode").val() == ""){
+            $("#errPrimaryProcedureCode").html("Required");
+            isError = 1;
+        };
+        if($("#PrimaryDiagnosisCode").val() == ""){
+            $("#errPrimaryDiagnosisCode").html("Required");
+            isError = 1;
+        };
+        if($("#providerList").data("kendoDropDownList").value() == ""){
+            $("#errProviderID").html("Required");
+            isError = 1;
+        };
+        if($('input[name="PaymentTypeId"]:checked').val() == ""  || $('input[name="PaymentTypeId"]:checked').val() == undefined){
+            $("#errPaymentTypeId").html("Required");
+            isError = 1;
+        };
+        if($("#Copay").val() == "" || $("#Copay").val() <= 0){
+            $("#errCopay").html("Required");
+            isError = 1;
+        };
+        if($("#OtherCharges").val() == ""){
+            $("#errOtherCharges").html("Required");
+            isError = 1;
+        };
+        if($("#PaymentDate").val() == ""){
+            $("#errPaymentDate").html("Required");
+            isError = 1;
+        };
+        if($("#ReceiptNumber").val() == ""){
+            $("#errReceiptNumber").html("Required");
+            isError = 1;
+        };
+
+        if(isError == 1) {
+            return false;
+        }
+        GetMemberXML(@PPCP07302018.Utils.GlobalFunctions.ClaimStatus.Submitted);
+    }
+
+    function GetMemberXML(ClaimStatus) {
+        var MemberClaim = {};
+        MemberClaim.VisitId = $("#VisitId").val();
+        MemberClaim.MemberId = $("#MemberId").val();
+        MemberClaim.OrganizationID = $("#OrganizationID").val();
+        MemberClaim.ProviderId = $("#providerList").data("kendoDropDownList").value();
+        MemberClaim.DateOfService = $("#DateOfService").val();
+        MemberClaim.VisitTypeId = $('input[name="VisitTypeId"]:checked').val();
+        MemberClaim.PrimaryProcedureCode = $("#PrimaryProcedureCode").val();
+        MemberClaim.PrimaryDiagnosisCode = $("#PrimaryDiagnosisCode").val();
+        MemberClaim.Copay = $("#Copay").val();
+        MemberClaim.OtherCharges = $("#OtherCharges").val();
+        MemberClaim.PaymentTypeId = $('input[name="PaymentTypeId"]:checked').val();
+        MemberClaim.PaymentDate = $("#PaymentDate").val();
+        MemberClaim.ReceiptNumber = $("#ReceiptNumber").val();
+        MemberClaim.ModifiedBy = '@Session["UserID"]';
+        MemberClaim.ClaimStatusId = ClaimStatus,
+        MemberClaim.ProcedureLines = [];
+        debugger;
+        for (var i = 0; i < 3; i++) {
+            var p = {
+                ProcCode: $("#ProcedureLines_" + i + "__ProcCode").val(),
+                Modifier1: $("#ProcedureLines_" + i + "__Modifier1").val(),
+                Modifier2: $("#ProcedureLines_" + i + "__Modifier2").val(),
+                Modifier3: $("#ProcedureLines_" + i + "__Modifier3").val(),
+                Modifier4: $("#ProcedureLines_" + i + "__Modifier4").val()
+            }
+            MemberClaim.ProcedureLines.push(p);
+        };
+
+        $.ajax({
+            type: 'POST',
+            cache: false,
+            url: '/Organization/GetMemberXML',
+            data: MemberClaim,
+            success: function (data, textStatus, jqXHR) {
+
+                SaveClaimWebApiService(data, '@ServiceUrl');
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+            },
+        });
+    }
+
+    function SaveClaimWebApiService(data, Url) {
+        var webMethodName = "SaveClaim";
+        var ParameterName = data;
+        var jsonPostString = setParameter(ParameterName, webMethodName);
+        var Url = Url + "Organization";
+        $("<div class='loadingSpinner'></div>").appendTo($("#divMainMemberDetails"));
+        $.ajax({
+            type: "POST",
+            url: Url,
+            data: jsonPostString,
+            dataType: "json",
+            contentType: "application/json",
+            success: function (result) {
+                var obj = result[0];
+                $("#divMainMemberDetails").find(".loadingSpinner:first").remove();
+                location.reload();
+
+                //if (obj[0].ResultID >= 0 && obj[0].ResultName == null) {
+                //    document.getElementById("divSignupPopup").style.display = "block";
+                //    document.getElementById("spnPopupMessage").innerHTML = "Updated successfully.";
+                //    document.getElementById("divSignupPopup").scrollIntoView();
+                //}
+                //else {
+                //    document.getElementById("divErrMessagePopup").style.display = "block";
+                //    document.getElementById("spnPopupErrMessage").innerHTML = obj[0].result + ". Please try again.";
+                //    document.getElementById("divErrMessagePopup").scrollIntoView();
+                //}
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+            },
+        });
+    }
+
+    function setParameter(parameterName, methodName) {
+        var obj = new Object();
+        obj.WebMethodName = methodName;
+        obj.XMLdata = parameterName;
+        var resultData = JSON.stringify(obj);
+        return resultData;
+    }
+
+    function getDate(str) { var ops = { year: 'numeric' }; ops.month = ops.day = '2-digit'; return new Date(str).toLocaleDateString(0, ops); }
+
+    function setJsonParameter(parameterName, parameterValue, methodName) {
+        var obj = new Object();
+        obj.ParameterName = parameterName;
+        obj.ParameterValue = parameterValue;
+        obj.WebMethodName = methodName;
+        var resultData = JSON.stringify(obj);
+        resultData = getformattedJsonFromArray(resultData);
+        return resultData;
+    }
+
+    function getformattedJsonFromArray(arrayObj) {
+        arrayObj = arrayObj.replace(/"/g, "'");
+        return arrayObj + "";
+    }
+</script>

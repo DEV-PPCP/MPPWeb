@@ -24,6 +24,10 @@ span.k-icon.k-i-calendar {
     line-height: 1.6em;
 }
 
+.disabled {
+    background-color: #f1f1f1;
+}
+
 #sidebar123 {
     background: #e6e5e5;
     color: #fff;
@@ -315,7 +319,7 @@ a, a:hover, a:focus {
 
 #sidebar a:hover, a:focus {
     color: #fff;
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 #sidebar ul p {

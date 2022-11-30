@@ -80,11 +80,6 @@ span.k-icon.k-i-calendar {
         background-color: #242424;
         height: 45px;
     }
-    .loginFooter {
-        bottom: 0;
-        position: fixed;
-        width: 100%;
-    }
 }
 
 @media only screen and (min-width:1024px) and (max-width:768px) /*style for desktop view*/
@@ -92,11 +87,6 @@ span.k-icon.k-i-calendar {
     .thememount-topbar {
         background-color: #242424;
         height: 45px;
-    }
-    .loginFooter {
-        bottom: 0;
-        position: fixed;
-        width: 100%;
     }
 }
 
@@ -106,6 +96,10 @@ span.k-icon.k-i-calendar {
         background-color: #242424;
         height: 45px;
     }
+}
+
+@media only screen and (min-width:1000px) /*style for desktop view*/
+{
     .loginFooter {
         bottom: 0;
         position: fixed;

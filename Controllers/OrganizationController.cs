@@ -3418,22 +3418,53 @@ shapeFooter, PageNumbers
         {
             return View();
         }
-
+        public ActionResult ClaimSubmissionAdd()
+        {
+            return RedirectToAction("ClaimSubmission", new { mode = "add", VisitId = 0 });
+        }
         public ActionResult ClaimSubmission(string mode, int VisitId)
         {
-            DataAccessLayer.ServiceCall<PPCP07302018.Models.MemberVisit> objcall = new DataAccessLayer.ServiceCall<PPCP07302018.Models.MemberVisit>();
-            PPCP07302018.Models.Member.ServiceData ServiceData = new PPCP07302018.Models.Member.ServiceData();
-            string[] ParameterName = new string[] { "VisitId" };
+            MemberVisit model = new MemberVisit();
+            if (VisitId > 0)
+            {
+                DataAccessLayer.ServiceCall<PPCP07302018.Models.MemberVisit> objcall = new DataAccessLayer.ServiceCall<PPCP07302018.Models.MemberVisit>();
+                PPCP07302018.Models.Member.ServiceData ServiceData = new PPCP07302018.Models.Member.ServiceData();
+                string[] ParameterName = new string[] { "VisitId" };
 
-            string[] ParameterValue = new string[] { VisitId.ToString() };
-            ServiceData.ParameterName = ParameterName;
-            ServiceData.ParameterValue = ParameterValue;
-            ServiceData.WebMethodName = "GetVisitById";
-            List<PPCP07302018.Models.MemberVisit> List = objcall.CallServices(Convert.ToInt32(0), "GetVisitById", ServiceData);
+                string[] ParameterValue = new string[] { VisitId.ToString() };
+                ServiceData.ParameterName = ParameterName;
+                ServiceData.ParameterValue = ParameterValue;
+                ServiceData.WebMethodName = "GetVisitById";
+                List<PPCP07302018.Models.MemberVisit> List = objcall.CallServices(Convert.ToInt32(0), "GetVisitById", ServiceData);
 
-            MemberVisit model = List.FirstOrDefault();
+                model = List.FirstOrDefault();
+
+                //add procedure lines to make it at 3 - currently allowing max of 3 lines
+                int ctr = model.ProcedureLines.Count;
+                for (int i = ctr; i < 3; i++)
+                {
+                    model.ProcedureLines.Add(new ProcedureLine());
+                }
+            }
+            else
+            {
+                model.OrganizationID = Session["OrganizationID"] == null ? 0 : Convert.ToInt32(Session["OrganizationID"]);
+                model.ClaimStatus = "New";
+                model.IsPlanExistingOnDOS = true;
+                model.ProcedureLines = new List<ProcedureLine>();
+                model.ProcedureLines.Add(new ProcedureLine());
+                model.ProcedureLines.Add(new ProcedureLine());
+                model.ProcedureLines.Add(new ProcedureLine());
+            }
 
             return View(model);
+        }
+
+        public string GetMemberXML(MemberVisit modelParameter)
+        {
+            string xml = GetXMLFromObject(modelParameter);
+            string returnData = xml.Replace("\"", "\'");
+            return returnData;
         }
         #endregion
     }

@@ -94,6 +94,8 @@
                                     </div>
                                 </div>
                             </div>
+                            @if (Session["BillingTypeID"] != null && Convert.ToInt32(Session["BillingTypeID"]) == PPCP07302018.Utils.GlobalFunctions.BillingType.PPV)
+                            {
                             <div class="panel panel-default">
                                 <div class="panel-heading">
                                     <a data-toggle="collapse" data-parent="#accordion" href="#collapseBilling">
@@ -115,13 +117,14 @@
                                             <tr>
                                                 <td>
                                                     <span class="glyphicon glyphicon-list-alt"></span>
-                                                    <a id="liClaimSubmission" class="Organization_Color" href='@Url.Action("ClaimSubmission", "Organization")' ;> Claim Submission</a>
+                                                    <a id="liClaimSubmission" class="Organization_Color" href='@Url.Action("ClaimSubmissionAdd", "Organization")' ;> Claim Submission</a>
                                                 </td>
                                             </tr>
                                         </table>
                                     </div>
                                 </div>
                             </div>
+                            }
                             <div class="panel panel-default">
                                 <div class="panel-heading">
                                     <a id="accPayments" data-toggle="collapse" data-parent="#accordion" href="#collapsePayments">

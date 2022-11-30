@@ -97,6 +97,35 @@
 
                             <div class="panel panel-default">
                                 <div class="panel-heading">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseBilling">
+                                        <h4 class="panel-title">
+                                            <span class="glyphicon glyphicon-tasks">
+                                            </span> Billing
+                                        </h4>
+                                    </a>
+                                </div>
+                                <div id="collapseBilling" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <table class="table">
+                                            <tr>
+                                                <td>
+                                                    <span class="glyphicon glyphicon-file"></span>
+                                                    <a id="liBillingSubmission" class="Organization_Color" href='@Url.Action("BillingDashboard", "Admin")' ;> Billing Dashboard</a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <span class="glyphicon glyphicon-list-alt"></span>
+                                                    <a id="liClaimSubmission" class="Organization_Color" href='@Url.Action("ClaimSubmissionAdd", "Admin")' ;> Claim Submission</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
                                     <a data-toggle="collapse" data-parent="#accordion" href="#collapseReports">
                                         <h4 class="panel-title">
                                             <span class="glyphicon glyphicon-book">
@@ -146,7 +175,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                         </div>
                     </div>
                     @*<ul class="list-unstyled components">
@@ -295,6 +324,21 @@
             $("#liViewProviders").removeClass("Organization_Color");
             $("#liViewProviders").addClass("stripePanel");
         }
+
+        //Billing
+        if (currentURL.includes("Admin/BillingDashboard")) {
+            $('div[id^="collapse"]').removeClass("in");
+            $("#collapseBilling").addClass("in");
+            $("#liBillingSubmission").removeClass("Organization_Color");
+            $("#liBillingSubmission").addClass("stripePanel");
+        }
+        if (currentURL.includes("Admin/ClaimSubmission")) {
+            $('div[id^="collapse"]').removeClass("in");
+            $("#collapseBilling").addClass("in");
+            $("#liClaimSubmission").removeClass("Organization_Color");
+            $("#liClaimSubmission").addClass("stripePanel");
+        }
+
         //Reports
         if (currentURL.includes("Admin/AdminMemberReport")) {
             $('div[id^="collapse"]').removeClass("in");

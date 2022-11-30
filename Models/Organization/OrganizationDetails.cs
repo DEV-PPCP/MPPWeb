@@ -541,7 +541,7 @@ namespace PPCP07302018.Models.Organization
     {
         public int? UserID { get; set; }
         public int MemberID { get; set; }
-
+        public string MemberCardID { get; set; }
         public string MemberName { get; set; }
 
         [Required(ErrorMessage = "This information is required.")]
@@ -625,6 +625,7 @@ namespace PPCP07302018.Models.Organization
         public string PlanName { get; set; }
         public DateTime PlanStartDate { get; set; }
         public DateTime PlanEndDate { get; set; }
+        public bool IsPlanActive { get; set; }
 
         public decimal? AmountPaid { get; set; }
         [Required(ErrorMessage = "This Information is required")]

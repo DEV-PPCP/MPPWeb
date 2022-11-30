@@ -269,5 +269,34 @@ namespace PPCP07302018.Controllers
 
             return Json(result, JsonRequestBehavior.AllowGet);
         }
+
+        public ActionResult ClaimConfirm(int id)
+        {
+            DataAccessLayer.ServiceCall<PPCP07302018.Models.MemberVisit> objcall = new DataAccessLayer.ServiceCall<PPCP07302018.Models.MemberVisit>();
+            PPCP07302018.Models.Member.ServiceData ServiceData = new PPCP07302018.Models.Member.ServiceData();
+            string[] ParameterName = new string[] { "VisitId" };
+            string[] ParameterValue = new string[] { id.ToString() };
+            ServiceData.ParameterName = ParameterName;
+            ServiceData.ParameterValue = ParameterValue;
+            ServiceData.WebMethodName = "ClaimConfirm";
+
+            List<PPCP07302018.Models.MemberVisit> List = objcall.CallServicesAdmin(Convert.ToInt32(0), "ClaimConfirm", ServiceData);
+
+            return View();
+        }
+        public ActionResult ClaimDeny(int id)
+        {
+            DataAccessLayer.ServiceCall<PPCP07302018.Models.MemberVisit> objcall = new DataAccessLayer.ServiceCall<PPCP07302018.Models.MemberVisit>();
+            PPCP07302018.Models.Member.ServiceData ServiceData = new PPCP07302018.Models.Member.ServiceData();
+            string[] ParameterName = new string[] { "VisitId" };
+            string[] ParameterValue = new string[] { id.ToString() };
+            ServiceData.ParameterName = ParameterName;
+            ServiceData.ParameterValue = ParameterValue;
+            ServiceData.WebMethodName = "ClaimDeny";
+
+            List<PPCP07302018.Models.MemberVisit> List = objcall.CallServicesAdmin(Convert.ToInt32(0), "ClaimDeny", ServiceData);
+
+            return View();
+        }
     }
 }

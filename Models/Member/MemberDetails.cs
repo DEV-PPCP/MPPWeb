@@ -250,6 +250,7 @@ namespace PPCP07302018.Models.Member
         public int MemberID { get; set; }
         public Nullable<int> MemberParentID { get; set; }
         public string MemberName { get; set; }
+        public bool doesPlanExist { get; set; }
         public int PlanID { get; set; }
         public Nullable<int> ProviderID { get; set; }
         public string ProviderName { get; set; }

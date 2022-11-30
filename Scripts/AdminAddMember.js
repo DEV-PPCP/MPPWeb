@@ -751,6 +751,7 @@ function MembeDetails(MemberRegistrationDetails, session, Url, CurrentMonth) {
     MemberRegistrationDetails.ConfirmPassword = $("#ConfirmPassword").val();
     MemberRegistrationDetails.OrganizationName = document.getElementById("spnSelectedOrganization").innerText;
     MemberRegistrationDetails.OrganizationID = document.getElementById("SpOrganizationID").innerText;
+    MemberRegistrationDetails.BillingTypeID = document.getElementById("SpBillingTypeID").innerText;
     MemberRegistrationDetails.ProviderName = document.getElementById("SpProviderName").innerText;
     MemberRegistrationDetails.ProviderID = document.getElementById("SpProviderID").innerText;
     MemberRegistrationDetails.PlanName = document.getElementById("spnSelectedPlan").innerText;
@@ -786,7 +787,7 @@ function MembeDetails(MemberRegistrationDetails, session, Url, CurrentMonth) {
     else {
         MemberRegistrationDetails.AmountPaid = $("#AmountPaid").val();
         var dueamount = tAmount - amountpaid;
-        alert(dueamount);
+       // alert(dueamount);
         if (dueamount == 0.0) {
             MemberRegistrationDetails.DueAmount = dueamount;
             MemberRegistrationDetails.Status = "Paid";
