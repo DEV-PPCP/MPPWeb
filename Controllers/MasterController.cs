@@ -1724,7 +1724,9 @@ namespace PPCP07302018.Controllers
                 txtRxMemberId.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.1D), Telerik.Reporting.Drawing.Unit.Inch(txtRxDetails.Bottom.Value + 0.1));
                 txtRxMemberId.Name = "txtRxMemberId";
                 txtRxMemberId.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(3.5D), Telerik.Reporting.Drawing.Unit.Inch(0.29996060132980347D)); //new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.1800000667572021D), Telerik.Reporting.Drawing.Unit.Inch(0.15000000596046448D));
-                txtRxMemberId.Value = "<span style='color: white'>Member ID: </span> <span style='color: white; font-weight:bold'>" + MemberId + "</span>";//                      : " + Convert.ToString(dtPatientDetails.Rows[0]["EntityName"]);
+                txtRxMemberId.Value = "<span style='color: white;'>Member ID: <b>" + MemberId + "</b>"
+                                    + "<br/>Member Name: <b>" + MemberName + "</b></span> ";
+                //txtRxMemberId.Value = "<span style='color: white'>Member ID: </span> <span style='color: white; font-weight:bold'>" + MemberId + "</span>";//                      : " + Convert.ToString(dtPatientDetails.Rows[0]["EntityName"]);
                 txtRxMemberId.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
                 txtRxMemberId.Style.Font.Name = fontname;
 
