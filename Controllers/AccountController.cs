@@ -220,11 +220,11 @@ namespace PPCP07302018.Controllers
                 {
                     if (Session["IsTermsAccepted"].ToString() == "True")
                     {
-                        returnString = "4";
+                        returnString = "1";
                     }
                     else
                     {
-                        returnString = "1";
+                        returnString = "4";
                     }
                 }
                 else
@@ -280,7 +280,7 @@ namespace PPCP07302018.Controllers
             ServiceData.ParameterValue = ParameterValue;
             ServiceData.WebMethodName = "ClaimConfirm";
 
-            List<PPCP07302018.Models.MemberVisit> List = objcall.CallServicesAdmin(Convert.ToInt32(0), "ClaimConfirm", ServiceData);
+            List<PPCP07302018.Models.MemberVisit> List = objcall.CallServices(Convert.ToInt32(0), "ClaimConfirm", ServiceData);
 
             return View();
         }
@@ -294,7 +294,7 @@ namespace PPCP07302018.Controllers
             ServiceData.ParameterValue = ParameterValue;
             ServiceData.WebMethodName = "ClaimDeny";
 
-            List<PPCP07302018.Models.MemberVisit> List = objcall.CallServicesAdmin(Convert.ToInt32(0), "ClaimDeny", ServiceData);
+            List<PPCP07302018.Models.MemberVisit> List = objcall.CallServices(Convert.ToInt32(0), "ClaimDeny", ServiceData);
 
             return View();
         }

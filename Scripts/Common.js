@@ -125,3 +125,33 @@ function ValidateCredentials() {
         }
     });
 }
+
+function BindOrganizations(autoCompleteName, url) {
+    var webMethodName = "GetPPCPOrganizations";
+    var ParameterNames = "";
+    var Url = url + "DefaultService";
+    var jsonPostString = setParameter(ParameterNames, webMethodName);
+    $.ajax({
+        type: "POST",
+        url: Url,
+        data: jsonPostString,
+        dataType: "text",
+        contentType: "application/json",
+        success: function (result) {
+            var obj = jQuery.parseJSON(result);
+            var OrganizationList = obj[0];
+            $('#' + autoCompleteName).data('kendoAutoComplete').dataSource.data(OrganizationList);
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            ErrorMessage(webMethodName, textStatus);
+        },
+    });
+}
+
+function setParameter(parameterName, methodName) {
+    var obj = new Object();
+    obj.WebMethodName = methodName;
+    obj.XMLdata = parameterName;
+    var resultData = JSON.stringify(obj);
+    return resultData;
+}

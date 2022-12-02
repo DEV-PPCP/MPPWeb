@@ -271,6 +271,9 @@
         color: rgba(255, 255, 255, 0.85);
         opacity: 1;
     }
+    .disabled {
+        background-color: #f1f1f1;
+    }
 </style>
 
 @Html.Hidden("hdnTAndConditions")
@@ -368,6 +371,8 @@
         BindCities(stateID,'@ServiceUrl',"1");
 
         $("#divStep1").show();
+        $("#btnSubmitNoPlan").hide(); //enroll in plan is checked by default; show next button
+        $("#btnNextTab").show(); //enroll in plan is checked by default; show next button
         $("#divSubmit").hide();
         $("#divTermsConditionsSubmit").hide();
         $('#chkPayNow').is(":checked") == true;
@@ -379,19 +384,21 @@
         $("#btnstepBack").hide();
 
         $("#chkEnroll").click(function () {
+            debugger;
             if ($('#chkEnroll').is(":checked") == true) {
-                $("#divStep1").show();
+                $("#btnSubmitNoPlan").hide();
+                $("#btnNextTab").show();
                 $("#divSubmit").hide();
                 $("#divTermsConditionsSubmit").hide();
-                $('#chkPayNow').is(":checked") == true;
-                $('input[name="chkPayNow"]').attr('checked', true);
-                $('input[name="chkPayNow"]').attr('disable', true);
-                $("#divCarddetails").show();
+                //$('#chkPayNow').is(":checked") == true;
+                //$('input[name="chkPayNow"]').attr('checked', true);
+                //$('input[name="chkPayNow"]').attr('disable', true);
+                //$("#divCarddetails").show();
 
             } else if ($('#chkEnroll').is(":checked") == false) {
-
-                $("#divStep1").hide();
-                $("#divSubmit").show();
+                $("#btnSubmitNoPlan").show();
+                $("#btnNextTab").hide();
+                $("#divSubmit").hide();
                 $("#divTermsConditionsSubmit").hide();
             }
         });
@@ -433,20 +440,36 @@
             }
         });
         $("#btnBackButton").click(function (e) {                           //Back button click logic (from step2 to step1)
-
             e.preventDefault();
             // $("#divSubmit").show();
             // $('#chkEnroll').is(":checked") = false;
             $("#MemberDetails").show();
-
             $("#SearchPlan").hide();
-
             $("#EnrollPlan").hide();
-
             $("#divStep1").show();
-            $("#btnCancel").hide();
-            $("#btnSubmit").hide();
-            $("#btnstepBack").hide();
+            $("#btnSubmitNoPlan").hide(); //enroll in plan is checked; show next button
+            $("#btnNextTab").show(); //enroll in plan is checked; show next button
+            //$("#btnCancel").hide();
+            $("#divSubmit").hide();
+            //$("#btnstepBack").hide();
+            $("#Step1").removeClass("Clicked");
+            $("#Step2").removeClass("CurrentPage");
+            $("#Step2").removeClass("Clicked");
+            $("#Step1").addClass("CurrentPage");
+            $("#Step2").addClass("Initial");
+            $("#Step3").addClass("Initial");
+        });
+        $("#btnstepBack2").click(function (e) {   // back button from step 2 to 1
+            e.preventDefault();
+            $("#MemberDetails").show();
+            $("#SearchPlan").hide();
+            $("#EnrollPlan").hide();
+            $("#divStep1").show();
+            $("#btnSubmitNoPlan").hide(); //enroll in plan is checked; show next button
+            $("#btnNextTab").show(); //enroll in plan is checked; show next button
+            //$("#btnCancel").hide();
+            $("#divSubmit").hide();
+            //$("#btnstepBack").hide();
             $("#Step1").removeClass("Clicked");
             $("#Step2").removeClass("CurrentPage");
             $("#Step2").removeClass("Clicked");
@@ -462,30 +485,11 @@
             $("#btnCancel").hide();
             $("#btnSubmit").hide();
             $("#btnstepBack").hide();
-
             $("#Step3").removeClass("CurrentPage");
             $("#Step1").addClass("Clicked");
             $("#Step2").addClass("CurrentPage");
             $("#Step3").addClass("Initial");
-        });
-        $("#btnstepBack2").click(function (e) {   // back button from step 2 to 1
-            e.preventDefault();
-
-            $("#MemberDetails").show();
-            $("#SearchPlan").hide();
-            $("#EnrollPlan").hide();
-            $("#divStep1").show();
-            $("#btnCancel").hide();
-            $("#btnSubmit").hide();
-            $("#btnstepBack").hide();
-            $("#Step1").removeClass("Clicked");
-            $("#Step2").removeClass("CurrentPage");
-            $("#Step2").removeClass("Clicked");
-            $("#Step1").addClass("CurrentPage");
-            $("#Step2").addClass("Initial");
-            $("#Step3").addClass("Initial");
-        });
-
+        });     
 
         $("#btnstepNext").click(function (e) {                          //Next button click logic after search (in Step2)
             var PaymentSchedule = document.getElementById("Paymentschedule").innerText;
@@ -534,11 +538,13 @@
             $("#Zip").val("");
             $("#ZipCode").val("");
             $("#UserName").val("");
+            $("#ConfirmUserName").val("")
             $("#Password").val("");
             $("#ConfirmPassword").val("");
             $("#strength").html("");
             validator.hideMessages();
         });
+
         function MembeDetail(){
             debugger;
             var MemberRegistrationDetails =@Html.Raw(Json.Encode(@Model));
@@ -546,7 +552,14 @@
             MembeDetails(MemberRegistrationDetails, "@Session["SystemIPAddress"]",'@ServiceUrl');
         }
         var EnrollPlanValidator = $("#EnrollPlan").kendoValidator().data("kendoValidator");
+
         $("#btnSubmit").click(function (e) {
+            SubmitMemberRegistration();
+        });
+        $("#btnSubmitNoPlan").click(function (e) {
+            SubmitMemberRegistration();
+        });
+        function SubmitMemberRegistration() {
             debugger;
             var MemberDetailsValidator = $("#MemberDetails").kendoValidator().data("kendoValidator");
             if (MemberDetailsValidator.validate()){
@@ -558,26 +571,19 @@
             var AmountValidation=document.getElementById("spnAmountPaid").innerText;
             if (EnrollPlanValidator.validate() && AmountValidation==""){
 
-
                 if($('#SecoundTime').is(":checked") == true){
                     MembeDetail();
-                }
-                else{
+                } else{
                     $("#spnCheckTermsErrorMessages").show();
                     $("#spnCheckErrorMessages").show();
                     return false;
                 }
-            }
-
-            else if($('#chkEnroll').is(":checked") == true)
-            {
+            } else if($('#chkEnroll').is(":checked") == true) {
                 if (EnrollPlanValidator.validate() && AmountValidation==""){
-
                     //MembeDetail();
                     if($('#SecoundTime').is(":checked") == true){
                         MembeDetail();
-                    }
-                    else{
+                    }  else{
                         $("#spnCheckTermsErrorMessages").show();
                         $("#spnCheckErrorMessages").show();
                         return false;
@@ -587,33 +593,12 @@
                 {
                     return false;
                 }
-                //if($('#OneTime').is(":checked") == true){
-                //    MembeDetail();
-                //}
-                //else if($('#SecoundTime').is(":checked") == true){
-                //    MembeDetail();
-                //}
-                //else{
-                //   // $("#spnCheckTermsErrorMessages").show();
-                //    $("#spnCheckErrorMessages").show();
-                //    return false;
-                //}
             }
             else{
                 MembeDetail();
-                //    if($('#SecoundTime').is(":checked") == true){
-                //        MembeDetail();
-                //    }
-                //    else if($('#OneTime').is(":checked") == true){
-                //        MembeDetail();
-                //    }
-                //    else{
-                //       // $("#spnCheckTermsErrorMessages").show();
-                //        $("#spnCheckErrorMessages").show();
-                //        return false;
-                //    }
             }
-        });
+        };
+
         $("#chk2factor").click(function () {
             if ($('#chk2factor').is(":checked") == true) {
                 $("#divEnableFactor").show();
@@ -1309,8 +1294,7 @@
                                     <br />
                                     <legend class="Legendtxtcolor" style="float: left; font-size: 14px;">
                                         <b>
-                                            @Html.CheckBox("chkEnroll", true, new
-{@*@disabled = "disabled"*@}) Continue to Plan Enrollment
+                                            @Html.CheckBox("chkEnroll", true, new {@*@disabled = "disabled"*@}) Continue to Plan Enrollment
                                         </b>
                                     </legend>
 
@@ -1858,7 +1842,7 @@
                                                 <div class="row">
                                                     <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
                                                         @Html.Label("Amount", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;"> * </span>$
-                                                        @Html.TextBoxFor(model => model.AmountPaid, null, new { @class = "k-textbox", @readonly = "readonly", PlaceHolder = "", maxlength = 20, onchange = "ValidateAmountPaid(this.value);" })
+                                                        @Html.TextBoxFor(model => model.AmountPaid, null, new { @class = "k-textbox disabled", @readonly = "readonly", PlaceHolder = "", maxlength = 20, onchange = "ValidateAmountPaid(this.value);" })
                                                         @Html.ValidationMessageFor(model => model.AmountPaid, "", new { @style = "color:red" })
                                                     </div>
                                                     <div class="col-xs-0 col-md-6 col-sm-6 col-lg-6 col-md-pull-2 col-lg-pull-2">
@@ -1957,7 +1941,7 @@
                                 </button>
                             </div>
                             <div class="col-xs-6 col-md-6 col-sm-6" align="right">
-                                <button class="button_blue" type="submit" id="btnSubmit" title="Submit" style="width: 100px;" value="Submit">
+                                <button class="button_blue" id="btnSubmit" type="submit" title="Submit" style="width: 100px;" value="Submit">
                                     Submit
                                 </button>
                             </div>
@@ -1979,6 +1963,9 @@
                                 </div>
                                 <button class="button_blue" type="submit" id="btnNextTab" title="Next" style="width: 100px;" value="Next">
                                     Next
+                                </button>
+                                <button class="button_blue" id="btnSubmitNoPlan" type="submit" title="Submit" style="width: 100px;" value="Submit">
+                                    Submit
                                 </button>
                             </div>
                             <br />

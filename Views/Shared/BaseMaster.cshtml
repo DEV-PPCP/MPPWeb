@@ -135,7 +135,7 @@
                                                     @{
                                                         var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
                                                         var AttachedLink = (System.Configuration.ConfigurationManager.AppSettings["AttachedLink"].ToString());
-                                                        var TermsAndConditionsFile = @Session["TermsAndConditionsFile"].ToString();
+                                                        var TermsAndConditionsFile = @Session["TermsAndConditionsFile"] == null ? string.Empty : @Session["TermsAndConditionsFile"].ToString();
                                                         var TermsURL = AttachedLink + "PlanTerms/" + TermsAndConditionsFile;
                                                     }
                                                     <span class="glyphicon glyphicon-file"></span>

@@ -46,6 +46,7 @@ namespace PPCP07302018.Models
         public DateTime? ManualApprovalDate { get; set; }
         public int ManualApprovalBy { get; set; }
         public string ManualApprovalUserName { get; set; }
+        public string AdminNotes { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
         public int ModifiedBy { get; set; }
