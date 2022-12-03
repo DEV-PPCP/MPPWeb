@@ -226,7 +226,6 @@
         });
 
 
-
         function MembeDetail()
         {
             debugger;
@@ -243,23 +242,21 @@
             var EnrollPlanValidator = $("#EnrollPlan").kendoValidator().data("kendoValidator");
             var MemberDetailsvalidate = $("#MemberDetails").kendoValidator().data("kendoValidator");//fsMain
             var MemberCredentialsvalidattion = $("#MemberCredentials").kendoValidator().data("kendoValidator");
-            if($('#chkEnroll').is(":checked") == false)
-            {
-                //document.getElementById("spnEnrollValidator").innerHTML="Please Enroll the plan";
-                //return false;
-                if ($('#chkMemberCredentials').is(":checked") == true) {
-                    if(MemberDetailsvalidate.validate() && MemberCredentialsvalidattion.validate()){
-                        MembeDetail();
-                    }
+
+            if ($('#chkMemberCredentials').is(":checked") == true) {
+                if (MemberDetailsvalidate.validate() && MemberCredentialsvalidattion.validate()) {
+                    //MembeDetail();
+                } else {
+                    return false;
                 }
-                else {
-                    if(MemberDetailsvalidate.validate()){
-                        MembeDetail();
-                    } else{
-                        return false;
-                    }
+            } else {
+                if (MemberDetailsvalidate.validate()) {
+                    //MembeDetail();
+                } else {
+                    return false;
                 }
             }
+
             if($('#chkEnroll').is(":checked") == true)
             {
                 document.getElementById("spnEnrollValidator").innerHTML="";
@@ -276,7 +273,6 @@
                         document.getElementById("CVV").innerHTML="This information is required";
                         return false;
                     }else document.getElementById("CVV").innerHTML="";
-                    // MembeDetail();
                 }
                 if ($('#chkPayNow').is(":checked") == false){
                     document.getElementById("spnCardNumber").innerHTML="";
@@ -284,8 +280,10 @@
                     document.getElementById("CVV").innerHTML="";
                 }
                 var AmountValidation=document.getElementById("spnAmountPaid").innerText;
-                MembeDetail();
+                //MembeDetail();
             }
+
+            MembeDetail();
         });
 
     });
