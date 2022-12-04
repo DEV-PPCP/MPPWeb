@@ -854,20 +854,26 @@ function CallWebApiService(data, url) {
         success: function (result) {
             var obj = result[0];
             $("#divMainRegistration").find(".loadingSpinner:first").remove();
-            if (obj[0].result == null && obj[0].MemberID != null && obj[0].TransactionID != null && obj[0].TransactionID != "") {
-                document.getElementById("divSignupPopup").style.display = "block";
-                document.getElementById("spnPopupMessage").innerHTML = "You are registered successfully. Your Transaction ID: " + obj[0].TransactionID;
-                document.getElementById("divSignupPopup").scrollIntoView();
-            }
-            else if (obj[0].result == null && obj[0].MemberID != null) {
-                document.getElementById("divSignupPopup").style.display = "block";
-                document.getElementById("spnPopupMessage").innerHTML = "You are registered successfully.";
-                document.getElementById("divSignupPopup").scrollIntoView();
-            }
-            else {
+            if (obj[0].result == "MemberExists") {
                 document.getElementById("divErrMessagePopup").style.display = "block";
-                document.getElementById("spnPopupErrMessage").innerHTML = obj[0].result + ". Please try again.";
+                document.getElementById("spnPopupErrMessage").innerHTML = "Member already exists. You can try searching the member.";
                 document.getElementById("divErrMessagePopup").scrollIntoView();
+            } else {
+                if (obj[0].result == null && obj[0].MemberID != null && obj[0].TransactionID != null && obj[0].TransactionID != "") {
+                    document.getElementById("divSignupPopup").style.display = "block";
+                    document.getElementById("spnPopupMessage").innerHTML = "You are registered successfully. Your Transaction ID: " + obj[0].TransactionID;
+                    document.getElementById("divSignupPopup").scrollIntoView();
+                }
+                else if (obj[0].result == null && obj[0].MemberID != null) {
+                    document.getElementById("divSignupPopup").style.display = "block";
+                    document.getElementById("spnPopupMessage").innerHTML = "You are registered successfully.";
+                    document.getElementById("divSignupPopup").scrollIntoView();
+                }
+                else {
+                    document.getElementById("divErrMessagePopup").style.display = "block";
+                    document.getElementById("spnPopupErrMessage").innerHTML = obj[0].result + ". Please try again.";
+                    document.getElementById("divErrMessagePopup").scrollIntoView();
+                }
             }
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {

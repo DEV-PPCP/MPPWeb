@@ -302,7 +302,7 @@ function AddMemberRegistrationWebApiServicewithPlandetails(data, url) {
             $("#divMain").find(".loadingSpinner:first").remove();
             if (obj[0].result == "MemberExists") {
                 document.getElementById("divErrMessagePopup").style.display = "block";
-                document.getElementById("spnPopupErrMessage").innerHTML = "Member already exists. You can searching the member.";
+                document.getElementById("spnPopupErrMessage").innerHTML = "Member already exists. You can try searching the member.";
                 document.getElementById("divErrMessagePopup").scrollIntoView();
             } else {
                 if (obj[0].result == null && obj[0].MemberID != null && obj[0].TransactionID != null) {
@@ -348,7 +348,7 @@ function AddMemberRegistrationWebApiService(data, Url) {
             $("#divMain").find(".loadingSpinner:first").remove();
             if (obj[0].result == "MemberExists") {
                 document.getElementById("divErrMessagePopup").style.display = "block";
-                document.getElementById("spnPopupErrMessage").innerHTML = "Member already exists. You can searching the member.";
+                document.getElementById("spnPopupErrMessage").innerHTML = "Member already exists. You can try searching the member.";
                 document.getElementById("divErrMessagePopup").scrollIntoView();
             }
             else { 

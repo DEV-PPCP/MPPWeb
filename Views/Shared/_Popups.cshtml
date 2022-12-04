@@ -48,6 +48,7 @@
         <div style="border: Solid 1px #33CCEE; width: 100%;">
             <div align="center">
                 <br /><br />
+                @Html.Hidden("confirmType")
                 <span id="lblconfirmMessage" style="color: Green; font-family: Verdana,Tahoma; font-size: 15px;
                         font-weight: bold; text-align: center; margin-top: 8px; margin-left: 3px; ">
                 </span>
@@ -103,5 +104,9 @@
 <script>
     function confirmPopUpNo() {
         $("#popupConfirmation").hide();
+    }
+
+    function popupMessageBoxOK() {
+        $("#popupMessageBox").hide();
     }
 </script>
