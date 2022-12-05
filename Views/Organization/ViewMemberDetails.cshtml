@@ -163,6 +163,7 @@
         BindStates('@ServiceUrl', CountryID, StateID);
         BindCites('@ServiceUrl', StateID, CityID);
         BindSalutation(Salutation);
+        BindMemberPlans('@ServiceUrl', '@Session["OrganizationID"]', MemberID);
 
         $("#chk2factor").click(function () {
             if ($("#chk2factor").is(":checked") == true) {
@@ -750,15 +751,11 @@
                                 <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
                                     @*@Html.CheckBox("chkMemberCredentials", false)&nbsp;*@
                                     <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Member Credentials</b>:</legend>
-
                                 </div>
                             </div>
 
-
                             <div class="form-group">
-
                                 <div class="row" id="MemberCredentials" style="display:block">
-
                                     <div class="row">
                                         <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
                                             @Html.CheckBox("chk2factor", false)&nbsp;<b>Enable 2-factor authentication</b>
@@ -782,6 +779,43 @@
                                             </label>
                                             <br />
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row Panel_bg_Sub">
+                            <div class="row">
+                                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                    <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Member Plans</b>:</legend>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div>
+                                        @(Html.Kendo().Grid<PPCP07302018.Models.Member.MemberPlan> ()
+                                        .Name("memberPlanGrid")
+                                        .Columns(columns =>
+                                        {
+                                            columns.Bound(p => p.PlanName).Title("Plan Name").Width(130);
+                                            columns.Bound(p => p.PlanStartDate).Title("Plan Start Date").ClientTemplate("#= kendo.toString(kendo.parseDate(PlanStartDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') #").Filterable(true).Width(120);
+                                            columns.Bound(p => p.PlanEndDate).Title("Plan End Date").ClientTemplate("#= kendo.toString(kendo.parseDate(PlanEndDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') #").Filterable(true).Width(120);
+                                            columns.Bound(p => p.VisitFee).Title("In Person Copay").Width(130);
+                                            columns.Bound(p => p.TeleVisitFee).Title("Tele Visit Copy").Width(130);
+                                            columns.Bound(p => p.IsActive).Width(100)
+                                                        .ClientTemplate("#if(IsActive) {# " +
+                                                                              "Active" +
+                                                                          "#} else {#" +
+                                                                              "<span style='color:red; font-weight:bold'>In-Active</span>" +
+                                                                          "#} #");
+
+                                        })
+                                        .Scrollable()
+                                        .AutoBind(false)
+                                        .HtmlAttributes(new { style = "" })
+                                        .DataSource(dataSource => dataSource
+                                        .Ajax()
+                                        .PageSize(50)
+                                        .ServerOperation(false)))
                                     </div>
                                 </div>
                             </div>
