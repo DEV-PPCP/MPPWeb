@@ -355,7 +355,7 @@
                                                             </div>
                                                             <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                                 @Html.Label("Phone Number", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                                                @Html.TextBoxFor(model => model.OrgCountryCode, null, new { @class = "k-textbox", style = "width:15%;", maxlength = 4 })
+                                                                @Html.TextBoxFor(model => model.OrgCountryCode, null, new { @class = "k-textbox", @Value = "0", style = "width:15%;", maxlength = 4 })
                                                                 @Html.Label("-", new { style = "font-weight:normal;", @class = "labelColor" })
                                                                 @Html.TextBoxFor(model => model.OrgMobileNumber, null, new { @class = "k-textbox", style = "width:75%;", maxlength = 10 })
                                                                 @Html.ValidationMessageFor(model => model.OrgCountryCode, "", new { @style = "color:red" })

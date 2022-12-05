@@ -62,6 +62,34 @@ function GetMemberDetails(OrganizationID, strMemberID, Url) {
         },
     });
 }
+
+function BindMemberPlans(Url, OrganizationID, MemberID) {
+    var webMethodName = "GetMemberPlanDetailsByOrg";
+    var ParameterNames = new Array();
+    var ParameterValues = new Array();
+    ParameterNames[0] = "OrganizationID";
+    ParameterValues[0] = OrganizationID;
+    ParameterNames[1] = "MemberID";
+    ParameterValues[1] = MemberID;
+    var Url = Url + "Member";
+    var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
+    $.ajax({
+        type: "POST",
+        url: Url,
+        data: jsonPostString,
+        dataType: "text",
+        contentType: "application/json",
+        success: function (result) {
+            var obj = jQuery.parseJSON(result);
+            var PlansList = obj[0];
+
+            $("#memberPlanGrid").data("kendoGrid").dataSource.data(PlansList);
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+        },
+    });
+}
+
 function BindCountries(Url, CountryID) {
     var webMethodName = "GetCountries";
     var ParameterNames = "";
