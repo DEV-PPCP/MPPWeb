@@ -2342,6 +2342,10 @@ shapeFooter, PageNumbers
         {
             return RedirectToAction("ClaimSubmission", new { mode = "add", VisitId = 0 });
         }
+        public ActionResult BillingReport()
+        {
+            return View();
+        }
         public ActionResult ClaimSubmission(string mode, int VisitId)
         {
             MemberVisit model = new MemberVisit();

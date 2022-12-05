@@ -119,6 +119,12 @@
                                                     <a id="liClaimSubmission" class="Organization_Color" href='@Url.Action("ClaimSubmissionAdd", "Admin")' ;> Claim Submission</a>
                                                 </td>
                                             </tr>
+                                            <tr>
+                                                <td>
+                                                    <span class="glyphicon glyphicon-list-alt"></span>
+                                                    <a id="liBillingReport" class="Organization_Color" href='@Url.Action("BillingReport", "Admin")' ;> Billing Report</a>
+                                                </td>
+                                            </tr>
                                         </table>
                                     </div>
                                 </div>
@@ -339,6 +345,12 @@
             $("#collapseBilling").addClass("in");
             $("#liClaimSubmission").removeClass("Organization_Color");
             $("#liClaimSubmission").addClass("stripePanel");
+        }
+        if (currentURL.includes("Admin/BillingReport")) {
+            $('div[id^="collapse"]').removeClass("in");
+            $("#collapseBilling").addClass("in");
+            $("#liBillingReport").removeClass("Organization_Color");
+            $("#liBillingReport").addClass("stripePanel");
         }
 
         //Reports
