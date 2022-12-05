@@ -96,16 +96,19 @@
             .Name("gridClaims")
             .Columns(columns =>
             {
-                columns.Bound(p => p.MemberName).Width(100).Width(150).Title("Member Name").Width(120);
+                columns.Bound(p => p.OrganizationName).Title("Organization").Width(120);
+                columns.Bound(p => p.MemberName).Title("Member Name").Width(120);
                 columns.Bound(p => p.DateOfService).Title("Date of Service").Width(120).ClientTemplate("#= kendo.toString(kendo.parseDate(DateOfService,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') #");
                 columns.Bound(p => p.ProviderName).Title("Provider Name").Width(120);
                 columns.Bound(p => p.ProviderNPI).Title("Provider NPI").Width(100);
                 columns.Bound(p => p.VisitType).Title("Visit type").Width(100);
                 columns.Bound(p => p.AllowedFee).Title("Allowed Fee").Width(75);
                 columns.Bound(p => p.CoPayFee).Title("Plan CoPay").Width(75);
+                columns.Bound(p => p.PlanFee).Title("Plan Fee").Width(75);
                 columns.Bound(p => p.SubmitDate).Title("Submitted Date").Width(100).ClientTemplate("#= SubmitDate != null ? kendo.toString(kendo.parseDate(SubmitDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') : '' #");
                 columns.Bound(p => p.PlanPaidDate).Title("Date Paid").Width(120).ClientTemplate("#= PlanPaidDate != null ? kendo.toString(kendo.parseDate(PlanPaidDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') : '' #");
-                columns.Bound(p => p.PlanPaidAmount).Title("Plan Paid").Width(75);
+               // columns.Bound(p => p.PlanPaidAmount).Title("Plan Paid").Width(75);
+                columns.Bound(p => p.PlanPaidAmount).Title("Balance Due").Width(75).ClientTemplate("#= PlanPaidAmount == 0 ? PlanFee : 0 #");
                 columns.Bound(p => p.ClaimStatus).Title("Claim Status").Width(120);
 
                 columns.Bound(p => p.SubmitDate).Title("Action").Width(60).HtmlAttributes(new { style = "text-align: center" }).ClientTemplate(

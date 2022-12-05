@@ -58,6 +58,9 @@ namespace PPCP07302018.Models
         public DateTime PlanEndDate { get; set; }
         public decimal AllowedFee { get; set; }
         public decimal CoPayFee { get; set; }
+        public decimal PlanFee { get; set; }
+        public decimal InPersonProviderFee { get; set; }
+        public decimal TeleVisitProviderFee { get; set; }
 
         public List<ProcedureLine> ProcedureLines { get; set; }
     }
