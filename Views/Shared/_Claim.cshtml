@@ -719,15 +719,6 @@
         });
     }
 
-    function getFormattedDate(date) {
-        date = new Date(date);
-        var year = date.getFullYear();
-        var month = (1 + date.getMonth()).toString().padStart(2, '0');
-        var day = date.getDate().toString().padStart(2, '0');
-
-        return month + '/' + day + '/' + year;
-    }
-
     function memberPlanDatabound () {
         var dos=$("#DateOfService").val();
         SetDOSMessage(dos);   
@@ -1174,7 +1165,7 @@
           CancelClaimSubmission();
         }
 
-    }*/
+    }
 
 
     function setParameter(parameterName, methodName) {
@@ -1200,5 +1191,5 @@
     function getformattedJsonFromArray(arrayObj) {
         arrayObj = arrayObj.replace(/"/g, "'");
         return arrayObj + "";
-    }
+    }*/
 </script>
