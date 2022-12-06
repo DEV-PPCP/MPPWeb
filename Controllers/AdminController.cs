@@ -2389,6 +2389,14 @@ shapeFooter, PageNumbers
             string returnData = xml.Replace("\"", "\'");
             return returnData;
         }
+
+        [System.Web.Http.HttpPost]
+        public ActionResult BillingDashboardExport(string contentType, string base64, string fileName)
+        {
+            var fileContents = Convert.FromBase64String(base64);
+
+            return File(fileContents, contentType, fileName);
+        }
         #endregion
     }
 }

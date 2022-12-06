@@ -107,7 +107,7 @@
                 columns.Bound(p => p.PlanFee).Title("Plan Fee").Width(75);
                 columns.Bound(p => p.SubmitDate).Title("Submitted Date").Width(100).ClientTemplate("#= SubmitDate != null ? kendo.toString(kendo.parseDate(SubmitDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') : '' #");
                 columns.Bound(p => p.PlanPaidDate).Title("Date Paid").Width(120).ClientTemplate("#= PlanPaidDate != null ? kendo.toString(kendo.parseDate(PlanPaidDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') : '' #");
-               // columns.Bound(p => p.PlanPaidAmount).Title("Plan Paid").Width(75);
+                // columns.Bound(p => p.PlanPaidAmount).Title("Plan Paid").Width(75);
                 columns.Bound(p => p.PlanPaidAmount).Title("Balance Due").Width(75).ClientTemplate("#= PlanPaidAmount == 0 ? PlanFee : 0 #");
                 columns.Bound(p => p.ClaimStatus).Title("Claim Status").Width(120);
 
@@ -119,6 +119,15 @@
                     "#}#");
 
             })
+            //.ToolBar(tools => tools.Excel())
+            .ToolBar(toolbar =>{
+                toolbar.Template("<a class=\"k-button k-button-icontext k-grid-excel\" style=\"float: right \" href=\"#\"><span class=\"k-icon k-i-excel\"></span>Excel Export</a>");
+            })
+            .Excel(excel => excel
+                .FileName("Billing.xlsx")
+                .Filterable(true)
+                .ProxyURL(Url.Action("BillingDashboardExport", "Admin"))
+            )
             .Scrollable()
             //.Scrollable()
             .Sortable()

@@ -365,14 +365,19 @@
                                                                               "<span style='color:red; font-weight:bold'>In-Active</span>" +
                                                                           "#} #");
 
-                                        })
+                                        })                                        
                                         .Scrollable(s => s.Height("auto"))
                                         .AutoBind(false)
                                         .HtmlAttributes(new { style = " max-height: 200px" })
+                                        .Events(events => events
+                                            .DataBound("memberPlanDatabound")
+                                        )
                                         .DataSource(dataSource => dataSource
-                                        .Ajax()
-                                        .PageSize(50)
-                                        .ServerOperation(false)))
+                                            .Ajax()
+                                            .PageSize(50)
+                                            .Sort(sort => sort.Add("PlanStartDate").Descending())
+                                            .ServerOperation(false)
+                                        ))
                         @*<div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                             @Html.Label("Plan Name", new { style = "font-weight:normal;", @class = "" })<br />
                             @Html.TextBoxFor(model => model.PlanName, null, new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;", maxlength = 50 })
@@ -394,14 +399,27 @@
 
     <div class="row Panel_bg_Sub">
         <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Encounter Detail</b></legend>
-        <span style="color: orangered">@(Model.IsPlanExistingOnDOS ? "" : "Please check the Date of Service. ")</span>
+        @*<span style="color: orangered">@(Model.IsPlanExistingOnDOS ? "" : "Please check the Date of Service. ")</span>*@
         <div class="form-group">
             <div class="row">
                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                     @Html.Label("Date of Service", new { style = "font-weight:normal;", @class = "" })<br />
-                    @( Html.Kendo().DatePickerFor(model => model.DateOfService).Format("MM/dd/yyyy").Max(DateTime.Today).HtmlAttributes(new {  PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text" }))
+                    @( Html.Kendo().DatePickerFor(model => model.DateOfService).Format("MM/dd/yyyy")
+                        .Value(DateTime.Today).Max(DateTime.Today)
+                        .Events(e =>
+                        {
+                            e.Change("DateOfServiceChange");
+                        })
+                        .HtmlAttributes(new {  PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text" }))
                     <span id="errDateOfService" style="color:red"></span>
                 </div>
+                <div class="col-xs-12 col-md-9 col-sm-6 col-lg-9" style="margin-top: 10px;">
+                    <br />
+                    <span id="errDOS" style="color: orangered;"></span>
+                    <span id="dosPlan" style="color: mediumblue; "></span>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 30px;">
                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                     @Html.Label("Visit Type", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
                     <label style="font-weight: normal;">
@@ -435,8 +453,6 @@
                         }))
                     <span id="errProviderID" style="color:red"></span>
                 </div>
-            </div>
-            <div class="row">
                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                     @Html.Label("Primary Procedure Code", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
                     @Html.TextBoxFor(model => model.PrimaryProcedureCode, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 10 })
@@ -701,6 +717,42 @@
             error: function (XMLHttpRequest, textStatus, errorThrown) {
             },
         });
+    }
+
+    function getFormattedDate(date) {
+        date = new Date(date);
+        var year = date.getFullYear();
+        var month = (1 + date.getMonth()).toString().padStart(2, '0');
+        var day = date.getDate().toString().padStart(2, '0');
+
+        return month + '/' + day + '/' + year;
+    }
+
+    function memberPlanDatabound () {
+        var dos=$("#DateOfService").val();
+        SetDOSMessage(dos);   
+    }
+
+    function DateOfServiceChange() {
+    debugger;
+        var dos = this.value();
+        SetDOSMessage(dos);            
+    }
+
+    function SetDOSMessage(dos) {
+        debugger;
+        var grid = $("#memberPlanGrid").data("kendoGrid");
+        var data = grid.dataSource.data();
+        var res = $.grep(data, function (d) {
+            return new Date(d.PlanStartDate) <= new Date(dos) && new Date(d.PlanEndDate) >= new Date(dos);
+        });
+        if(res.length > 0) {
+            $("#dosPlan").text("Plan Applied: " + res[0].PlanName + "; PlanDates: " + getFormattedDate(res[0].PlanStartDate) + " - " + getFormattedDate(res[0].PlanEndDate));
+            $("#errDOS").text("");
+        } else {
+            $("#dosPlan").text("");
+            $("#errDOS").text("Please check the Date of Service. No Plan found for this date. ");
+        }        
     }
 
     function CalculateTotalPaid() {
