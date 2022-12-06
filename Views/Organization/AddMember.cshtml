@@ -257,6 +257,14 @@
                 }
             }
 
+            if (($("#UserName").val()) == ($("#ConfirmUserName").val())) {
+                document.getElementById("spnConfirmUserName").innerHTML = "";
+            }
+            else {
+                document.getElementById("spnConfirmUserName").innerHTML = "Username and Confirm Username must match.";
+                return false;
+            }
+
             if($('#chkEnroll').is(":checked") == true)
             {
                 document.getElementById("spnEnrollValidator").innerHTML="";
