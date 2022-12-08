@@ -1,6 +1,9 @@
 ﻿body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     background: #fafafa;
+    display: flex;
+    overflow-y: auto;
+    flex-direction: row;
 }
 
 .row {
@@ -484,9 +487,9 @@ a.download {
 @media (max-width:767px) {
     nav1 {
         background: url(images/menu.jpg) repeat-x;
-        height: 50px;
+       /* height: 50px;*/
         line-height: 50px;
-        width: 8%;
+       /* width: 8%;*/
         display: block;
         float: left;
         margin: 0px 0 0 0;
@@ -509,10 +512,10 @@ a.download {
     }
 }
 
-#sidebarCollapse {
+/*#sidebarCollapse {
     width: 40px;
     height: 40px;
-}
+}*/
 
 /* Date Picker Calender Icon stop rotating on mouse hover */
 .RadPicker_Default a.rcCalPopup:hover, .RadPicker_Default a.rcCalPopup:focus, .RadPicker_Default a.rcCalPopup:active {

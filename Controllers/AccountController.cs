@@ -272,7 +272,7 @@ namespace PPCP07302018.Controllers
 
         public ActionResult ClaimConfirm(int id)
         {
-            DataAccessLayer.ServiceCall<PPCP07302018.Models.MemberVisit> objcall = new DataAccessLayer.ServiceCall<PPCP07302018.Models.MemberVisit>();
+            DataAccessLayer.ServiceCall<PPCP07302018.Models.Result> objcall = new DataAccessLayer.ServiceCall<PPCP07302018.Models.Result>();
             PPCP07302018.Models.Member.ServiceData ServiceData = new PPCP07302018.Models.Member.ServiceData();
             string[] ParameterName = new string[] { "VisitId" };
             string[] ParameterValue = new string[] { id.ToString() };
@@ -280,13 +280,23 @@ namespace PPCP07302018.Controllers
             ServiceData.ParameterValue = ParameterValue;
             ServiceData.WebMethodName = "ClaimConfirm";
 
-            List<PPCP07302018.Models.MemberVisit> List = objcall.CallServices(Convert.ToInt32(0), "ClaimConfirm", ServiceData);
+            List<PPCP07302018.Models.Result> List = objcall.CallServices(Convert.ToInt32(0), "ClaimConfirm", ServiceData);
 
-            return View();
+            PPCP07302018.Models.Result model = List.FirstOrDefault();
+            if (model != null && model.ResultID == 1)
+            {
+                model.ResultName = "Thank you for confirming you visited this provider.";
+            }
+            else
+            {
+                model.ResultName = "Thank you! You have already replied to this message.";
+            }
+
+            return View(model);
         }
         public ActionResult ClaimDeny(int id)
         {
-            DataAccessLayer.ServiceCall<PPCP07302018.Models.MemberVisit> objcall = new DataAccessLayer.ServiceCall<PPCP07302018.Models.MemberVisit>();
+            DataAccessLayer.ServiceCall<PPCP07302018.Models.Result> objcall = new DataAccessLayer.ServiceCall<PPCP07302018.Models.Result>();
             PPCP07302018.Models.Member.ServiceData ServiceData = new PPCP07302018.Models.Member.ServiceData();
             string[] ParameterName = new string[] { "VisitId" };
             string[] ParameterValue = new string[] { id.ToString() };
@@ -294,9 +304,19 @@ namespace PPCP07302018.Controllers
             ServiceData.ParameterValue = ParameterValue;
             ServiceData.WebMethodName = "ClaimDeny";
 
-            List<PPCP07302018.Models.MemberVisit> List = objcall.CallServices(Convert.ToInt32(0), "ClaimDeny", ServiceData);
+            List<PPCP07302018.Models.Result> List = objcall.CallServices(Convert.ToInt32(0), "ClaimDeny", ServiceData);
 
-            return View();
+            PPCP07302018.Models.Result model = List.FirstOrDefault();
+            if(model != null && model.ResultID == 1)
+            {
+                model.ResultName = "Thank you for confirming you did not visit this provider.";
+            }
+            else
+            {
+                model.ResultName = "Thank you! You have already replied to this message.";
+            }
+
+            return View(model);
         }
     }
 }

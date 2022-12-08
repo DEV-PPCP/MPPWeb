@@ -132,32 +132,15 @@
                                 .Name("memberGrid")
                                 .Columns(columns =>
                                 {
-                                    columns.Bound(p => p.MemberName).Width(100).ClientTemplate(" <a onclick='SelectPat(#= Member_Id # );' <span style=' cursor:pointer'>#: Member_name #</a>").Width(150).Title("Name").Visible(false);
                                     columns.Bound(p => p.OrganizationName).Title("Organization Name").Filterable(true).Width(100).Visible(false);
                                     columns.Bound(p => p.MemberID).Title("MemberID").Filterable(true).Width(130).Visible(false);
-                                    columns.Bound(p => p.FirstName).Title("FirstName").Filterable(true).Width(130).Visible(false);
-                                    columns.Bound(p => p.LastName).Title("Last Name").Filterable(true).Width(120).Visible(false);
                                     columns.Bound(p => p.MemberName).Title("Member Name").ClientTemplate("#: FirstName # #: LastName #").Filterable(true).Width(150);
                                     columns.Bound(p => p.CountryCode).Title("Country Code").Filterable(true).Width(120).Visible(false);
                                     columns.Bound(p => p.MobileNumber).Title("Mobile Number").Filterable(true).Width(120);
                                     columns.Bound(p => p.PlanStartDate).Title("Plan Start Date").ClientTemplate("#= kendo.toString(kendo.parseDate(PlanStartDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') #").Filterable(true).Width(120);
                                     columns.Bound(p => p.PlanEndDate).Title("Plan End Date").ClientTemplate("#= kendo.toString(kendo.parseDate(PlanEndDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') #").Filterable(true).Width(120);
-                                    columns.Bound(p => p.DOB).Title("DOB").Filterable(true).Width(130).Visible(false);
-                                    columns.Bound(p => p.Age).Title("Age").Filterable(true).Width(120).Visible(false);
-                                    columns.Bound(p => p.Gender).Title("Gender").Filterable(true).Width(120).Visible(false);
-                                    columns.Bound(p => p.Salutation).Title("Salutation").Filterable(true).Width(130).Visible(false);
                                     // columns.Bound(p => p.SalutationID).Title("SalutationID").Filterable(true).Width(130).Visible(false);
                                     columns.Bound(p => p.Email).Title("Email").Filterable(true).Width(120).Visible(false);
-                                    columns.Bound(p => p.CountryName).Title("CountryName").Filterable(true).Width(120).Visible(false);
-                                    columns.Bound(p => p.StateName).Title("StateName").Filterable(true).Width(130).Visible(false);
-                                    columns.Bound(p => p.CityName).Title("CityName").Filterable(true).Width(120).Visible(false);
-                                    columns.Bound(p => p.Zip).Title("Zip").Filterable(true).Width(120).Visible(false);
-                                    columns.Bound(p => p.MemberID).Title("MemberID").Filterable(false).Width(100).Visible(false);
-                                    columns.Bound(p => p.CountryID).Title("CountryID").Filterable(false).Width(100).Visible(false);
-                                    columns.Bound(p => p.StateID).Title("StateID").Filterable(false).Width(100).Visible(false);
-                                    columns.Bound(p => p.CityID).Title("CityID").Filterable(false).Width(100).Visible(false);
-                                    columns.Bound(p => p.IsTwofactorAuthentication).Title("IsTwofactorAuthentication").Filterable(false).Width(100).Visible(false);
-                                    columns.Bound(p => p.TwoFactorType).Title("TwoFactorType").Filterable(false).Width(100).Visible(false);
 
                                     columns.Bound(p => p.IsPlanActive).Width(100)
                                                 .ClientTemplate("#if(IsPlanActive) {# " +
@@ -168,8 +151,8 @@
 
                                     if (System.Web.HttpContext.Current.Request.RequestContext.RouteData.Values["action"].ToString() == "ClaimSubmission")
                                     {
-                                        columns.Bound(p => p).Title("Action").Width(60)
-                                        .ClientTemplate("<a onclick='SubmitNewClaim(#=MemberID#,\"#=MemberCardID#\", \"#=FirstName#\",\"#=LastName#\",\"#=CountryCode#\",\"#=MobileNumber#\",\"#=DOB#\",\"#=PlanName#\",\"#=PlanStartDate#\",\"#=PlanEndDate#\",\"#=IsPlanActive#\");' <span style='cursor:pointer'>Submit Claim</a>");
+                                        columns.Bound(p => p).Title("Action").Width(100)
+                                        .ClientTemplate("<a onclick='SubmitNewClaim(#=MemberID#,\"#=MemberCardID#\", \"#=FirstName#\",\"#=LastName#\",\"#=Email#\",\"#=CountryCode#\",\"#=MobileNumber#\",\"#=DOB#\",\"#=PlanName#\",\"#=PlanStartDate#\",\"#=PlanEndDate#\",\"#=IsPlanActive#\");' <span style='cursor:pointer'>Submit Claim</a>");
                                     }
                                     //columns.Bound(p => p).ClientTemplate(
                                     //    "<a onclick='EditOptions(#=MemberID#,\"#=FirstName#\",\"#=LastName#\",\"#=CountryCode#\",\"#=MobileNumber#\",\"#=DOB#\",\"#=Gender#\",\"#=Email#\",\"#=CountryName#\",\"#=StateName#\",\"#=CityName#\",\"#=Zip#\",\"#=Salutation#\",\"#=CountryID#\",\"#=StateID#\",\"#=CityID#\",\"#=IsTwofactorAuthentication#\",\"#=TwoFactorType#\");' <span style='cursor:pointer'>View</a>").Title("Action").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(50);
@@ -508,7 +491,7 @@
             <div class="row">
                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                     @Html.Label("Co-Pay Paid", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                    @Html.TextBoxFor(model => model.Copay, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 10, onchange = "CalculateTotalPaid();", Value = String.Format("{0:C}", Model.Copay) })
+                    @Html.TextBoxFor(model => model.Copay, null, new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;", maxlength = 10, onchange = "CalculateTotalPaid();", Value = String.Format("{0:C}", Model.Copay) })
                     <span id="errCopay" style="color:red"></span>
                 </div>
                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
@@ -541,7 +524,7 @@
                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3"></div>
                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                     @Html.Label("Payment Date", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                    @( Html.Kendo().DatePickerFor(model => model.PaymentDate).Format("MM/dd/yyyy").Max(DateTime.Today).HtmlAttributes(new {  PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text" }))
+                    @( Html.Kendo().DatePickerFor(model => model.PaymentDate).Format("MM/dd/yyyy").Value(DateTime.Today).Max(DateTime.Today).HtmlAttributes(new {  PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text" }))
                     <span id="errPaymentDate" style="color:red"></span>
                 </div>
                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
@@ -633,13 +616,14 @@
         });
     }
 
-    function SubmitNewClaim(MemberID, MemberCardID, FirstName, LastName, CountryCode, MobileNumber, DOB, PlanName, PlanStartDate, PlanEndDate, IsPlanActive) {
+    function SubmitNewClaim(MemberID, MemberCardID, FirstName, LastName, Email, CountryCode, MobileNumber, DOB, PlanName, PlanStartDate, PlanEndDate, IsPlanActive) {
         $("#memberSearch").hide();
         $("#divMainMemberDetails").show()
 
         $("#MemberId").val(MemberID);
         $("#MemberCardID").val(MemberCardID);
         $("#MemberName").val(FirstName + " " + LastName);
+        $("#MemberEmail").val(Email);
         $("#MemberDOB").val(getDate(DOB));
         $("#MemberMobileNumber").val(MobileNumber);
         if (IsPlanActive == "true") {
@@ -652,8 +636,9 @@
             $("#PlanEndDate").val("");
         }
 
+        $("[name=VisitTypeId]").val(['@PPCP07302018.Utils.GlobalFunctions.VisitType.InPerson']);
         $("#Copay").val("");
-        $("#OtherCharges").val("");
+        $("#OtherCharges").val("$0");
         BindMemberPlans('@ServiceUrl', '@Session["OrganizationID"]', MemberID);
     }
 
@@ -721,14 +706,19 @@
 
     function memberPlanDatabound () {
         var dos=$("#DateOfService").val();
-        SetDOSMessage(dos);   
+        SetDOSMessage(dos);
     }
 
     function DateOfServiceChange() {
     debugger;
         var dos = this.value();
-        SetDOSMessage(dos);            
+        SetDOSMessage(dos);
     }
+
+    $('input:radio[name="VisitTypeId"]').change(function() {
+        var dos=$("#DateOfService").val();
+        SetDOSMessage(dos);
+    });
 
     function SetDOSMessage(dos) {
         debugger;
@@ -739,11 +729,17 @@
         });
         if(res.length > 0) {
             $("#dosPlan").text("Plan Applied: " + res[0].PlanName + "; PlanDates: " + getFormattedDate(res[0].PlanStartDate) + " - " + getFormattedDate(res[0].PlanEndDate));
+            if($('input[name="VisitTypeId"]:checked').val() == '@PPCP07302018.Utils.GlobalFunctions.VisitType.InPerson') {
+                $("#Copay").val("$" + res[0].VisitFee);
+            } else {
+                $("#Copay").val("$" + res[0].TeleVisitFee);
+            }
+            CalculateTotalPaid();
             $("#errDOS").text("");
         } else {
             $("#dosPlan").text("");
             $("#errDOS").text("Please check the Date of Service. No Plan found for this date. ");
-        }        
+        }
     }
 
     function CalculateTotalPaid() {
@@ -793,13 +789,6 @@
                 $("#divMainMemberDetails").hide();
 
                 //Clear Encounter section
-                var value = 15
-                //$('input:radio[name="VisitTypeId"]').filter('[value=15]').attr('checked', true);;
-                //$('input:radio[name=VisitTypeId][value=15]').click();
-               // $("input[id=VisitTypeId][value=" + value + "]").prop('checked', true);
-                //$("#VisitTypeId").attr('checked', true);
-                // document.querySelector('input[name=VisitTypeId][value=15]').checked = true;
-
                 $("#DateOfService").val(null);
                 $("#PrimaryProcedureCode").val("");
                 $("#PrimaryDiagnosisCode").val("");
@@ -810,7 +799,6 @@
                 $("#PaymentDate").val(null);
                 //$("#providerList").data("kendoDropDownList").values(null);
                 $(".proclines").val("");
-
             }
         }
     }
@@ -1025,9 +1013,9 @@
                 if(ClaimSaveResult != "") {
                     $("#errorDetail").html(ClaimSaveResult);
                 } else {
-                    location.reload();
+                    //location.reload();
                     var getUrl = window.location.href.split('?')[0];
-                    var uurl = getUrl + "?mode=edit&VisitId" + obj[0].VisitId;
+                    var uurl = getUrl + "?mode=edit&VisitId=" + obj[0].VisitId;
                     window.location = uurl;
                 }
             },

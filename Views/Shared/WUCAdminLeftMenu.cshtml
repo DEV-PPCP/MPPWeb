@@ -40,17 +40,7 @@
         <div>
             @*--------------Left Menu--------------*@
             <div class="wrapper">
-                <nav1 class="">
-                    <div class="container_fluid1">
-                        <div class="">
-                            <button type="button" id="sidebarCollapse" class="navbar-btn">
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                            </button>
-                        </div>
-                    </div>
-                </nav1>
+                
                 <nav1 id="sidebar" class="">
                     <div class="row">
                         <div class="panel-group" id="accordion">
@@ -293,6 +283,9 @@
         $('#sidebarCollapse').on('click', function () {
             $('#sidebar').toggleClass('active');
             $(this).toggleClass('active');
+            if ($("#sidebar").hasClass("active")) {
+
+            }
         });
     });
 

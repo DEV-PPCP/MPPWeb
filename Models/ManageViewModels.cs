@@ -5,6 +5,12 @@ using Microsoft.Owin.Security;
 
 namespace PPCP07302018.Models
 {
+    public class Result
+    {
+        public int? ResultID { get; set; }
+        public string ResultName { get; set; }
+        public string Exception { get; set; }
+    }
     public class IndexViewModel
     {
         public bool HasPassword { get; set; }
