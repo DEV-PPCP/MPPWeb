@@ -1175,7 +1175,7 @@
                                                                 var PlanID = $("#PlanID").val();
                                                                 var gender=$("#hdnGender").val();
                                                                 var age=$("#hdnAge").val();
-                                                                BindingPlansGrid(OrganizationID, ProviderID, PlanID,gender,age);
+                                                               // BindingPlansGrid(OrganizationID, ProviderID, PlanID,gender,age);
                                                             }
                                                         </script>
                                                     </div>
@@ -1216,7 +1216,7 @@
                                                                 var PlanID = $("#PlanID").val();
                                                                 var gender=$("#hdnGender").val();
                                                                 var age=$("#hdnAge").val();
-                                                                BindingPlansGrid(OrganizationID, ProviderID, PlanID,gender,age);
+                                                                //BindingPlansGrid(OrganizationID, ProviderID, PlanID,gender,age);
                                                             }
                                                         </script>
                                                     </div>
@@ -1280,15 +1280,40 @@
                                                 Search
                                             </button>
                                         </div>
-
-
-
-
-
-
                                         <br />
                                     </div>
                                     <div id="divSelectPlan" style="display:none;">
+                                        <br />
+                                        <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Select a Provider</b></legend>
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                                    @(Html.Kendo().Grid<PPCP07302018.Models.Member.MemberDetails>
+                                                    ()
+                                                    .Name("gridProviders")
+                                                    .Columns(columns =>
+                                                    {
+                                                        columns.Bound(p => p.ProviderID).ClientTemplate("<input type='radio' name='ProviderID' value='#= ProviderID #' onclick=\"BindPlansGridByProvider('#=OrganizationID#', '#=ProviderID#');\" />").Title("Select").Filterable(false).Width(50);
+                                                        columns.Bound(p => p.OrganizationName).Title("Organization Name").Filterable(true).Width(100);
+                                                        columns.Bound(p => p.ProviderName).Title("Provider Name").Filterable(true).Width(100);
+                                                        columns.Bound(p => p.ProviderAddress).Title("ProviderAddress").Filterable(true).Width(150);
+
+                                                    })
+                                                    .Scrollable().Sortable()
+                                                    .Pageable()
+                                                    //.Filterable()
+                                                    .AutoBind(false)
+                                                    .HtmlAttributes(new { })
+                                                    //.Selectable()
+                                                    .DataSource(dataSource => dataSource
+                                                    .Ajax()
+                                                    .PageSize(5)
+                                                    .ServerOperation(false)))
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br />
+
                                         <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Select a Plan</b></legend>
                                         <div class="form-group">
                                             <div class="row">
@@ -1340,10 +1365,10 @@
                                                         .Columns(columns =>
                                                         {
                                                             columns.Bound(p => p.Paymentschedule).ClientTemplate("<input type='radio' name='Paymentschedule' value='#= Paymentschedule #' />" + " " + "#=Paymentschedule#").Title("Payment Schedule").Filterable(false).Width(140).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
-                                                            columns.Bound(p => p.TotalAmount).Title("Total Amount").Filterable(true).Width(130).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                            columns.Bound(p => p.TotalAmount).Title("Total Amount").Format("{0:c2}").Filterable(true).Width(130).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
                                                             columns.Bound(p => p.NoofInstallments).Title("No. of Installments").Filterable(true).Width(170).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
-                                                            columns.Bound(p => p.InstallmentAmount).Title("Installment Amount").Filterable(true).Width(160).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
-                                                            columns.Bound(p => p.InstallmentFee).Title("Installment Fee").Filterable(true).Width(160).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                            columns.Bound(p => p.InstallmentAmount).Title("Installment Amount").Format("{0:c2}").Filterable(true).Width(160).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                            columns.Bound(p => p.InstallmentFee).Title("Installment Fee").Format("{0:c2}").Filterable(true).Width(160).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
                                                             columns.Bound(p => p.Savings).Title("Savings").Filterable(true).Width(130).Visible(false);
                                                         })
                                                         .Scrollable()
@@ -1462,10 +1487,11 @@
                                                         <span id="spnDuration"></span>
                                                     </div>
                                                     <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                                        <span><b>Enrollment Fee  </b> </span>
+                                                        <span><b>Visit Fee </b></span>
                                                         <br />
-                                                        $<span id="spnEnrollFee"></span>
-                                                    </div>
+                                                        <span id="spnVisitFee" style="display:none"></span>
+                                                        <span id="spnVisitFee1">In-person visit: $35, Televisit: $25</span>
+                                                    </div>                                                    
                                                 </div>
                                                 <br />
                                                 <div class="row">
@@ -1473,6 +1499,11 @@
                                                         <span><b>Plan Amount  </b> </span>
                                                         <br />
                                                         $<span id="spnPlanAmount"></span>
+                                                    </div>
+                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                        <span><b>Enrollment Fee  </b> </span>
+                                                        <br />
+                                                        $<span id="spnEnrollFee"></span>
                                                     </div>
                                                     <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                         <span><b>Plan Start date </b></span>
@@ -1484,24 +1515,18 @@
                                                         <br />
                                                         <span id="spnPlanEndDate"></span>
                                                     </div>
-                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                                        <span><b>Visit Fee </b></span>
-                                                        <br />
-                                                        <span id="spnVisitFee" style="display:none"></span>
-                                                        <span id="spnVisitFee1">In-person visit: $35, Televisit: $25</span>
-                                                    </div>
                                                 </div>
                                                 <br />
                                                 <div class="row">
-                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3" id="divinstAmt">
-                                                        <span><b>Installment Amount </b>  </span>
-                                                        <br />
-                                                        $<span id="spnInstallmentAmount"></span>
-                                                    </div>
                                                     <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                         <span><b>Payment Schedule</b></span>
                                                         <br />
                                                         <span id="spnPaymentschedule"></span>
+                                                    </div>
+                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3" id="divinstAmt">
+                                                        <span><b>Installment Amount </b>  </span>
+                                                        <br />
+                                                        $<span id="spnInstallmentAmount"></span>
                                                     </div>
                                                     <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                         <span><b>Installment Fee  </b> </span>
@@ -1551,7 +1576,7 @@
                                                 <div class="row">
                                                     <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
                                                         @Html.Label("Amount", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;"> * </span>
-                                                        @Html.TextBoxFor(model => model.AmountPaid, null, new { @class = "customKendoTextBox", PlaceHolder = "", maxlength = 20, style = "display:none", onchange = "ValidateAmountPaid(this.value);" })
+                                                        @Html.TextBoxFor(model => model.AmountPaid, null, new { @class = "customKendoTextBox disabled", @readonly = "readonly", PlaceHolder = "", maxlength = 20, onchange = "ValidateAmountPaid(this.value);" })
                                                         @Html.ValidationMessageFor(model => model.AmountPaid, "", new { @style = "color:red" })
                                                     </div>
                                                     <div class="col-xs-0 col-md-6 col-sm-6 col-lg-6 col-md-pull-2 col-lg-pull-2">

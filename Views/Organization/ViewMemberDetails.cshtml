@@ -473,16 +473,17 @@
                                                                                            "<a onclick='ViewMemberCard(#=MemberID#,#=Plan_Code#,\"#=MemberPlanID#\",\"#=PlanType#\");' <span style='cursor:pointer'>Download</a>").Title("ID Card").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(80);
 
                                                     })
-                                                    .Scrollable()
+                                                    .Scrollable().Sortable()
                                                     .Pageable()
-                                                    .Filterable()
+                                                    //.Filterable()
                                                     .AutoBind(false)
-                                                    .HtmlAttributes(new { })
+                                                    .HtmlAttributes(new { style = "height: 400px; min-height: 300px;" })
                                                     .Selectable()
                                                     .DataSource(dataSource => dataSource
-                                                    .Ajax()
-                                                    .PageSize(5)
-                                                    .ServerOperation(false)))
+                                                        .Ajax()
+                                                        .PageSize(10)
+                                                        .Sort(sort => sort.Add("MemberName").Ascending())
+                                                        .ServerOperation(false)))
                     </div>
                 </div>
             </div>
