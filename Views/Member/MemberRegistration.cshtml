@@ -418,7 +418,8 @@
             debugger;
             var PasswordErrorMsg = document.getElementById("PasswordErrorMsg").innerText;
             var spnUserName = document.getElementById("spnUserName").innerText;
-            if (MemberDetailsValidator.validate() && PasswordErrorMsg == "" && spnUserName == "") {
+            var spnConfirmUserName = document.getElementById("spnConfirmUserName").innerText;
+            if (MemberDetailsValidator.validate() && PasswordErrorMsg == "" && spnUserName == "" && spnConfirmUserName == "") {
                 e.preventDefault();
 
                 //Check Memer exists or not by vinod
@@ -723,20 +724,31 @@
                 var obj = jQuery.parseJSON(result);
                 var PlansList = obj[0];
                 //select distinct providers
-                var providerList = (function (a) {
-                    var seen = {};
-                    return a.filter(function (e) {
-                        return seen[e.ProviderID, e.OrganizationID] ? false : (seen[e.ProviderID, e.OrganizationID] = true);
-                    }).map(function (e) {
-                        return {
-                            OrganizationID: e.OrganizationID,
-                            OrganizationName: e.OrganizationName,
-                            ProviderID: e.ProviderID,
-                            ProviderName: e.ProviderName,
-                            ProviderAddress: e.ProviderAddress
-                        }
+                var providerList = [];
+                $.each(PlansList, function (index, obj) {
+                    var a = $.grep(providerList, function (e) {
+                        return obj.ProviderID === e.ProviderID && obj.OrganizationID === e.OrganizationID;
                     });
-                })(PlansList);
+                    if (a.length === 0) {
+                        providerList.push(obj);
+                    }
+                });
+
+
+                //var providerList = (function (a) {
+                //    var seen = {};
+                //    return a.filter(function (e) {
+                //        return seen[e.ProviderID, e.OrganizationID] ? false : (seen[e.ProviderID, e.OrganizationID] = true);
+                //    }).map(function (e) {
+                //        return {
+                //            OrganizationID: e.OrganizationID,
+                //            OrganizationName: e.OrganizationName,
+                //            ProviderID: e.ProviderID,
+                //            ProviderName: e.ProviderName,
+                //            ProviderAddress: e.ProviderAddress
+                //        }
+                //    });
+                //})(PlansList);
                 $("#gridProviders").data("kendoGrid").dataSource.data(providerList);
 
                 FilteredPlans = PlansList;
@@ -782,7 +794,8 @@
         //To check Password strength (in Step1)
         chkPasswordStrengths(txtPassword, strenghtMsg, errorMsg);
     }
-    function ValidateUserName(Username){
+    function ValidateUserName(Username) {
+        validateConfirmUsername();
         ValidateUserNames(Username,'@ServiceUrl');
     }
     function ValidateAmountPaid(AmountPaid){
@@ -1640,10 +1653,10 @@
                                                         .Columns(columns =>
                                                         {
                                                             columns.Bound(p => p.Paymentschedule).ClientTemplate("<input type='radio' name='Paymentschedule' value='#= Paymentschedule #' />" + " " + "#=Paymentschedule#").Title("Payment Schedule").Filterable(false).Width(140).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
-                                                            columns.Bound(p => p.TotalAmount).Title("Total Amount").Filterable(true).Width(130).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                            columns.Bound(p => p.TotalAmount).Title("Total Amount").Format("{0:c2}").Filterable(true).Width(130).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
                                                             columns.Bound(p => p.NoofInstallments).Title("No. of Installments").Filterable(true).Width(170).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
-                                                            columns.Bound(p => p.InstallmentAmount).Title("Installment Amount").Filterable(true).Width(160).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
-                                                            columns.Bound(p => p.InstallmentFee).Title("Installment Fee").Filterable(true).Width(160).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                            columns.Bound(p => p.InstallmentAmount).Title("Installment Amount").Format("{0:c2}").Filterable(true).Width(160).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                            columns.Bound(p => p.InstallmentFee).Title("Installment Fee").Format("{0:c2}").Filterable(true).Width(160).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
                                                             columns.Bound(p => p.Savings).Title("Savings").Filterable(true).Width(130).Visible(false);
                                                         })
                                                         .Scrollable()
@@ -1763,10 +1776,11 @@
                                                         <span id="spnDuration"></span>
                                                     </div>
                                                     <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                                        <span><b>Enrollment Fee  </b> </span>
+                                                        <span><b>Visit Fee </b></span>
                                                         <br />
-                                                        $<span id="spnEnrollFee"></span>
-                                                    </div>
+                                                        <span id="spnVisitFee" style="display:none"></span>
+                                                        <span id="spnVisitFee1">In-person visit: $35, Televisit: $25</span>
+                                                    </div>                                                    
                                                 </div>
                                                 <br />
                                                 <div class="row">
@@ -1774,6 +1788,11 @@
                                                         <span><b>Plan Amount  </b> </span>
                                                         <br />
                                                         $<span id="spnPlanAmount"></span>
+                                                    </div>
+                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                        <span><b>Enrollment Fee  </b> </span>
+                                                        <br />
+                                                        $<span id="spnEnrollFee"></span>
                                                     </div>
                                                     <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                         <span><b>Plan Start date </b></span>
@@ -1785,15 +1804,14 @@
                                                         <br />
                                                         <span id="spnPlanEndDate"></span>
                                                     </div>
-                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                                        <span><b>Visit Fee </b></span>
-                                                        <br />
-                                                        <span id="spnVisitFee" style="display:none"></span>
-                                                        <span id="spnVisitFee1">In-person visit: $35, Televisit: $25</span>
-                                                    </div>
                                                 </div>
                                                 <br />
                                                 <div class="row">
+                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                        <span><b>Payment Schedule</b></span>
+                                                        <br />
+                                                        <span id="spnPaymentschedule"></span>
+                                                    </div>
                                                     <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3" id="divinstAmt">
                                                         <span><b>Installment Amount </b>  </span>
                                                         <br />
@@ -1803,11 +1821,6 @@
                                                         <span><b>Installment Fee  </b> </span>
                                                         <br />
                                                         $<span id="spnInstalmentFee"></span>
-                                                    </div>
-                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                                        <span><b>Payment Schedule</b></span>
-                                                        <br />
-                                                        <span id="spnPaymentschedule"></span>
                                                     </div>
 
                                                     <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3" style="display:none;">

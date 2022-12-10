@@ -214,7 +214,7 @@
                             $("#AmountPaid").val(TotalAmount);
                         } else {                            
                             $("#divValidator").show();
-                            document.getElementById("PlanPaymentValidation").innerHTML = "Member Plan Exists. Please select a different start date. Plan Dates: " + getFormattedDate(list[0].PlanStartDate) + " - " + getFormattedDate(list[0].PlanEndDate);
+                            document.getElementById("PlanPaymentValidation").innerHTML = "Member Plan Exists. Plan Dates: " + getFormattedDate(list[0].PlanStartDate) + " - " + getFormattedDate(list[0].PlanEndDate) + "Please select a different start date.";
                             return false;
                         }
                     },
@@ -704,20 +704,30 @@
                 var PlansList = obj[0];
 
                 //select distinct providers
-                var providerList = (function (a) {
-                    var seen = {};
-                    return a.filter(function (e) {
-                        return seen[e.ProviderID, e.OrganizationID] ? false : (seen[e.ProviderID, e.OrganizationID] = true);
-                    }).map(function (e) {
-                        return {
-                            OrganizationID: e.OrganizationID,
-                            OrganizationName: e.OrganizationName,
-                            ProviderID: e.ProviderID,
-                            ProviderName: e.ProviderName,
-                            ProviderAddress: e.ProviderAddress
-                        }
+                var providerList = [];
+                $.each(PlansList, function (index, obj) {
+                    var a = $.grep(providerList, function (e) {
+                        return obj.ProviderID === e.ProviderID && obj.OrganizationID === e.OrganizationID;
                     });
-                })(PlansList);
+                    if (a.length === 0) {
+                        providerList.push(obj);
+                    }
+                });
+
+                //var providerList = (function (a) {
+                //    var seen = {};
+                //    return a.filter(function (e) {
+                //        return seen[e.ProviderID, e.OrganizationID] ? false : (seen[e.ProviderID, e.OrganizationID] = true);
+                //    }).map(function (e) {
+                //        return {
+                //            OrganizationID: e.OrganizationID,
+                //            OrganizationName: e.OrganizationName,
+                //            ProviderID: e.ProviderID,
+                //            ProviderName: e.ProviderName,
+                //            ProviderAddress: e.ProviderAddress
+                //        }
+                //    });
+                //})(PlansList);
                 $("#gridProviders").data("kendoGrid").dataSource.data(providerList);
 
                 FilteredPlans = PlansList;
@@ -1332,10 +1342,10 @@
                                                         .Columns(columns =>
                                                         {
                                                             columns.Bound(p => p.Paymentschedule).ClientTemplate("<input type='radio' name='Paymentschedule' value='#= Paymentschedule #' />" + " " + "#=Paymentschedule#").Title("Payment Schedule").Filterable(false).Width(150);
-                                                            columns.Bound(p => p.TotalAmount).Title("TotalAmount").Filterable(false).Width(150);
+                                                            columns.Bound(p => p.TotalAmount).Title("TotalAmount").Format("{0:c2}").Filterable(false).Width(150);
                                                             columns.Bound(p => p.NoofInstallments).Title("No. of Installments").Filterable(false).Width(150);
-                                                            columns.Bound(p => p.InstallmentAmount).Title("Installment Amount").Filterable(false).Width(150);
-                                                            columns.Bound(p => p.InstallmentFee).Title("Installment Fee").Filterable(false).Width(150);
+                                                            columns.Bound(p => p.InstallmentAmount).Title("Installment Amount").Format("{0:c2}").Filterable(false).Width(150);
+                                                            columns.Bound(p => p.InstallmentFee).Title("Installment Fee").Format("{0:c2}").Filterable(false).Width(150);
                                                             columns.Bound(p => p.Savings).Title("Savings").Filterable(false).Width(100).Visible(false);
                                                         })
                                                         .Scrollable().Sortable()

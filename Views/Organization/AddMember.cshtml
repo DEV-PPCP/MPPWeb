@@ -974,10 +974,10 @@
                                                         .Columns(columns =>
                                                         {
                                                             columns.Bound(p => p.Paymentschedule).ClientTemplate("<input type='radio' name='Paymentschedule' value='#= Paymentschedule #' />" + " " + "#=Paymentschedule#").Title("Payment Schedule").Filterable(false).Width(150);
-                                                            columns.Bound(p => p.TotalAmount).Title("TotalAmount").Filterable(true).Width(150);
+                                                            columns.Bound(p => p.TotalAmount).Title("TotalAmount").Format("{0:c2}").Filterable(true).Width(150);
                                                             columns.Bound(p => p.NoofInstallments).Title("No. of Installments").Filterable(true).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
-                                                            columns.Bound(p => p.InstallmentAmount).Title("Installment Amount").Filterable(true).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
-                                                            columns.Bound(p => p.InstallmentFee).Title("Installment Fee").Filterable(true).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                            columns.Bound(p => p.InstallmentAmount).Title("Installment Amount").Format("{0:c2}").Filterable(true).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                            columns.Bound(p => p.InstallmentFee).Title("Installment Fee").Format("{0:c2}").Filterable(true).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
                                                             columns.Bound(p => p.Savings).Title("Savings").Filterable(true).Width(100).Visible(false);
                                                         })
                                                         .Scrollable()
@@ -1078,10 +1078,10 @@
                                                                     <span id="spnDuration"></span>
                                                                 </div>
                                                                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                                                    <span><b>Enrollment Fee  </b> </span>
+                                                                    <span><b>Visit Fee </b></span>
                                                                     <br />
-                                                                    <span id="spnEnrollFee"></span>
-                                                                </div>
+                                                                    <span id="spnVisitFee"></span>
+                                                                </div>                                                               
                                                             </div>
                                                             <br />
                                                             <div class="row">
@@ -1089,6 +1089,11 @@
                                                                     <span><b>Plan Amount  </b> </span>
                                                                     <br />
                                                                     <span id="spnPlanAmount"></span>
+                                                                </div>
+                                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                    <span><b>Enrollment Fee  </b> </span>
+                                                                    <br />
+                                                                    <span id="spnEnrollFee"></span>
                                                                 </div>
                                                                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                                     <span><b>Plan Start date </b></span>
@@ -1100,23 +1105,18 @@
                                                                     <br />
                                                                     <span id="spnPlanEndDate"></span>
                                                                 </div>
-                                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                                                    <span><b>Visit Fee </b></span>
-                                                                    <br />
-                                                                    <span id="spnVisitFee"></span>
-                                                                </div>
                                                             </div>
                                                             </br>
                                                             <div class="row">
                                                                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                                                    <span><b>Instalment Amount </b>  </span>
-                                                                    <br />
-                                                                    <span id="spnInstallmentAmount"></span>
-                                                                </div>
-                                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                                     <span><b>Payment Schedule</b></span>
                                                                     <br />
                                                                     <span id="spnPaymentschedule"></span>
+                                                                </div>
+                                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                    <span><b>Installment Amount </b>  </span>
+                                                                    <br />
+                                                                    <span id="spnInstallmentAmount"></span>
                                                                 </div>
                                                                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                                     <span><b>Installment Fee  </b> </span>
@@ -1128,7 +1128,7 @@
                                                                     <br />
                                                                     <span id="spnNoofInstalments"></span>
                                                                 </div>
-                                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3"  style="display:none;">
+                                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3" style="display:none;">
                                                                     <span><b>Plan Decription</b></span>
                                                                     <br />
                                                                     <span id="spnPlanDescription"></span>
