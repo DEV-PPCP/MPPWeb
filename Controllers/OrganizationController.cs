@@ -361,6 +361,8 @@ namespace PPCP07302018.Controllers
                 model.Password = Convert.ToString(Session["OrgPassword"]);
                 model.ConfirmPassword = Convert.ToString(Session["OrgPassword"]);
                 model.SSN= Convert.ToInt32(List[0].UserSSN);
+                model.BillingTypeId = List[0].BillingTypeId;
+                model.BillingType = List[0].BillingType;
             }
             return View(model);
         }

@@ -327,7 +327,7 @@
             </div>
         </div>
 
-        <legend class="Legendtxtcolor" style="float: left; font-size: 14px; "><b>Member Plan</b></legend>
+        <legend class="Legendtxtcolor" style="float: left; font-size: 14px; "><b>Member PPV Plans</b></legend>
         <div class="form-group">
             <div class="row">
                 <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
@@ -588,7 +588,7 @@
     }
 
     function GetMemberDetails(OrganizationID, strMemberID, searchText, Url) {
-        var webMethodName = "GetMembersList";//GetOrganizationMemberDetails
+        var webMethodName = "GetPPVMembersList";//GetOrganizationMemberDetails
         var ParameterNames = new Array();
         var ParameterValues = new Array();
         ParameterNames[0] = "OrganizationID";
@@ -643,7 +643,7 @@
     }
 
     function BindMemberPlans(Url, OrganizationID, MemberID) {
-        var webMethodName = "GetMemberPlanDetailsByOrg";
+        var webMethodName = "GetPPVMemberPlanDetailsByOrg";
         var ParameterNames = new Array();
         var ParameterValues = new Array();
         ParameterNames[0] = "OrganizationID";

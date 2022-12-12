@@ -51,6 +51,7 @@ namespace PPCP07302018.Models.Organization
         public string OrgAddress { get; set; }
 
         public int BillingTypeId { get; set; }
+        public string BillingType { get; set; }
 
         public int? UserID { get; set; }
 

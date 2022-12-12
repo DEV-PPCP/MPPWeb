@@ -111,6 +111,7 @@
             .DataSource(dataSource => dataSource
             .Ajax()
             .PageSize(50)
+            .Sort(sort => sort.Add("SubmitDate").Descending())
             .ServerOperation(false)))
         </div>
     </div>

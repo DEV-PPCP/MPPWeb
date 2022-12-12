@@ -28,6 +28,10 @@ namespace PPCP07302018.Controllers
     {
         public ActionResult MPPLogin(Login model)
         {
+            Response.Cache.SetCacheability(HttpCacheability.NoCache);
+            Response.Cache.SetExpires(DateTime.UtcNow.AddHours(-1));
+            Response.Cache.SetNoStore();
+            Session.Clear();
             MasterController mas = new MasterController();
             Session["SystemIPAddress"] = mas.GetIPAddress();
             return View(model);
