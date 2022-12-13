@@ -34,13 +34,13 @@
     <link href="~/Content/login.css" rel="stylesheet" />
 </head>
 <body style="width: 100%; background-color: #eae6e6;">
-    <div>
+    <div style="width: 100%;">
         @*--------------Header--------------*@
         @Html.Partial("BaseHeader")
         <div>
             @*--------------Left Menu--------------*@
             <div class="wrapper">
-                <nav1 class="">
+                @*<nav1 class="">
                     <div class="container_fluid1">
                         <div class="">
                             <button type="button" id="sidebarCollapse" class="navbar-btn">
@@ -50,7 +50,7 @@
                             </button>
                         </div>
                     </div>
-                </nav1>
+                </nav1>*@
                 <nav1 id="sidebar" class="">
                     <div class="row">
                         <div class="panel-group" id="accordion">
@@ -135,7 +135,7 @@
                                                     @{
                                                         var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
                                                         var AttachedLink = (System.Configuration.ConfigurationManager.AppSettings["AttachedLink"].ToString());
-                                                        var TermsAndConditionsFile = @Session["TermsAndConditionsFile"].ToString();
+                                                        var TermsAndConditionsFile = @Session["TermsAndConditionsFile"] == null ? string.Empty : @Session["TermsAndConditionsFile"].ToString();
                                                         var TermsURL = AttachedLink + "PlanTerms/" + TermsAndConditionsFile;
                                                     }
                                                     <span class="glyphicon glyphicon-file"></span>
@@ -208,7 +208,7 @@
 </body>
 </html>
 @*<script src="~/Scripts/jquery-1.12.0.min.js" type="text/javascript"></script>*@
-<script src="~/Scripts/bootstrap-leftmenu.js" type="text/javascript"></script>
+@*<script src="~/Scripts/bootstrap-leftmenu.js" type="text/javascript"></script>*@
 
 <script type="text/javascript">
     $(document).ready(function () {

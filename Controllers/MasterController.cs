@@ -1700,7 +1700,7 @@ namespace PPCP07302018.Controllers
                 txtPharmasist.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.1D), Telerik.Reporting.Drawing.Unit.Inch(horizantalShaperx.Bottom.Value + 0.1));
                 txtPharmasist.Name = "txtPharmasist";
                 txtPharmasist.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.8D), Telerik.Reporting.Drawing.Unit.Inch(0.29996060132980347D)); //new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.1800000667572021D), Telerik.Reporting.Drawing.Unit.Inch(0.15000000596046448D));
-                txtPharmasist.Value = "<span style='color: white;'>Show to your pharmacist</span>";//                      : " + Convert.ToString(dtPatientDetails.Rows[0]["EntityName"]);
+                txtPharmasist.Value = "<span style='color: white;'>Show this to your pharmacist</span>";//                      : " + Convert.ToString(dtPatientDetails.Rows[0]["EntityName"]);
                 txtPharmasist.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
                 txtPharmasist.Style.Font.Name = fontname;
 
@@ -1734,7 +1734,7 @@ namespace PPCP07302018.Controllers
                 txtRxNote.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.1D), Telerik.Reporting.Drawing.Unit.Inch(txtRxMemberId.Bottom.Value + 0.1));
                 txtRxNote.Name = "txtRxNote";
                 txtRxNote.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(3.5D), Telerik.Reporting.Drawing.Unit.Inch(0.29996060132980347D)); //new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.1800000667572021D), Telerik.Reporting.Drawing.Unit.Inch(0.15000000596046448D));
-                txtRxNote.Value = "<span style='color: white; font-weight:bold'>This Saving card is not an insurance program<br/> and canot be combined with insurance</span>";
+                txtRxNote.Value = "<span style='color: white; font-weight:bold'>This Savings card is not an insurance program<br/> and cannot be combined with insurance</span>";
                 txtRxNote.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
                 txtRxNote.Style.Font.Name = fontname;
 

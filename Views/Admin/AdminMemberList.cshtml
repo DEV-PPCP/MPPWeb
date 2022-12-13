@@ -164,6 +164,8 @@
         BindStates('@ServiceUrl', CountryID, StateID);
         BindCites('@ServiceUrl', StateID, CityID);
         BindSalutation(Salutation);
+        BindMemberPlans('@ServiceUrl', "0", MemberID);
+
         function MembeDetail()
         {
             var MemberRegistrationDetails = {};
@@ -630,7 +632,7 @@
                                                     @Html.Label("-", new { style = "font-weight:normal;", @class = "labelColor" })
                                                     @Html.TextBoxFor(model => model.MobileNumber, null, new { @class = "customKendoTextBox Text", style = "width:75%;", maxlength = 10 })
                                                     @*@Html.ValidationMessageFor(model => model.CountryCode, "", new { @style = "color:red" })
-                                                        @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @style = "color:red" })*@
+                                    @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @style = "color:red" })*@
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -744,7 +746,7 @@
                                                     <span style="font-weight:normal;">5-digit ZIP</span>&nbsp;&nbsp;&nbsp;&nbsp;
                                                     <span style="font-weight:normal;"> 4-digit ZIP </span><br />
                                                     @*@Html.ValidationMessageFor(m => m.Zip)
-                                                        @Html.ValidationMessageFor(m => m.ZipCode)*@
+                                    @Html.ValidationMessageFor(m => m.ZipCode)*@
                                                 </div>
                                             </div>
                                         </div>
@@ -790,6 +792,45 @@
                                             </label>
                                             <br />
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row Panel_bg_Sub">
+                            <div class="row">
+                                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                    <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Member Plans</b>:</legend>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div>
+                                        @(Html.Kendo().Grid<PPCP07302018.Models.Member.MemberPlan> ()
+                                        .Name("memberPlanGrid")
+                                        .Columns(columns =>
+                                        {
+                                            columns.Bound(p => p.OrganizationName).Title("Organization Name").Width(130);
+                                            columns.Bound(p => p.PlanName).Title("Plan Name").Width(130);
+                                            columns.Bound(p => p.PlanStartDate).Title("Plan Start Date").ClientTemplate("#= kendo.toString(kendo.parseDate(PlanStartDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') #").Filterable(true).Width(120);
+                                            columns.Bound(p => p.PlanEndDate).Title("Plan End Date").ClientTemplate("#= kendo.toString(kendo.parseDate(PlanEndDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') #").Filterable(true).Width(120);
+                                            columns.Bound(p => p.VisitFee).Title("In Person Copay").Width(130);
+                                            columns.Bound(p => p.TeleVisitFee).Title("Tele Visit Copy").Width(130);
+                                            columns.Bound(p => p.IsActive).Width(100)
+                                                        .ClientTemplate("#if(IsActive) {# " +
+                                                                              "Active" +
+                                                                          "#} else {#" +
+                                                                              "<span style='color:red; font-weight:bold'>In-Active</span>" +
+                                                                          "#} #");
+
+                                        })
+                                        .Scrollable()
+                                        .AutoBind(false)
+                                        .HtmlAttributes(new { style = "" })
+                                        .DataSource(dataSource => dataSource
+                                        .Ajax()
+                                        .PageSize(50)
+                                        .ServerOperation(false)))
                                     </div>
                                 </div>
                             </div>

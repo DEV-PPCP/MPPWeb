@@ -59,6 +59,9 @@
 </script>
 
 <style type="text/css">
+    body {
+        display: block;
+    }
     .Page_Dimmer {
         position: fixed;
         height: 100%;
@@ -355,7 +358,7 @@
                                                             </div>
                                                             <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                                 @Html.Label("Phone Number", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                                                @Html.TextBoxFor(model => model.OrgCountryCode, null, new { @class = "k-textbox", style = "width:15%;", maxlength = 4 })
+                                                                @Html.TextBoxFor(model => model.OrgCountryCode, null, new { @class = "k-textbox", @Value = "0", style = "width:15%;", maxlength = 4 })
                                                                 @Html.Label("-", new { style = "font-weight:normal;", @class = "labelColor" })
                                                                 @Html.TextBoxFor(model => model.OrgMobileNumber, null, new { @class = "k-textbox", style = "width:75%;", maxlength = 10 })
                                                                 @Html.ValidationMessageFor(model => model.OrgCountryCode, "", new { @style = "color:red" })
@@ -508,7 +511,7 @@
                                                 @Html.RadioButton("chkBillingType", PPCP07302018.Utils.GlobalFunctions.BillingType.PPV, new { })
                                                 <span>
                                                     Pay Per Visit [Provider <b>reimbursed within 48 hours</b> of submitting the online claim <b>for each consultation</b> <br />
-                                                    &nbsp;&nbsp;&nbsp;&nbsp;Fixed "Allowed Amount: for 2022 for each doctor consulation: <b>$90 (In Person)</b> and <b>$60 (Tele-visit)</b>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;Fixed "Allowed Amount: for 2022 for each doctor consultation: <b>$90 (In Person)</b> and <b>$60 (Tele-visit)]</b>
                                                 </span>
                                                 <span id="errorBillingType" style="color:red"></span>
                                             </div>
@@ -593,11 +596,11 @@
                                                         </div>
                                                         <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
 
-                                                            @Html.Label("Degree", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
+                                                            @Html.Label("Degree", new { style = "font-weight:normal;", @class = "classlabel" })<br />
 
                                                             @(Html.Kendo().DropDownListFor(m => m.Degree)
                                                     .Name("Degree").HtmlAttributes(new { style = "width:100%;" })
-                                                    //.OptionLabel("--Select--")
+                                                    .OptionLabel("--Select--")
                                                     .Events(events =>
                                                     {
                                                         events.Change("onSelectDegree");

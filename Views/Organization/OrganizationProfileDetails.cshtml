@@ -22,6 +22,9 @@
         width: 100%;
         background: rgba( 255, 255, 255, .8 ) url('../../Images/loading-spinner-red.gif') 50% 50% no-repeat;
     }
+    .disabled {
+        background-color: #f1f1f1;
+    }
 </style>
 <div id="divProfile">
     <div class="pageheading_bar" align="center">
@@ -50,6 +53,13 @@
                                                 @*@Html.ValidationMessageFor(model => model.TaxID, "", new { @style = "color:red" })*@
                                             </div>
                                             <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                @Html.Label("Billing Type", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                @Html.TextBoxFor(model => model.BillingType, null, new { @class = "customKendoTextBox disabled", @readonly="readonly", style = "width:100%;", maxlength = 50 })
+                                                @*@Html.ValidationMessageFor(model => model.TaxID, "", new { @style = "color:red" })*@
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                 @Html.Label("Email", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
                                                 @Html.TextBoxFor(model => model.OrgEmail, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
                                                 @*@Html.ValidationMessageFor(model => model.OrgEmail, "", new { @style = "color:red" })*@
@@ -60,7 +70,11 @@
                                                 @Html.Label("-", new { style = "font-weight:normal;", @class = "labelColor" })
                                                 @Html.TextBoxFor(model => model.OrgMobileNumber, null, new { @class = "customKendoTextBox", style = "width:75%;", maxlength = 10 })
                                                 @*@Html.ValidationMessageFor(model => model.OrgCountryCode, "", new { @style = "color:red" })
-                                                    @Html.ValidationMessageFor(model => model.OrgMobileNumber, "", new { @style = "color:red" })*@
+            @Html.ValidationMessageFor(model => model.OrgMobileNumber, "", new { @style = "color:red" })*@
+                                            </div>
+                                            <div class="col-xs-12 col-md-6 col-sm-9 col-lg-6">
+                                                @Html.Label("Address", new { style = "font-weight:normal;", @class = "" })<br />
+                                                @Html.TextBoxFor(model => model.Address, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
                                             </div>
                                         </div>
                                         <div class="row">
@@ -178,15 +192,10 @@
                                                 <br />
 
                                                 @*@Html.ValidationMessageFor(m => m.OrgZip)
-                                                    @Html.ValidationMessageFor(m => m.OrgZipCode)*@
+                @Html.ValidationMessageFor(m => m.OrgZipCode)*@
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-xs-12 col-md-6 col-sm-9 col-lg-6">
-                                                @Html.Label("Address", new { style = "font-weight:normal;", @class = "" })<br />
-                                                @Html.TextBoxFor(model => model.Address, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
-                                            </div>
-                                        </div>
+
                                     </div>
                                 </div>
                             </div>

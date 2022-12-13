@@ -240,7 +240,6 @@ function AddMembeDetails(MemberRegistrationDetails, session, Url) {
         else {
             return false;
         }
-
     }
     if ($('#chkEnroll').is(":checked") == false) {
         if (MemberRegistrationDetails != null) {
@@ -250,9 +249,6 @@ function AddMembeDetails(MemberRegistrationDetails, session, Url) {
             return false;
         }
     }
-
-
-
 }
 
 //To generate Add Member Registration xml by veena
@@ -264,11 +260,7 @@ function AddMemberRegistration(MemberRegistrationDetails, Url) {
         data: MemberRegistrationDetails,
         success: function (data, textStatus, jqXHR) {
             debugger;
-
-
             AddMemberRegistrationWebApiService(data, Url);
-
-
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
         },
@@ -308,20 +300,26 @@ function AddMemberRegistrationWebApiServicewithPlandetails(data, url) {
             debugger;
             var obj = result[0];
             $("#divMain").find(".loadingSpinner:first").remove();
-            if (obj[0].result == null && obj[0].MemberID != null && obj[0].TransactionID != null) {
-                document.getElementById("divSignupPopup").style.display = "block";
-                document.getElementById("spnPopupMessage").innerHTML = "You are registered successfully. Your Transaction ID: " + obj[0].TransactionID;
-                document.getElementById("divSignupPopup").scrollIntoView();
-            }
-            else if (obj[0].result == null && obj[0].MemberID != null) {
-                document.getElementById("divSignupPopup").style.display = "block";
-                document.getElementById("spnPopupMessage").innerHTML = "You are registered successfully.";
-                document.getElementById("divSignupPopup").scrollIntoView();
-            }
-            else {
+            if (obj[0].result == "MemberExists") {
                 document.getElementById("divErrMessagePopup").style.display = "block";
-                document.getElementById("spnPopupErrMessage").innerHTML = obj[0].result + ". Please try again.";
+                document.getElementById("spnPopupErrMessage").innerHTML = "Member already exists. You can try searching the member.";
                 document.getElementById("divErrMessagePopup").scrollIntoView();
+            } else {
+                if (obj[0].result == null && obj[0].MemberID != null && obj[0].TransactionID != null) {
+                    document.getElementById("divSignupPopup").style.display = "block";
+                    document.getElementById("spnPopupMessage").innerHTML = "You are registered successfully. Your Transaction ID: " + obj[0].TransactionID;
+                    document.getElementById("divSignupPopup").scrollIntoView();
+                }
+                else if (obj[0].result == null && obj[0].MemberID != null) {
+                    document.getElementById("divSignupPopup").style.display = "block";
+                    document.getElementById("spnPopupMessage").innerHTML = "You are registered successfully.";
+                    document.getElementById("divSignupPopup").scrollIntoView();
+                }
+                else {
+                    document.getElementById("divErrMessagePopup").style.display = "block";
+                    document.getElementById("spnPopupErrMessage").innerHTML = obj[0].result + ". Please try again.";
+                    document.getElementById("divErrMessagePopup").scrollIntoView();
+                }
             }
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -348,20 +346,27 @@ function AddMemberRegistrationWebApiService(data, Url) {
             debugger;
             var obj = result[0];
             $("#divMain").find(".loadingSpinner:first").remove();
-            if (obj[0].result == null && obj[0].UserID != null && obj[0].TransactionID != null) {
-                document.getElementById("divSignupPopup").style.display = "block";
-                document.getElementById("spnPopupMessage").innerHTML = "You are registered successfully. Your Transaction ID: " + obj[0].TransactionID;
-                document.getElementById("divSignupPopup").scrollIntoView();
-            }
-            else if (obj[0].result == null && obj[0].UserID != null) {
-                document.getElementById("divSignupPopup").style.display = "block";
-                document.getElementById("spnPopupMessage").innerHTML = "You are registered successfully.";
-                document.getElementById("divSignupPopup").scrollIntoView();
-            }
-            else {
+            if (obj[0].result == "MemberExists") {
                 document.getElementById("divErrMessagePopup").style.display = "block";
-                document.getElementById("spnPopupErrMessage").innerHTML = obj[0].result + ". Please try again.";
+                document.getElementById("spnPopupErrMessage").innerHTML = "Member already exists. You can try searching the member.";
                 document.getElementById("divErrMessagePopup").scrollIntoView();
+            }
+            else { 
+                if (obj[0].result == null && obj[0].UserID != null && obj[0].TransactionID != null) {
+                    document.getElementById("divSignupPopup").style.display = "block";
+                    document.getElementById("spnPopupMessage").innerHTML = "You are registered successfully. Your Transaction ID: " + obj[0].TransactionID;
+                    document.getElementById("divSignupPopup").scrollIntoView();
+                }
+                else if (obj[0].result == null && obj[0].UserID != null) {
+                    document.getElementById("divSignupPopup").style.display = "block";
+                    document.getElementById("spnPopupMessage").innerHTML = "You are registered successfully.";
+                    document.getElementById("divSignupPopup").scrollIntoView();
+                }
+                else {
+                    document.getElementById("divErrMessagePopup").style.display = "block";
+                    document.getElementById("spnPopupErrMessage").innerHTML = obj[0].result + ". Please try again.";
+                    document.getElementById("divErrMessagePopup").scrollIntoView();
+                }
             }
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {

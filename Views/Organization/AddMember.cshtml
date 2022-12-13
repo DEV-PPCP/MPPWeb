@@ -188,7 +188,7 @@
          //   $("#divStep1").hide();
             $("#btnSubmit").show();
             $("#divTermsConditionsSubmit").show();
-            
+
         }
         });
         $("#chkPayNow").click(function () {
@@ -201,9 +201,9 @@
                     //TotalAmount=parseFloat(Amount)+parseFloat(InstalmentAmount);
                     TotalAmount=parseFloat(Amount)+parseFloat(InstalmentAmount)+parseFloat(EnrollFee);
                 }catch(err){
-                    
+
                 }
-               
+
                 $("#AmountPaid").val(TotalAmount);
                 $("#divCarddetails").show();
             } else if ($('#chkPayNow').is(":checked") == false) {
@@ -226,13 +226,12 @@
         });
 
 
-
         function MembeDetail()
         {
             debugger;
             var MemberRegistrationDetails =@Html.Raw(Json.Encode(@Model));
             MemberRegistrationDetails.OrganizationID='@Session["OrganizationID"]';
-            MemberRegistrationDetails.OrganizationName = '@Session["OrganizationName"]';            
+            MemberRegistrationDetails.OrganizationName = '@Session["OrganizationName"]';
             MemberRegistrationDetails.RelationshipID = "0";
             MemberRegistrationDetails.RelationshipName ="Self";
             AddMembeDetails(MemberRegistrationDetails,"@Session["SystemIPAddress"]",'@ServiceUrl');
@@ -243,23 +242,29 @@
             var EnrollPlanValidator = $("#EnrollPlan").kendoValidator().data("kendoValidator");
             var MemberDetailsvalidate = $("#MemberDetails").kendoValidator().data("kendoValidator");//fsMain
             var MemberCredentialsvalidattion = $("#MemberCredentials").kendoValidator().data("kendoValidator");
-            if($('#chkEnroll').is(":checked") == false)
-            {
-                //document.getElementById("spnEnrollValidator").innerHTML="Please Enroll the plan";
-                //return false;
-                if ($('#chkMemberCredentials').is(":checked") == true) {
-                    if(MemberDetailsvalidate.validate() && MemberCredentialsvalidattion.validate()){
-                        MembeDetail();
-                    }
+
+            if ($('#chkMemberCredentials').is(":checked") == true) {
+                if (MemberDetailsvalidate.validate() && MemberCredentialsvalidattion.validate()) {
+                    //MembeDetail();
+                } else {
+                    return false;
                 }
-                else{
-                    if(MemberDetailsvalidate.validate()){
-                        MembeDetail();
-                    } else{
-                        return false;
-                    }
+            } else {
+                if (MemberDetailsvalidate.validate()) {
+                    //MembeDetail();
+                } else {
+                    return false;
                 }
             }
+
+            if (($("#UserName").val()) == ($("#ConfirmUserName").val())) {
+                document.getElementById("spnConfirmUserName").innerHTML = "";
+            }
+            else {
+                document.getElementById("spnConfirmUserName").innerHTML = "Username and Confirm Username must match.";
+                return false;
+            }
+
             if($('#chkEnroll').is(":checked") == true)
             {
                 document.getElementById("spnEnrollValidator").innerHTML="";
@@ -276,7 +281,6 @@
                         document.getElementById("CVV").innerHTML="This information is required";
                         return false;
                     }else document.getElementById("CVV").innerHTML="";
-                    // MembeDetail();
                 }
                 if ($('#chkPayNow').is(":checked") == false){
                     document.getElementById("spnCardNumber").innerHTML="";
@@ -284,55 +288,11 @@
                     document.getElementById("CVV").innerHTML="";
                 }
                 var AmountValidation=document.getElementById("spnAmountPaid").innerText;
-                MembeDetail();
-                //if($('#SecoundTime').is(":checked") == true){
-                    
-                //}
-                //else{
-                //    $("#spnCheckTermsErrorMessages").show();
-                //    $("#spnCheckErrorMessages").show();
-                //    return false;
-                //}
-               
+                //MembeDetail();
             }
-               
-            //if (EnrollPlanValidator.validate() && AmountValidation==""){
 
-
-            //    if($('#SecoundTime').is(":checked") == true){
-            //        // MembeDetail();
-            //    }
-            //    else{
-            //        $("#spnCheckTermsErrorMessages").show();
-            //        $("#spnCheckErrorMessages").show();
-            //        return false;
-            //    }
-            //}
-            //else if($('#chkEnroll').is(":checked") == true)
-            //{
-            //    if($('#SecoundTime').is(":checked") == true){
-            //        MembeDetail();
-            //    }
-            //    else{
-            //        $("#spnCheckTermsErrorMessages").show();
-            //        $("#spnCheckErrorMessages").show();
-            //        return false;
-            //    }
-            //}
-            //else{
-            //    if($('#SecoundTime').is(":checked") == true){
-            //        MembeDetail();
-            //    }
-            //    else{
-            //        $("#spnCheckTermsErrorMessages").show();
-            //        $("#spnCheckErrorMessages").show();
-            //        return false;
-            //    }
-            //}
-       // }
-            
+            MembeDetail();
         });
-
 
     });
 
@@ -364,7 +324,7 @@
             //To get selected Plan payment information
             var OrganizationID = dataItem.OrganizationID;
             var ProviderID = dataItem.ProviderID;
-          
+
             BindPlans(OrganizationID, ProviderID, PlanID,$("#hdnGender").val(),$("#hdnAge").val(),'@ServiceUrl');
 
         });
@@ -394,7 +354,7 @@
             document.getElementById("spnPlanAmount").innerHTML = dataItem.TotalAmount;
             document.getElementById("spnStripeAccountID").innerHTML = dataItem.AccountID;
             document.getElementById("spnInstalmentFee").innerHTML = dataItem.InstallmentFee;
-            
+
             $('#chkPayNow').is(":checked") == true;
             $('input[name="chkPayNow"]').attr('checked', true);
             var  TotalAmount=0;
@@ -415,14 +375,14 @@
 
                // TotalAmount=parseFloat(Amount)+parseFloat(InstalmentAmount)+parseFloat(EnrollFee);
             }catch(err){
-                    
+
             }
-               
+
             $("#AmountPaid").val(TotalAmount);
             $("#divCarddetails").show();
             $("#divValidator").hide();
             $("#btnSubmit").show();
-            
+
             document.getElementById("PlanPaymentValidation").innerHTML = "";
             var Months=document.getElementById("spnPlanTermMonths").innerHTML;
             AddMonths(Months);
@@ -517,7 +477,7 @@
             Gender=2;
         }
         CheckMemberExists($("#FirstName").val(),$("#LastName").val(),Gender, $("#DOB").data('kendoDatePicker').value(), $("#MobileNumber").val(),$("#Age").val(),'@ServiceUrl');
-        
+
     }
     function validateConfirmUsername() {
         if (($("#UserName").val()) == ($("#ConfirmUserName").val())) {
@@ -1014,10 +974,10 @@
                                                         .Columns(columns =>
                                                         {
                                                             columns.Bound(p => p.Paymentschedule).ClientTemplate("<input type='radio' name='Paymentschedule' value='#= Paymentschedule #' />" + " " + "#=Paymentschedule#").Title("Payment Schedule").Filterable(false).Width(150);
-                                                            columns.Bound(p => p.TotalAmount).Title("TotalAmount").Filterable(true).Width(150);
+                                                            columns.Bound(p => p.TotalAmount).Title("TotalAmount").Format("{0:c2}").Filterable(true).Width(150);
                                                             columns.Bound(p => p.NoofInstallments).Title("No. of Installments").Filterable(true).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
-                                                            columns.Bound(p => p.InstallmentAmount).Title("Installment Amount").Filterable(true).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
-                                                            columns.Bound(p => p.InstallmentFee).Title("Installment Fee").Filterable(true).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                            columns.Bound(p => p.InstallmentAmount).Title("Installment Amount").Format("{0:c2}").Filterable(true).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                            columns.Bound(p => p.InstallmentFee).Title("Installment Fee").Format("{0:c2}").Filterable(true).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
                                                             columns.Bound(p => p.Savings).Title("Savings").Filterable(true).Width(100).Visible(false);
                                                         })
                                                         .Scrollable()
@@ -1118,10 +1078,10 @@
                                                                     <span id="spnDuration"></span>
                                                                 </div>
                                                                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                                                    <span><b>Enrollment Fee  </b> </span>
+                                                                    <span><b>Visit Fee </b></span>
                                                                     <br />
-                                                                    <span id="spnEnrollFee"></span>
-                                                                </div>
+                                                                    <span id="spnVisitFee"></span>
+                                                                </div>                                                               
                                                             </div>
                                                             <br />
                                                             <div class="row">
@@ -1129,6 +1089,11 @@
                                                                     <span><b>Plan Amount  </b> </span>
                                                                     <br />
                                                                     <span id="spnPlanAmount"></span>
+                                                                </div>
+                                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                    <span><b>Enrollment Fee  </b> </span>
+                                                                    <br />
+                                                                    <span id="spnEnrollFee"></span>
                                                                 </div>
                                                                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                                     <span><b>Plan Start date </b></span>
@@ -1140,23 +1105,18 @@
                                                                     <br />
                                                                     <span id="spnPlanEndDate"></span>
                                                                 </div>
-                                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                                                    <span><b>Visit Fee </b></span>
-                                                                    <br />
-                                                                    <span id="spnVisitFee"></span>
-                                                                </div>
                                                             </div>
                                                             </br>
                                                             <div class="row">
                                                                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                                                    <span><b>Instalment Amount </b>  </span>
-                                                                    <br />
-                                                                    <span id="spnInstallmentAmount"></span>
-                                                                </div>
-                                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                                     <span><b>Payment Schedule</b></span>
                                                                     <br />
                                                                     <span id="spnPaymentschedule"></span>
+                                                                </div>
+                                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                    <span><b>Installment Amount </b>  </span>
+                                                                    <br />
+                                                                    <span id="spnInstallmentAmount"></span>
                                                                 </div>
                                                                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                                     <span><b>Installment Fee  </b> </span>
@@ -1168,7 +1128,7 @@
                                                                     <br />
                                                                     <span id="spnNoofInstalments"></span>
                                                                 </div>
-                                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3"  style="display:none;">
+                                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3" style="display:none;">
                                                                     <span><b>Plan Decription</b></span>
                                                                     <br />
                                                                     <span id="spnPlanDescription"></span>
@@ -1197,14 +1157,14 @@
                                                         <br />
                                                         <div class="row">
                                                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                                <span style="font-weight:bold; font-size:15px">Card Details :</span>
+                                                                <span style="font-weight:bold; font-size:15px">Card Details:</span>
                                                             </div>
                                                         </div>
                                                         <div class="row">
                                                             <div class="row">
                                                                 <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
                                                                     @Html.Label("Amount", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;"> * </span>
-                                                                    @Html.TextBoxFor(model => model.AmountPaid, null, new { @class = "customKendoTextBox", @readonly = "readonly", PlaceHolder = "", maxlength = 20, onchange = "ValidateAmountPaid(this.value);" })
+                                                                    @Html.TextBoxFor(model => model.AmountPaid, null, new { @class = "customKendoTextBox disabled", @readonly = "readonly", PlaceHolder = "", maxlength = 20, onchange = "ValidateAmountPaid(this.value);" })
                                                                     @Html.ValidationMessageFor(model => model.AmountPaid, "", new { @style = "color:red" })
                                                                 </div>
                                                                 <div class="col-xs-0 col-md-6 col-sm-6 col-lg-6 col-md-pull-2 col-lg-pull-2">

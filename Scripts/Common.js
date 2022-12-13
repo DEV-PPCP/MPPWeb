@@ -1,4 +1,15 @@
-﻿function setJsonParameter(parameterName, parameterValue, methodName) {
+﻿function getDate(str) { var ops = { year: 'numeric' }; ops.month = ops.day = '2-digit'; return new Date(str).toLocaleDateString(0, ops); }
+
+function getFormattedDate(date) {
+    date = new Date(date);
+    var year = date.getFullYear();
+    var month = (1 + date.getMonth()).toString().padStart(2, '0');
+    var day = date.getDate().toString().padStart(2, '0');
+
+    return month + '/' + day + '/' + year;
+}
+
+function setJsonParameter(parameterName, parameterValue, methodName) {
     var obj = new Object();
     obj.ParameterName = parameterName;
     obj.ParameterValue = parameterValue;
@@ -11,6 +22,14 @@
 function getformattedJsonFromArray(arrayObj) {
     arrayObj = arrayObj.replace(/"/g, "'");
     return arrayObj + "";
+}
+
+function setParameter(parameterName, methodName) {
+    var obj = new Object();
+    obj.WebMethodName = methodName;
+    obj.XMLdata = parameterName;
+    var resultData = JSON.stringify(obj);
+    return resultData;
 }
 
 function BindDropdown(LookupTypeId, dropdownName, Url) {
@@ -125,3 +144,26 @@ function ValidateCredentials() {
         }
     });
 }
+
+function BindOrganizations(autoCompleteName, url) {
+    var webMethodName = "GetPPCPOrganizations";
+    var ParameterNames = "";
+    var Url = url + "DefaultService";
+    var jsonPostString = setParameter(ParameterNames, webMethodName);
+    $.ajax({
+        type: "POST",
+        url: Url,
+        data: jsonPostString,
+        dataType: "text",
+        contentType: "application/json",
+        success: function (result) {
+            var obj = jQuery.parseJSON(result);
+            var OrganizationList = obj[0];
+            $('#' + autoCompleteName).data('kendoAutoComplete').dataSource.data(OrganizationList);
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            ErrorMessage(webMethodName, textStatus);
+        },
+    });
+}
+

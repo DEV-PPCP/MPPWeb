@@ -132,32 +132,15 @@
                                 .Name("memberGrid")
                                 .Columns(columns =>
                                 {
-                                    columns.Bound(p => p.MemberName).Width(100).ClientTemplate(" <a onclick='SelectPat(#= Member_Id # );' <span style=' cursor:pointer'>#: Member_name #</a>").Width(150).Title("Name").Visible(false);
                                     columns.Bound(p => p.OrganizationName).Title("Organization Name").Filterable(true).Width(100).Visible(false);
                                     columns.Bound(p => p.MemberID).Title("MemberID").Filterable(true).Width(130).Visible(false);
-                                    columns.Bound(p => p.FirstName).Title("FirstName").Filterable(true).Width(130).Visible(false);
-                                    columns.Bound(p => p.LastName).Title("Last Name").Filterable(true).Width(120).Visible(false);
                                     columns.Bound(p => p.MemberName).Title("Member Name").ClientTemplate("#: FirstName # #: LastName #").Filterable(true).Width(150);
                                     columns.Bound(p => p.CountryCode).Title("Country Code").Filterable(true).Width(120).Visible(false);
                                     columns.Bound(p => p.MobileNumber).Title("Mobile Number").Filterable(true).Width(120);
                                     columns.Bound(p => p.PlanStartDate).Title("Plan Start Date").ClientTemplate("#= kendo.toString(kendo.parseDate(PlanStartDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') #").Filterable(true).Width(120);
                                     columns.Bound(p => p.PlanEndDate).Title("Plan End Date").ClientTemplate("#= kendo.toString(kendo.parseDate(PlanEndDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') #").Filterable(true).Width(120);
-                                    columns.Bound(p => p.DOB).Title("DOB").Filterable(true).Width(130).Visible(false);
-                                    columns.Bound(p => p.Age).Title("Age").Filterable(true).Width(120).Visible(false);
-                                    columns.Bound(p => p.Gender).Title("Gender").Filterable(true).Width(120).Visible(false);
-                                    columns.Bound(p => p.Salutation).Title("Salutation").Filterable(true).Width(130).Visible(false);
                                     // columns.Bound(p => p.SalutationID).Title("SalutationID").Filterable(true).Width(130).Visible(false);
                                     columns.Bound(p => p.Email).Title("Email").Filterable(true).Width(120).Visible(false);
-                                    columns.Bound(p => p.CountryName).Title("CountryName").Filterable(true).Width(120).Visible(false);
-                                    columns.Bound(p => p.StateName).Title("StateName").Filterable(true).Width(130).Visible(false);
-                                    columns.Bound(p => p.CityName).Title("CityName").Filterable(true).Width(120).Visible(false);
-                                    columns.Bound(p => p.Zip).Title("Zip").Filterable(true).Width(120).Visible(false);
-                                    columns.Bound(p => p.MemberID).Title("MemberID").Filterable(false).Width(100).Visible(false);
-                                    columns.Bound(p => p.CountryID).Title("CountryID").Filterable(false).Width(100).Visible(false);
-                                    columns.Bound(p => p.StateID).Title("StateID").Filterable(false).Width(100).Visible(false);
-                                    columns.Bound(p => p.CityID).Title("CityID").Filterable(false).Width(100).Visible(false);
-                                    columns.Bound(p => p.IsTwofactorAuthentication).Title("IsTwofactorAuthentication").Filterable(false).Width(100).Visible(false);
-                                    columns.Bound(p => p.TwoFactorType).Title("TwoFactorType").Filterable(false).Width(100).Visible(false);
 
                                     columns.Bound(p => p.IsPlanActive).Width(100)
                                                 .ClientTemplate("#if(IsPlanActive) {# " +
@@ -168,8 +151,8 @@
 
                                     if (System.Web.HttpContext.Current.Request.RequestContext.RouteData.Values["action"].ToString() == "ClaimSubmission")
                                     {
-                                        columns.Bound(p => p).Title("Action").Width(60)
-                                        .ClientTemplate("<a onclick='SubmitNewClaim(#=MemberID#,\"#=MemberCardID#\", \"#=FirstName#\",\"#=LastName#\",\"#=CountryCode#\",\"#=MobileNumber#\",\"#=DOB#\",\"#=PlanName#\",\"#=PlanStartDate#\",\"#=PlanEndDate#\",\"#=IsPlanActive#\");' <span style='cursor:pointer'>Submit Claim</a>");
+                                        columns.Bound(p => p).Title("Action").Width(100)
+                                        .ClientTemplate("<a onclick='SubmitNewClaim(#=MemberID#,\"#=MemberCardID#\", \"#=FirstName#\",\"#=LastName#\",\"#=Email#\",\"#=CountryCode#\",\"#=MobileNumber#\",\"#=DOB#\",\"#=PlanName#\",\"#=PlanStartDate#\",\"#=PlanEndDate#\",\"#=IsPlanActive#\");' <span style='cursor:pointer'>Submit Claim</a>");
                                     }
                                     //columns.Bound(p => p).ClientTemplate(
                                     //    "<a onclick='EditOptions(#=MemberID#,\"#=FirstName#\",\"#=LastName#\",\"#=CountryCode#\",\"#=MobileNumber#\",\"#=DOB#\",\"#=Gender#\",\"#=Email#\",\"#=CountryName#\",\"#=StateName#\",\"#=CityName#\",\"#=Zip#\",\"#=Salutation#\",\"#=CountryID#\",\"#=StateID#\",\"#=CityID#\",\"#=IsTwofactorAuthentication#\",\"#=TwoFactorType#\");' <span style='cursor:pointer'>View</a>").Title("Action").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(50);
@@ -197,18 +180,120 @@
 
 <div class="Panel_bg" id="divMainMemberDetails" style="width: 100%">
     <div class="row Panel_bg_Sub">
-        @{ var blueStatusList = new List<int> { 1, 2 }; var yellowStatusList = new List<int> { 3 }; var redStatusList = new List<int> { 4 }; var greenStatusList = new List<int> { 5, 6 }; }
-        <div style="float: right">
-            <button type="submit" title="Claim Status" style=" " disabled
-                    class="claimStatusButton @(Model.ClaimStatus == "New" || blueStatusList.Contains(Model.ClaimStatusId) ? "claimStatusButtonBlue" : "")
-                                            @(yellowStatusList.Contains(Model.ClaimStatusId) ? "claimStatusButtonYellow" : "")
-                                            @(redStatusList.Contains(Model.ClaimStatusId) ? "claimStatusButtonRed" : "")
-                                            @(greenStatusList.Contains(Model.ClaimStatusId) ? "claimStatusButtonGreen" :"" )">
-                @Model.ClaimStatus
-            </button>
-        </div>
+        @if (Model.ClaimStatusId == PPCP07302018.Utils.GlobalFunctions.ClaimStatus.Paid || Model.ClaimStatusId == PPCP07302018.Utils.GlobalFunctions.ClaimStatus.Approved)
+        {
+            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Payment Status</b></legend>
+        }
+        else
+        {
+            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Claim Status</b></legend>
+        }
+        <div class="row">
+            @if (Session["RoleType"].ToString() == "MPP")
+            {
+                <div class="col-xs-12 col-md-4 col-sm-4 col-lg-4">
+                    @Html.Label("Provider Name: ", new { style = "font-weight:normal;", @class = "" }) <b> @Model.OrganizationName</b>
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Model.ClaimSubStatus))
+            {
+                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                    @Html.Label("Claim Status Reason", new { style = "font-weight:normal;", @class = "" }) <b> @Model.ClaimSubStatus</b>
+                </div>
+            }
 
-        <div id="formstatus" style="height: 30px; font-weight: 600; top: 15px; padding-left: 20px; "> </div>
+            @{ var blueStatusList = new List<int> { 1, 2 }; var yellowStatusList = new List<int> { 3 }; var redStatusList = new List<int> { 4 }; var greenStatusList = new List<int> { 5, 6 }; }
+            <div style="float: right">
+                <button type="submit" title="Claim Status" style=" " disabled
+                        class="claimStatusButton @(Model.ClaimStatus == "New" || blueStatusList.Contains(Model.ClaimStatusId) ? "claimStatusButtonBlue" : "")
+                                                    @(yellowStatusList.Contains(Model.ClaimStatusId) ? "claimStatusButtonYellow" : "")
+                                                    @(redStatusList.Contains(Model.ClaimStatusId) ? "claimStatusButtonRed" : "")
+                                                    @(greenStatusList.Contains(Model.ClaimStatusId) ? "claimStatusButtonGreen" :"" )">
+                    @Model.ClaimStatus
+                </button>
+            </div>
+        </div>
+        @if (Model.ClaimStatusId == PPCP07302018.Utils.GlobalFunctions.ClaimStatus.Verification)
+        {
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                        @Html.Label("Submit Date", new { style = "font-weight:normal;", @class = "" })<br />
+                        @Html.TextBoxFor(model => model.SubmitDate, "{0:MM/dd/yyyy}", new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;" })
+                    </div>
+                </div>
+            </div>
+        }
+        @if (Model.ClaimStatusId == PPCP07302018.Utils.GlobalFunctions.ClaimStatus.Paid || Model.ClaimStatusId == PPCP07302018.Utils.GlobalFunctions.ClaimStatus.Approved)
+        {
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                        @Html.Label("Submit Date", new { style = "font-weight:normal;", @class = "" })<br />
+                        @Html.TextBoxFor(model => model.SubmitDate, "{0:MM/dd/yyyy}", new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;" })
+                    </div>
+                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                        @Html.Label("Plan Paid Date", new { style = "font-weight:normal;", @class = "" })<br />
+                        @Html.TextBoxFor(model => model.PlanPaidDate, "{0:MM/dd/yyyy}", new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;" })
+                    </div>
+                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                        @Html.Label("Plan Paid Amount", new { style = "font-weight:normal;", @class = "" })<br />
+                        @Html.TextBoxFor(model => model.PlanPaidAmount, null, new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;", Value = String.Format("{0:C}", Model.PlanPaidAmount) })
+                    </div>
+                </div>
+                @if (Session["RoleType"].ToString() == "MPP" && Model.ManualApprovalBy != 0)
+                {
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
+                            @Html.Label("Admin Notes", new { style = "font-weight:normal;", @class = "" })<br />
+                            @Html.TextAreaFor(model => model.AdminNotes, new { @class = "customKendoTextBox disabled", style = "width:100%;", @disabled = "disabled", maxlength = 5000 })
+                            <span id="errAdminNotes" style="color:red"></span>
+                        </div>
+                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                            @Html.Label("Manual Approval Date", new { style = "font-weight:normal;", @class = "" })<br />
+                            @Html.TextBoxFor(model => model.ManualApprovalDate, "{0:MM/dd/yyyy}", new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;" })
+                        </div>
+                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                            @Html.Label("Manual Approval By", new { style = "font-weight:normal;", @class = "" })<br />
+                            @Html.TextBoxFor(model => model.ManualApprovalUserName, null, new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;" })
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    @if (Session["RoleType"].ToString() == "MPP" && (Model.ClaimStatusId == PPCP07302018.Utils.GlobalFunctions.ClaimStatus.Verification
+                                                        || Model.ClaimStatusId == PPCP07302018.Utils.GlobalFunctions.ClaimStatus.Denied))
+    {
+        <div class="row Panel_bg_Sub">
+            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Admin Actions</b></legend>
+            <div id="formstatus" style="height: 30px; font-weight: 600; top: 15px; padding-left: 20px; "> </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
+                        @Html.Label("Member Confirmation", new { style = "font-weight:normal;", @class = "" })<br />
+                        <a href="#" onclick="resendText()" style="font-size:small; color: blue; ">Resend Text</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <a href="#" onclick="resendEmail()" style="font-size:small; color: blue;">Resend Email</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
+                        @Html.Label("Admin Notes", new { style = "font-weight:normal;", @class = "" })<br />
+                        @Html.TextAreaFor(model => model.AdminNotes, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 5000 })
+                        <span id="errAdminNotes" style="color:red"></span>
+                    </div>
+                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3" style="margin-top: 25px">
+                        <button title="Close" style="width: 200px" class="button_blue" onclick="ClaimApproveClick()">
+                            Approve Claim
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="row Panel_bg_Sub">
         <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Member Details</b></legend>
         <div class="form-group">
             <div class="row">
@@ -232,30 +317,51 @@
                         <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                             @Html.Label("Mobile Number", new { style = "font-weight:normal;", @class = "" })<br />
                             @Html.TextBoxFor(model => model.MemberMobileNumber, null, new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;" })
-                            @if (Session["RoleType"].ToString() == "MPP" && Model.ClaimStatus == "Verification" && (Model.ClaimSubStatus == "Text Sent" || Model.ClaimSubStatus == "Email Sent" || Model.ClaimSubStatus == "Text And Email Sent"))
-                            {
-                                <br /><a href="#" onclick="resendText()" style="font-size:small; color: blue;">Resend Text</a>
-                            }
                         </div>
                         <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                             @Html.Label("Email", new { style = "font-weight:normal;", @class = "" })<br />
                             @Html.TextBoxFor(model => model.MemberEmail, null, new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;" })
-                            @if (Session["RoleType"].ToString() == "MPP" && Model.ClaimStatus == "Verification" && (Model.ClaimSubStatus == "Text Sent" || Model.ClaimSubStatus == "Email Sent" || Model.ClaimSubStatus == "Text And Email Sent"))
-                            {
-                                <br /><a href="#" onclick="resendEmail()" style="font-size:small; color: blue;">Resend Email</a>
-                            }
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <legend class="Legendtxtcolor" style="float: left; font-size: 14px; "><b>Current Plan</b></legend>
+        <legend class="Legendtxtcolor" style="float: left; font-size: 14px; "><b>Member PPV Plans</b></legend>
         <div class="form-group">
             <div class="row">
                 <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
                     <div class="row">
-                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                        @(Html.Kendo().Grid<PPCP07302018.Models.Member.MemberPlan> ()
+                                        .Name("memberPlanGrid")
+                                        .Columns(columns =>
+                                        {
+                                            columns.Bound(p => p.PlanName).Title("Plan Name").Width(130);
+                                            columns.Bound(p => p.PlanStartDate).Title("Plan Start Date").ClientTemplate("#= kendo.toString(kendo.parseDate(PlanStartDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') #").Filterable(true).Width(120);
+                                            columns.Bound(p => p.PlanEndDate).Title("Plan End Date").ClientTemplate("#= kendo.toString(kendo.parseDate(PlanEndDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') #").Filterable(true).Width(120);
+                                            columns.Bound(p => p.VisitFee).Title("In Person Copay").Width(130);
+                                            columns.Bound(p => p.TeleVisitFee).Title("Tele Visit Copy").Width(130);
+                                            columns.Bound(p => p.IsActive).Width(100)
+                                                        .ClientTemplate("#if(IsActive) {# " +
+                                                                              "Active" +
+                                                                          "#} else {#" +
+                                                                              "<span style='color:red; font-weight:bold'>In-Active</span>" +
+                                                                          "#} #");
+
+                                        })                                        
+                                        .Scrollable(s => s.Height("auto"))
+                                        .AutoBind(false)
+                                        .HtmlAttributes(new { style = " max-height: 200px" })
+                                        .Events(events => events
+                                            .DataBound("memberPlanDatabound")
+                                        )
+                                        .DataSource(dataSource => dataSource
+                                            .Ajax()
+                                            .PageSize(50)
+                                            .Sort(sort => sort.Add("PlanStartDate").Descending())
+                                            .ServerOperation(false)
+                                        ))
+                        @*<div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                             @Html.Label("Plan Name", new { style = "font-weight:normal;", @class = "" })<br />
                             @Html.TextBoxFor(model => model.PlanName, null, new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;", maxlength = 50 })
                         </div>
@@ -267,39 +373,39 @@
                         <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                             @Html.Label("Plan End Date", new { style = "font-weight:normal;", @class = "" })<br />
                             @Html.TextBoxFor(model => model.PlanEndDate, "{0:MM/dd/yyyy}", new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;", maxlength = 50 })
-                        </div>
+                        </div>*@
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row Panel_bg_Sub">
-        <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Encounter Detail</b></legend>
-        <span style="color: orangered">@(Model.IsPlanExistingOnDOS ? "" : "Please check the Date of Service. No active member plan found.")</span>
-        <div class="form-group">
-            <div class="row">
-                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                    @Html.Label("Date of Service", new { style = "font-weight:normal;", @class = "" })<br />
-                    @( Html.Kendo().DatePickerFor(model => model.DateOfService).Format("MM/dd/yyyy").Max(DateTime.Today).HtmlAttributes(new {  PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text" }))
-                    <span id="errDateOfService" style="color:red"></span>
-                </div>
-                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                    @Html.Label("Visit Type", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                    <label style="font-weight: normal;">
-                        @(Html.RadioButtonFor(m => m.VisitTypeId, PPCP07302018.Utils.GlobalFunctions.VisitType.InPerson, Model.VisitTypeId == @PPCP07302018.Utils.GlobalFunctions.VisitType.InPerson ? new { @checked = "checked", id="rbInPerson" } : null))
-                        In Person
-                    </label>
-                    <label style="font-weight: normal; margin-left:20px">
-                        @(Html.RadioButtonFor(m => m.VisitTypeId, PPCP07302018.Utils.GlobalFunctions.VisitType.TeleVisit, Model.VisitTypeId == @PPCP07302018.Utils.GlobalFunctions.VisitType.TeleVisit ? new { @checked = "checked" } : null))
-                        Tele Visit
-                    </label>
-                    <br />
-                    <span id="errVisitTypeId" style="color:red"></span>
-                </div>
-                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                    @Html.Label("Provider", new { style = "font-weight:normal;", @class = "" })<br />
-                    @(Html.Kendo().DropDownListFor(model => model.ProviderId)
+                                <div class="row Panel_bg_Sub">
+                                    <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Encounter Detail</b></legend>
+                                    <span style="color: orangered">@(Model.IsPlanExistingOnDOS ? "" : "Please check the Date of Service. No active member plan found.")</span>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                @Html.Label("Date of Service", new { style = "font-weight:normal;", @class = "" })<br />
+                                                @( Html.Kendo().DatePickerFor(model => model.DateOfService).Format("MM/dd/yyyy").Max(DateTime.Today).HtmlAttributes(new {  PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text" }))
+                                                <span id="errDateOfService" style="color:red"></span>
+                                            </div>
+                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                @Html.Label("Visit Type", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                <label style="font-weight: normal;">
+                                                    @(Html.RadioButtonFor(m => m.VisitTypeId, PPCP07302018.Utils.GlobalFunctions.VisitType.InPerson, Model.VisitTypeId == @PPCP07302018.Utils.GlobalFunctions.VisitType.InPerson ? new { @checked = "checked", id="rbInPerson" } : null))
+                                                    In Person
+                                                </label>
+                                                <label style="font-weight: normal; margin-left:20px">
+                                                    @(Html.RadioButtonFor(m => m.VisitTypeId, PPCP07302018.Utils.GlobalFunctions.VisitType.TeleVisit, Model.VisitTypeId == @PPCP07302018.Utils.GlobalFunctions.VisitType.TeleVisit ? new { @checked = "checked" } : null))
+                                                    Tele Visit
+                                                </label>
+                                                <br />
+                                                <span id="errVisitTypeId" style="color:red"></span>
+                                            </div>
+                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                @Html.Label("Provider", new { style = "font-weight:normal;", @class = "" })<br />
+                                                @(Html.Kendo().DropDownListFor(model => model.ProviderId)
                             .Name("providerList")
                             .OptionLabel("--Select--")
                             .HtmlAttributes(new { style = "width:100%;" })
@@ -315,130 +421,130 @@
                                 {
                                 });
                             }))
-                    <span id="errProviderID" style="color:red"></span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                    @Html.Label("Primary Procedure Code", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                    @Html.TextBoxFor(model => model.PrimaryProcedureCode, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 10 })
-                    <span id="errPrimaryProcedureCode" style="color:red"></span>
-                </div>
-                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                    @Html.Label("Primary Diagnosis Code", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                    @Html.TextBoxFor(model => model.PrimaryDiagnosisCode, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 10 })
-                    <span id="errPrimaryDiagnosisCode" style="color:red"></span>
-                </div>
-            </div>
-            <div class="row" style="margin-top: 30px;">
-                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                    @Html.Label("Addl. Procedure Code", new { style = "font-weight:normal;", @class = "" })
-                </div>
-                <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
-                    @Html.Label("Modifier1", new { style = "font-weight:normal;", @class = "" })
-                </div>
-                <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
-                    @Html.Label("Modifier2", new { style = "font-weight:normal;", @class = "" })
-                </div>
-                <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
-                    @Html.Label("Modifier3", new { style = "font-weight:normal;", @class = "" })
-                </div>
-                <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
-                    @Html.Label("Modifier4", new { style = "font-weight:normal;", @class = "" })
-                </div>
-            </div>
-            <div class="row">
-                @for (int i = 0; i < Model.ProcedureLines.Count; i++)
-                {
-                    <div class="row">
-                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                            @Html.TextBoxFor(model => model.ProcedureLines[i].ProcCode, null, new { @class = "customKendoTextBox proclines", style = "width:100%;", maxlength = 10 })
-                        </div>
-                        <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
-                            @Html.TextBoxFor(model => model.ProcedureLines[i].Modifier1, null, new { @class = "customKendoTextBox proclines", style = "width:100%;", maxlength = 10 })
-                        </div>
-                        <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
-                            @Html.TextBoxFor(model => model.ProcedureLines[i].Modifier2, null, new { @class = "customKendoTextBox proclines", style = "width:100%;", maxlength = 10 })
-                        </div>
-                        <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
-                            @Html.TextBoxFor(model => model.ProcedureLines[i].Modifier3, null, new { @class = "customKendoTextBox proclines", style = "width:100%;", maxlength = 10 })
-                        </div>
-                        <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
-                            @Html.TextBoxFor(model => model.ProcedureLines[i].Modifier4, null, new { @class = "customKendoTextBox proclines", style = "width:100%;", maxlength = 10 })
-                        </div>
-                    </div>
-                }
-            </div>
+                                                <span id="errProviderID" style="color:red"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                @Html.Label("Primary Procedure Code", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                @Html.TextBoxFor(model => model.PrimaryProcedureCode, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 10 })
+                                                <span id="errPrimaryProcedureCode" style="color:red"></span>
+                                            </div>
+                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                @Html.Label("Primary Diagnosis Code", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                @Html.TextBoxFor(model => model.PrimaryDiagnosisCode, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 10 })
+                                                <span id="errPrimaryDiagnosisCode" style="color:red"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row" style="margin-top: 30px;">
+                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                @Html.Label("Addl. Procedure Code", new { style = "font-weight:normal;", @class = "" })
+                                            </div>
+                                            <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
+                                                @Html.Label("Modifier1", new { style = "font-weight:normal;", @class = "" })
+                                            </div>
+                                            <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
+                                                @Html.Label("Modifier2", new { style = "font-weight:normal;", @class = "" })
+                                            </div>
+                                            <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
+                                                @Html.Label("Modifier3", new { style = "font-weight:normal;", @class = "" })
+                                            </div>
+                                            <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
+                                                @Html.Label("Modifier4", new { style = "font-weight:normal;", @class = "" })
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            @for (int i = 0; i < Model.ProcedureLines.Count; i++)
+                                            {
+                                                <div class="row">
+                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                        @Html.TextBoxFor(model => model.ProcedureLines[i].ProcCode, null, new { @class = "customKendoTextBox proclines", style = "width:100%;", maxlength = 10 })
+                                                    </div>
+                                                    <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
+                                                        @Html.TextBoxFor(model => model.ProcedureLines[i].Modifier1, null, new { @class = "customKendoTextBox proclines", style = "width:100%;", maxlength = 10 })
+                                                    </div>
+                                                    <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
+                                                        @Html.TextBoxFor(model => model.ProcedureLines[i].Modifier2, null, new { @class = "customKendoTextBox proclines", style = "width:100%;", maxlength = 10 })
+                                                    </div>
+                                                    <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
+                                                        @Html.TextBoxFor(model => model.ProcedureLines[i].Modifier3, null, new { @class = "customKendoTextBox proclines", style = "width:100%;", maxlength = 10 })
+                                                    </div>
+                                                    <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
+                                                        @Html.TextBoxFor(model => model.ProcedureLines[i].Modifier4, null, new { @class = "customKendoTextBox proclines", style = "width:100%;", maxlength = 10 })
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
 
-            <legend class="Legendtxtcolor" style="float: left; font-size: 14px; margin-top: 15px;"><b>Fees</b></legend>
-            <div class="row">
-                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                    @Html.Label("Co-Pay Paid", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                    @Html.TextBoxFor(model => model.Copay, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 10, onchange = "CalculateTotalPaid();" })
-                    <span id="errCopay" style="color:red"></span>
-                </div>
-                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                    @Html.Label("Other Charges Paid", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                    @Html.TextBoxFor(model => model.OtherCharges, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 10, onchange = "CalculateTotalPaid();" })
-                    <span id="errOtherCharges" style="color:red"></span>
-                </div>
-                <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
-                    @Html.Label("Payment Type", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                    <label style="font-weight: normal;">
-                        @(Html.RadioButtonFor(m => m.PaymentTypeId, PPCP07302018.Utils.GlobalFunctions.PaymentType.Credit, Model.PaymentTypeId == @PPCP07302018.Utils.GlobalFunctions.PaymentType.Credit ? new { @checked = "checked" } : null))
-                        Credit Card
-                    </label>
-                    <label style="font-weight: normal; margin-left:20px">
-                        @(Html.RadioButtonFor(m => m.PaymentTypeId, PPCP07302018.Utils.GlobalFunctions.PaymentType.Cash, Model.PaymentTypeId == @PPCP07302018.Utils.GlobalFunctions.PaymentType.Cash ? new { @checked = "checked" } : null))
-                        Cash
-                    </label>
-                    <label style="font-weight: normal; margin-left:20px">
-                        @(Html.RadioButtonFor(m => m.PaymentTypeId, PPCP07302018.Utils.GlobalFunctions.PaymentType.Check, Model.PaymentTypeId == @PPCP07302018.Utils.GlobalFunctions.PaymentType.Check ? new { @checked = "checked" } : null))
-                        Check
-                    </label><br />
-                    <span id="errPaymentTypeId" style="color:red"></span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                    @Html.Label("Total Paid", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                    @Html.TextBox("TotalPaid", null, new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;", maxlength = 50 })
-                </div>
-                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3"></div>
-                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                    @Html.Label("Payment Date", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                    @( Html.Kendo().DatePickerFor(model => model.PaymentDate).Format("MM/dd/yyyy").Max(DateTime.Today).HtmlAttributes(new {  PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text" }))
-                    <span id="errPaymentDate" style="color:red"></span>
-                </div>
-                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                    @Html.Label("Receipt/Transaction Number", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                    @Html.TextBoxFor(model => model.ReceiptNumber, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
-                    <span id="errReceiptNumber" style="color:red"></span>
-                </div>
-            </div>
-        </div>
-    </div>
+                                        <legend class="Legendtxtcolor" style="float: left; font-size: 14px; margin-top: 15px;"><b>Fees</b></legend>
+                                        <div class="row">
+                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                @Html.Label("Co-Pay Paid", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                @Html.TextBoxFor(model => model.Copay, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 10, onchange = "CalculateTotalPaid();" })
+                                                <span id="errCopay" style="color:red"></span>
+                                            </div>
+                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                @Html.Label("Other Charges Paid", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                @Html.TextBoxFor(model => model.OtherCharges, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 10, onchange = "CalculateTotalPaid();" })
+                                                <span id="errOtherCharges" style="color:red"></span>
+                                            </div>
+                                            <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
+                                                @Html.Label("Payment Type", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                <label style="font-weight: normal;">
+                                                    @(Html.RadioButtonFor(m => m.PaymentTypeId, PPCP07302018.Utils.GlobalFunctions.PaymentType.Credit, Model.PaymentTypeId == @PPCP07302018.Utils.GlobalFunctions.PaymentType.Credit ? new { @checked = "checked" } : null))
+                                                    Credit Card
+                                                </label>
+                                                <label style="font-weight: normal; margin-left:20px">
+                                                    @(Html.RadioButtonFor(m => m.PaymentTypeId, PPCP07302018.Utils.GlobalFunctions.PaymentType.Cash, Model.PaymentTypeId == @PPCP07302018.Utils.GlobalFunctions.PaymentType.Cash ? new { @checked = "checked" } : null))
+                                                    Cash
+                                                </label>
+                                                <label style="font-weight: normal; margin-left:20px">
+                                                    @(Html.RadioButtonFor(m => m.PaymentTypeId, PPCP07302018.Utils.GlobalFunctions.PaymentType.Check, Model.PaymentTypeId == @PPCP07302018.Utils.GlobalFunctions.PaymentType.Check ? new { @checked = "checked" } : null))
+                                                    Check
+                                                </label><br />
+                                                <span id="errPaymentTypeId" style="color:red"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                @Html.Label("Total Paid", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                @Html.TextBox("TotalPaid", null, new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;", maxlength = 50 })
+                                            </div>
+                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3"></div>
+                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                @Html.Label("Payment Date", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                @( Html.Kendo().DatePickerFor(model => model.PaymentDate).Format("MM/dd/yyyy").Max(DateTime.Today).HtmlAttributes(new {  PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text" }))
+                                                <span id="errPaymentDate" style="color:red"></span>
+                                            </div>
+                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                @Html.Label("Receipt/Transaction Number", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                @Html.TextBoxFor(model => model.ReceiptNumber, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
+                                                <span id="errReceiptNumber" style="color:red"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
-    <div class="row" style="margin-top: 20px;">
-        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
-            <div align="center">
-                @if (Model.ClaimStatus == "New" || blueStatusList.Contains(Model.ClaimStatusId))
-                {
-                    <button type="submit" class="button_blue" title="Submit" style="width: 100px;" onclick="SaveClaim()">
-                        Save
-                    </button>
-                    <button type="submit" class="button_blue" title="Submit" style="width: 100px;" onclick="SubmitClaim()">
-                        Submit
-                    </button>
-                }
-                <button id="btnClose" title="Close" style="width: 100px" class="button_blue" onclick="CancelClaimSubmission()">
-                    Cancel
-                </button>
-            </div>
-            <br />
-        </div>
-    </div>
-</div>
+                                <div class="row" style="margin-top: 20px;">
+                                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                        <div align="center">
+                                            @if (Model.ClaimStatus == "New" || blueStatusList.Contains(Model.ClaimStatusId))
+                                            {
+                                                <button type="submit" class="button_blue" title="Submit" style="width: 100px;" onclick="SaveClaim()">
+                                                    Save
+                                                </button>
+                                                <button type="submit" class="button_blue" title="Submit" style="width: 100px;" onclick="SubmitClaim()">
+                                                    Submit
+                                                </button>
+                                            }
+                                            <button id="btnClose" title="Close" style="width: 100px" class="button_blue" onclick="CancelClaimSubmission()">
+                                                Cancel
+                                            </button>
+                                        </div>
+                                        <br />
+                                    </div>
+                                </div>
+                            </div>
 
 <script>
     $(document).ready(function () {
@@ -453,6 +559,7 @@
         } else {
             $("#memberSearch").hide();
             $("#divMainMemberDetails").show();
+            BindMemberPlans('@ServiceUrl', '@Session["OrganizationID"]', $("#MemberId").val());
             CalculateTotalPaid();
         }
     });
@@ -469,7 +576,7 @@
     }
 
     function GetMemberDetails(OrganizationID, strMemberID, searchText, Url) {
-        var webMethodName = "GetMembersList";//GetOrganizationMemberDetails
+        var webMethodName = "GetPPVMembersList";//GetOrganizationMemberDetails
         var ParameterNames = new Array();
         var ParameterValues = new Array();
         ParameterNames[0] = "OrganizationID";
@@ -481,7 +588,7 @@
         var Url = Url + "OrganizationServices";
         var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
         $.ajax({
-            type: "POST",
+        type: "POST",
             url: Url,
             data: jsonPostString,
             dataType: "text",
@@ -497,13 +604,14 @@
         });
     }
 
-    function SubmitNewClaim(MemberID, MemberCardID, FirstName, LastName, CountryCode, MobileNumber, DOB, PlanName, PlanStartDate, PlanEndDate, IsPlanActive) {
+    function SubmitNewClaim(MemberID, MemberCardID, FirstName, LastName, Email, CountryCode, MobileNumber, DOB, PlanName, PlanStartDate, PlanEndDate, IsPlanActive) {
         $("#memberSearch").hide();
         $("#divMainMemberDetails").show()
 
         $("#MemberId").val(MemberID);
         $("#MemberCardID").val(MemberCardID);
         $("#MemberName").val(FirstName + " " + LastName);
+        $("#MemberEmail").val(Email);
         $("#MemberDOB").val(getDate(DOB));
         $("#MemberMobileNumber").val(MobileNumber);
         if (IsPlanActive == "true") {
@@ -516,8 +624,37 @@
             $("#PlanEndDate").val("");
         }
 
+        $("[name=VisitTypeId]").val(['@PPCP07302018.Utils.GlobalFunctions.VisitType.InPerson']);
         $("#Copay").val("");
-        $("#OtherCharges").val("");
+        $("#OtherCharges").val("$0");
+        BindMemberPlans('@ServiceUrl', '@Session["OrganizationID"]', MemberID);
+    }
+
+    function BindMemberPlans(Url, OrganizationID, MemberID) {
+        var webMethodName = "GetPPVMemberPlanDetailsByOrg";
+        var ParameterNames = new Array();
+        var ParameterValues = new Array();
+        ParameterNames[0] = "OrganizationID";
+        ParameterValues[0] = OrganizationID;
+        ParameterNames[1] = "MemberID";
+        ParameterValues[1] = MemberID;
+        var Url = Url + "Member";
+        var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
+        $.ajax({
+            type: "POST",
+            url: Url,
+            data: jsonPostString,
+            dataType: "text",
+            contentType: "application/json",
+            success: function (result) {
+                var obj = jQuery.parseJSON(result);
+                var PlansList = obj[0];
+
+                $("#memberPlanGrid").data("kendoGrid").dataSource.data(PlansList);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+            },
+        });
     }
 
     function onProviderDropdownDataBound() {
@@ -555,9 +692,72 @@
         });
     }
 
+    function memberPlanDatabound () {
+        var dos=$("#DateOfService").val();
+        SetDOSMessage(dos);
+    }
+
+    function DateOfServiceChange() {
+    debugger;
+        var dos = this.value();
+        SetDOSMessage(dos);
+    }
+
+    $('input:radio[name="VisitTypeId"]').change(function() {
+        var dos=$("#DateOfService").val();
+        SetDOSMessage(dos);
+    });
+
+    function SetDOSMessage(dos) {
+        debugger;
+        var grid = $("#memberPlanGrid").data("kendoGrid");
+        var data = grid.dataSource.data();
+        var res = $.grep(data, function (d) {
+            return new Date(d.PlanStartDate) <= new Date(dos) && new Date(d.PlanEndDate) >= new Date(dos);
+        });
+        if(res.length > 0) {
+            $("#dosPlan").text("Plan Applied: " + res[0].PlanName + "; PlanDates: " + getFormattedDate(res[0].PlanStartDate) + " - " + getFormattedDate(res[0].PlanEndDate));
+            if($('input[name="VisitTypeId"]:checked').val() == '@PPCP07302018.Utils.GlobalFunctions.VisitType.InPerson') {
+                $("#Copay").val("$" + res[0].VisitFee);
+            } else {
+                $("#Copay").val("$" + res[0].TeleVisitFee);
+            }
+            CalculateTotalPaid();
+            $("#errDOS").text("");
+        } else {
+            $("#dosPlan").text("");
+            $("#errDOS").text("Please check the Date of Service. No Plan found for this date. ");
+        }
+    }
+
     function CalculateTotalPaid() {
-        var total = parseFloat($("#Copay").val()) + parseFloat($("#OtherCharges").val());
-        $("#TotalPaid").val(total.toFixed(2));
+        debugger;
+        if($("#Copay").val() != "" ){
+            if(moneyIsValid($("#Copay").val()) == false){
+                $("#Copay").val("$0.00");
+            }
+        }
+
+        if($("#OtherCharges").val() != "" ){
+            if(moneyIsValid($("#OtherCharges").val()) == false){
+                 $("#OtherCharges").val("$0.00");
+            }
+        }
+
+        var Copay = $("#Copay").val();
+        var OtherCharges = $("#OtherCharges").val();
+        var a = Copay.substring(0,1);
+        if(Copay.substring(0,1) == '$'){
+            Copay = Copay.substring(1, Copay.length);
+        }
+        if(OtherCharges.substring(0,1) == '$'){
+            OtherCharges = OtherCharges.substring(1, OtherCharges.length);
+        }
+
+        var total = parseFloat(Copay) + parseFloat(OtherCharges);
+         $("#Copay").val('$' + parseFloat(Copay).toFixed(2));
+         $("#OtherCharges").val('$' + parseFloat(OtherCharges).toFixed(2));
+        $("#TotalPaid").val('$' + total.toFixed(2));
     }
 
     function CancelClaimSubmission() {
@@ -577,13 +777,6 @@
                 $("#divMainMemberDetails").hide();
 
                 //Clear Encounter section
-                var value = 15
-                //$('input:radio[name="VisitTypeId"]').filter('[value=15]').attr('checked', true);;
-                //$('input:radio[name=VisitTypeId][value=15]').click();
-               // $("input[id=VisitTypeId][value=" + value + "]").prop('checked', true);
-                //$("#VisitTypeId").attr('checked', true);
-                // document.querySelector('input[name=VisitTypeId][value=15]').checked = true;
-
                 $("#DateOfService").val(null);
                 $("#PrimaryProcedureCode").val("");
                 $("#PrimaryDiagnosisCode").val("");
@@ -594,7 +787,6 @@
                 $("#PaymentDate").val(null);
                 //$("#providerList").data("kendoDropDownList").values(null);
                 $(".proclines").val("");
-
             }
         }
     }
@@ -615,6 +807,10 @@
 
     function moneyIsValid(inputStr) {
         const regex = /^[0-9]+(\.)?[0-9]*$/;
+
+        if(inputStr.substring(0,1) == '$'){
+            inputStr = inputStr.substring(1, inputStr.length);
+        }
 
         if (inputStr.match(regex) === null) {
             return false;
@@ -733,6 +929,7 @@
     }
 
     function GetMemberXML(ClaimStatus) {
+    debugger;
         var MemberClaim = {};
         MemberClaim.VisitId = $("#VisitId").val();
         MemberClaim.MemberId = $("#MemberId").val();
@@ -742,8 +939,16 @@
         MemberClaim.VisitTypeId = $('input[name="VisitTypeId"]:checked').val();
         MemberClaim.PrimaryProcedureCode = $("#PrimaryProcedureCode").val();
         MemberClaim.PrimaryDiagnosisCode = $("#PrimaryDiagnosisCode").val();
-        MemberClaim.Copay = $("#Copay").val();
-        MemberClaim.OtherCharges = $("#OtherCharges").val();
+        var copay = $("#Copay").val();
+        if(copay.substring(0,1) == '$'){
+            copay = copay.substring(1, copay.length);
+        }
+        MemberClaim.Copay = copay;
+        var oc = $("#OtherCharges").val();
+        if(oc.substring(0,1) == '$'){
+            oc = oc.substring(1, oc.length);
+        }
+        MemberClaim.OtherCharges = oc;
         MemberClaim.PaymentTypeId = $('input[name="PaymentTypeId"]:checked').val();
         MemberClaim.PaymentDate = $("#PaymentDate").val();
         MemberClaim.ReceiptNumber = $("#ReceiptNumber").val();
@@ -789,9 +994,18 @@
             dataType: "json",
             contentType: "application/json",
             success: function (result) {
-                var obj = result[0];
+                debugger;
                 $("#divMainMemberDetails").find(".loadingSpinner:first").remove();
-                location.reload();
+                var obj = result[0];
+                var ClaimSaveResult = obj[0].ClaimSaveResult;
+                if(ClaimSaveResult != "") {
+                    $("#errorDetail").html(ClaimSaveResult);
+                } else {
+                    //location.reload();
+                    var getUrl = window.location.href.split('?')[0];
+                    var uurl = getUrl + "?mode=edit&VisitId=" + obj[0].VisitId;
+                    window.location = uurl;
+                }
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
             },
@@ -799,58 +1013,136 @@
     }
 
     function resendText() {
-        var webMethodName = "ResendClaimConfirmText";
-        var ParameterNames = new Array();
-        var ParameterValues = new Array();
-        ParameterNames[0] = "VisitId";
-        ParameterValues[0] = $("#VisitId").val();
-        var Url = '@ServiceUrl' + "OrganizationServices";
-        var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
-        $.ajax({
-            type: "POST",
-            url: Url,
-            data: jsonPostString,
-            dataType: "text",
-            contentType: "application/json",
-            success: function (res) {
-                var d = JSON.parse(res);
-                if (d[0].ResultID == 1) {
-                    $("#formstatus").html("Text message sent").addClass('p-3 mb-2 bg-success text-success').removeClass('text-danger').delay(1000).fadeOut();
-                } else {
-                    $("#formstatus").html("There was an error sending the text message").addClass('p-3 mb-2 bg-danger text-danger').removeClass('p-3 mb-2 bg-success text-success');
-                }
-            },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-            },
-        });
+        $("#popupConfirmation").show();
+        $("#confirmType").val("resendText")
+        $("#lblconfirmMessage").html("Are you sure you want to send a text to the member to confirm visit?");
     }
 
     function resendEmail() {
-        var webMethodName = "ResendClaimConfirmEmail";
-        var ParameterNames = new Array();
-        var ParameterValues = new Array();
-        ParameterNames[0] = "VisitId";
-        ParameterValues[0] = $("#VisitId").val();
-        var Url = '@ServiceUrl' + "OrganizationServices";
-        var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
-        $.ajax({
-            type: "POST",
-            url: Url,
-            data: jsonPostString,
-            dataType: "text",
-            contentType: "application/json",
-            success: function (res) {
-                var d = JSON.parse(res);
-                if (d[0].ResultID == 1) {
-                    $("#formstatus").html("Email sent").addClass('p-3 mb-2 bg-success text-success').removeClass('text-danger').delay(1000).fadeOut();
-                } else {
-                    $("#formstatus").html("There was an error sending the email").addClass('p-3 mb-2 bg-danger text-danger').removeClass('p-3 mb-2 bg-success text-success');
-                }
-            },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-            },
-        });
+        $("#popupConfirmation").show();
+        $("#confirmType").val("resendEmail")
+        $("#lblconfirmMessage").html("Are you sure you want to send an email to the member to confirm visit?");
     }
+
+    function ClaimApproveClick() {
+        if($("#AdminNotes").val() == ""){
+            $("#errAdminNotes").html("Notes required for manual approval");
+            return false;
+        };
+        $("#popupConfirmation").show();
+        $("#confirmType").val("ClaimApproveClick")
+        $("#lblconfirmMessage").html("Are you sure you want to approve this claim?");
+    }
+
+    function confirmPopUpYes() {
+        //alert($("#confirmType").val());
+        if($("#confirmType").val() == "ClaimApproveClick"){
+            var webMethodName = "AdminClaimApproval";
+            var ParameterNames = new Array();
+            var ParameterValues = new Array();
+            ParameterNames[0] = "VisitId";
+            ParameterValues[0] = $("#VisitId").val();
+            ParameterNames[1] = "AdminNotes";
+            ParameterValues[1] = $("#AdminNotes").val();
+            ParameterNames[2] = "ModifiedBy";
+            ParameterValues[2] = '@Session["UserID"]';
+            var Url = '@ServiceUrl' + "OrganizationServices";
+            var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
+            $.ajax({
+                type: "POST",
+                url: Url,
+                data: jsonPostString,
+                dataType: "text",
+                contentType: "application/json",
+                success: function (res) {
+                     $("#popupConfirmation").hide();
+                    var d = JSON.parse(res);
+                    if (d[0].ResultID == 1) {
+                        $("#lblMBMessage").html("Claim has been approved by admin and provider payment processed.");
+                        $("#popupMessageBox").show();
+                    } else {
+                        $("#lblMBMessage").html("ERROR: There was an error processing the claim.");
+                        $("#popupMessageBox").show();
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                },
+            });
+        }
+
+        if($("#confirmType").val() == "resendText"){
+            var webMethodName = "ResendClaimConfirmText";
+            var ParameterNames = new Array();
+            var ParameterValues = new Array();
+            ParameterNames[0] = "VisitId";
+            ParameterValues[0] = $("#VisitId").val();
+            var Url = '@ServiceUrl' + "OrganizationServices";
+            var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
+            $.ajax({
+                type: "POST",
+                url: Url,
+                data: jsonPostString,
+                dataType: "text",
+                contentType: "application/json",
+                success: function (res) {
+                     $("#popupConfirmation").hide();
+                    var d = JSON.parse(res);
+                    if (d[0].ResultID == 1) {
+                        $("#lblMBMessage").html("A text has been sent to the member for visit confirmation.");
+                        $("#popupMessageBox").show();
+                    } else {
+                        $("#lblMBMessage").html("ERROR: There was an error sending the text.");
+                        $("#popupMessageBox").show();
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                },
+            });
+        }
+         if($("#confirmType").val() == "resendEmail"){
+            var webMethodName = "ResendClaimConfirmEmail";
+            var ParameterNames = new Array();
+            var ParameterValues = new Array();
+            ParameterNames[0] = "VisitId";
+            ParameterValues[0] = $("#VisitId").val();
+            var Url = '@ServiceUrl' + "OrganizationServices";
+            var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
+            $.ajax({
+                type: "POST",
+                url: Url,
+                data: jsonPostString,
+                dataType: "text",
+                contentType: "application/json",
+                success: function (res) {
+                     $("#popupConfirmation").hide();
+                    var d = JSON.parse(res);
+                    if (d[0].ResultID == 1) {
+                        $("#lblMBMessage").html("An email has been sent to the member for visit confirmation.");
+                        $("#popupMessageBox").show();
+                    } else {
+                        $("#lblMBMessage").html("ERROR: There was an error sending the email.");
+                        $("#popupMessageBox").show();
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                },
+            });
+        }
+    }
+
+    /*
+    function popupMessageBoxOK() {
+        $("#popupMessageBox").hide();
+        const box = document.getElementById('lblMBMessage');
+
+        if (box.textContent.includes('ERROR')) {
+          console.log('approval failed error');
+        } else {
+          CancelClaimSubmission();
+        }
+
+    }
+
 
     function setParameter(parameterName, methodName) {
         var obj = new Object();
@@ -875,5 +1167,5 @@
     function getformattedJsonFromArray(arrayObj) {
         arrayObj = arrayObj.replace(/"/g, "'");
         return arrayObj + "";
-    }
+    }*/
 </script>

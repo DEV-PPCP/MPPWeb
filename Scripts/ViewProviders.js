@@ -158,23 +158,28 @@ function BindSalutation(SalutationID) {
         url: '/Master/BindSalutation',
         //data: ,
         success: function (SalutationList, textStatus, jqXHR) {
+            debugger;
             for (var r in SalutationList) {
-                $('#SalutationList').data('kendoDropDownList').dataSource.insert(r, { Text: SalutationList[r].Text, Value: SalutationList[r].Value });
+                $('#SalutationList').data('kendoDropDownList').dataSource.insert(r, { Text: SalutationList[r].Text, Value: SalutationList[r].Text });
             }
-            var SalutationName = SalutationID;
-            if (SalutationName != "" && SalutationName != null) {
-                var dropdownlist = $("#SalutationList").data("kendoDropDownList");
-                dropdownlist.select(function (dataItem) {
-                    return dataItem.Text === SalutationName;
-                });
-            }
+            var dropdownlist = $("#SalutationList").data("kendoDropDownList");
+            dropdownlist.text(SalutationID);
+
+            //var SalutationName = SalutationID;
+            //if (SalutationName != "" && SalutationName != null) {
+            //    var dropdownlist = $("#SalutationList").data("kendoDropDownList");
+            //    dropdownlist.select(function (dataItem) {
+            //        return dataItem.Text === SalutationName;
+            //    });
+            //}
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
         },
     });
 }
 
-function BindDegree() {
+function BindDegree(degree) {
+    debugger;
     $.ajax({
         type: 'POST',
         cache: false,
@@ -182,8 +187,10 @@ function BindDegree() {
         //data: ,
         success: function (SalutationList, textStatus, jqXHR) {
             for (var r in SalutationList) {
-                $('#Degree').data('kendoDropDownList').dataSource.insert(r, { Text: SalutationList[r].Text, Value: SalutationList[r].ID });
+                $('#Degree').data('kendoDropDownList').dataSource.insert(r, { Text: SalutationList[r].Text, Value: SalutationList[r].Text });
             }
+            var dropdownlist = $("#Degree").data("kendoDropDownList");
+            dropdownlist.text(degree);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
         },
@@ -274,7 +281,7 @@ function UpdateProviders(jsModel, Url) {
     jsModel.CityName = $("#hdnCityName").val();
     jsModel.NPI = $("#NPI").val();
   
-    
+    if ($("#Fax").val() =="null") $("#Fax").val(null);
     jsModel.Fax = $("#Fax").val();
     jsModel.Address = $("#Address").val();
     jsModel.Degree = $("#Degree").val();

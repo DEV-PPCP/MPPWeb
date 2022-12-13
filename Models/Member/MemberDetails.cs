@@ -251,6 +251,7 @@ namespace PPCP07302018.Models.Member
         public Nullable<int> MemberParentID { get; set; }
         public string MemberName { get; set; }
         public bool doesPlanExist { get; set; }
+        public bool IsActive { get; set; }
         public int PlanID { get; set; }
         public Nullable<int> ProviderID { get; set; }
         public string ProviderName { get; set; }
@@ -258,11 +259,14 @@ namespace PPCP07302018.Models.Member
         public string OrganizationName { get; set; }
         public string Status { get; set; }
         public Nullable<System.DateTime> PlanStartDate { get; set; }
-        public Nullable<System.DateTime> PlanEnddate { get; set; }
+        public Nullable<System.DateTime> PlanEndDate { get; set; }
         public Nullable<decimal> TotalAmount { get; set; }
         public Nullable<decimal> AmountPaid { get; set; }
         public Nullable<decimal> DueAmount { get; set; }
         public Nullable<decimal> Discount { get; set; }
+        public Nullable<int> PlanTermMonths { get; set; }
+        public Nullable<decimal> VisitFee { get; set; }
+        public Nullable<decimal> TeleVisitFee { get; set; }
         public string PaymentInterval { get; set; }
         // public Nullable<int> Duration { get; set; }
         public string Duration { get; set; }

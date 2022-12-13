@@ -143,6 +143,7 @@
         $("#SalutationList").val(Salutation);
         $("#NPI").val(NPI);
 
+        if (Fax == "null") Fax=null;
         $("#Fax").val(Fax);
         $("#Address").val(Address);
 
@@ -593,7 +594,7 @@
                                 @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @style = "color:red" })
                             </div>
                             <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
-                                @Html.Label("Fax", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                @Html.Label("Fax", new { style = "font-weight:normal;", @class = "" })<br />
                                 @Html.TextBoxFor(model => model.Fax, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 10 })
                             </div>
                         </div>

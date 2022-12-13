@@ -854,20 +854,26 @@ function CallWebApiService(data, url) {
         success: function (result) {
             var obj = result[0];
             $("#divMainRegistration").find(".loadingSpinner:first").remove();
-            if (obj[0].result == null && obj[0].MemberID != null && obj[0].TransactionID != null && obj[0].TransactionID != "") {
-                document.getElementById("divSignupPopup").style.display = "block";
-                document.getElementById("spnPopupMessage").innerHTML = "You are registered successfully. Your Transaction ID: " + obj[0].TransactionID;
-                document.getElementById("divSignupPopup").scrollIntoView();
-            }
-            else if (obj[0].result == null && obj[0].MemberID != null) {
-                document.getElementById("divSignupPopup").style.display = "block";
-                document.getElementById("spnPopupMessage").innerHTML = "You are registered successfully.";
-                document.getElementById("divSignupPopup").scrollIntoView();
-            }
-            else {
+            if (obj[0].result == "MemberExists") {
                 document.getElementById("divErrMessagePopup").style.display = "block";
-                document.getElementById("spnPopupErrMessage").innerHTML = obj[0].result + ". Please try again.";
+                document.getElementById("spnPopupErrMessage").innerHTML = "Member already exists. You can try searching the member.";
                 document.getElementById("divErrMessagePopup").scrollIntoView();
+            } else {
+                if (obj[0].result == null && obj[0].MemberID != null && obj[0].TransactionID != null && obj[0].TransactionID != "") {
+                    document.getElementById("divSignupPopup").style.display = "block";
+                    document.getElementById("spnPopupMessage").innerHTML = "You are registered successfully. Your Transaction ID: " + obj[0].TransactionID;
+                    document.getElementById("divSignupPopup").scrollIntoView();
+                }
+                else if (obj[0].result == null && obj[0].MemberID != null) {
+                    document.getElementById("divSignupPopup").style.display = "block";
+                    document.getElementById("spnPopupMessage").innerHTML = "You are registered successfully.";
+                    document.getElementById("divSignupPopup").scrollIntoView();
+                }
+                else {
+                    document.getElementById("divErrMessagePopup").style.display = "block";
+                    document.getElementById("spnPopupErrMessage").innerHTML = obj[0].result + ". Please try again.";
+                    document.getElementById("divErrMessagePopup").scrollIntoView();
+                }
             }
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -1076,6 +1082,7 @@ function BindSpecificOrganizations(OrganizationID, url) {
 }
 function buttonchangesrarch(url) {
     debugger;
+    /*
     $("#PlansGrid").data("kendoGrid").dataSource.data("");
     $("#divSelectPlan").hide();
     //Added by akhil
@@ -1088,6 +1095,7 @@ function buttonchangesrarch(url) {
     $("#ProviderNames").data("kendoAutoComplete").value("");
     $("#ProviderName").val("");
     $("#ProviderID").val("0");
+    */
     //End
     //$("#OrganizationNames").data("kendoAutoComplete").destroy();
     //$("#PlanNames").data("kendoAutoComplete").destroy();
@@ -1095,4 +1103,76 @@ function buttonchangesrarch(url) {
     BindOrganizations(url);
     BindProviderNames(0, url);
     BindPlanNames(0, 0, 0, "", "", url);
+    BindingPlansGridBasedOnFilters(url);
+}
+
+var FilteredPlans;
+function BindingPlansGridBasedOnFilters(url) {
+    debugger;
+    var OrganizationID = $("#OrganizationID").val();
+    var ProviderID = $("#ProviderID").val();
+    var PlanID = $("#PlanID").val();
+
+    var oid = $("#OrganizationNames").data("kendoAutoComplete").value();
+    if (oid == "") { OrganizationID = 0; } 
+
+    var webMethodName = "GetPPCPOrganizationProviderPlansBasedonFilters";
+    var ParameterNames = new Array();
+    var ParameterValues = new Array();
+    ParameterNames[0] = "OrganizationID";
+    ParameterValues[0] = OrganizationID;
+    ParameterNames[1] = "ProviderID";
+    ParameterValues[1] = ProviderID;
+    ParameterNames[2] = "PlanID";
+    ParameterValues[2] = $("#PlanID").val() == null ? "0" : $("#PlanID").val();;
+    ParameterNames[3] = "StateID";
+    ParameterValues[3] = '0'; // $("#PlanStateID").val();
+    ParameterNames[4] = "CityID";
+    ParameterValues[4] = '0'; // $("#PlanCityID").val() == "" ? "0" : $("#PlanCityID").val();
+    ParameterNames[5] = "ZIP";
+    ParameterValues[5] = ''; // $("#PlanZip").val() == null ? "" : $("#PlanZip").val();
+    var Url = url + "DefaultService";
+    var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
+    $.ajax({
+        type: "POST",
+        url: Url,
+        data: jsonPostString,
+        dataType: "text",
+        contentType: "application/json",
+        success: function (result) {
+            debugger;
+            $("#PlansGrid").data("kendoGrid").dataSource.data("");
+            $("#divSelectPlan").show();
+            var obj = jQuery.parseJSON(result);
+            var PlansList = obj[0];
+            //select distinct providers
+            var providerList = [];
+            $.each(PlansList, function (index, obj) {
+                var a = $.grep(providerList, function (e) {
+                    return obj.ProviderID === e.ProviderID && obj.OrganizationID === e.OrganizationID;
+                });
+                if (a.length === 0) {
+                    providerList.push(obj);
+                }
+            });
+            $("#gridProviders").data("kendoGrid").dataSource.data(providerList);
+
+            FilteredPlans = PlansList;
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            res = '';
+            //callback(res);
+            ErrorMessage(webMethodName, textStatus);
+        },
+    });
+}
+
+function BindPlansGridByProvider(OrganizationID, ProviderID) {
+    debugger;
+    var plansList = FilteredPlans.filter(element => {
+        return element.OrganizationID == OrganizationID && element.ProviderID == ProviderID;
+    });
+    $("#PlansGrid").data("kendoGrid").dataSource.data(plansList);
+    $("#PlansPayment").data("kendoGrid").dataSource.data("");
+   // $("#btnstepNext").hide();
 }

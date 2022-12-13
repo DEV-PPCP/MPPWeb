@@ -193,50 +193,49 @@
     @Html.Partial("_Popups")
 
     <script type="text/javascript">
-        function divPopUpSuccessClose()
-                                                            {
-                                                                var MemberID= "@Session["MemberID"]" ;
+        function divPopUpSuccessClose() {
+            var MemberID= "@Session["MemberID"]" ;
             $.ajax({
-                                                                url: '@Url.Action("VerifyUserOTP", "Account")',
+                url: '@Url.Action("VerifyUserOTP", "Account")',
                 data: { otp: $("#OTP").val()},
                 dataType: 'json',
                 contentType: 'application/json',
                 success: function (result) {
-                                                                        if (result.returnString == "1") {
-                                                                            switch (result.roleType) {
-                                                                                case "MPP":
-                                                                                    getUrl = '@Url.Action("ViewPlans", "Admin")';
-                                                                                    break;
-                                                                                case "Member":
-                                                                                    getUrl = '@Url.Action("PlanDetails", "Member")';
-                                                                                    break;
-                                                                                case "Organization":
-                                                                                    getUrl = '@Url.Action("ViewPaymentDetails", "Organization")';
-                                                                                    break;
-                                                                                case "Provider":
-                                                                                    getUrl = '@Url.Action("SubscribedPlans", "Provider")';
-                                                                                    break;
-                                                                            }
+                    if (result.returnString == "1") {
+                        switch (result.roleType) {
+                            case "MPP":
+                                getUrl = '@Url.Action("ViewPlans", "Admin")';
+                                break;
+                            case "Member":
+                                getUrl = '@Url.Action("PlanDetails", "Member")';
+                                break;
+                            case "Organization":
+                                getUrl = '@Url.Action("ViewPaymentDetails", "Organization")';
+                                break;
+                            case "Provider":
+                                getUrl = '@Url.Action("SubscribedPlans", "Provider")';
+                                break;
+                        }
 
-                                                                            //var getUrl = '@Url.Action("PlanDetails", "Member")';
-                                                                            window.location = getUrl;
-                                                                        }
-                                                                        else if (result.returnString == "4"){
-                                                                            //var getUrl = '@Url.Action("PatientsTermsAndConditions", "Member")';
-                                                                            var getUrl = '@Url.Action("TermsAndConditions", "Account")';
-                                                                            //var uurl = getUrl + "?MemberID=";
-                                                                            window.location = getUrl;
-                                                                        }
-                                                                        else {
+                        //var getUrl = '@Url.Action("PlanDetails", "Member")';
+                        window.location = getUrl;
+                    }
+                    else if (result.returnString == "4"){
+                        //var getUrl = '@Url.Action("PatientsTermsAndConditions", "Member")';
+                        var getUrl = '@Url.Action("TermsAndConditions", "Account")';
+                        //var uurl = getUrl + "?MemberID=";
+                        window.location = getUrl;
+                    }
+                    else {
                         $("#lblUserMessag").show();
                         $("#lblUserMessag").html("Invalid OTP");
-                                                                            return false;
-                                                                        }
-                                                                    },
+                        return false;
+                    }
+                },
                 error: function (ex) {
-                                                                        location.reload();
-                                                                    }
-                                                                });
+                        location.reload();
+                    }
+                });
         }
 
         function ValidateCredentials(){

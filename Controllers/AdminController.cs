@@ -2365,6 +2365,10 @@ shapeFooter, PageNumbers
         {
             return RedirectToAction("ClaimSubmission", new { mode = "add", VisitId = 0 });
         }
+        public ActionResult BillingReport()
+        {
+            return View();
+        }
         public ActionResult ClaimSubmission(string mode, int VisitId)
         {
             MemberVisit model = new MemberVisit();
@@ -2407,6 +2411,14 @@ shapeFooter, PageNumbers
             string xml = GetXMLFromObject(modelParameter);
             string returnData = xml.Replace("\"", "\'");
             return returnData;
+        }
+
+        [System.Web.Http.HttpPost]
+        public ActionResult BillingDashboardExport(string contentType, string base64, string fileName)
+        {
+            var fileContents = Convert.FromBase64String(base64);
+
+            return File(fileContents, contentType, fileName);
         }
         #endregion
     }

@@ -42,17 +42,33 @@
             <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" style="display:block">
                 <div class="row">
                     <div class="row">
-                        <div class="col-xs-6 col-md-4 col-sm-6 col-lg-4">
+                        <div class="col-xs-6 col-md-3 col-sm-6 col-lg-3">
                             @Html.Label("Claim Start Date", new { style = "font-weight:normal;", @class = "" })<br />
                             @( Html.Kendo().DatePicker().Format("MM/dd/yyyy").Name("ClaimStartDate").Value("").Max(DateTime.Today)
                                                 .HtmlAttributes(new { PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text", onkeydown = "return true;" }))
                         </div>
-                        <div class="col-xs-6 col-md-4 col-sm-6 col-lg-4">
+                        <div class="col-xs-6 col-md-3 col-sm-6 col-lg-3">
                             @Html.Label("Claim End Date", new { style = "font-weight:normal;", @class = "" })<br />
                             @( Html.Kendo().DatePicker().Format("MM/dd/yyyy").Name("ClaimEndDate").Value("").Max(DateTime.Today)
                                                 .HtmlAttributes(new { PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text", onkeydown = "return true;" }))
                         </div>
-                        <div class="col-xs-6 col-md-4 col-sm-6 col-lg-4">
+                        <div class="col-xs-6 col-md-3 col-sm-6 col-lg-3">
+                            @Html.Label("Facility Name", new { style = "font-weight:normal;", @class = "" })<br />
+                            @Html.Hidden("OrganizationIdFilter")
+                            @(Html.Kendo().AutoComplete()
+                                    .Name("OrganizationNames")
+                                    .Placeholder("Select Organization...")
+                                    .HtmlAttributes(new { style = "width:100%;" })
+                                    .DataTextField("OrganizationName")
+                                    .Events(e => e.Select("OnSelectOrgFilter"))
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                        });
+                                    }))
+                        </div>
+                        <div class="col-xs-6 col-md-3 col-sm-6 col-lg-3">
                             @Html.Label("Claim Status", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
                             @(Html.Kendo().DropDownList()
                                             .Name("ClaimStatus").HtmlAttributes(new { style = "width:100%;" })
@@ -80,16 +96,19 @@
             .Name("gridClaims")
             .Columns(columns =>
             {
-                columns.Bound(p => p.MemberName).Width(100).Width(150).Title("Member Name").Width(120);
+                columns.Bound(p => p.OrganizationName).Title("Organization").Width(120);
+                columns.Bound(p => p.MemberName).Title("Member Name").Width(120);
                 columns.Bound(p => p.DateOfService).Title("Date of Service").Width(120).ClientTemplate("#= kendo.toString(kendo.parseDate(DateOfService,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') #");
                 columns.Bound(p => p.ProviderName).Title("Provider Name").Width(120);
                 columns.Bound(p => p.ProviderNPI).Title("Provider NPI").Width(100);
                 columns.Bound(p => p.VisitType).Title("Visit type").Width(100);
                 columns.Bound(p => p.AllowedFee).Title("Allowed Fee").Width(75);
                 columns.Bound(p => p.CoPayFee).Title("Plan CoPay").Width(75);
+                columns.Bound(p => p.PlanFee).Title("Plan Fee").Width(75);
                 columns.Bound(p => p.SubmitDate).Title("Submitted Date").Width(100).ClientTemplate("#= SubmitDate != null ? kendo.toString(kendo.parseDate(SubmitDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') : '' #");
                 columns.Bound(p => p.PlanPaidDate).Title("Date Paid").Width(120).ClientTemplate("#= PlanPaidDate != null ? kendo.toString(kendo.parseDate(PlanPaidDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') : '' #");
-                columns.Bound(p => p.PlanPaidAmount).Title("Plan Paid").Width(75);
+                // columns.Bound(p => p.PlanPaidAmount).Title("Plan Paid").Width(75);
+                columns.Bound(p => p.PlanPaidAmount).Title("Balance Due").Width(75).ClientTemplate("#= PlanPaidAmount == 0 ? PlanFee : 0 #");
                 columns.Bound(p => p.ClaimStatus).Title("Claim Status").Width(120);
 
                 columns.Bound(p => p.SubmitDate).Title("Action").Width(60).HtmlAttributes(new { style = "text-align: center" }).ClientTemplate(
@@ -100,12 +119,21 @@
                     "#}#");
 
             })
+            //.ToolBar(tools => tools.Excel())
+            .ToolBar(toolbar =>{
+                toolbar.Template("<a class=\"k-button k-button-icontext k-grid-excel\" style=\"float: right \" href=\"#\"><span class=\"k-icon k-i-excel\"></span>Excel Export</a>");
+            })
+            .Excel(excel => excel
+                .FileName("Billing.xlsx")
+                .Filterable(true)
+                .ProxyURL(Url.Action("BillingDashboardExport", "Admin"))
+            )
             .Scrollable()
             //.Scrollable()
             .Sortable()
             .Pageable()
             .AutoBind(false)
-            .HtmlAttributes(new { style = "height:400px;" })
+            .HtmlAttributes(new { style = "height:400px; min-width: 400px; " })
             //.Selectable()
             .DataSource(dataSource => dataSource
             .Ajax()
@@ -122,12 +150,19 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        BindDropdown(2, 'ClaimStatus', '@ServiceUrl');
+        BindDropdown(1, 'ClaimStatus', '@ServiceUrl');
+        BindOrganizations('OrganizationNames', '@ServiceUrl')
         btnClear();
     });
 
+    function OnSelectOrgFilter(e) {
+        debugger;
+        var dataItem = this.dataItem(e.item.index());
+        $("#OrganizationIdFilter").val(dataItem.OrganizationID);
+    }
+
     function btnSearch() {
-       GetClaims('@ServiceUrl', 0, $("#ClaimStartDate").val(), $("#ClaimEndDate").val(), $("#ClaimStatus").val());
+        GetClaims('@ServiceUrl', $("#OrganizationIdFilter").val(), $("#ClaimStartDate").val(), $("#ClaimEndDate").val(), $("#ClaimStatus").val());
 
     }
     function btnClear() {
@@ -135,12 +170,15 @@
         var ToDate = kendo.toString(kendo.parseDate(new Date()), 'MM/dd/yyyy');
         $("#ClaimEndDate").data("kendoDatePicker").value(ToDate);
         var dt = new Date();
-        dt.setMonth(dt.getMonth() - 1);
+        dt.setMonth(dt.getMonth() - 3);
         var dd = dt.getDate();
         var mm = dt.getMonth() + 1;
         var y = dt.getFullYear();
         var FromDate = mm + '/' + dd + '/' + y;
         $("#ClaimStartDate").val(FromDate);
+        $("#ClaimStatus").data("kendoDropDownList").value("");
+        $("#OrganizationNames").data("kendoAutoComplete").value("");
+        $("#OrganizationIdFilter").val("");
         //to clear grid
         GetClaims('@ServiceUrl', 0, $("#ClaimStartDate").val(), $("#ClaimEndDate").val(), $("#ClaimStatus").val());
     }

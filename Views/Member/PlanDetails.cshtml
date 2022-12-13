@@ -315,36 +315,36 @@
                                                     .Name("PlansGrid")
                                                     .Columns(columns =>
                                                     {
-                                                        columns.Bound(p => p.MemberPlanID).Title("MemPlanID").Filterable(false).Visible(false);
-                                                        columns.Bound(p => p.MemberID).Title("MemID").Filterable(false).Visible(false);
-                                                        columns.Bound(p => p.PlanID).Title("PlanID").Filterable(false).Visible(false);
-                                                        columns.Bound(p => p.OrganizationID).Title("OrganizationID").Filterable(false).Visible(false);
-                                                        columns.Bound(p => p.MemberName).Title("Member Name").Filterable(false).Width(130);
+                                                        //columns.Bound(p => p.MemberPlanID).Title("MemPlanID").Filterable(false).Visible(false);
+                                                        //columns.Bound(p => p.MemberID).Title("MemID").Filterable(false).Visible(false);
+                                                        //columns.Bound(p => p.PlanID).Title("PlanID").Filterable(false).Visible(false);
+                                                        //columns.Bound(p => p.OrganizationID).Title("OrganizationID").Filterable(false).Visible(false);
+                                                        columns.Bound(p => p.MemberName).Title("Member Name").Width(130);
                                                         columns.Bound(p => p.PlanName).Title("Plan Name").Width(130);
-                                                                        //.ClientTemplate("#if (PlanName == '' ) { #" + "<text>No Enrolled Plan</text>" + " # } else { PlanName } #").Filterable(false);
-                                                        columns.Bound(p => p.PlanStartDate).Width(120).Title("Plan Start Date").Filterable(false).Encoded(true).ClientTemplate("#= PlanStartDate != null ? kendo.toString(kendo.parseDate(PlanStartDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') : '' #");
-                                                        columns.Bound(p => p.Duration).Title("Duration(in months)").Width(100).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
-                                                        columns.Bound(p => p.ProviderName).Title("Provider Name").Width(150).Filterable(false);
-                                                        columns.Bound(p => p.TotalAmount).Title("Plan Fee").Width(70).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
-                                                        columns.Bound(p => p.Status).Title("Payment Status").Width(100).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
-                                                        columns.Bound(p => p.AmountPaid).Title("Amount Paid").Width(70).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
-                                                        columns.Bound(p => p.Plan_Code).Title("Amount Paid").Filterable(false).Width(100).Visible(false);
-                                                        columns.Bound(p => p).Width(80).ClientTemplate("# if (TotalAmount != AmountPaid) { #" + "<a onclick='MakePayment(#=Plan_Code#,\"#=MemberPlanID#\");' <span style='cursor:pointer'>Make Payment</a>" + "# } else { #" + "" + "# } #").Title("Payment").Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                        //.ClientTemplate("#if (PlanName == '' ) { #" + "<text>No Enrolled Plan</text>" + " # } else { PlanName } #").Filterable(false);
+                                                        columns.Bound(p => p.PlanStartDate).Width(100).Title("Plan Start Date").Encoded(true).ClientTemplate("#= PlanStartDate != null ? kendo.toString(kendo.parseDate(PlanStartDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') : '' #").HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                        columns.Bound(p => p.Duration).Title("Duration(in months)").Width(80).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                        columns.Bound(p => p.ProviderName).Title("Provider Name").Width(150);
+                                                        columns.Bound(p => p.TotalAmount).Title("Plan Fee").Width(70).Format("{0:c0}").HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                        columns.Bound(p => p.Status).Title("Payment Status").Width(80).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                        columns.Bound(p => p.AmountPaid).Title("Amount Paid").Width(70).Format("{0:c0}").HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                        // columns.Bound(p => p.Plan_Code).Title("Amount Paid").Filterable(false).Width(100).Visible(false);
+                                                        columns.Bound(p => p).Width(100).ClientTemplate("# if (TotalAmount != AmountPaid) { #" + "<a onclick='MakePayment(#=Plan_Code#,\"#=MemberPlanID#\");' <span style='cursor:pointer'>Make Payment</a>" + "# } else { #" + "" + "# } #").Title("Make Payment").HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
 
-                                                        columns.Bound(p => p).Width(80).ClientTemplate(
-   "<a onclick='ViewMemberCard(#=MemberID#,#=Plan_Code#,\"#=OrganizationID#\",\"#=MemberPlanID#\");' <span style='cursor:pointer'> #if (!doesPlanExist) { # Rx Card Only # } else { # Download # } # </a>").Title("ID Card").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                        columns.Bound(p => p).Width(100).ClientTemplate(
+   "<a onclick='ViewMemberCard(#=MemberID#,#=Plan_Code#,\"#=OrganizationID#\",\"#=MemberPlanID#\");' <span style='cursor:pointer'> #if (!doesPlanExist) { # Rx Card Only # } else { # Download # } # </a>").Title("ID Card").HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
 
-                                                        columns.Bound(p => p).ClientTemplate(
-                                                           "<a onclick='CancelMemberPlan(#=MemberID#,#=Plan_Code#,\"#=OrganizationID#\");' <span style='cursor:pointer'>Cancel Plan</a>").Title("Cancel Plan").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(100).Visible(false);
+                                                        //columns.Bound(p => p).Width(100).ClientTemplate(
+                                                        //   "<a onclick='CancelMemberPlan(#=MemberID#,#=Plan_Code#,\"#=OrganizationID#\");' <span style='cursor:pointer'>Cancel Plan</a>").Title("Cancel Plan").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Visible(false);
                                                         //columns.Bound(p => p).ClientTemplate(
                                                         // "<a onclick='ViewTermsCondition(\"#=PatientTAndCPath#\");' <span style='cursor:pointer'>View</a>").Title("Terms & Conditions").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(100);
                                                     })
-                                                    .Scrollable()
+                                                    .Scrollable(s => s.Enabled(true))
                                                     .Pageable()
-                                                    .Filterable()
+                                                    //.Filterable()
                                                     .AutoBind(false)
-                                                    .HtmlAttributes(new { })
-                                                    .Selectable()
+                                                    .HtmlAttributes(new {  })
+                                                    //.Selectable()
                                                     .DataSource(dataSource => dataSource
                                                     .Ajax()
                                                     .PageSize(5)
