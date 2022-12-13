@@ -19,7 +19,6 @@ using System.Xml;
 using System.Xml.Serialization;
 using Telerik.Reporting.Processing;
 using static PPCP07302018.Utils.GlobalFunctions;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace PPCP07302018.Controllers
 {
@@ -56,16 +55,16 @@ namespace PPCP07302018.Controllers
                 ServiceData.ParameterValue = ParameterValue;
                 ServiceData.WebMethodName = "GetPlans";
                 List<PPCP07302018.Models.Admin.AddPlans> objPlansList = objcall.CallServices(Convert.ToInt32(0), "GetPlans", ServiceData);
-                
+
                 if (objPlansList.Count > 0)
                 {
                     objPlans = objPlansList[0];
                 }
-               
+
             }
             return View(objPlans);
         }
-            public ActionResult AddPlans()
+        public ActionResult AddPlans()
         {
             //modelParameter.OrganizationTermsandCondition = Convert.ToString(Session["OrganiationTandCFilePath"]);
             //modelParameter.PatientTermsandCondition = Convert.ToString(Session["PatientTandCFilePath"]);

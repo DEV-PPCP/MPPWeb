@@ -348,7 +348,7 @@
                                                                               "<span style='color:red; font-weight:bold'>In-Active</span>" +
                                                                           "#} #");
 
-                                        })
+                                        })                                        
                                         .Scrollable(s => s.Height("auto"))
                                         .AutoBind(false)
                                         .HtmlAttributes(new { style = " max-height: 200px" })
@@ -362,18 +362,18 @@
                                             .ServerOperation(false)
                                         ))
                         @*<div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                @Html.Label("Plan Name", new { style = "font-weight:normal;", @class = "" })<br />
-                                @Html.TextBoxFor(model => model.PlanName, null, new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;", maxlength = 50 })
-                            </div>
-                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                @Html.Label("Plan Start Date", new { style = "font-weight:normal;", @class = "" })<br />
-                                @Html.TextBoxFor(model => model.PlanStartDate, "{0:MM/dd/yyyy}", new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;", maxlength = 50 })
-                            </div>
+                            @Html.Label("Plan Name", new { style = "font-weight:normal;", @class = "" })<br />
+                            @Html.TextBoxFor(model => model.PlanName, null, new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;", maxlength = 50 })
+                        </div>
+                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                            @Html.Label("Plan Start Date", new { style = "font-weight:normal;", @class = "" })<br />
+                            @Html.TextBoxFor(model => model.PlanStartDate, "{0:MM/dd/yyyy}", new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;", maxlength = 50 })
+                        </div>
 
-                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                @Html.Label("Plan End Date", new { style = "font-weight:normal;", @class = "" })<br />
-                                @Html.TextBoxFor(model => model.PlanEndDate, "{0:MM/dd/yyyy}", new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;", maxlength = 50 })
-                            </div>*@
+                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                            @Html.Label("Plan End Date", new { style = "font-weight:normal;", @class = "" })<br />
+                            @Html.TextBoxFor(model => model.PlanEndDate, "{0:MM/dd/yyyy}", new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;", maxlength = 50 })
+                        </div>*@
                     </div>
                 </div>
             </div>
@@ -536,7 +536,7 @@
             <div class="row"><span id="errorDetail" style="color: orangered"></span></div>
         </div>
     </div>
-
+    
     <div class="row" style="margin-top: 20px;">
         <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
             <div align="center">
