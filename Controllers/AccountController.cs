@@ -276,51 +276,72 @@ namespace PPCP07302018.Controllers
 
         public ActionResult ClaimConfirm(int id)
         {
-            DataAccessLayer.ServiceCall<PPCP07302018.Models.Result> objcall = new DataAccessLayer.ServiceCall<PPCP07302018.Models.Result>();
+            DataAccessLayer.ServiceCall<PPCP07302018.Models.MemberVisit> objcall = new DataAccessLayer.ServiceCall<PPCP07302018.Models.MemberVisit>();
             PPCP07302018.Models.Member.ServiceData ServiceData = new PPCP07302018.Models.Member.ServiceData();
             string[] ParameterName = new string[] { "VisitId" };
             string[] ParameterValue = new string[] { id.ToString() };
             ServiceData.ParameterName = ParameterName;
             ServiceData.ParameterValue = ParameterValue;
-            ServiceData.WebMethodName = "ClaimConfirm";
+            ServiceData.WebMethodName = "GetVisitById";
 
-            List<PPCP07302018.Models.Result> List = objcall.CallServices(Convert.ToInt32(0), "ClaimConfirm", ServiceData);
+            List<PPCP07302018.Models.MemberVisit> List = objcall.CallServices(Convert.ToInt32(0), "GetVisitById", ServiceData);
 
-            PPCP07302018.Models.Result model = List.FirstOrDefault();
-            if (model != null && model.ResultID == 1)
-            {
-                model.ResultName = "Thank you for confirming you visited this provider.";
-            }
-            else
-            {
-                model.ResultName = "Thank you! You have already replied to this message.";
-            }
+            PPCP07302018.Models.MemberVisit model = List.FirstOrDefault();
 
-            return View(model);
-        }
-        public ActionResult ClaimDeny(int id)
-        {
-            DataAccessLayer.ServiceCall<PPCP07302018.Models.Result> objcall = new DataAccessLayer.ServiceCall<PPCP07302018.Models.Result>();
-            PPCP07302018.Models.Member.ServiceData ServiceData = new PPCP07302018.Models.Member.ServiceData();
-            string[] ParameterName = new string[] { "VisitId" };
-            string[] ParameterValue = new string[] { id.ToString() };
-            ServiceData.ParameterName = ParameterName;
-            ServiceData.ParameterValue = ParameterValue;
-            ServiceData.WebMethodName = "ClaimDeny";
 
-            List<PPCP07302018.Models.Result> List = objcall.CallServices(Convert.ToInt32(0), "ClaimDeny", ServiceData);
+            //DataAccessLayer.ServiceCall<PPCP07302018.Models.Result> objcall = new DataAccessLayer.ServiceCall<PPCP07302018.Models.Result>();
+            //PPCP07302018.Models.Member.ServiceData ServiceData = new PPCP07302018.Models.Member.ServiceData();
+            //string[] ParameterName = new string[] { "VisitId" };
+            //string[] ParameterValue = new string[] { id.ToString() };
+            //ServiceData.ParameterName = ParameterName;
+            //ServiceData.ParameterValue = ParameterValue;
+            //ServiceData.WebMethodName = "ClaimConfirm";
 
-            PPCP07302018.Models.Result model = List.FirstOrDefault();
-            if(model != null && model.ResultID == 1)
-            {
-                model.ResultName = "Thank you for confirming you did not visit this provider.";
-            }
-            else
-            {
-                model.ResultName = "Thank you! You have already replied to this message.";
-            }
+            //List<PPCP07302018.Models.Result> List = objcall.CallServices(Convert.ToInt32(0), "ClaimConfirm", ServiceData);
+
+            //PPCP07302018.Models.Result model = List.FirstOrDefault();
+            //if (model != null && model.ResultID == -1) //Handling Android self clicking
+            //{
+            //    return null;
+            //}
+            //if (model != null && model.ResultID == 1)
+            //{
+            //    model.ResultName = "Thank you for confirming you visited this provider.";
+            //}
+            //else
+            //{
+            //    model.ResultName = "Thank you! You have already replied to this message.";
+            //}
 
             return View(model);
         }
+        //public ActionResult ClaimDeny(int id)
+        //{
+        //    DataAccessLayer.ServiceCall<PPCP07302018.Models.Result> objcall = new DataAccessLayer.ServiceCall<PPCP07302018.Models.Result>();
+        //    PPCP07302018.Models.Member.ServiceData ServiceData = new PPCP07302018.Models.Member.ServiceData();
+        //    string[] ParameterName = new string[] { "VisitId" };
+        //    string[] ParameterValue = new string[] { id.ToString() };
+        //    ServiceData.ParameterName = ParameterName;
+        //    ServiceData.ParameterValue = ParameterValue;
+        //    ServiceData.WebMethodName = "ClaimDeny";
+
+        //    List<PPCP07302018.Models.Result> List = objcall.CallServices(Convert.ToInt32(0), "ClaimDeny", ServiceData);
+
+        //    PPCP07302018.Models.Result model = List.FirstOrDefault();
+        //    if (model != null && model.ResultID == -1) //Handling Android self clicking
+        //    {
+        //        return null;
+        //    }
+        //    if (model != null && model.ResultID == 1)
+        //    {
+        //        model.ResultName = "Thank you for confirming you did not visit this provider.";
+        //    }
+        //    else
+        //    {
+        //        model.ResultName = "Thank you! You have already replied to this message.";
+        //    }
+
+        //    return View(model);
+        //}
     }
 }
