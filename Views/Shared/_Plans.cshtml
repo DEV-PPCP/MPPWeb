@@ -1,0 +1,92 @@
+﻿@model PPCP07302018.Models.Admin.AddPlans
+@using Kendo.Mvc.UI
+
+@{
+    var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
+}
+
+<div class="pageheading_bar" align="center">
+    <b>Edit Plans</b>
+</div>
+<div class="Panel_bg" id="divMainAddPlans">
+    <div id="divSelectPlan" style="display:block;">
+
+        <fieldset id="fsPlanDetails" style="margin:0px;width:100%;">
+            <div class="row Panel_bg_Sub">
+                <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Plan Information</b>:</legend>
+                <div class="row">
+                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                        @Html.Label("Plan Name", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                        @Html.TextBoxFor(model => model.PlanName, null, new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;", maxlength = 50, onchange = "ValidatePlanName(this.value);" }) <span id="spnPlanNamevalidator" style="color:red !important;display:none;">Plan Name Already Exists</span>
+                        @Html.ValidationMessageFor(model => model.PlanName, "", new { @style = "color:red" })
+                    </div>
+                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                        @Html.Label("Plan Code", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                        @Html.TextBoxFor(model => model.PlanCode, null, new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;", maxlength = 50 })
+                        @Html.ValidationMessageFor(model => model.PlanCode, "", new { @style = "color:red" })
+                    </div>
+                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                        @Html.Label("Enrollment Fee($)", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                        @Html.TextBoxFor(model => model.EnrollFee, null, new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;", maxlength = 50 })
+                        @Html.ValidationMessageFor(model => model.EnrollFee, "", new { @style = "color:red" })
+                    </div>
+                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
+                        @Html.Label("Plan Amount($)", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                        @Html.TextBoxFor(model => model.MonthlyFee, null, new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;", maxlength = 50 })
+                        @Html.ValidationMessageFor(model => model.MonthlyFee, "", new { @style = "color:red" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                        @Html.Label("Co pay($)", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                        @Html.TextBoxFor(model => model.VisitFee, null, new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;", maxlength = 50 })
+                        @Html.ValidationMessageFor(model => model.VisitFee, "", new { @style = "color:red" })
+                    </div>
+                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                        @Html.Label("Installment Fee($)", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                        @Html.TextBoxFor(model => model.InstalmentFee, null, new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;", maxlength = 10 })
+                        @Html.ValidationMessageFor(model => model.InstalmentFee, "", new { @style = "color:red" })
+                    </div>
+                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3 ">
+                        @Html.Label("Effective Date", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                        @( Html.Kendo().DatePickerFor(model => model.EffectiveDate).Format("MM/dd/yyyy").Name("EffectiveDate").Value("")
+                            .HtmlAttributes(new { PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text", onkeydown = "return false;" })
+                                        )
+                        @Html.ValidationMessageFor(model => model.EffectiveDate, "", new { @style = "color:red" })
+                    </div>
+
+                </div>
+            </div>
+        </fieldset>
+        <fieldset id="fsPaymentSchedule">
+            <div class="row Panel_bg_Sub">
+                <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Payment Schedule</b><span style="color: Red;">*</span>:</legend>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-12" id="divPaymentSchedule">
+                        </div>
+                        <div id="divPaymentScheduleValidator" style="display:none">
+                            <span style="color:red !important" id="PaymentIntervals_validationMessage"><span class="k-icon k-warning"> </span> This Information is Requried</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        @*<div class="row">
+            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                <div align="center">
+                    <button type="submit" class="button_blue" id="btnSubmit" title="Submit" style="width: 100px;" value="addUser">
+                        Submit
+                    </button>
+                    <button type="reset" class="button_blue" id="btnClear" title="Clear" value="addUser" style="width: 100px;" onclick="@("window.location.href='" + Url.Action("AddPlans", "Admin") + "'");">
+                        Clear
+                    </button>
+                    <button type="button" class="button_blue" id="btnCancel" title="Cancel" value="addUser" style="width: 100px;" onclick="@("window.location.href='" + @Url.Action("AddPlans", "Admin") + "'");">
+                        Cancel
+                    </button>
+                </div>
+                <br />
+            </div>
+        </div>*@
+    </div>
+</div>

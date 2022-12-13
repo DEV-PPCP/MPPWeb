@@ -380,183 +380,171 @@
         </div>
     </div>
 
-    <div class="row Panel_bg_Sub">
-        <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Encounter Detail</b></legend>
-        @*<span style="color: orangered">@(Model.IsPlanExistingOnDOS ? "" : "Please check the Date of Service. ")</span>*@
-        <div class="form-group">
-            <div class="row">
-                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                    @Html.Label("Date of Service", new { style = "font-weight:normal;", @class = "" })<br />
-                    @( Html.Kendo().DatePickerFor(model => model.DateOfService).Format("MM/dd/yyyy")
-                        .Value(DateTime.Today).Max(DateTime.Today)
-                        .Events(e =>
-                        {
-                            e.Change("DateOfServiceChange");
-                        })
-                        .HtmlAttributes(new {  PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text" }))
-                    <span id="errDateOfService" style="color:red"></span>
-                </div>
-                <div class="col-xs-12 col-md-9 col-sm-6 col-lg-9" style="margin-top: 10px;">
-                    <br />
-                    <span id="errDOS" style="color: orangered;"></span>
-                    <span id="dosPlan" style="color: mediumblue; "></span>
-                </div>
-            </div>
-            <div class="row" style="margin-top: 30px;">
-                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                    @Html.Label("Visit Type", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                    <label style="font-weight: normal;">
-                        @(Html.RadioButtonFor(m => m.VisitTypeId, PPCP07302018.Utils.GlobalFunctions.VisitType.InPerson, Model.VisitTypeId == @PPCP07302018.Utils.GlobalFunctions.VisitType.InPerson ? new { @checked = "checked", id="rbInPerson" } : null))
-                        In Person
-                    </label>
-                    <label style="font-weight: normal; margin-left:20px">
-                        @(Html.RadioButtonFor(m => m.VisitTypeId, PPCP07302018.Utils.GlobalFunctions.VisitType.TeleVisit, Model.VisitTypeId == @PPCP07302018.Utils.GlobalFunctions.VisitType.TeleVisit ? new { @checked = "checked" } : null))
-                        Tele Visit
-                    </label>
-                    <br />
-                    <span id="errVisitTypeId" style="color:red"></span>
-                </div>
-                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                    @Html.Label("Provider", new { style = "font-weight:normal;", @class = "" })<br />
-                    @(Html.Kendo().DropDownListFor(model => model.ProviderId)
-                        .Name("providerList")
-                        .OptionLabel("--Select--")
-                        .HtmlAttributes(new { style = "width:100%;" })
-                        .DataValueField("ProviderID")
-                        .DataTextField("ProviderName").Template("#:data.ProviderName# | #:data.NPI#")
-                        .Events(e =>
-                        {
-                            e.DataBound("onProviderDropdownDataBound");
-                        })
-                        .DataSource(source =>
-                        {
-                            source.Read(read =>
+                                <div class="row Panel_bg_Sub">
+                                    <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Encounter Detail</b></legend>
+                                    <span style="color: orangered">@(Model.IsPlanExistingOnDOS ? "" : "Please check the Date of Service. No active member plan found.")</span>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                @Html.Label("Date of Service", new { style = "font-weight:normal;", @class = "" })<br />
+                                                @( Html.Kendo().DatePickerFor(model => model.DateOfService).Format("MM/dd/yyyy").Max(DateTime.Today).HtmlAttributes(new {  PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text" }))
+                                                <span id="errDateOfService" style="color:red"></span>
+                                            </div>
+                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                @Html.Label("Visit Type", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                <label style="font-weight: normal;">
+                                                    @(Html.RadioButtonFor(m => m.VisitTypeId, PPCP07302018.Utils.GlobalFunctions.VisitType.InPerson, Model.VisitTypeId == @PPCP07302018.Utils.GlobalFunctions.VisitType.InPerson ? new { @checked = "checked", id="rbInPerson" } : null))
+                                                    In Person
+                                                </label>
+                                                <label style="font-weight: normal; margin-left:20px">
+                                                    @(Html.RadioButtonFor(m => m.VisitTypeId, PPCP07302018.Utils.GlobalFunctions.VisitType.TeleVisit, Model.VisitTypeId == @PPCP07302018.Utils.GlobalFunctions.VisitType.TeleVisit ? new { @checked = "checked" } : null))
+                                                    Tele Visit
+                                                </label>
+                                                <br />
+                                                <span id="errVisitTypeId" style="color:red"></span>
+                                            </div>
+                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                @Html.Label("Provider", new { style = "font-weight:normal;", @class = "" })<br />
+                                                @(Html.Kendo().DropDownListFor(model => model.ProviderId)
+                            .Name("providerList")
+                            .OptionLabel("--Select--")
+                            .HtmlAttributes(new { style = "width:100%;" })
+                            .DataValueField("ProviderID")
+                            .DataTextField("ProviderName")
+                            .Events(e =>
                             {
-                            });
-                        }))
-                    <span id="errProviderID" style="color:red"></span>
-                </div>
-                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                    @Html.Label("Primary Procedure Code", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                    @Html.TextBoxFor(model => model.PrimaryProcedureCode, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 10 })
-                    <span id="errPrimaryProcedureCode" style="color:red"></span>
-                </div>
-                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                    @Html.Label("Primary Diagnosis Code", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                    @Html.TextBoxFor(model => model.PrimaryDiagnosisCode, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 10 })
-                    <span id="errPrimaryDiagnosisCode" style="color:red"></span>
-                </div>
-            </div>
-            <div class="row" style="margin-top: 30px;">
-                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                    @Html.Label("Addl. Procedure Code", new { style = "font-weight:normal;", @class = "" })
-                </div>
-                <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
-                    @Html.Label("Modifier1", new { style = "font-weight:normal;", @class = "" })
-                </div>
-                <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
-                    @Html.Label("Modifier2", new { style = "font-weight:normal;", @class = "" })
-                </div>
-                <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
-                    @Html.Label("Modifier3", new { style = "font-weight:normal;", @class = "" })
-                </div>
-                <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
-                    @Html.Label("Modifier4", new { style = "font-weight:normal;", @class = "" })
-                </div>
-            </div>
-            <div class="row">
-                @for (int i = 0; i < Model.ProcedureLines.Count; i++)
-                {
-                    <div class="row">
-                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                            @Html.TextBoxFor(model => model.ProcedureLines[i].ProcCode, null, new { @class = "customKendoTextBox proclines", style = "width:100%;", maxlength = 10 })
-                        </div>
-                        <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
-                            @Html.TextBoxFor(model => model.ProcedureLines[i].Modifier1, null, new { @class = "customKendoTextBox proclines", style = "width:100%;", maxlength = 10 })
-                        </div>
-                        <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
-                            @Html.TextBoxFor(model => model.ProcedureLines[i].Modifier2, null, new { @class = "customKendoTextBox proclines", style = "width:100%;", maxlength = 10 })
-                        </div>
-                        <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
-                            @Html.TextBoxFor(model => model.ProcedureLines[i].Modifier3, null, new { @class = "customKendoTextBox proclines", style = "width:100%;", maxlength = 10 })
-                        </div>
-                        <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
-                            @Html.TextBoxFor(model => model.ProcedureLines[i].Modifier4, null, new { @class = "customKendoTextBox proclines", style = "width:100%;", maxlength = 10 })
-                        </div>
-                    </div>
-                }
-            </div>
+                                e.DataBound("onProviderDropdownDataBound");
+                            })
+                            .DataSource(source =>
+                            {
+                                source.Read(read =>
+                                {
+                                });
+                            }))
+                                                <span id="errProviderID" style="color:red"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                @Html.Label("Primary Procedure Code", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                @Html.TextBoxFor(model => model.PrimaryProcedureCode, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 10 })
+                                                <span id="errPrimaryProcedureCode" style="color:red"></span>
+                                            </div>
+                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                @Html.Label("Primary Diagnosis Code", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                @Html.TextBoxFor(model => model.PrimaryDiagnosisCode, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 10 })
+                                                <span id="errPrimaryDiagnosisCode" style="color:red"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row" style="margin-top: 30px;">
+                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                @Html.Label("Addl. Procedure Code", new { style = "font-weight:normal;", @class = "" })
+                                            </div>
+                                            <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
+                                                @Html.Label("Modifier1", new { style = "font-weight:normal;", @class = "" })
+                                            </div>
+                                            <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
+                                                @Html.Label("Modifier2", new { style = "font-weight:normal;", @class = "" })
+                                            </div>
+                                            <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
+                                                @Html.Label("Modifier3", new { style = "font-weight:normal;", @class = "" })
+                                            </div>
+                                            <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
+                                                @Html.Label("Modifier4", new { style = "font-weight:normal;", @class = "" })
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            @for (int i = 0; i < Model.ProcedureLines.Count; i++)
+                                            {
+                                                <div class="row">
+                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                        @Html.TextBoxFor(model => model.ProcedureLines[i].ProcCode, null, new { @class = "customKendoTextBox proclines", style = "width:100%;", maxlength = 10 })
+                                                    </div>
+                                                    <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
+                                                        @Html.TextBoxFor(model => model.ProcedureLines[i].Modifier1, null, new { @class = "customKendoTextBox proclines", style = "width:100%;", maxlength = 10 })
+                                                    </div>
+                                                    <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
+                                                        @Html.TextBoxFor(model => model.ProcedureLines[i].Modifier2, null, new { @class = "customKendoTextBox proclines", style = "width:100%;", maxlength = 10 })
+                                                    </div>
+                                                    <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
+                                                        @Html.TextBoxFor(model => model.ProcedureLines[i].Modifier3, null, new { @class = "customKendoTextBox proclines", style = "width:100%;", maxlength = 10 })
+                                                    </div>
+                                                    <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
+                                                        @Html.TextBoxFor(model => model.ProcedureLines[i].Modifier4, null, new { @class = "customKendoTextBox proclines", style = "width:100%;", maxlength = 10 })
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
 
-            <legend class="Legendtxtcolor" style="float: left; font-size: 14px; margin-top: 15px;"><b>Fees</b></legend>
-            <div class="row">
-                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                    @Html.Label("Co-Pay Paid", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                    @Html.TextBoxFor(model => model.Copay, null, new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;", maxlength = 10, onchange = "CalculateTotalPaid();", Value = String.Format("{0:C}", Model.Copay) })
-                    <span id="errCopay" style="color:red"></span>
-                </div>
-                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                    @Html.Label("Other Charges Paid", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                    @Html.TextBoxFor(model => model.OtherCharges, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 10, onchange = "CalculateTotalPaid();", Value = String.Format("{0:C}", Model.OtherCharges) })
-                    <span id="errOtherCharges" style="color:red"></span>
-                </div>
-                <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
-                    @Html.Label("Payment Type", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                    <label style="font-weight: normal;">
-                        @(Html.RadioButtonFor(m => m.PaymentTypeId, PPCP07302018.Utils.GlobalFunctions.PaymentType.Credit, Model.PaymentTypeId == @PPCP07302018.Utils.GlobalFunctions.PaymentType.Credit ? new { @checked = "checked" } : null))
-                        Credit Card
-                    </label>
-                    <label style="font-weight: normal; margin-left:20px">
-                        @(Html.RadioButtonFor(m => m.PaymentTypeId, PPCP07302018.Utils.GlobalFunctions.PaymentType.Cash, Model.PaymentTypeId == @PPCP07302018.Utils.GlobalFunctions.PaymentType.Cash ? new { @checked = "checked" } : null))
-                        Cash
-                    </label>
-                    <label style="font-weight: normal; margin-left:20px">
-                        @(Html.RadioButtonFor(m => m.PaymentTypeId, PPCP07302018.Utils.GlobalFunctions.PaymentType.Check, Model.PaymentTypeId == @PPCP07302018.Utils.GlobalFunctions.PaymentType.Check ? new { @checked = "checked" } : null))
-                        Check
-                    </label><br />
-                    <span id="errPaymentTypeId" style="color:red"></span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                    @Html.Label("Total Paid", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                    @Html.TextBox("TotalPaid", null, new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;", maxlength = 50 })
-                </div>
-                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3"></div>
-                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                    @Html.Label("Payment Date", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                    @( Html.Kendo().DatePickerFor(model => model.PaymentDate).Format("MM/dd/yyyy").Value(DateTime.Today).Max(DateTime.Today).HtmlAttributes(new {  PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text" }))
-                    <span id="errPaymentDate" style="color:red"></span>
-                </div>
-                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                    @Html.Label("Receipt/Transaction Number", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                    @Html.TextBoxFor(model => model.ReceiptNumber, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
-                    <span id="errReceiptNumber" style="color:red"></span>
-                </div>
-            </div>
-            <div class="row"><span id="errorDetail" style="color: orangered"></span></div>
-        </div>
-    </div>
-    
-    <div class="row" style="margin-top: 20px;">
-        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
-            <div align="center">
-                @if (Model.ClaimStatus == "New" || blueStatusList.Contains(Model.ClaimStatusId))
-                {
-                    <button type="button" class="button_blue" title="Submit" style="width: 100px;" onclick="SaveClaim()">
-                        Save
-                    </button>
-                    <button type="submit" class="button_blue" title="Submit" style="width: 100px;" onclick="SubmitClaim()">
-                        Submit
-                    </button>
-                }
-                <button id="btnClose" title="Close" style="width: 100px" class="button_blue" onclick="CancelClaimSubmission()">
-                    Cancel
-                </button>
-            </div>
-            <br />
-        </div>
-    </div>
-</div>
+                                        <legend class="Legendtxtcolor" style="float: left; font-size: 14px; margin-top: 15px;"><b>Fees</b></legend>
+                                        <div class="row">
+                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                @Html.Label("Co-Pay Paid", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                @Html.TextBoxFor(model => model.Copay, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 10, onchange = "CalculateTotalPaid();" })
+                                                <span id="errCopay" style="color:red"></span>
+                                            </div>
+                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                @Html.Label("Other Charges Paid", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                @Html.TextBoxFor(model => model.OtherCharges, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 10, onchange = "CalculateTotalPaid();" })
+                                                <span id="errOtherCharges" style="color:red"></span>
+                                            </div>
+                                            <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
+                                                @Html.Label("Payment Type", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                <label style="font-weight: normal;">
+                                                    @(Html.RadioButtonFor(m => m.PaymentTypeId, PPCP07302018.Utils.GlobalFunctions.PaymentType.Credit, Model.PaymentTypeId == @PPCP07302018.Utils.GlobalFunctions.PaymentType.Credit ? new { @checked = "checked" } : null))
+                                                    Credit Card
+                                                </label>
+                                                <label style="font-weight: normal; margin-left:20px">
+                                                    @(Html.RadioButtonFor(m => m.PaymentTypeId, PPCP07302018.Utils.GlobalFunctions.PaymentType.Cash, Model.PaymentTypeId == @PPCP07302018.Utils.GlobalFunctions.PaymentType.Cash ? new { @checked = "checked" } : null))
+                                                    Cash
+                                                </label>
+                                                <label style="font-weight: normal; margin-left:20px">
+                                                    @(Html.RadioButtonFor(m => m.PaymentTypeId, PPCP07302018.Utils.GlobalFunctions.PaymentType.Check, Model.PaymentTypeId == @PPCP07302018.Utils.GlobalFunctions.PaymentType.Check ? new { @checked = "checked" } : null))
+                                                    Check
+                                                </label><br />
+                                                <span id="errPaymentTypeId" style="color:red"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                @Html.Label("Total Paid", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                @Html.TextBox("TotalPaid", null, new { @class = "customKendoTextBox disabled", @disabled = "disabled", style = "width:100%;", maxlength = 50 })
+                                            </div>
+                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3"></div>
+                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                @Html.Label("Payment Date", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                @( Html.Kendo().DatePickerFor(model => model.PaymentDate).Format("MM/dd/yyyy").Max(DateTime.Today).HtmlAttributes(new {  PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text" }))
+                                                <span id="errPaymentDate" style="color:red"></span>
+                                            </div>
+                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                @Html.Label("Receipt/Transaction Number", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
+                                                @Html.TextBoxFor(model => model.ReceiptNumber, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
+                                                <span id="errReceiptNumber" style="color:red"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row" style="margin-top: 20px;">
+                                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                        <div align="center">
+                                            @if (Model.ClaimStatus == "New" || blueStatusList.Contains(Model.ClaimStatusId))
+                                            {
+                                                <button type="submit" class="button_blue" title="Submit" style="width: 100px;" onclick="SaveClaim()">
+                                                    Save
+                                                </button>
+                                                <button type="submit" class="button_blue" title="Submit" style="width: 100px;" onclick="SubmitClaim()">
+                                                    Submit
+                                                </button>
+                                            }
+                                            <button id="btnClose" title="Close" style="width: 100px" class="button_blue" onclick="CancelClaimSubmission()">
+                                                Cancel
+                                            </button>
+                                        </div>
+                                        <br />
+                                    </div>
+                                </div>
+                            </div>
 
 <script>
     $(document).ready(function () {

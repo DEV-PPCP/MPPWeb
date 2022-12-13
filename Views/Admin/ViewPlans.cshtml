@@ -21,7 +21,7 @@
    });
     function EditOptions(PlanID) {
         $("#PlanID").val(PlanID);
-        var getUrl = '@Url.Action("AddPlans", "Admin")';
+        var getUrl = '@Url.Action("EditPlans", "Admin")';
         var uurl = getUrl + "?PlanID=" + PlanID;
         window.location = uurl;
     }
@@ -59,12 +59,17 @@
                                                     .Columns(columns =>
                                                     {
                                                         columns.Bound(p => p.PlanName).Title("Plan Name").Filterable(true).Width(150);
-                                                        columns.Bound(p => p.FromAge).ClientTemplate("#: FromAge #"+"Y " + "-" +" #: ToAge #"+ "Y").Title("Eligibility").Filterable(false).Width(80);
+                                                        columns.Bound(p => p.FromAge).ClientTemplate("#: FromAge #"+"Y " + "-" +" #: ToAge #"+ "Y").Title("Eligibility").Filterable(false).Width(80).Visible(false);
                                                         columns.Bound(p => p.EnrollFee).Title("Enrollment Fee").Filterable(false).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
                                                         columns.Bound(p => p.MonthlyFee).Title("Plan Fee").Filterable(true).Width(70).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
                                                         columns.Bound(p => p.VisitFee).Title("Co Pay").Filterable(false).Width(70).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
                                                         columns.Bound(p => p.EffectiveDate).Title("Effective Date(MM/DD/YYYY)").Filterable(false).Width(100).ClientTemplate("#= kendo.toString(kendo.parseDate(EffectiveDate,'yyyy-MM-dd'), '" + "MM-dd-yyyy" + "') #").HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
-                                                        columns.Bound(p => p.GenderID).ClientTemplate("#if(GenderID==1){ #Male#}else if(GenderID==2){ #Female#}else{ #Male,Female #}#").Title("Available To").Filterable(false).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                        columns.Bound(p => p.GenderID).ClientTemplate("#if(GenderID==1){ #Male#}else if(GenderID==2){ #Female#}else{ #Male,Female #}#").Title("Available To").Filterable(false).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Visible(false);
+
+                                                        columns.Bound(p => p).Title("Action").Width(60).HtmlAttributes(new { style = "text-align: center" }).ClientTemplate(
+
+                       "<a title='Edit' style='text-decoration: none; cursor: pointer;' onclick='EditOptions(#=PlanID#);'><span class=\"glyphicon glyphicon-pencil\"></span></a> ");
+
                                                         //   columns.Bound(p => p).ClientTemplate(
                                                         //"<a onclick='EditOptions(#=PlanID#);' <span style='cursor:pointer'>Modify</a>").Title("Action").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(50);
                                                     })
