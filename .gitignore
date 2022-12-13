@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/_EventSourceUsersGuide.docx
+/_EventRegisterUsersGuide.docx
+/Properties/PublishProfiles/PPCP.pubxml.user
+/Properties/PublishProfiles/PPCP.pubxml
+/PPCP07302018.csproj.user
+/.vs/PPCP07302018/config/applicationhost.config
