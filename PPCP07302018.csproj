@@ -1371,6 +1371,8 @@
     <Content Include="Views\Admin\BillingDashboard.cshtml" />
     <Content Include="Views\Account\ClaimConfirm.cshtml" />
     <Content Include="Views\Account\ClaimDeny.cshtml" />
+    <Content Include="Views\Admin\EditPlans.cshtml" />
+    <Content Include="Views\Shared\_Plans.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

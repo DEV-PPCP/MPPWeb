@@ -19,6 +19,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using Telerik.Reporting.Processing;
 using static PPCP07302018.Utils.GlobalFunctions;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace PPCP07302018.Controllers
 {
@@ -41,8 +42,30 @@ namespace PPCP07302018.Controllers
             model.LoginType = "MPP";
             return RedirectToAction("MPPLogin", "Account", model);
         }
+        public ActionResult EditPlans(int PlanId)
+        {
+            PPCP07302018.Models.Admin.AddPlans objPlans = new AddPlans();
+            if (PlanId > 0)
+            {
+                DataAccessLayer.ServiceCall<PPCP07302018.Models.Admin.AddPlans> objcall = new DataAccessLayer.ServiceCall<PPCP07302018.Models.Admin.AddPlans>();
+                PPCP07302018.Models.Member.ServiceData ServiceData = new PPCP07302018.Models.Member.ServiceData();
+                string[] ParameterName = new string[] { "PlanId" };
 
-        public ActionResult AddPlans()
+                string[] ParameterValue = new string[] { PlanId.ToString() };
+                ServiceData.ParameterName = ParameterName;
+                ServiceData.ParameterValue = ParameterValue;
+                ServiceData.WebMethodName = "GetPlans";
+                List<PPCP07302018.Models.Admin.AddPlans> objPlansList = objcall.CallServices(Convert.ToInt32(0), "GetPlans", ServiceData);
+                
+                if (objPlansList.Count > 0)
+                {
+                    objPlans = objPlansList[0];
+                }
+               
+            }
+            return View(objPlans);
+        }
+            public ActionResult AddPlans()
         {
             //modelParameter.OrganizationTermsandCondition = Convert.ToString(Session["OrganiationTandCFilePath"]);
             //modelParameter.PatientTermsandCondition = Convert.ToString(Session["PatientTandCFilePath"]);

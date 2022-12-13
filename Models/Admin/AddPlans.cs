@@ -29,7 +29,7 @@ namespace PPCP07302018.Models.Admin
 
         public Nullable<int> ModifiedBy { get; set; }
 
-        public Nullable<int> ModifiedDate { get; set; }
+        public DateTime ModifiedDate { get; set; }
 
         public string PlanTermName { get; set; }
         [Required(ErrorMessage = "This information is required.")]
@@ -58,7 +58,7 @@ namespace PPCP07302018.Models.Admin
         //[Required(ErrorMessage = "This information is required.")]
         public string PlanDescription { get; set; }
         [Required(ErrorMessage = "This information is required.")]
-        public Nullable<System.DateTime> EffectiveDate { get; set; }
+        public DateTime EffectiveDate { get; set; }
 
         public Nullable<int> PlanMemberType { get; set; }
         //[Required(ErrorMessage = "This information is required.")]
