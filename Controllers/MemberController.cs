@@ -514,7 +514,7 @@ namespace PPCP07302018.Controllers
                 OrganizationName.Name = "OrganizationName";
                 OrganizationName.Style.Font.Bold = true;
                 OrganizationName.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(3D), Telerik.Reporting.Drawing.Unit.Pixel(14));
-                string OrganizationNameDisplay = "My Physician Plan";
+                string OrganizationNameDisplay = "MyPhysicianPlan";
                 OrganizationName.Value = OrganizationNameDisplay;
 
                 txtHeading.Name = "Heading";
