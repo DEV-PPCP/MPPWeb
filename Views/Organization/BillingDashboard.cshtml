@@ -75,6 +75,12 @@
 
     <div class="row">
         <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" >
+        <div id="formStatus"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" >
             @(Html.Kendo().Grid<PPCP07302018.Models.MemberVisit>()
             .Name("gridClaims")
             .Columns(columns =>
@@ -95,9 +101,10 @@
 
                 columns.Bound(p => p.SubmitDate).Title("Action").Width(60).HtmlAttributes(new { style = "text-align: center" }).ClientTemplate(
                     "#if(SubmitDate == null){# " +
-                        "<a title='View' style='text-decoration: none; cursor: pointer; ' href=/Organization/ClaimSubmission?mode=edit&VisitId=${VisitId}><span class=\"glyphicon glyphicon-pencil\"></span></a> " +
+                        "<a title='Delete' style='text-decoration: none; cursor: pointer; ' href=/Organization/ClaimSubmission onclick=deleteClaim(${VisitId});event.preventDefault();><span class=\"glyphicon glyphicon-trash\"></span></a> " +
+                        "&nbsp;&nbsp;<a title='Edit' style='text-decoration: none; cursor: pointer; ' href=/Organization/ClaimSubmission?mode=edit&VisitId=${VisitId}><span class=\"glyphicon glyphicon-pencil\"></span></a> " +
                     "#} else {# " +
-                        "<a title='Edit' style='text-decoration: none; cursor: pointer; ' href=/Organization/ClaimSubmission?mode=view&VisitId=${VisitId}><span class=\"glyphicon glyphicon-eye-open\"></span></a> " +
+                        "<a title='View' style='text-decoration: none; cursor: pointer; ' href=/Organization/ClaimSubmission?mode=view&VisitId=${VisitId}><span class=\"glyphicon glyphicon-eye-open\"></span></a> " +
                     "#}#");
 
             })
@@ -130,14 +137,13 @@
 
     function btnSearch() {
        GetClaims('@ServiceUrl', '@Session["OrganizationID"]', $("#ClaimStartDate").val(), $("#ClaimEndDate").val(), $("#ClaimStatus").val());
-
     }
     function btnClear() {
         //set start and end dates in search filter
         var ToDate = kendo.toString(kendo.parseDate(new Date()), 'MM/dd/yyyy');
         $("#ClaimEndDate").data("kendoDatePicker").value(ToDate);
         var dt = new Date();
-        dt.setMonth(dt.getMonth() - 3);
+        dt.setMonth(dt.getMonth() - 1);
         var dd = dt.getDate();
         var mm = dt.getMonth() + 1;
         var y = dt.getFullYear();
@@ -145,6 +151,32 @@
         $("#ClaimStartDate").val(FromDate);
         //to clear grid
         GetClaims('@ServiceUrl', '@Session["OrganizationID"]', $("#ClaimStartDate").val(), $("#ClaimEndDate").val(), $("#ClaimStatus").val());
+    }
+
+    function deleteClaim(VisitId) {
+        //alert("delete");        
+        var webMethodName = "ClaimDelete";
+        var ParameterNames = new Array();
+        var ParameterValues = new Array();
+        ParameterNames[0] = "VisitId";
+        ParameterValues[0] = VisitId;
+        var Url = '@ServiceUrl' + "OrganizationServices";
+        var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
+        $.ajax({
+            type: "POST",
+            url: Url,
+            data: jsonPostString,
+            dataType: "text",
+            contentType: "application/json",
+            success: function (result) {
+                btnSearch();
+                $("#formStatus").html("Saved claim has been deleted. ").addClass("bg-success").css({ "font-size": "large", "font-weight": "bold" }).show().delay(5000).fadeOut();
+                return false;
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                return false;
+            },
+        });
     }
 
 </script>
