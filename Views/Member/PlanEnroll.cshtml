@@ -170,7 +170,7 @@
                 ParameterNames[0] = "OrganizationID";
                 ParameterValues[0] = document.getElementById("SpOrganizationID").innerText;
                 ParameterNames[1] = "MemberID";
-                ParameterValues[1] = '@Session["MemberID"]';
+                ParameterValues[1] = $("#SelectedMemberId").val();
                 ParameterNames[2] = "PlanStartDate";
                 ParameterValues[2] = $("#PlanStartDate").val();
                 ParameterNames[3] = "PlanID";
@@ -212,7 +212,7 @@
                                 TotalAmount = parseFloat(Amount) + parseFloat(InstalmentAmount) + parseFloat(EnrollFee);
                             }
                             $("#AmountPaid").val(TotalAmount);
-                        } else {                            
+                        } else {
                             $("#divValidator").show();
                             document.getElementById("PlanPaymentValidation").innerHTML = "Member Plan Exists. Plan Dates: " + getFormattedDate(list[0].PlanStartDate) + " - " + getFormattedDate(list[0].PlanEndDate) + ". Please select a different start date.";
                             return false;
@@ -559,6 +559,7 @@
 
     function GetEnrollMemberDetails(memberId, firstname, lastname, DOb, Gender, individualFamily)
     {
+        $("#SelectedMemberId").val(memberId);
         $("#hdnFamilyIndividual").val(individualFamily);
         debugger;
         $.ajax({
@@ -919,6 +920,7 @@
                                     </div>
                                     <div>
                                         <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" id="divIndividual" style="display: block; padding-left: 60px; width: 500px; padding-top: 5px;">
+                                            @Html.Hidden("SelectedMemberId")
                                             @(Html.Kendo().Grid<PPCP07302018.Models.Member.MemberDetails>
                                                     ()
                                                     .Name("IndividualsMemberGrid")

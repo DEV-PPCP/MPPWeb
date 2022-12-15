@@ -463,6 +463,71 @@ function CheckMemberExists(FirstName, LastName, Gender, DOB, MobileNumber, Age, 
     });
 }
 
+var FilteredPlans;
+function BindingPlansGridBasedOnFilters(OrganizationID, ProviderID, PlanID, StateId, CityId, zip, Url) {
+    debugger;
+
+    var webMethodName = "GetPPCPOrganizationProviderPlansBasedonFilters";
+    var ParameterNames = new Array();
+    var ParameterValues = new Array();
+    ParameterNames[0] = "OrganizationID";
+    ParameterValues[0] = OrganizationID;
+    ParameterNames[1] = "ProviderID";
+    ParameterValues[1] = ProviderID;
+    ParameterNames[2] = "PlanID";
+    ParameterValues[2] = PlanID;
+    ParameterNames[3] = "StateID";
+    ParameterValues[3] = StateId;
+    ParameterNames[4] = "CityID";
+    ParameterValues[4] = CityId;
+    ParameterNames[5] = "ZIP";
+    ParameterValues[5] = zip;
+    var Url = Url + "DefaultService";
+    var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
+    $.ajax({
+        type: "POST",
+        url: Url,
+        data: jsonPostString,
+        dataType: "text",
+        contentType: "application/json",
+        success: function (result) {
+            debugger;
+            $("#PlansGrid").data("kendoGrid").dataSource.data("");
+            $("#divSelectPlan").show();
+            var obj = jQuery.parseJSON(result);
+            var PlansList = obj[0];
+            //select distinct providers
+            var providerList = [];
+            $.each(PlansList, function (index, obj) {
+                var a = $.grep(providerList, function (e) {
+                    return obj.ProviderID === e.ProviderID && obj.OrganizationID === e.OrganizationID;
+                });
+                if (a.length === 0) {
+                    providerList.push(obj);
+                }
+            });
+            $("#gridProviders").data("kendoGrid").dataSource.data(providerList);
+
+            FilteredPlans = PlansList;
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            res = '';
+            //callback(res);
+            ErrorMessage(webMethodName, textStatus);
+        },
+    });
+}
+
+function BindPlansGrid(OrganizationID, ProviderID) {
+    debugger;
+    var plansList = FilteredPlans.filter(element => {
+        return element.OrganizationID == OrganizationID && element.ProviderID == ProviderID;
+    });
+    $("#PlansGrid").data("kendoGrid").dataSource.data(plansList);
+    $("#PlansPayment").data("kendoGrid").dataSource.data("");
+    $("#btnstepNext").hide();
+}
+
 function BindingPlansGrids(OrganizationID, ProviderID, PlanID, MemberGender, MemberAge, url) {
     debugger;
     var webMethodName = "GetPPCPOrganizationProviderPlans";
@@ -502,15 +567,12 @@ function BindingPlansGrids(OrganizationID, ProviderID, PlanID, MemberGender, Mem
 
             $("#PlansGrid").data("kendoGrid").dataSource.data(PlansList);
 
-
-
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             ErrorMessage(webMethodName, textStatus);
         },
     });
 }
-
 
 function BindPlans(OrganizationID, ProviderID, PlanID, MemberGender, MemberAge, url) {
     debugger;

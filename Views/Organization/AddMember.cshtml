@@ -129,18 +129,20 @@
         var OrganizationID='@Session["OrganizationID"]';
         $("#OrganizationID").val(OrganizationID);
         GetIpAddress();
-       BindCountries('@ServiceUrl');
+        BindCountries('@ServiceUrl');
         BindStates(countryID, '@ServiceUrl');
         BindCities(stateID,'@ServiceUrl');
-        BindingPlansGrids(OrganizationID, "0", "0", "", "0", '@ServiceUrl');
-        $("#chkMemberCredentials").click(function () {
+        //BindingPlansGrids(OrganizationID, "0", "0", "", "0", '@ServiceUrl');
+        BindingPlansGridBasedOnFilters(OrganizationID, "0", "0", "0", "0", "0", '@ServiceUrl');
 
+        $("#chkMemberCredentials").click(function () {
             if ($('#chkMemberCredentials').is(":checked") == true) {
                 $("#MemberCredentials").show();
             } else if ($('#chkMemberCredentials').is(":checked") == false) {
                 $("#MemberCredentials").hide();
             }
         });
+
         $("#chk2factor").click(function () {
             if ($('#chk2factor').is(":checked") == true) {
                 $("#divEnableFactor").show();
@@ -148,49 +150,48 @@
                 $("#divEnableFactor").hide();
             }
         });
+
         //when enroll plan check box clicked
         var MemberDetailsValidator = $("#fsMemberDetails").kendoValidator().data("kendoValidator");
         $("#chkEnroll").click(function () {
             if ($('#chkEnroll').is(":checked") == true) {
-            debugger;
-            var PasswordErrorMsg = document.getElementById("PasswordErrorMsg").innerText;
-            var spnUserName = document.getElementById("spnUserName").innerText;
-            if (MemberDetailsValidator.validate() && PasswordErrorMsg == "" && spnUserName == "") {
-                // e.preventDefault();
+                debugger;
+                var PasswordErrorMsg = document.getElementById("PasswordErrorMsg").innerText;
+                var spnUserName = document.getElementById("spnUserName").innerText;
+                if (MemberDetailsValidator.validate() && PasswordErrorMsg == "" && spnUserName == "") {
+                    // e.preventDefault();
 
-                //Check Memer exists or not by vinod
-                var Gender=0;
-                var rbtnMale = $('input[id=rbtnGenderMale]:checked').val();
-                if (rbtnMale == 1)
-                {
-                    Gender= 1;
-                }else{
-                    Gender=2;
+                    //Check Memer exists or not by vinod
+                    var Gender=0;
+                    var rbtnMale = $('input[id=rbtnGenderMale]:checked').val();
+                    if (rbtnMale == 1)
+                    {
+                        Gender= 1;
+                    }else{
+                        Gender=2;
+                    }
+                    var Age=$("#Age").val();
+                    $("#hdnAge").val(Age);
+                    $("#hdnGender").val(Gender);
+                    CheckMemberExists($("#FirstName").val(),$("#LastName").val(),Gender, $("#DOB").data('kendoDatePicker').value(), $("#MobileNumber").val(),Age,'@ServiceUrl');
                 }
-                var Age=$("#Age").val();
-                $("#hdnAge").val(Age);
-                $("#hdnGender").val(Gender);
-                CheckMemberExists($("#FirstName").val(),$("#LastName").val(),Gender, $("#DOB").data('kendoDatePicker').value(), $("#MobileNumber").val(),Age,'@ServiceUrl');
-
-
+                else {
+                    document.getElementById("CityNameList_validationMessage").style.wordWrap = "break-word";
+                    return false;
+                }
             }
-            else {
-                document.getElementById("CityNameList_validationMessage").style.wordWrap = "break-word";
-                return false;
+            else if ($('#chkEnroll').is(":checked") == false) {
+                $("#divCarddetails").hide();
+                $("#divSelectPlan").hide();
+                $("#SearchPlan").hide();
+                $("#divSelectPlan").hide();
+                $("#EnrollPlan").hide();
+             //   $("#divStep1").hide();
+                $("#btnSubmit").show();
+                $("#divTermsConditionsSubmit").show();
             }
-        }
-        else if ($('#chkEnroll').is(":checked") == false) {
-            $("#divCarddetails").hide();
-            $("#divSelectPlan").hide();
-            $("#SearchPlan").hide();
-            $("#divSelectPlan").hide();
-            $("#EnrollPlan").hide();
-         //   $("#divStep1").hide();
-            $("#btnSubmit").show();
-            $("#divTermsConditionsSubmit").show();
-
-        }
         });
+
         $("#chkPayNow").click(function () {
             if ($('#chkPayNow').is(":checked") == true) {
                 var  TotalAmount=0;
@@ -215,16 +216,16 @@
                 document.getElementById("CVV").innerHTML="";
             }
         });
+
     //Enter Only numbers in Mobile Number Textbox
         $(".Text").keypress(function (e) {
-        var x = "";
-        x = x + e.currentTarget.value + ",";
-        if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
-        //alert("Numbers only allowed");
-        return false;
+            var x = "";
+            x = x + e.currentTarget.value + ",";
+            if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+            //alert("Numbers only allowed");
+            return false;
         }
-        });
-
+    });
 
         function MembeDetail()
         {
@@ -326,7 +327,6 @@
             var ProviderID = dataItem.ProviderID;
 
             BindPlans(OrganizationID, ProviderID, PlanID,$("#hdnGender").val(),$("#hdnAge").val(),'@ServiceUrl');
-
         });
     }
     function onPlansPaymentDataBound() {
@@ -923,31 +923,60 @@
                                             <div class="row Panel_bg_Sub" id="fssearchplan" style="margin:0px;width:100%;">
                                                 <br />
                                                 <div id="divSelectPlan" style="display:block;">
+                                                    <br />
+                                                    <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Select a Provider</b></legend>
+                                                    <div class="form-group">
+                                                        <div class="row">
+                                                            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                                                @(Html.Kendo().Grid<PPCP07302018.Models.Member.MemberDetails> ()
+                                                                    .Name("gridProviders")
+                                                                    .Columns(columns =>
+                                                                    {
+                                                                        columns.Bound(p => p.ProviderID).ClientTemplate("<input type='radio' name='ProviderID' value='#= ProviderID #' onclick=\"BindPlansGrid('#=OrganizationID#', '#=ProviderID#');\" />").Title("Select").Filterable(false).Width(50);
+                                                                        columns.Bound(p => p.OrganizationName).Title("Organization Name").Filterable(true).Width(100);
+                                                                        columns.Bound(p => p.ProviderName).Title("Provider Name").Filterable(true).Width(100);
+                                                                        columns.Bound(p => p.ProviderAddress).Title("ProviderAddress").Filterable(true).Width(150);
+
+                                                                    })
+                                                                    .Scrollable().Sortable()
+                                                                    .Pageable()
+                                                                    //.Filterable()
+                                                                    .AutoBind(false)
+                                                                    .HtmlAttributes(new { })
+                                                                    //.Selectable()
+                                                                    .DataSource(dataSource => dataSource
+                                                                    .Ajax()
+                                                                    .PageSize(5)
+                                                                    .ServerOperation(false)))
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <br />
                                                     <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Select a Plan</b>:</legend>
                                                     <div class="form-group">
                                                         <div class="row">
                                                             <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
-                                                                @(Html.Kendo().Grid<PPCP07302018.Models.Member.MemberDetails>
-                                                    ()
-                                                    .Name("PlansGrid")
-                                                    .Events(e => e.DataBound("onDataBound"))
-                                                    .Columns(columns =>
-                                                    {
-                                                        columns.Bound(p => p.PlanID).ClientTemplate("<input type='radio' name='PlanID' value='#= PlanID #' />").Title("Select").Filterable(false).Width(50);
-                                                        //columns.Bound(p => p.Specialization).Title("Specialization").Filterable(true).Visible(false);
-                                                        columns.Bound(p => p.PlanName).Title("Plan Name").Filterable(true).Width(100);
-                                                        columns.Bound(p => p.ProviderName).Title("Provider Name").Filterable(true).Width(100);
-                                                    })
-                                                    .Scrollable()
-                                                    .Pageable()
-                                                    .Filterable()
-                                                    .AutoBind(false)
-                                                    .HtmlAttributes(new { })
-                                                    .Selectable()
-                                                    .DataSource(dataSource => dataSource
-                                                    .Ajax()
-                                                    .PageSize(5)
-                                                    .ServerOperation(false)))
+                                                                @(Html.Kendo().Grid<PPCP07302018.Models.Member.MemberDetails> ()
+                                                                    .Name("PlansGrid")
+                                                                    .Events(e => e.DataBound("onDataBound"))
+                                                                    .Columns(columns =>
+                                                                    {
+                                                                        columns.Bound(p => p.PlanID).ClientTemplate("<input type='radio' name='PlanID' value='#= PlanID #' />").Title("Select").Filterable(false).Width(50);
+                                                                        //columns.Bound(p => p.Specialization).Title("Specialization").Filterable(true).Visible(false);
+                                                                        columns.Bound(p => p.PlanName).Title("Plan Name").Filterable(true).Width(100);
+                                                                        columns.Bound(p => p.ProviderName).Title("Provider Name").Filterable(true).Width(100);
+                                                                    })
+                                                                    .Scrollable()
+                                                                    .Pageable()
+                                                                    .Filterable()
+                                                                    .AutoBind(false)
+                                                                    .HtmlAttributes(new { })
+                                                                    .Selectable()
+                                                                    .DataSource(dataSource => dataSource
+                                                                    .Ajax()
+                                                                    .PageSize(5)
+                                                                    .ServerOperation(false)))
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1044,7 +1073,7 @@
                                                                 <span id="Status" style="display:none;"></span>
                                                             </div>
                                                         </div>
-                                                       
+
                                                     </div>
                                                 </div>
                                             </div>
