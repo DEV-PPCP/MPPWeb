@@ -68,6 +68,32 @@ function BindOrganizations(Url, orgId) {
         },
     });
 }
+
+function ConvertOrgBillingType(OrgId, Url) {
+    var webMethodName = "ConvertOrganizationBillingType";
+    var ParameterNames = new Array();
+    var ParameterValues = new Array();
+    ParameterNames[0] = "OrganizationId";
+    ParameterValues[0] = OrgId;
+    var Url = Url + "OrganizationServices";
+    var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
+    $.ajax({
+        type: "POST",
+        url: Url,
+        data: jsonPostString,
+        dataType: "text",
+        contentType: "application/json",
+        success: function (result) {
+            debugger;
+            var res = jQuery.parseJSON(result);
+            var obj = res[0];
+            $("#formStatus").html("Organization Billing Type Converted. ").addClass("bg-success").css({ "font-size": "large", "font-weight": "bold" }).show().delay(5000).fadeOut();
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+        },
+    });
+}
+
 //To Bind States dropdownlist based on CountryID by Ragini
 function BindStates(CountryID, ContolID, Url, tempValue) {
     if (tempValue == "2") {

@@ -42,16 +42,16 @@ function BindSubscribeDetails(url, OrganizationID, Type) {
             $("#divMainPlan").find(".loadingSpinner:first").remove();
             var obj = jQuery.parseJSON(result);
             var PlansList = obj[0];
-            if (PlansList[0].GenderID == 1) {
-                document.getElementById("spnAvailable").innerHTML = "Male";
+            //if (PlansList[0].GenderID == 1) {
+            //    document.getElementById("spnAvailable").innerHTML = "Male";
 
-            }
-            else if (PlansList[0].GenderID == 2) {
-                document.getElementById("spnAvailable").innerHTML = "Female";
-            }
-            else {
-                document.getElementById("spnAvailable").innerHTML = "Male,Female";
-            }
+            //}
+            //else if (PlansList[0].GenderID == 2) {
+            //    document.getElementById("spnAvailable").innerHTML = "Female";
+            //}
+            //else {
+            //    document.getElementById("spnAvailable").innerHTML = "Male,Female";
+            //}
 
             $("#ViewSubscribePlanDetailsGrid").data("kendoGrid").dataSource.data(PlansList);
            

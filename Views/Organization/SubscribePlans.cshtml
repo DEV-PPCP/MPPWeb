@@ -419,22 +419,23 @@
                                 .Columns(columns =>
                                 {
                                     columns.Bound(p => p.PlanName).Title("Plan Name").Filterable(false).Width(150);
-                                    columns.Bound(p => p.FromAge).ClientTemplate("#: FromAge #" + "Y " + "-" + " #:ToAge #" + "Y").Title("Eligibility").Filterable(false).Width(100);
-                                    columns.Bound(p => p.ToAge).Title("ToAge").Filterable(false).Visible(false);
-                                    columns.Bound(p => p.EnrollFee).Title("Enrollment Fee").Filterable(false).Width(120).Visible(false);
+                                    columns.Bound(p => p.BillingType).Title("Billing Type").Filterable(false).Width(150);
+                                    //columns.Bound(p => p.FromAge).ClientTemplate("#: FromAge #" + "Y " + "-" + " #:ToAge #" + "Y").Title("Eligibility").Filterable(false).Width(100);
+                                    //columns.Bound(p => p.ToAge).Title("ToAge").Filterable(false).Visible(false);
+                                    columns.Bound(p => p.EnrollFee).Title("Enrollment Fee($)").Filterable(false).Width(130);
                                     columns.Bound(p => p.MonthlyFee).Title("Plan Fee($)").Filterable(false).Width(100);
-                                    columns.Bound(p => p.VisitFee).Title("Visit Fee").Filterable(false).Width(100).Visible(false);
+                                    columns.Bound(p => p.VisitFee).Title("Copay").ClientTemplate("In-person Visit: $#:VisitFee#<br/> Televisit: $#:TeleVisitFee#").Filterable(false).Width(150);
                                     columns.Bound(p => p.EffectiveDate).Title("Effective Date").Filterable(false).Encoded(true).ClientTemplate("#= kendo.toString(kendo.parseDate(EffectiveDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') #").Width(120);
-                                    columns.Bound(p => p.GenderID).ClientTemplate("#if(GenderID==1){ #Male#}else if(GenderID==2){ #Female#}else{ #Male,Female #}#").Title("Available To").Filterable(false).Width(120);
-                                    columns.Bound(p => p.PaymentIntervals).Title("Payment Intervals").Filterable(true).Visible(false);
-                                    columns.Bound(p => p.PlanTermMonths).Title("Payment schedule").Filterable(false).Visible(false);
-                                    columns.Bound(p => p.PlanTermName).Title("PlanTermName").Filterable(false).Visible(false);
-                                    columns.Bound(p => p.PlanDescription).Title("Plan Description").Filterable(true).Visible(false);
-                                    columns.Bound(p => p.PlanType).Title("Plan Type").Filterable(false).Visible(false);
-                                    columns.Bound(p => p.OrgID).Title("OrgID").Filterable(false).Visible(false);
-                                    columns.Bound(p => p.MapID).Title("OrgID").Filterable(false).Visible(false);
-                                    columns.Bound(p => p.OrganizationTAndCPath).Title("OrganizationTAndCPath").Filterable(false).Visible(false);
-                                    columns.Bound(p => p.MemberName).Width(100).ClientTemplate("<a onclick='ViewDetails(#=PlanID#,#=PaymentIntervals#,\"#=FromAge#\",\"#=ToAge#\",\"#=PlanName#\",\"#=EnrollFee#\",\"#=MonthlyFee#\",\"#=VisitFee#\",\"#=EffectiveDate#\",\"#=GenderID#\",\"#=PlanTermName#\",\"#=PlanDescription#\",\"#=PlanType#\",\"#=OrgID#\",\"#=OrganizationTAndCPath#\");' <span style='cursor:pointer'>View</a>").Width(150).Title("Action");
+                                    //columns.Bound(p => p.GenderID).ClientTemplate("#if(GenderID==1){ #Male#}else if(GenderID==2){ #Female#}else{ #Male,Female #}#").Title("Available To").Filterable(false).Width(120);
+                                    //columns.Bound(p => p.PaymentIntervals).Title("Payment Intervals").Filterable(true).Visible(false);
+                                    //columns.Bound(p => p.PlanTermMonths).Title("Payment schedule").Filterable(false).Visible(false);
+                                    //columns.Bound(p => p.PlanTermName).Title("PlanTermName").Filterable(false).Visible(false);
+                                    //columns.Bound(p => p.PlanDescription).Title("Plan Description").Filterable(true).Visible(false);
+                                    //columns.Bound(p => p.PlanType).Title("Plan Type").Filterable(false).Visible(false);
+                                    //columns.Bound(p => p.OrgID).Title("OrgID").Filterable(false).Visible(false);
+                                    //columns.Bound(p => p.MapID).Title("OrgID").Filterable(false).Visible(false);
+                                    //columns.Bound(p => p.OrganizationTAndCPath).Title("OrganizationTAndCPath").Filterable(false).Visible(false);
+                                    columns.Bound(p => p.MemberName).Width(100).ClientTemplate("<a onclick='ViewDetails(#=PlanID#,#=PaymentIntervals#,\"#=FromAge#\",\"#=ToAge#\",\"#=PlanName#\",\"#=EnrollFee#\",\"#=MonthlyFee#\",\"#=VisitFee#\",\"#=EffectiveDate#\",\"#=GenderID#\",\"#=PlanTermName#\",\"#=PlanDescription#\",\"#=PlanType#\",\"#=OrgID#\",\"#=OrganizationTAndCPath#\");' <span style='cursor:pointer'>View</a>").Width(150).Title("Action").Filterable(false);
                                     columns.Bound(p => p).ClientTemplate(
                               "# if (OrgID== 0) { #" + "<a onclick='EditOptions(#=PlanID#,#=PaymentIntervals#,\"#=FromAge#\",\"#=ToAge#\",\"#=PlanName#\",\"#=EnrollFee#\",\"#=MonthlyFee#\",\"#=VisitFee#\",\"#=EffectiveDate#\",\"#=GenderID#\",\"#=PlanTermName#\",\"#=PlanDescription#\",\"#=PlanType#\",\"#=OrgID#\",\"#=OrganizationTAndCPath#\");' <span style='cursor:pointer'>Subscribe</a>" + "# } else { #" + "<a onclick='UnSubscribed(#=PlanID#,#=MapID#,\"#=PlanName#\",);'<span style='cursor:pointer'>Unsubscribe</a>" + "# } #").Title("Action").Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(150);
 
@@ -544,13 +545,14 @@
 
                                                         // columns.Bound(p => p).ClientTemplate("<a onclick='ProviderPlan(\"#=PlanID#\",\"#=PlanName#\")'; <span style='cursor:pointer'><input type='checkbox' value='#= PlanID #' id='check'></a>").Title("Select").Width(60).Filterable(false);
                                                         columns.Bound(p => p.PlanName).Title("Plan Name").Filterable(false).Width(150);
-                                                        columns.Bound(p => p.FromAge).ClientTemplate("#: FromAge #" + "Y " + "-" + " #: ToAge #" + "Y").Title("Eligibility").Filterable(false).Width(100);
-                                                        columns.Bound(p => p.EnrollFee).Title("Enrollment Fee").Filterable(false).Width(130);
-                                                        columns.Bound(p => p.MonthlyFee).Title("Monthly Fee").Filterable(false).Width(100);
-                                                        columns.Bound(p => p.VisitFee).Title("Visit Fee").Filterable(false).Width(100);
+                                                        columns.Bound(p => p.BillingType).Title("Billing Type").Filterable(false).Width(150);
+                                                        //columns.Bound(p => p.FromAge).ClientTemplate("#: FromAge #" + "Y " + "-" + " #: ToAge #" + "Y").Title("Eligibility").Filterable(false).Width(100);
+                                                        columns.Bound(p => p.EnrollFee).Title("Enrollment Fee($)").Filterable(false).Width(130);
+                                                        columns.Bound(p => p.MonthlyFee).Title("Plan Fee($)").Filterable(false).Width(100);
+                                                        columns.Bound(p => p.VisitFee).Title("Copay").ClientTemplate("In-person Visit: $#:VisitFee#<br/> Televisit: $#:TeleVisitFee#").Filterable(false).Width(150);
                                                         columns.Bound(p => p.MapID).Title("PlanMapID").Filterable(false).Width(100).Visible(false);
                                                         columns.Bound(p => p.EffectiveDate).Title("Effective Date").Filterable(false).Width(130).Encoded(true).ClientTemplate("#= kendo.toString(kendo.parseDate(EffectiveDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') #");
-                                                        columns.Bound(p => p.GenderID).ClientTemplate("#if(GenderID==1){ #Male#}else if(GenderID==2){ #Female#}else{ #Male,Female #}#").Title("Available To").Filterable(false).Width(100);
+                                                        //columns.Bound(p => p.GenderID).ClientTemplate("#if(GenderID==1){ #Male#}else if(GenderID==2){ #Female#}else{ #Male,Female #}#").Title("Available To").Filterable(false).Width(100);
                                                         columns.Bound(p => p.ProviderTAndCPath).Title("ProviderTAndCPath").Filterable(false).Visible(false);
                                                         columns.Bound(p => p).ClientTemplate(
                                                      "# if (OrgID== 0) { #" + "<a onclick='UnSubscribedProviderPlan(#=MapID#);' <span style='cursor:pointer'>Unsubscribe</a>" + "# } else { #" + "<a onclick='ProviderPlan(#=PlanID#,#=PaymentIntervals#,\"#=FromAge#\",\"#=ToAge#\",\"#=PlanName#\",\"#=EnrollFee#\",\"#=MonthlyFee#\",\"#=VisitFee#\",\"#=EffectiveDate#\",\"#=GenderID#\",\"#=PlanTermName#\",\"#=PlanDescription#\",\"#=PlanType#\",\"#=OrgID#\",\"#=ProviderTAndCPath#\");' <span style='cursor:pointer'>Subscribe</a>" + "# }  #").Title("Action").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(150);

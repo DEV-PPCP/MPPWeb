@@ -264,6 +264,8 @@ namespace PPCP07302018.Models.Member
         public Nullable<decimal> AmountPaid { get; set; }
         public Nullable<decimal> DueAmount { get; set; }
         public Nullable<decimal> Discount { get; set; }
+        public int BillingTypeID { get; set; }
+        public string BillingType { get; set; }
         public Nullable<int> PlanTermMonths { get; set; }
         public Nullable<decimal> VisitFee { get; set; }
         public Nullable<decimal> TeleVisitFee { get; set; }

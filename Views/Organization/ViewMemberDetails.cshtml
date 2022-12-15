@@ -798,10 +798,11 @@
                                         .Columns(columns =>
                                         {
                                             columns.Bound(p => p.PlanName).Title("Plan Name").Width(130);
+                                            columns.Bound(p => p.BillingType).Title("Billing Type").Filterable(false).Width(150);
                                             columns.Bound(p => p.PlanStartDate).Title("Plan Start Date").ClientTemplate("#= kendo.toString(kendo.parseDate(PlanStartDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') #").Filterable(true).Width(120);
                                             columns.Bound(p => p.PlanEndDate).Title("Plan End Date").ClientTemplate("#= kendo.toString(kendo.parseDate(PlanEndDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') #").Filterable(true).Width(120);
-                                            columns.Bound(p => p.VisitFee).Title("In Person Copay").Width(130);
-                                            columns.Bound(p => p.TeleVisitFee).Title("Tele Visit Copy").Width(130);
+                                            columns.Bound(p => p.VisitFee).Title("Copay").ClientTemplate("In-person Visit: $#:VisitFee#<br/> Televisit: $#:TeleVisitFee#").Filterable(false).Width(150);
+                                            //columns.Bound(p => p.TeleVisitFee).Title("Tele Visit Copy").Width(130);
                                             columns.Bound(p => p.IsActive).Width(100)
                                                         .ClientTemplate("#if(IsActive) {# " +
                                                                               "Active" +

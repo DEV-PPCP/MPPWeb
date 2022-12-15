@@ -55,7 +55,7 @@
         $("#fsLabOrderSearch").show();
         GetOrganizationDetails('0', '@ServiceUrl');
          BindOrganizations("@ServiceUrl");
-        BindStates("1", "StateName", '@ServiceUrl', "1");
+        //BindStates("1", "StateName", '@ServiceUrl', "1");
     });
     function setCollapsePanel(dvSearchFilterHeader, dvSearchFilter) {
         $(dvSearchFilter).slideToggle('slow');
@@ -82,6 +82,21 @@
         //BindOrganizations('@ServiceUrl', $("#OrganizationID").val());
         GetOrganizationDetails($("#OrganizationID").val(), '@ServiceUrl');
     }
+
+    var OrgId = 0;
+    function ConvertBillingType(OrganizationID) {        
+        OrgId = OrganizationID;
+        $("#popupConfirmation").show();
+        $("#confirmType").val("ConvertBillingType")
+        $("#lblconfirmMessage").html("Are you sure you want to convert the Organization Billing Type?");
+    }
+
+    function confirmPopUpYes() {
+        if ($("#confirmType").val() == "ConvertBillingType") {
+            ConvertOrgBillingType(OrgId, '@ServiceUrl');
+            $("#popupConfirmation").hide();
+        }
+    }
 </script>
 <div class="pageheading_bar" align="center">
     <b>Organization Details</b>
@@ -91,12 +106,12 @@
 
         <div class="form-group" id="divproviderGrid">
             <div class="row">
-                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" >
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
                     <div class="pageheading_bar" style="display:none">
                         Search Organization
                     </div>
                     <fieldset id="fsLabOrderSearch" style="display:none">
-                        <div class="form-group"  style="display:none">
+                        <div class="form-group" style="display:none">
                             <div id="dvSearchFilterHeader" style="cursor: pointer;" onclick="CollapsiblePanels(document.getElementById('dvSearchFilterHeader'),document.getElementById('dvSearchFilter'));"
                                  class="PanelTopBar">
                                 <span id="4_lblSearchPat" style="font-size:15px;font-weight:normal;color: White;">Search</span>
@@ -105,21 +120,21 @@
                                 <div id="arrow" class="ArrowClose"></div>
                             </div>
                         </div>
-                        <div id="dvSearchFilter" style="display: block;" >
+                        <div id="dvSearchFilter" style="display: block;">
                             <div class="Page_Dimmer1">
                             </div>
                             <div class="PopupHolder2" style="height:auto;">
 
                                 <div class="Panel_bg_Sub" style="padding-left:300px">
                                     <div style="width: 100%;height:auto;">
-                                        
-                                            @*<div class="row" >*@
-                                                
-                                                    @*<div class="col-xs-12 col-md-3 col-sm-6 col-lg-3" align="center">*@
-                                                <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6" >
-                                                   
 
-                                                   @(Html.Kendo().AutoCompleteFor(model => model.OrganizationName)
+                                        @*<div class="row" >*@
+
+                                        @*<div class="col-xs-12 col-md-3 col-sm-6 col-lg-3" align="center">*@
+                                        <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
+
+
+                                            @(Html.Kendo().AutoCompleteFor(model => model.OrganizationName)
                                                     .Name("OrganizationName")
                                                     .MinLength(3)
                                                     .Placeholder("Enter OrganizationName")
@@ -137,54 +152,58 @@
                                                             read.Action("OrganizationSearchAutoComplete", "Admin").Data("onOrgAdditionalData");
                                                         }).ServerFiltering(true);
                                                     }))
-                                                    </div>
+                                        </div>
                                         <br />
                                         <br />
-                                                    <div class="col-xs-12 col-md-6 col-sm-6 col-lg-10" style="padding-left:70px">
-                                                        <button type="button" id="btnSearch" title="Search" style="width: 100px;" class="button_blue" value="Search" onclick="btnSearch()">
-                                                            Search
-                                                        </button>
-                                                        <button type="button" id="btnClear" title="Search" style="width: 100px;" class="button_blue" value="Clear" onclick="@("window.location.href='" + @Url.Action("ViewOrganizations", "Admin") + "'");">
-                                                            Clear
-                                                        </button>
-                                                    </div>
-                                                    <br />
-                                                    @Html.ValidationMessageFor(model => model.OrganizationName)
-                                                    @Html.HiddenFor(m => m.OrganizationID)
-                                                    <script type="text/javascript">
-                                                        
-                                                        function OnOrganizationSelectChange(e) {
-                                                            $("#OrganizationId").val("");
-                                                            var dataItem = this.dataItem(e.item.index());
-                                                            $("#OrganizationName").val(dataItem.OrganizationName);
-                                                            $("#OrganizationID").val(dataItem.OrganizationID);
-                                                            var OrganizationID = $("#OrganizationID").val();
+                                        <div class="col-xs-12 col-md-6 col-sm-6 col-lg-10" style="padding-left:70px">
+                                            <button type="button" id="btnSearch" title="Search" style="width: 100px;" class="button_blue" value="Search" onclick="btnSearch()">
+                                                Search
+                                            </button>
+                                            <button type="button" id="btnClear" title="Search" style="width: 100px;" class="button_blue" value="Clear" onclick="@("window.location.href='" + @Url.Action("ViewOrganizations", "Admin") + "'");">
+                                                Clear
+                                            </button>
+                                        </div>
+                                        <br />
+                                        @Html.ValidationMessageFor(model => model.OrganizationName)
+                                        @Html.HiddenFor(m => m.OrganizationID)
+                                        <script type="text/javascript">
 
-                                                        }
-                                                        function onOrgAdditionalData() {
-                                                            return {
-                                                                text: $("#OrganizationName").val()
-                                                            }
-                                                        }
-                                                        function OnOrganizationchangeEvent() {
+                                            function OnOrganizationSelectChange(e) {
+                                                $("#OrganizationId").val("");
+                                                var dataItem = this.dataItem(e.item.index());
+                                                $("#OrganizationName").val(dataItem.OrganizationName);
+                                                $("#OrganizationID").val(dataItem.OrganizationID);
+                                                var OrganizationID = $("#OrganizationID").val();
 
-                                                        }
-                                                    </script>
+                                            }
+                                            function onOrgAdditionalData() {
+                                                return {
+                                                    text: $("#OrganizationName").val()
+                                                }
+                                            }
+                                            function OnOrganizationchangeEvent() {
+
+                                            }
+                                        </script>
 
 
-                                                    </div>
-                                                @*</div>*@
+                                    </div>
+                                    @*</div>*@
 
-                                        @*</div>*@
+                                    @*</div>*@
 
                                     @*</div>*@
                                 </div>
                             </div>
                         </div>
-                    </fieldset>   
-
+                    </fieldset>
+                    <div class="row">
                         <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
-                            @(Html.Kendo().Grid<PPCP07302018.Models.Organization.OrganizationDetails>()
+                            <div id="formStatus"></div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                        @(Html.Kendo().Grid<PPCP07302018.Models.Organization.OrganizationDetails>()
                                                 .Name("gvOrganizationGrid")
                                                 .Columns(columns =>
                                                 {
@@ -197,8 +216,8 @@
                                                     columns.Bound(p => p.CityName).Title("CityName").Filterable(false).Width(120).Visible(true);
                                                     columns.Bound(p => p.Zip).Title("Zip").Filterable(false).Width(120).Visible(true);
 
-                                                    //columns.Bound(p => p).ClientTemplate(
-                                                    //    "<a onclick='EditOptions(#=ProviderID#,\"#=FirstName#\",\"#=LastName#\",\"#=CountryCode#\",\"#=MobileNumber#\",\"#=DOB#\",\"#=Gender#\",\"#=Email#\",\"#=CountryName#\",\"#=StateName#\",\"#=CityName#\",\"#=Zip#\",\"#=Salutation#\",\"#=NPI#\");' <span style='cursor:pointer'>View</a>").Title("Action").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(50);
+                                                    columns.Bound(p => p).ClientTemplate(
+                                                        "<a onclick='ConvertBillingType(#=OrganizationID#);' <span style='cursor:pointer'>Convert Billing Type</a>").Title("Action").Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
                                                 })
                                                 .Scrollable()
                                                 .AutoBind(false)
@@ -210,8 +229,8 @@
                                                 .Ajax()
                                                 .PageSize(5)
                                                 .ServerOperation(false)))
-                        </div>
                     </div>
+                </div>
                 
             </div>
         </div>

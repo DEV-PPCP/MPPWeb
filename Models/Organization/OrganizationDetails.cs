@@ -699,9 +699,14 @@ namespace PPCP07302018.Models.Organization
         public string PaymentIntervals { get; set; }
         public Nullable<bool> IsActive { get; set; }
 
+         public int BillingTypeId { get; set; }
+        public string BillingType { get; set; }
+
         public string PlanTermName { get; set; }
         public Nullable<int> PlanTermMonths { get; set; }
         public Nullable<decimal> VisitFee { get; set; }
+        public Nullable<decimal> TeleVisitFee { get; set; }
+        public Nullable<int> MaxAllowedClaims { get; set; }
         public Nullable<decimal> EnrollFee { get; set; }
         public Nullable<int> FromAge { get; set; }
         public Nullable<int> ToAge { get; set; }

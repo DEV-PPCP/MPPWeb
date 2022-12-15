@@ -223,6 +223,32 @@ function BindSalutation(Salutation) {
     });
 }
 
+function ConvertOrgBillingType(Url) {
+    var webMethodName = "ConvertOrganizationBillingType";
+    var ParameterNames = new Array();
+    var ParameterValues = new Array();
+    ParameterNames[0] = "OrganizationID";
+    ParameterValues[0] = $("#OrganizationID").val();
+    var Url = Url + "Organization";
+    var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
+    $.ajax({
+        type: "POST",
+        url: Url,
+        data: jsonPostString,
+        dataType: "text",
+        contentType: "application/json",
+        success: function (result) {
+            debugger;
+            var res = jQuery.parseJSON(result);
+            var obj = res[0];
+            $("#formStatus").html("Organization Billing Type Converted. ").addClass("bg-success").css({ "font-size": "large", "font-weight": "bold" }).show().delay(5000).fadeOut();
+            $("#BillingType").val(obj[0].BillingType);
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+        },
+    });
+}
+
 function UpdateOrganizationProfile(jsModel, Url) {
     $.ajax({
 

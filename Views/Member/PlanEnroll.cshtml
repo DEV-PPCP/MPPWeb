@@ -214,7 +214,7 @@
                             $("#AmountPaid").val(TotalAmount);
                         } else {                            
                             $("#divValidator").show();
-                            document.getElementById("PlanPaymentValidation").innerHTML = "Member Plan Exists. Plan Dates: " + getFormattedDate(list[0].PlanStartDate) + " - " + getFormattedDate(list[0].PlanEndDate) + "Please select a different start date.";
+                            document.getElementById("PlanPaymentValidation").innerHTML = "Member Plan Exists. Plan Dates: " + getFormattedDate(list[0].PlanStartDate) + " - " + getFormattedDate(list[0].PlanEndDate) + ". Please select a different start date.";
                             return false;
                         }
                     },

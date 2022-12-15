@@ -26,6 +26,7 @@
         background-color: #f1f1f1;
     }
 </style>
+@Html.HiddenFor(o => o.OrganizationID)
 <div id="divProfile">
     <div class="pageheading_bar" align="center">
         <b>Profile</b>
@@ -36,6 +37,11 @@
                 <div class="row">
                     <fieldset id="fsMemberDetails" style="width:100%; margin-left: 0px;border-color:#8B4513">
                         <br />
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                <div id="formStatus"></div>
+                            </div>
+                        </div>
                         <div class="row Panel_bg_Sub">
                             <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Organization Details</b>:</legend>
                             <div class="form-group">
@@ -54,9 +60,15 @@
                                             </div>
                                             <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                 @Html.Label("Billing Type", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
-                                                @Html.TextBoxFor(model => model.BillingType, null, new { @class = "customKendoTextBox disabled", @readonly="readonly", style = "width:100%;", maxlength = 50 })
+                                                @Html.TextBoxFor(model => model.BillingType, null, new { @class = "customKendoTextBox disabled", @readonly = "readonly", style = "width:100%;", maxlength = 50 })
                                                 @*@Html.ValidationMessageFor(model => model.TaxID, "", new { @style = "color:red" })*@
                                             </div>
+                                            @*<div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                <br />
+                                                <button type="submit" onclick="ConvertBillingType()" title="Change Billing Type" style="margin-top: 8px; " class="claimStatusButton claimStatusButtonBlue">
+                                                    @(Model.BillingTypeId == PPCP07302018.Utils.GlobalFunctions.BillingType.PPV ? "Convert to Lumpsum Payment" : "Convert to Pay Per Visit Payment")
+                                                </button>
+                                            </div>*@
                                         </div>
                                         <div class="row">
                                             <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
@@ -70,7 +82,7 @@
                                                 @Html.Label("-", new { style = "font-weight:normal;", @class = "labelColor" })
                                                 @Html.TextBoxFor(model => model.OrgMobileNumber, null, new { @class = "customKendoTextBox", style = "width:75%;", maxlength = 10 })
                                                 @*@Html.ValidationMessageFor(model => model.OrgCountryCode, "", new { @style = "color:red" })
-            @Html.ValidationMessageFor(model => model.OrgMobileNumber, "", new { @style = "color:red" })*@
+                                @Html.ValidationMessageFor(model => model.OrgMobileNumber, "", new { @style = "color:red" })*@
                                             </div>
                                             <div class="col-xs-12 col-md-6 col-sm-9 col-lg-6">
                                                 @Html.Label("Address", new { style = "font-weight:normal;", @class = "" })<br />
@@ -192,7 +204,7 @@
                                                 <br />
 
                                                 @*@Html.ValidationMessageFor(m => m.OrgZip)
-                @Html.ValidationMessageFor(m => m.OrgZipCode)*@
+                                @Html.ValidationMessageFor(m => m.OrgZipCode)*@
                                             </div>
                                         </div>
 
@@ -656,6 +668,19 @@
             $("#Zip").val(ProfileDetails.Zip);
         }
     });
+
+    function ConvertBillingType() {
+        $("#popupConfirmation").show();
+        $("#confirmType").val("ConvertBillingType")
+        $("#lblconfirmMessage").html("Are you sure you want to convert the Organization Billing Type?");
+    }
+
+    function confirmPopUpYes() {
+        if ($("#confirmType").val() == "ConvertBillingType") {
+            ConvertOrgBillingType('@ServiceUrl');
+            $("#popupConfirmation").hide();
+        }
+    }
 
     function DateSelectionChanged(e) {
         var birthDate = $("#DOB").val();
