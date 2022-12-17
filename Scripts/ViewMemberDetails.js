@@ -329,3 +329,64 @@ function BindOrganizationMembersAutoComplete(OrganizationID, Text, Url) {
         },
     });
 }
+
+function EnrollPlan(MemberRegistrationDetails, url) {
+    debugger;
+    $.ajax({
+        type: 'POST',
+        cache: false,
+        url: '/Member/PlanEnrollCommonXml',
+        data: MemberRegistrationDetails,
+        success: function (data, textStatus, jqXHR) {
+            debugger;
+            CallWebApiServices(data, url);
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+        },
+    });
+}
+
+function CallWebApiServices(data, url) {
+    debugger;
+    var webMethodName = "EnrollPlanDetails";
+    var ParameterName = data;
+    var jsonPostString = setParameter(ParameterName, webMethodName);
+    var Url = url + "MemberXml";
+    $("<div class='loadingSpinner'></div>").appendTo($("#divMainPlanEnroll"));
+    $.ajax({
+        type: "POST",
+        url: Url,
+        data: jsonPostString,
+        dataType: "json",
+        contentType: "application/json",
+        success: function (result) {
+            debugger;
+            var obj = result[0];
+            $("#divMainPlanEnroll").find(".loadingSpinner:first").remove();
+            if (obj[0].result == null && obj[0].MemberID != null && obj[0].TransactionID != null) {
+                if (obj[0].StripeCustomerID != null && obj[0].StripeCustomerID != "") {
+                    SaveStripeCustomerID(obj[0].StripeCustomerID, obj[0].TransactionID);
+                }
+                else {
+                    document.getElementById("divSignupPopup").style.display = "block";
+                    document.getElementById("spnPopupMessage").innerHTML = "Plan enrolled successfully. Your Transaction ID: " + obj[0].TransactionID;
+                    document.getElementById("divSignupPopup").scrollIntoView();
+                }
+
+            }
+            else if (obj[0].result == null && obj[0].MemberID != null) {
+                document.getElementById("divSignupPopup").style.display = "block";
+                document.getElementById("spnPopupMessage").innerHTML = "Plan enrolled successfully.";
+                document.getElementById("divSignupPopup").scrollIntoView();
+            }
+            else {
+                document.getElementById("divErrMessagePopup").style.display = "block";
+                document.getElementById("spnPopupErrMessage").innerHTML = obj[0].result + ". Please try again.";
+                document.getElementById("divErrMessagePopup").scrollIntoView();
+
+            }
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+        },
+    });
+}

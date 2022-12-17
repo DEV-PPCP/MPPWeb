@@ -101,6 +101,80 @@ namespace PPCP07302018.Controllers
             }
             return View(model);
         }
+        [HttpPost]
+        [AcceptVerbs(HttpVerbs.Post)]
+        public string PlanEnrollCommonXml(Models.Member.MemberDetails modelParameter)
+        {
+            string returnData = "";
+            try
+            {
+                List<Models.Member.MemberDetails> MemberDetails = new List<Models.Member.MemberDetails>();
+                List<Models.Member.MemberDetails> MemberDetails1 = new List<Models.Member.MemberDetails>();
+
+                //if (TempData["SaveEnrollSelectedMember"] != null)
+                {
+                   // List<PPCP07302018.Models.Member.PlanEnrollMembers> objList1 = TempData["SaveEnrollSelectedMember"] as List<PPCP07302018.Models.Member.PlanEnrollMembers>;
+                   // TempData.Keep("SaveEnrollSelectedMember");
+                    //for (int i = 0; i < objList1.Count; i++)
+                    {
+                        Models.Member.MemberDetails objmember = new Models.Member.MemberDetails();//new Models.Member.MemberDetails(); 
+                        objmember.MemberID = modelParameter.MemberID;
+                        objmember.MemberName = modelParameter.MemberName;
+                        //objmember.LoginMemberID = Convert.ToInt32(Session["MemberID"]);
+                        //objmember.Email = Convert.ToString(Session["MemberEmail"]);
+                        //objmember.MobileNumber = Convert.ToString(Session["MemberPrimaryPhone"]);
+                        objmember.MemberParentID = modelParameter.MemberParentID;
+                        objmember.PlanID = modelParameter.PlanID;
+                        objmember.PlanName = modelParameter.PlanName;
+                        objmember.OrganizationID = modelParameter.OrganizationID;
+                        objmember.OrganizationName = modelParameter.OrganizationName;
+                        objmember.BillingTypeID = modelParameter.BillingTypeID;
+                        objmember.ProviderID = modelParameter.ProviderID;
+                        objmember.ProviderName = modelParameter.ProviderName;
+                        objmember.Status = modelParameter.Status;
+                        objmember.PlanStartDate = modelParameter.PlanStartDate;
+                        objmember.PlanEndDate = modelParameter.PlanEndDate;
+                        objmember.TotalAmount = modelParameter.TotalAmount;
+                        objmember.AmountPaid = modelParameter.AmountPaid;
+                        objmember.DueAmount = modelParameter.DueAmount;
+                        objmember.InstallmentAmount = modelParameter.InstallmentAmount;
+                        objmember.NoofInstallments = modelParameter.NoofInstallments;
+                        objmember.InstallmentFee = modelParameter.InstallmentFee;
+                        objmember.Savings = modelParameter.Savings;
+                        objmember.Paymentschedule = modelParameter.Paymentschedule;
+                        objmember.Duration = modelParameter.Duration;
+                        objmember.PlanType = modelParameter.PlanType;
+                        if (modelParameter.CVV != null)
+                        {
+                            objmember.CVV = modelParameter.CVV;
+                            objmember.CardNumber = modelParameter.CardNumber;
+                            objmember.NameOnCard = modelParameter.NameOnCard;
+                            objmember.MM = modelParameter.MM;
+                            objmember.YY = modelParameter.YY;
+                        }
+                        else
+                        {
+                            objmember.CardID = modelParameter.CardID;
+                        }
+                        objmember.StripeCustomerID = modelParameter.StripeCustomerID;
+                        objmember.StripeAccountID = modelParameter.StripeAccountID;
+                        objmember.CommPPCP = modelParameter.CommPPCP;
+                        objmember.CommPrimaryMember = modelParameter.CommPrimaryMember;
+                        objmember.EnrollFee = modelParameter.EnrollFee;
+                        MemberDetails.Add(objmember);
+                    }
+                }
+
+                string xml = GetXMLFromObject(MemberDetails);
+                returnData = xml.Replace("\"", "\'");
+            }
+            catch (Exception Ex)
+            {
+
+            }
+            return returnData;
+        }
+
         //To Convert the modelparameters into XML format for Member Registration by Gayathri
         [HttpPost]
         [AcceptVerbs(HttpVerbs.Post)]

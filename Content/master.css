@@ -28,7 +28,7 @@ span.k-icon.k-i-calendar {
 }
 
 .disabled {
-    background-color: #f1f1f1;
+    background-color: #f1f1f1 !important;
 }
 
 #sidebar123 {

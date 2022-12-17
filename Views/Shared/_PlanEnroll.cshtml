@@ -1,0 +1,709 @@
+﻿@model PPCP07302018.Models.Organization.AddMemberDetails
+@using Kendo.Mvc.UI
+
+@{
+    var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
+}
+
+<style>
+    .loadingSpinner {
+        position: absolute;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background: rgba( 255, 255, 255, .8 ) url('../../Images/loading-spinner-red.gif') 50% 50% no-repeat;
+    }
+</style>
+
+@Html.Hidden("CardID")
+
+<div id="SearchPlan" class="form-group" style="width:100%;display:block;">
+    <div class="row Panel_bg_Sub" id="fssearchplan" style="margin:0px;width:100%;">
+        <div id="divSelectPlan" style="display:block;">
+            <br />
+            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Select a Provider</b></legend>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                        @(Html.Kendo().Grid<PPCP07302018.Models.Member.MemberDetails> ()
+                            .Name("gridProviders")
+                            .Columns(columns =>
+                            {
+                                columns.Bound(p => p.ProviderID).ClientTemplate("<input type='radio' name='ProviderID' value='#= ProviderID #' onclick=\"BindPlansGrid('#=OrganizationID#', '#=ProviderID#');\" />").Title("Select").Filterable(false).Width(50);
+                                columns.Bound(p => p.OrganizationName).Title("Organization Name").Filterable(true).Width(100);
+                                columns.Bound(p => p.ProviderName).Title("Provider Name").Filterable(true).Width(100);
+                                columns.Bound(p => p.ProviderAddress).Title("ProviderAddress").Filterable(true).Width(150);
+
+                            })
+                            .Scrollable().Sortable()
+                            .Pageable()
+                            //.Filterable()
+                            .AutoBind(false)
+                            .HtmlAttributes(new { })
+                            //.Selectable()
+                            .DataSource(dataSource => dataSource
+                            .Ajax()
+                            .PageSize(5)
+                            .ServerOperation(false)))
+                    </div>
+                </div>
+            </div>
+
+            <br />
+            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Select a Plan</b>:</legend>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                        @(Html.Kendo().Grid<PPCP07302018.Models.Member.MemberDetails> ()
+                            .Name("gridPlans")
+                            .Events(e => e.DataBound("onPlansGridDataBound"))
+                            .Columns(columns =>
+                            {
+                                columns.Bound(p => p.PlanID).ClientTemplate("<input type='radio' name='PlanID' value='#= PlanID #' />").Title("Select").Filterable(false).Width(50);
+                                //columns.Bound(p => p.Specialization).Title("Specialization").Filterable(true).Visible(false);
+                                columns.Bound(p => p.PlanName).Title("Plan Name").Filterable(true).Width(100);
+                                columns.Bound(p => p.ProviderName).Title("Provider Name").Filterable(true).Width(100);
+                            })
+                            .Scrollable()
+                            .Pageable()
+                            .Filterable()
+                            .AutoBind(false)
+                            .HtmlAttributes(new { })
+                            .Selectable()
+                            .DataSource(dataSource => dataSource
+                            .Ajax()
+                            .PageSize(5)
+                            .ServerOperation(false)))
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div id="divPlanPayment" style="display:none;">
+                <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Select Plan Start Date / Payment Schedule</b>:</legend>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
+                            @Html.Label("Plan start date ", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;"> * </span>
+                            @(Html.Kendo().DatePickerFor(model => model.PlanStartDate).Format("MM/dd/yyyy").Name("PlanStartDate").Value(DateTime.Now)
+                                  .Events(e =>
+                                  {
+                                      e.Change("OnPlanStartDateChange");
+                                  })
+                                  .HtmlAttributes(new { PlaceHolder = "MM/DD/YYYY", Maxlength = "10", type = "text", onkeydown = "return false;" }))
+                            @Html.ValidationMessageFor(model => model.PlanStartDate, "", new { @style = "color:red" })
+                        </div>
+                        <div class="col-xs-0 col-md-6 col-sm-6 col-lg-6"></div>
+                    </div>
+                    <br />
+                    <div align="center" id="divValidator" class="row" style="display:none;">
+                        <span style="color: Red"><span id="PlanPaymentValidation"></span></span>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                            @(Html.Kendo().Grid<PPCP07302018.Models.Member.MemberDetails>()
+                                .Name("gridPlansPayment")
+                                .Events(e => e.DataBound("onPlansPaymentDataBound"))
+                                .Columns(columns =>
+                                {
+                                    columns.Bound(p => p.Paymentschedule).ClientTemplate("<input type='radio' name='Paymentschedule' value='#= Paymentschedule #' />" + " " + "#=Paymentschedule#").Title("Payment Schedule").Filterable(false).Width(150);
+                                    columns.Bound(p => p.TotalAmount).Title("TotalAmount").Format("{0:c2}").Filterable(true).Width(150);
+                                    columns.Bound(p => p.NoofInstallments).Title("No. of Installments").Filterable(true).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                    columns.Bound(p => p.InstallmentAmount).Title("Installment Amount").Format("{0:c2}").Filterable(true).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                    columns.Bound(p => p.InstallmentFee).Title("Installment Fee").Format("{0:c2}").Filterable(true).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                    columns.Bound(p => p.Savings).Title("Savings").Filterable(true).Width(100).Visible(false);
+                                })
+                                .Scrollable()
+                                .Pageable()
+                                .Filterable()
+                                .AutoBind(false)
+                                .HtmlAttributes(new { })
+                                .Selectable()
+                                .DataSource(dataSource => dataSource
+                                .Ajax()
+                                .PageSize(5)
+                                .ServerOperation(false)))
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <span id="PlanID" style="display:none;"></span>
+                    <span id="SpOrganizationID" style="display:none;"></span>
+                    <span id="SpBillingTypeID" style="display:none;"></span>
+                    <span id="spnSelectedOrganization" style="display:none;"></span>
+                    <span id="SpProviderID" style="display:none;"></span>
+                    <span id="SpProviderName" style="display:none;"></span>
+                    <span id="spnMonthlyPlanFee" style="display:none;"></span>
+                    <span id="TotalAmount" style="display:none;"></span>
+                    <span id="Installments" style="display:none;"></span>
+                    <span id="Paymentschedule" style="display:none;"></span>
+                    <span id="SelectedOrganization" style="display:none;"></span>
+                    <span id="spnPlanTermMonths" style="display:none;"></span>
+                    <span id="InstallmentFee" style="display:none;"></span>
+                    <span id="Savings" style="display:none;"></span>
+                    <span id="DueAmount" style="display:none;"></span>
+                    <span id="spnEligibility" style="display:none;"></span>
+                    <span id="spnCommPPCP" style="display:none;"></span>
+                    <span id="spnCommPrimaryMember" style="display:none;"></span>
+                    <span id="Status" style="display:none;"></span>
+                    <span id="spnStripeAccountID" style="display:none;"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12 col-md-12 col-sm-12" align="right">
+                    <button class="button_blue" type="button" id="btnConfirmPlanSelection" onclick="ConfirmPlanSelection();" title="Next" style="width: 100px;" value="Next">
+                        Next
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="EnrollPlan" class="form-group" style="width:100%;display:none;">
+    <div class="row">
+        <div class="row Panel_bg_Sub" id="fsenrollplan" style="margin:0px;width:100%;">
+            <br />
+            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;margin-bottom:0px;"><b>Selected Plan</b>:</legend>
+            <br />
+            <div class="form-group">
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                    <div class="row">
+                        <br />
+                        <div class="row">
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                <span><b>Plan Name</b></span>
+                                <br />
+                                <span id="spnSelectedPlan"></span>
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                <span><b>Plan Type</b></span>
+                                <br />
+                                <span id="spnPlanType"></span>
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                <span><b>Plan Duration</b></span>
+                                <br />
+                                <span id="spnDuration"></span>
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                <span><b>Visit Fee </b></span>
+                                <br />
+                                <span id="spnVisitFee"></span>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                <span><b>Plan Amount  </b> </span>
+                                <br />
+                                <span id="spnPlanAmount"></span>
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                <span><b>Enrollment Fee  </b> </span>
+                                <br />
+                                <span id="spnEnrollFee"></span>
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                <span><b>Plan Start date </b></span>
+                                <br />
+                                <span id="spnPlanStartDate"></span>
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                <span><b>Plan End Date </b></span>
+                                <br />
+                                <span id="spnPlanEndDate"></span>
+                            </div>
+                        </div>
+                        </br>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                <span><b>Payment Schedule</b></span>
+                                <br />
+                                <span id="spnPaymentschedule"></span>
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                <span><b>Installment Amount </b>  </span>
+                                <br />
+                                <span id="spnInstallmentAmount"></span>
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                <span><b>Installment Fee  </b> </span>
+                                <br />
+                                <span id="spnInstalmentFee"></span>
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3" style="display:none;">
+                                <span><b>Terms (No. of payments)</b></span>
+                                <br />
+                                <span id="spnNoofInstalments"></span>
+                            </div>
+                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3" style="display:none;">
+                                <span><b>Plan Decription</b></span>
+                                <br />
+                                <span id="spnPlanDescription"></span>
+                            </div>
+
+                            <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6 col-lg-push-1 col-md-push-1" style="display:none">
+                                <span><b>AccountID  </b> </span>
+                                <br />
+                                
+                            </div>
+                        </div>
+                        <div class="row">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+
+            <legend class="Legendtxtcolor" style="float: left; font-size: 14px; margin-top: 30px;"><b>@Html.CheckBox("chkPayNow", false, new { @disabled = "disabled" }) Pay Now</b>:</legend>
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
+                        @Html.Label("Amount", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;"> * </span>
+                        @Html.TextBoxFor(model => model.AmountPaid, null, new { @class = "customKendoTextBox disabled", @readonly = "readonly", PlaceHolder = "", maxlength = 20, onchange = "ValidateAmountPaid(this.value);" })
+                        @Html.ValidationMessageFor(model => model.AmountPaid, "", new { @style = "color:red" })
+                    </div>
+                    <div class="col-xs-0 col-md-6 col-sm-6 col-lg-6 col-md-pull-2 col-lg-pull-2">
+                        <span id="spnAmountPaid" style="color:red"></span>
+                    </div>
+                </div>
+                <div class="row">
+                </div>
+                <div class="row" id="divCarddetails">
+                    <br />
+                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" id="divCardSelect" style="display:none;width:100%;padding-left:0px">
+                        <fieldset id="fsCardDetails">
+                            <legend style="padding: 0px; border: 0px; color: #4088B3;font-weight: bold;font-size: medium;width:auto; margin-bottom:8px">Card Details</legend>
+                            <div id="divCardList"></div>
+                        </fieldset>
+                    </div>
+                    <div class="row" id="divbankdetails">
+                        <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+                            @Html.Label("Card Number", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
+                            @Html.TextBoxFor(model => model.CardNumber, null, new { @class = "customKendoTextBox", PlaceHolder = "", style = "width:100%;", maxlength = 16 })
+                            @*@Html.ValidationMessageFor(model => model.CardNumber, "", new { @style = "color:red" })*@
+                            <span id="spnCardNumber" style="color:red"></span>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+                            @Html.Label("Name On Card", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
+                            @Html.TextBoxFor(model => model.NameOnCard, null, new { @class = "customKendoTextBox", PlaceHolder = "", style = "width:100%;", maxlength = 50 })
+                            @*@Html.ValidationMessageFor(model => model.NameOnCard, "", new { @style = "color:red" })*@
+                            <span id="spnNameOnCard" style="color:red"></span>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                            @Html.Label("Expiry Date (MM/YY)", new { style = "font-weight:normal;", @class = "labelColor" })<span style="color: Red;">*</span><br />
+                            @(Html.Kendo().DropDownListFor(m => m.MM)
+                                                .Name("MM").HtmlAttributes(new { style = "width:30%;" })
+                                                .HtmlAttributes(new { style = "width:30%;" })
+                                                //.OptionLabel("--Select--")
+                                                .DataTextField("Text")
+                                                .DataValueField("Value")
+                                                .Events(events =>
+                                                {
+                                                    events.Change("OnMonth");
+                                                })
+                                                .DataSource(source =>
+                                                {
+                                                    source.Read(read =>
+                                                    {
+                                                        read.Action("BindMonths", "Master");
+                                                    });
+                                                }))
+                            @(Html.Kendo().DropDownListFor(m => m.YY)
+                                                .Name("YY").HtmlAttributes(new { style = "width:30%;" })
+                                                .HtmlAttributes(new { style = "width:30%;" })
+                                                //.OptionLabel("--Select--")
+                                                .DataTextField("Text")
+                                                .DataValueField("Value")
+                                                .Events(events =>
+                                                {
+                                                    events.Change("OnYear");
+                                                })
+                                                .DataSource(source =>
+                                                {
+                                                    source.Read(read =>
+                                                    {
+                                                        read.Action("BindYears", "Master");
+                                                    });
+                                                }))
+                            @Html.Hidden("MM")
+                            @Html.Hidden("YY")
+                            <script type="text/javascript">
+                                function OnMonth(e) {
+                                    var dataItem = e.sender.dataItem();
+                                    $("#MM").val(dataItem.Text);
+                                }
+                                function OnYear(e) {
+                                    var dataItem = e.sender.dataItem();
+                                    $("#YY").val(dataItem.Text);
+                                }</script>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2 col-lg-pull-1">
+                            @Html.Label("CVV", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
+                            @Html.TextBoxFor(model => model.CVV, null, new { @class = "customKendoTextBox", PlaceHolder = "", style = "width:30%;background-color:white", maxlength = 3 })
+                            @*@Html.ValidationMessageFor(model => model.CVV, "", new { @style = "color:red" })*@
+                            <span id="spnCVV" style="color:red"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-md-12 col-sm-12" align="right" style="margin-top: 10px;">
+        <a href="#" title="Cancel Enroll" value="Cancel Enroll" style="width: 200px; text-decoration:solid;" onclick="CancelPlanEnroll();">
+            <u>Cancel Plan Enroll</u>
+        </a>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //BindingPlansGridBasedOnFilters(OrganizationID, "0", "0", "0", "0", "0", '@ServiceUrl');
+    });
+
+    function CancelPlanEnroll() {
+        $("#divEnrollPlan").hide();
+    }
+
+    var FilteredPlans;
+    function BindingPlansGridBasedOnFilters(OrganizationID, ProviderID, PlanID, StateId, CityId, zip) {
+        debugger;
+        $("#SearchPlan").show();
+        $("#divPlanPayment").hide();
+        $("#EnrollPlan").hide();
+        $("#btnConfirmPlanSelection").hide();
+
+        var webMethodName = "GetPPCPOrganizationProviderPlansBasedonFilters";
+        var ParameterNames = new Array();
+        var ParameterValues = new Array();
+        ParameterNames[0] = "OrganizationID";
+        ParameterValues[0] = OrganizationID;
+        ParameterNames[1] = "ProviderID";
+        ParameterValues[1] = ProviderID;
+        ParameterNames[2] = "PlanID";
+        ParameterValues[2] = PlanID;
+        ParameterNames[3] = "StateID";
+        ParameterValues[3] = StateId;
+        ParameterNames[4] = "CityID";
+        ParameterValues[4] = CityId;
+        ParameterNames[5] = "ZIP";
+        ParameterValues[5] = zip;
+        var Url = '@ServiceUrl' + "DefaultService";
+        var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
+        $.ajax({
+            type: "POST",
+            url: Url,
+            data: jsonPostString,
+            dataType: "text",
+            contentType: "application/json",
+            success: function (result) {
+                debugger;
+                $("#divSelectPlan").show();
+                var obj = jQuery.parseJSON(result);
+                var PlansList = obj[0];
+                //select distinct providers
+                var providerList = [];
+                $.each(PlansList, function (index, obj) {
+                    var a = $.grep(providerList, function (e) {
+                        return obj.ProviderID === e.ProviderID && obj.OrganizationID === e.OrganizationID;
+                    });
+                    if (a.length === 0) {
+                        providerList.push(obj);
+                    }
+                });
+                $("#gridProviders").data("kendoGrid").dataSource.data(providerList);
+                $("#gridPlans").data("kendoGrid").dataSource.data("");
+                $("#gridPlansPayment").data("kendoGrid").dataSource.data("");
+
+                FilteredPlans = PlansList;
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                res = '';
+                //callback(res);
+                ErrorMessage(webMethodName, textStatus);
+            },
+        });
+    }
+
+    function BindPlansGrid(OrganizationID, ProviderID) {
+        debugger;
+        var plansList = FilteredPlans.filter(element => {
+            return element.OrganizationID == OrganizationID && element.ProviderID == ProviderID;
+        });
+        $("#gridPlans").data("kendoGrid").dataSource.data(plansList);
+        $("#gridPlansPayment").data("kendoGrid").dataSource.data("");
+    }
+
+    function BindPlanPayments(OrganizationID, ProviderID, PlanID) {
+        debugger;
+        var plansList = FilteredPlans.filter(element => {
+            return element.OrganizationID == OrganizationID && element.ProviderID == ProviderID && element.PlanID == PlanID;
+        });
+        var paymentList = jQuery.parseJSON(plansList[0].PaymentIntervals);
+        $("#divPlanPayment").show();
+        $("#gridPlansPayment").data("kendoGrid").dataSource.data(paymentList);
+    }
+
+    function onPlansGridDataBound() {
+        debugger;
+        var grid = this;
+        $("[name='PlanID']").change(function (e) {
+            debugger;
+            var row = $(e.target).closest("tr");
+            var dataItem = grid.dataItem(row);
+            grid.select(row);
+            var PlanID = dataItem.PlanID;
+            document.getElementById("PlanID").innerHTML = PlanID;
+            document.getElementById("spnSelectedPlan").innerHTML = dataItem.PlanName;
+            document.getElementById("spnSelectedOrganization").innerHTML = dataItem.OrganizationName;
+            document.getElementById("SpProviderName").innerHTML = dataItem.ProviderName;
+            document.getElementById("SpOrganizationID").innerHTML = dataItem.OrganizationID;
+            document.getElementById("SpBillingTypeID").innerHTML = dataItem.BillingTypeID;
+            document.getElementById("SpProviderID").innerHTML = dataItem.ProviderID;
+            document.getElementById("spnVisitFee").innerHTML = dataItem.VisitFee;
+            document.getElementById("spnEnrollFee").innerHTML = dataItem.EnrollFee;
+            document.getElementById("spnEligibility").innerHTML =dataItem.VisitFee+"Y - "+dataItem.ToAge+"Y";
+            document.getElementById("spnDuration").innerHTML = dataItem.PlanTermName;
+            document.getElementById("spnPlanType").innerHTML = "Individual";
+            document.getElementById("spnMonthlyPlanFee").innerHTML =dataItem.Amount;
+            document.getElementById("spnPlanDescription").innerHTML =dataItem.PlanDescription;
+            document.getElementById("spnPlanTermMonths").innerHTML =dataItem.PlanTermMonths;
+            document.getElementById("spnCommPPCP").innerHTML = dataItem.CommPPCP;
+            document.getElementById("spnCommPrimaryMember").innerHTML = dataItem.CommPrimaryMember;
+            document.getElementById("spnStripeAccountID").innerHTML = dataItem.AccountID;
+            //To get selected Plan payment information
+            var OrganizationID = dataItem.OrganizationID;
+            var ProviderID = dataItem.ProviderID;
+
+            BindPlanPayments(OrganizationID, ProviderID, PlanID);
+        });
+    }
+
+    function onPlansPaymentDataBound() {
+        var Paymentgrid = this;
+        $("#divStep1").hide();
+
+        $("[name='Paymentschedule']").change(function (e) {
+            debugger;
+            var row = $(e.target).closest("tr");
+            var dataItem = Paymentgrid.dataItem(row);
+            Paymentgrid.select(row);
+            //if(dataItem.Paymentschedule=="Quarterly"){
+            //    dataItem.Paymentschedule="Quaterly";
+            //}
+            document.getElementById("Paymentschedule").innerHTML = dataItem.Paymentschedule;
+            document.getElementById("spnPaymentschedule").innerHTML = dataItem.Paymentschedule;
+            document.getElementById("spnNoofInstalments").innerHTML = dataItem.NoofInstallments;
+            document.getElementById("spnInstallmentAmount").innerHTML = dataItem.InstallmentAmount;
+            document.getElementById("InstallmentFee").innerHTML = dataItem.InstallmentFee;
+            document.getElementById("Installments").innerHTML = dataItem.NoofInstallments;
+            document.getElementById("Savings").innerHTML = dataItem.Savings;
+            document.getElementById("spnPlanAmount").innerHTML = dataItem.TotalAmount;
+            document.getElementById("spnInstalmentFee").innerHTML = dataItem.InstallmentFee;
+
+            $('#chkPayNow').is(":checked") == true;
+            $('input[name="chkPayNow"]').attr('checked', true);
+            var TotalAmount = 0;
+            try {
+                var Amount = document.getElementById("spnInstallmentAmount").innerText;
+                var InstalmentAmount = document.getElementById("spnInstalmentFee").innerText;
+                var EnrollFee = document.getElementById("spnEnrollFee").innerText;
+                //TotalAmount=parseFloat(Amount)+parseFloat(InstalmentAmount);
+
+                if (dataItem.Paymentschedule == "One Time") {
+                    TotalAmount = parseFloat(Amount) + parseFloat(EnrollFee);
+                }
+                else {
+                    TotalAmount = parseFloat(Amount) + parseFloat(InstalmentAmount) + parseFloat(EnrollFee);
+                }
+
+                // TotalAmount=parseFloat(Amount)+parseFloat(InstalmentAmount)+parseFloat(EnrollFee);
+            } catch (err) {
+
+            }
+
+            $("#AmountPaid").val(TotalAmount);
+            $("#btnConfirmPlanSelection").show();
+
+            document.getElementById("PlanPaymentValidation").innerHTML = "";
+            var Months = document.getElementById("spnPlanTermMonths").innerHTML;
+            AddMonths(Months);
+            OnPlanStartDateChange("PlansPaymentDataBound");
+        });
+    }
+
+    function AddMonths(Months) {
+        debugger;
+        var dt = new Date($("#PlanStartDate").val());
+        dt.setMonth(dt.getMonth() + parseInt(Months));
+        $("#spnPlanEndDate").val((dt.getMonth() + 1) + '/' + dt.getDate() + '/' + dt.getFullYear());
+        document.getElementById("spnPlanStartDate").innerHTML = $("#PlanStartDate").val();
+        document.getElementById("spnPlanEndDate").innerHTML = $("#spnPlanEndDate").val();
+    }
+
+    function OnPlanStartDateChange(eventName) {
+        debugger;
+        var PaymentSchedule = document.getElementById("Paymentschedule").innerText;
+        if (PaymentSchedule != "") {
+            //e.preventDefault();
+            //Check if member already enrolled on this date for selected organization
+            var webMethodName = "CheckMemberPlan";
+            var ParameterNames = new Array();
+            var ParameterValues = new Array();
+            ParameterNames[0] = "OrganizationID";
+            ParameterValues[0] = document.getElementById("SpOrganizationID").innerText;
+            ParameterNames[1] = "MemberID";
+            ParameterValues[1] = $("#MemberID").val();
+            ParameterNames[2] = "PlanStartDate";
+            ParameterValues[2] = $("#PlanStartDate").val();
+            ParameterNames[3] = "PlanID";
+            ParameterValues[3] = document.getElementById("PlanID").innerHTML
+            var Url = '@ServiceUrl' + "Member";
+            var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
+            $.ajax({
+                type: "POST",
+                url: Url,
+                data: jsonPostString,
+                dataType: "text",
+                contentType: "application/json",
+                success: function (res) {
+                    debugger;
+                    var obj = jQuery.parseJSON(res);
+                    var list = obj[0];
+                    if (list.length == 0) { //no plan found on selected date
+                        if (eventName == "ConfirmPlanSelection") {
+                            $("#SearchPlan").hide();
+                            $("#EnrollPlan").show();
+                            $("#divEnrollPlanSubmitRow").show();
+                        }
+
+                        $("#divValidator").hide();
+
+                        //$('#chkPayNow').is(":checked") == true;
+                        // $('input[name="chkPayNow"]').attr('checked', true);
+                        var Amount = document.getElementById("spnInstallmentAmount").innerText;
+                        var InstalmentAmount = document.getElementById("spnInstalmentFee").innerText;
+                        var EnrollFee = document.getElementById("spnEnrollFee").innerText;
+                        if (PaymentSchedule == "One Time") {
+                            $("#divinstAmt").hide();
+                            var TotalAmount = 0;
+                            try {
+                                TotalAmount = parseFloat(Amount) + parseFloat(EnrollFee);
+                            } catch (err) {
+
+                            }
+                        }
+                        else {
+                            $("#divinstAmt").show();
+                            TotalAmount = parseFloat(Amount) + parseFloat(InstalmentAmount) + parseFloat(EnrollFee);
+                        }
+                        $("#AmountPaid").val(TotalAmount);
+                    } else {
+                        $("#divValidator").show();
+                        document.getElementById("PlanPaymentValidation").innerHTML = "Member Plan Exists. Plan Dates: " + getFormattedDate(list[0].PlanStartDate) + " - " + getFormattedDate(list[0].PlanEndDate) + ". Please select a different start date.";
+                        return false;
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                },
+            });
+        }
+        else {
+            $("#divValidator").show();
+            document.getElementById("PlanPaymentValidation").innerHTML = "Please select any payment schedule"; return false;
+        }
+    }
+
+    function ConfirmPlanSelection() {
+        OnPlanStartDateChange("ConfirmPlanSelection");
+        var Months = document.getElementById("spnPlanTermMonths").innerHTML;
+        AddMonths(Months);
+    }
+
+    function GetStripeCardDetails(StripeCustomerID) {
+        debugger;
+        //var ConsultFee = $("#eConsultfee").val();
+        var webMethodName = "GetStripCardDetails";
+        var ParameterNames = new Array();
+        var ParameterValues = new Array();
+        ParameterNames[0] = "CustomerID";
+        ParameterValues[0] = StripeCustomerID;
+        var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
+        var Url = '@ServiceUrl' + "Member";
+        $.ajax({
+            type: 'POST',
+            url: Url,
+            data: jsonPostString,
+            dataType: "text",
+            contentType: "application/json",
+            success: function (data, textStatus, jqXHR) {
+                debugger;
+                var obj = jQuery.parseJSON(data);
+                var TestsList = obj[0];
+                if (TestsList.length != 0) {
+                    $("#TempValue").val(2);
+                    var jsonResult = "";
+                    for (var r in TestsList) {
+                        jsonResult += "<input type='radio' name='" + "CardsList" + "' value='" + TestsList[r].Id+","+TestsList[r].Last4+","+TestsList[r].Name + "' onclick='" + "check(this.value)" + "'  />" + "&nbsp;" + TestsList[r].Brand + " **** **** **** " + TestsList[r].Last4 + "&nbsp;&nbsp;&nbsp;&nbsp;" + "<br />" +
+                            "<label for='" + TestsList[r].Name + "'>" + TestsList[r].Name + "</label>" + "<br />" +
+                            "<label for='" + TestsList[r].Name + "'>" + "Expires " + +TestsList[r].ExpirationMonth + "/" + TestsList[r].ExpirationYear + "</label>" + "<br />" +
+                            //"<label for='" + TestsList[r].Name + "'>" + "Amount Charged ($) " + ConsultFee + "</label>" + "<br />" +
+                            //"<input type='text' name='" + TestsList[r].Id + "' value='" + "" + "' id='" + TestsList[r].Id + "' style='display:none;width:100px' maxlength='" + 3 + "' placeholder='" + "Enter CVV" + "' onchange='" + "onChangeTest(this.value)" + "'/>"
+                             "<br />"
+                    }
+
+                    jsonResult += "<input type='radio' name='" + "CardsList" + "' value='" + 0 + "' onclick='" + "check(this.value)" + "'  />" + " Add New Card " + " <br /><br/>";
+                    $("#TextBoxTempValue").val(TestsList[r].Id);
+                    document.getElementById("divCardSelect").style.display = "block";
+                }
+                else {
+                    $("#TempValue").val(1);
+                    document.getElementById("divCardSelect").style.display = "none";
+                    document.getElementById("divbankdetails").style.display = "block";
+                }
+                $("#divCardList").html(jsonResult);
+                if (TestsList.length != 0) {
+                    check(TestsList[0].Id+","+TestsList[0].Last4+","+TestsList[0].Name);
+                    $("input[name=CardsList][value='" + TestsList[0].Id+","+TestsList[0].Last4+","+TestsList[0].Name + "']").attr('checked', true);
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+            }
+        });
+    }
+
+    function check(CardsList) {
+        debugger;
+        if (CardsList == 0) {
+            document.getElementById("divbankdetails").style.display = "block";
+            $("#TempSelectRadio").val("1");
+            //$("#memberDetails_TempCardNumber").val("");
+            //$("#memberDetails_TempNameOnCard").val("");
+        }
+        else {
+            $("#TempSelectRadio").val("2");
+            var arr =CardsList;
+            var arr_val=arr.split(',');
+            $("#CardID").val(arr_val[0]);
+
+            // $("#memberDetails_TempCardNumber").val(arr_val[1]);
+            // $("#memberDetails_TempNameOnCard").val(arr_val[2]);
+            var CardValue = $("#CardID").val();
+            $("#PaymentDetails_CardID").val(CardsList);
+
+            $("#PaymentDetails_CustomerID").val($("#StripeCustomerID").val());
+            // document.getElementById("" + CardsList + "").style.display = 'block';
+            $("#TextBoxTempValue").val(CardsList);
+
+            document.getElementById("divbankdetails").style.display = "none";
+        }
+    }
+
+</script>

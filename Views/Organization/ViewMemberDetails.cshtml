@@ -29,9 +29,10 @@
     Layout = "~/Views/Shared/WUCOrgLeftMenu.cshtml";
     var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
 }
-
+@Styles.Render("~/bundles/masterCss")
 @Styles.Render("~/bundles/Membercssfiles")       @*For member css files*@
 @Scripts.Render("~/bundles/ViewMemberDetailsScriptFiles")
+<script src="~/Scripts/Common.js"></script>
 
 @Html.Hidden("hdnMemberID")
 @Html.Hidden("hdnUserID")
@@ -95,9 +96,11 @@
             },
         });
     }
-    function EditOptions(MemberID, FirstName, LastName, CountryCode, MobileNumber, DOB, Gender, Email, CountryName, StateName, CityName, Zip, Salutation, CountryID, StateID, CityID, IsTwofactorAuthentication, TwoFactorType) {
+    function EditOptions(MemberID, StripeCustomerID, FirstName, LastName, CountryCode, MobileNumber, DOB, Gender, Email, CountryName, StateName, CityName, Zip, Salutation, CountryID, StateID, CityID, IsTwofactorAuthentication, TwoFactorType) {
 
         $("#MemberID").val(MemberID);
+        $("#SelectedMemberName").val(FirstName + ' ' + LastName);
+        $("#StripeCustomerID").val(StripeCustomerID);
         var x = MemberID;
         $("#hdnMemberID").val(x);
         $("#divMainMemberDetails").show();
@@ -201,7 +204,19 @@
                 }
             }
         });
+
+        $("#btnEnrollPlan").click(function (e) {
+            $("#divEnrollPlan").show();
+            $("#divEnrollPlanSubmitRow").hide();
+            GetStripeCardDetails($("#StripeCustomerID").val());
+            BindingPlansGridBasedOnFilters('@Session["OrganizationID"]', "0", "0", "0", "0", "0");
+        });
+
+        $("#btnCancelEnroll").click(function (e) {
+            $("#divEnrollPlan").hide();
+        });
     }
+
     function ViewMemberCard(MemberID, PlanCode, MemberPlanID,PlanType){
         debugger;
 
@@ -264,6 +279,119 @@
         document.getElementById('MemberName').value = '';
         //to clear grid
         GetMemberDetails('@Session["OrganizationID"]', "0", '@ServiceUrl');
+    }
+
+    function SubmitPlanEnrollment() {
+        debugger
+        //alert($('input[name="CardsList"]:checked').val());
+
+        if ($('#chkPayNow').is(":checked") == true) {
+            debugger;
+           // if ($("#TempSelectRadio").val() == "1" || $("#TempSelectRadio").val() == "") {
+            if ($('input[name="CardsList"]:checked').val() == "0") {
+                // document.getElementById("SpnValidationErrorMessage").innerHTML = "";
+                var fsCardDetails = $("#fsCardDetails").kendoValidator().data("kendoValidator");
+                if (fsCardDetails.validate()){
+                    var CardNo=$("#CardID").val();
+                    $("#CardID").val("");
+                    EnrollPlanDetails();
+                }
+                else {
+                    return false;
+                }
+            } else {
+                var CardNo=$("#CardID").val();
+                $("#CardID").val(CardNo);
+                $("#CVV").val("");
+                $("#CardNumber").val("");
+                EnrollPlanDetails();
+            }
+        }
+        else {
+            var MemberRegistrationDetails =@Html.Raw(Json.Encode(@Model));
+            MemberRegistrationDetails.MemberID='@Session["MemberID"]';
+            MemberRegistrationDetails.MemberName='@Session["MemberName"]';
+        }
+    }
+
+    function EnrollPlanDetails() {
+        debugger;
+        var MemberRegistrationDetails = {};
+        MemberRegistrationDetails.MemberID = $("#hdnMemberID").val();
+        MemberRegistrationDetails.MemberName = $("#SelectedMemberName").val();
+        //MemberRegistrationDetails.MemberParentID='@Session["MemberParentID"]';
+        MemberRegistrationDetails.OrganizationName=document.getElementById("spnSelectedOrganization").innerText;
+        MemberRegistrationDetails.OrganizationID = document.getElementById("SpOrganizationID").innerText;
+        MemberRegistrationDetails.BillingTypeID = document.getElementById("SpBillingTypeID").innerText;
+        MemberRegistrationDetails.ProviderName=document.getElementById("SpProviderName").innerText;
+        MemberRegistrationDetails.ProviderID=document.getElementById("SpProviderID").innerText;
+        MemberRegistrationDetails.PlanName=document.getElementById("spnSelectedPlan").innerText;
+        MemberRegistrationDetails.PlanID=document.getElementById("PlanID").innerText;
+        MemberRegistrationDetails.PlanStartDate = document.getElementById("spnPlanStartDate").innerText;
+        MemberRegistrationDetails.PlanEndDate=$("#spnPlanEndDate").val();
+        MemberRegistrationDetails.Paymentschedule=document.getElementById("Paymentschedule").innerText;
+        MemberRegistrationDetails.NoofInstallments=document.getElementById("spnNoofInstalments").innerText;
+        MemberRegistrationDetails.InstallmentAmount = document.getElementById("spnInstallmentAmount").innerText;
+        MemberRegistrationDetails.InstallmentFee=document.getElementById("InstallmentFee").innerText;
+        MemberRegistrationDetails.Savings=document.getElementById("Savings").innerText;
+        MemberRegistrationDetails.PlanType=$("#hdnFamilyIndividual").val();
+        MemberRegistrationDetails.StripeAccountID = document.getElementById("spnStripeAccountID").innerText;
+        MemberRegistrationDetails.CommPPCP=document.getElementById("spnCommPPCP").innerText;
+        MemberRegistrationDetails.CommPrimaryMember=document.getElementById("spnCommPrimaryMember").innerText;
+        MemberRegistrationDetails.EnrollFee = document.getElementById("spnEnrollFee").innerText;
+        MemberRegistrationDetails.StripeCustomerID = $("#StripeCustomerID").val();
+        var amountpaid="";
+        if ($('#chkPayNow').is(":checked") == true) {
+            if ($('input[name="CardsList"]:checked').val() == "0") {
+                MemberRegistrationDetails.CardNumber=$("#CardNumber").val();
+                MemberRegistrationDetails.NameOnCard=$("#NameOnCard").val();
+                MemberRegistrationDetails.MM=$("#MM").val();
+                MemberRegistrationDetails.YY=$("#YY").val();
+                MemberRegistrationDetails.CVV=$("#CVV").val();
+                MemberRegistrationDetails.CardID="";
+            }else{
+                MemberRegistrationDetails.CardID=$("#CardID").val();
+                MemberRegistrationDetails.CardNumber="";
+                MemberRegistrationDetails.NameOnCard="";
+                MemberRegistrationDetails.MM="";
+                MemberRegistrationDetails.YY="";
+                MemberRegistrationDetails.CVV="";
+            }
+
+            amountpaid=$("#AmountPaid").val();
+            MemberRegistrationDetails.AmountPaid=$("#AmountPaid").val();
+        }
+        //  var tAmount=document.getElementById("spnPlanAmount").innerText;
+        var tAmount =parseInt(document.getElementById("spnPlanAmount").innerText) + parseInt(MemberRegistrationDetails.InstallmentFee) +parseInt(MemberRegistrationDetails.EnrollFee);
+
+        MemberRegistrationDetails.TotalAmount=tAmount;
+        if(amountpaid=="")
+        {
+            MemberRegistrationDetails.AmountPaid=0;
+            MemberRegistrationDetails.DueAmount=tAmount;
+            MemberRegistrationDetails.Status="Pending";
+        }
+        else{
+            MemberRegistrationDetails.AmountPaid=$("#AmountPaid").val();
+            var dueamount=tAmount-amountpaid;
+            if(dueamount==0.0)
+            {
+                MemberRegistrationDetails.DueAmount=dueamount;
+                MemberRegistrationDetails.Status="Paid";
+            }
+            else{
+                MemberRegistrationDetails.DueAmount=dueamount;
+                MemberRegistrationDetails.Status="Partially Paid";
+            }
+        }
+
+        MemberRegistrationDetails.Duration=document.getElementById("spnDuration").innerText;
+        if (MemberRegistrationDetails != null) {
+            EnrollPlan(MemberRegistrationDetails,'@ServiceUrl');
+        }
+        else {
+            return false;
+        }
     }
 </script>
 
@@ -401,7 +529,8 @@
                                                 Clear
                                             </button>
                                             @Html.ValidationMessageFor(model => model.MemberName)
-                                            @Html.Hidden("MemberId")
+                                            @Html.Hidden("MemberID")
+                                            @Html.Hidden("SelectedMemberName")
                                             <script type="text/javascript">
                                                 function OnMemberNameSelectChange(e) {
                                                     $("#MemberId").val("0");
@@ -467,7 +596,7 @@
                                                         columns.Bound(p => p.IsTwofactorAuthentication).Title("IsTwofactorAuthentication").Filterable(false).Width(100).Visible(false);
                                                         columns.Bound(p => p.TwoFactorType).Title("TwoFactorType").Filterable(false).Width(100).Visible(false);
                                                         columns.Bound(p => p).ClientTemplate(
-                                                            "<a onclick='EditOptions(#=MemberID#,\"#=FirstName#\",\"#=LastName#\",\"#=CountryCode#\",\"#=MobileNumber#\",\"#=DOB#\",\"#=Gender#\",\"#=Email#\",\"#=CountryName#\",\"#=StateName#\",\"#=CityName#\",\"#=Zip#\",\"#=Salutation#\",\"#=CountryID#\",\"#=StateID#\",\"#=CityID#\",\"#=IsTwofactorAuthentication#\",\"#=TwoFactorType#\");' <span style='cursor:pointer'>View</a>").Title("Action").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(50);
+                                                            "<a onclick='EditOptions(#=MemberID#,\"#=StripeCustomerID#\",\"#=FirstName#\",\"#=LastName#\",\"#=CountryCode#\",\"#=MobileNumber#\",\"#=DOB#\",\"#=Gender#\",\"#=Email#\",\"#=CountryName#\",\"#=StateName#\",\"#=CityName#\",\"#=Zip#\",\"#=Salutation#\",\"#=CountryID#\",\"#=StateID#\",\"#=CityID#\",\"#=IsTwofactorAuthentication#\",\"#=TwoFactorType#\");' <span style='cursor:pointer'>View</a>").Title("Action").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(50);
 
                                                         columns.Bound(p => p).ClientTemplate(
                                                                                            "<a onclick='ViewMemberCard(#=MemberID#,#=Plan_Code#,\"#=MemberPlanID#\",\"#=PlanType#\");' <span style='cursor:pointer'>Download</a>").Title("ID Card").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(80);
@@ -522,25 +651,19 @@
                 </div>
             </div>
 
+            @Html.Hidden("StripeCustomerID")
             <div class="row" style="display:none;" id="DivViewMember">
 
                 <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
                 </div>
                 <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
                     <div id="MemberDetails" class="form-group" style="width:100%;">
-                        <div class="row">
-                            <br />
-                            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
-                            </div>
-
-                        </div>
 
                         <fieldset id="fsMemberDetails" style="margin:0px;width:100%; ">
                             <div class="row" id="MemberDetailsvalidate">
                             </div>
-                            <br />
                             <div class="row Panel_bg_Sub">
-                                <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Member Details</b>:</legend>
+                                <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Member Details</b></legend>
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
@@ -736,9 +859,53 @@
                                                     @Html.TextBoxFor(m => m.Zip, new { @class = "customKendoTextBox", style = "width:50%;Height:25px", maxlength = "5" })-
                                                     @Html.TextBoxFor(m => m.ZipCode, new { @class = "customKendoTextBox", style = "width:40%;Height:25px", maxlength = "4" })
                                                     <br />
-                                                    
+
                                                     @*@Html.ValidationMessageFor(m => m.Zip)
                                                         @Html.ValidationMessageFor(m => m.ZipCode)*@
+                                                </div>
+                                            </div>
+                                            <br />
+
+                                            <div class="row" id="MemberCredentials" style="display:block">
+                                                <div class="row">
+                                                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                                        @*@Html.CheckBox("chkMemberCredentials", false)&nbsp;*@
+                                                        <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Member Credentials</b></legend>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                                        @Html.CheckBox("chk2factor", false)&nbsp;<b>Enable 2-factor authentication</b>
+                                                    </div>
+                                                </div>
+                                                <div class="row" id="divEnableFactor">
+                                                    <div class="col-xs-10 col-md-3 col-sm-6 col-lg-10">
+                                                        <label style="font-weight: normal;">
+                                                            @(Html.RadioButton("ChkList", 1, new
+                                                    {
+                                                        id = "rbtnEverytime",
+                                                    }))
+                                                            Everytime
+                                                        </label>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        <label style="font-weight: normal;">
+                                                            @(Html.RadioButton("ChkList", 2, new
+                                                    {
+                                                        id = "rbtnOnlySysChange"
+                                                    }))
+                                                            Only when system change
+                                                        </label>
+                                                        <br />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="display:none;" id="DivUpdate">
+                                                <div class="col-xs-12 col-md-12 col-sm-12" align="right">
+                                                    <button class="button_blue" type="submit" id="btnSubmit" title="Submit" style="width: 100px;" value="Submit">
+                                                        Update
+                                                    </button>
+                                                    <button class="button_blue" type="button" id="btnCancel" title="Cancel" value="Cancel" style="width: 100px;" onclick="@("window.location.href='" + @Url.Action("ViewMemberDetails", "Organization") + "'");">
+                                                        Back
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -746,48 +913,11 @@
                                 </div>
                             </div>
                         </fieldset>
-                        <br />
-                        <div class="row Panel_bg_Sub" style="display:none;" id="DivMemberCredentials">
-                            <div class="row">
-                                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
-                                    @*@Html.CheckBox("chkMemberCredentials", false)&nbsp;*@
-                                    <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Member Credentials</b>:</legend>
-                                </div>
-                            </div>
 
-                            <div class="form-group">
-                                <div class="row" id="MemberCredentials" style="display:block">
-                                    <div class="row">
-                                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
-                                            @Html.CheckBox("chk2factor", false)&nbsp;<b>Enable 2-factor authentication</b>
-                                        </div>
-                                    </div>
-                                    <div class="row" id="divEnableFactor">
-                                        <div class="col-xs-10 col-md-3 col-sm-6 col-lg-10">
-                                            <label style="font-weight: normal;">
-                                                @(Html.RadioButton("ChkList", 1, new
-                                                    {
-                                                        id = "rbtnEverytime",
-                                                    }))
-                                                Everytime
-                                            </label>&nbsp;&nbsp;&nbsp;&nbsp;
-                                            <label style="font-weight: normal;">
-                                                @(Html.RadioButton("ChkList", 2, new
-                                                    {
-                                                        id = "rbtnOnlySysChange"
-                                                    }))
-                                                Only when system change
-                                            </label>
-                                            <br />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                         <div class="row Panel_bg_Sub">
                             <div class="row">
                                 <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
-                                    <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Member Plans</b>:</legend>
+                                    <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Member Plans</b></legend>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -811,7 +941,7 @@
                                                                           "#} #");
 
                                         })
-                                        .Scrollable()
+                                        .Scrollable(s => s.Height("auto"))
                                         .AutoBind(false)
                                         .HtmlAttributes(new { style = "" })
                                         .DataSource(dataSource => dataSource
@@ -821,18 +951,24 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <br />
-                        <div class="row" style="display:none;" id="DivUpdate">
-                            <div class="col-xs-12 col-md-12 col-sm-12" align="center">
-                                <button class="button_blue" type="submit" id="btnSubmit" title="Submit" style="width: 100px;" value="Submit">
-                                    Update
-                                </button>
-                                <button class="button_blue" type="button" id="btnCancel" title="Cancel" value="Cancel" style="width: 100px;" onclick="@("window.location.href='" + @Url.Action("ViewMemberDetails", "Organization") + "'");">
-                                    Cancel
-                                </button>
+                            <div class="row">
+                                <div class="col-xs-12 col-md-12 col-sm-12" align="right">
+                                    <button class="button_blue" type="button" id="btnEnrollPlan" title="Enroll Plan" style="width: 100px;" value="Enroll Plan">
+                                        Enroll Plan
+                                    </button>
+                                </div>
                             </div>
-                            <br />
+                            <div id="divEnrollPlan" style="display: none">
+                                @Html.Partial("_PlanEnroll")
+                                <br />
+                                <div class="row" id="divEnrollPlanSubmitRow" style="display: none">
+                                    <div class="col-xs-12 col-md-12 col-sm-12" align="right">
+                                        <button class="button_blue" type="button" id="btnSubmitPlan" title="Submit Plan" style="width: 100px;" value="Submit Plan" onclick="SubmitPlanEnrollment();">
+                                            Submit Plan
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                     </div>
