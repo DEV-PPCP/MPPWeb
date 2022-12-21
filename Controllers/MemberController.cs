@@ -21,6 +21,8 @@ using Newtonsoft.Json;
 using System.Net.Http;
 using Telerik.Web;
 using PPCP07302018.Models.Admin;
+using Kendo.Mvc.UI;
+using Kendo.Mvc.Extensions;
 
 namespace PPCP07302018.Controllers
 {
@@ -1754,6 +1756,41 @@ namespace PPCP07302018.Controllers
             string xml = GetXMLFromObject(list);
             string returnData = xml.Replace("\"", "\'");
             return returnData;
+        }
+
+        public ActionResult OrganizationMembers_Read([DataSourceRequest] DataSourceRequest request)
+        {
+            DataAccessLayer.ServiceCall<PPCP07302018.Models.Organization.AddMemberDetails> objcall = new DataAccessLayer.ServiceCall<PPCP07302018.Models.Organization.AddMemberDetails>();
+            ServiceData ServiceData = new ServiceData();
+            string[] ParameterName = new string[] { "OrganizationID", "strMemberID" };
+            string[] ParameterValue = new string[] { Session["OrganizationID"].ToString(), "0" };
+            ServiceData.ParameterName = ParameterName;
+            ServiceData.ParameterValue = ParameterValue;
+            ServiceData.WebMethodName = "GetMembersList";
+            List<PPCP07302018.Models.Organization.AddMemberDetails> List = objcall.CallServices(Convert.ToInt32(0), "GetMembersList", ServiceData);
+
+            var memberList = List.GroupBy(item => item.MemberID)
+                                     .Select(grouping => grouping.FirstOrDefault())
+                                     .OrderBy(item => item.MemberName)
+                                     .ToList();
+
+            return Json(memberList.ToDataSourceResult(request));
+        }
+
+        public ActionResult OrganizationMemberDetail(int memberID, [DataSourceRequest] DataSourceRequest request)
+        {
+            DataAccessLayer.ServiceCall<PPCP07302018.Models.Organization.AddMemberDetails> objcall = new DataAccessLayer.ServiceCall<PPCP07302018.Models.Organization.AddMemberDetails>();
+            ServiceData ServiceData = new ServiceData();
+            string[] ParameterName = new string[] { "OrganizationID", "strMemberID" };
+            string[] ParameterValue = new string[] { Session["OrganizationID"].ToString(), memberID.ToString() };
+            ServiceData.ParameterName = ParameterName;
+            ServiceData.ParameterValue = ParameterValue;
+            ServiceData.WebMethodName = "GetMembersList";
+            List<PPCP07302018.Models.Organization.AddMemberDetails> List = objcall.CallServices(Convert.ToInt32(0), "GetMembersList", ServiceData);
+
+            return Json(List
+                //.Where(order => order.EmployeeID == employeeID)
+                .ToDataSourceResult(request));
         }
     }
 }

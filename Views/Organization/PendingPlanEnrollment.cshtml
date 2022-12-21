@@ -210,12 +210,13 @@
             return false;
         }
     }
-    function EnrollPlanDetails(Gender,MemberID ,MemberParentID ,FirstName) {
+    function EnrollPlanDetails(Gender,MemberID ,MemberParentID ,FirstName, LastName) {
         debugger;
         $("#hdnMemberID").val(MemberID);
         $("#hdnMemberParentID").val(MemberParentID);
         $("#hdnFirstName").val(FirstName);
         $("#hdnGender").val(Gender)
+        $("#MemberName").text(FirstName + ' ' + LastName);
         $("#divGridPaymentsPending").hide();
         $("#DivPlanMain").show();
         $("#DivSubmitbutton").hide();
@@ -337,7 +338,7 @@
                                                     .Name("PaymentsPendinggrid")
                                                     .Columns(columns =>
                                                     {
-                                                        columns.Bound(p => p.FirstName).ClientTemplate(" #: LastName # #: FirstName # ").Title("Member Name").Filterable(false).Width(130);
+                                                        columns.Bound(p => p.FirstName).ClientTemplate(" #: FirstName # #: LastName # ").Title("Member Name").Filterable(false).Width(130);
                                                         columns.Bound(p => p.Gender).ClientTemplate("#if(Gender==1){ #Male#}else if(Gender==2){ #Female#}else{ #Male,Female #}#").Title("Gender").Filterable(false).Width(130);
                                                         columns.Bound(p => p.Age).Title("Age(Year)").Filterable(false).Width(130).Visible(false);
                                                         columns.Bound(p => p.RelationshipName).Title("Member Type").Filterable(false).Width(130);
@@ -346,7 +347,7 @@
                                                         columns.Bound(p => p.MemberParentID).Title("MobileNumber").Filterable(false).Width(130).Visible(false);
                                                         // columns.Bound(p => p.OrganizationID).Title("MobileNumber").Filterable(false).Width(130).Visible(false);
                                                         columns.Bound(p => p).ClientTemplate(
-                                                           "<a onclick='EnrollPlanDetails(#=Gender#,#= MemberID #,\"#=MemberParentID#\",\"#=FirstName#\");' <span style='cursor:pointer'>Enroll Plan</a>").Title("Enroll Plan").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(80);
+                                                           "<a onclick='EnrollPlanDetails(#=Gender#,#= MemberID #,\"#=MemberParentID#\",\"#=FirstName#\",\"#=LastName#\");' <span style='cursor:pointer'>Enroll Plan</a>").Title("Enroll Plan").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(80);
 
 
                                                     })
@@ -376,9 +377,10 @@
 
                     <div class="row">
                         <div class="row Panel_bg_Sub" id="fssearchplan" style="margin:0px;width:100%;">
+                            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Member: <label id="MemberName"></label></b></legend>
                             <br />
                             <div id="divSelectPlan" style="display:none;">
-                                <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Select a Plan</b>:</legend>
+                                <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Select a Plan</b></legend>
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
@@ -408,7 +410,7 @@
                                 </div>
                                 <br />
                                 <div id="divPlanPayment" style="display:none;">
-                                    <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Select Plan Start Date / Payment Schedule</b>:</legend>
+                                    <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Select Plan Start Date / Payment Schedule</b></legend>
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
@@ -510,7 +512,7 @@
                     <div class="row">
                         <div class="row Panel_bg_Sub" id="fsenrollplan" style="margin:0px;width:100%;">
                             <br />
-                            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;margin-bottom:0px;"><b>Selected Plan</b>:</legend>
+                            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;margin-bottom:0px;"><b>Selected Plan</b></legend>
                             <br />
                             <div class="form-group">
                                 <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
@@ -601,7 +603,7 @@
                             </div>
                             <br />
 
-                            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>@Html.CheckBox("chkPayNow", false, new { @disabled = "disabled" }) Pay Now</b>:</legend>
+                            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>@Html.CheckBox("chkPayNow", false, new { @disabled = "disabled" }) Pay Now</b></legend>
 
                             <div class="form-group">
                                 <div class="row">
@@ -617,7 +619,7 @@
                                         <div class="row">
                                             <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
                                                 @Html.Label("Amount", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;"> * </span>
-                                                @Html.TextBoxFor(model => model.AmountPaid, null, new { @class = "customKendoTextBox", @readonly = "readonly", PlaceHolder = "", maxlength = 20, onchange = "ValidateAmountPaid(this.value);" })
+                                                @Html.TextBoxFor(model => model.AmountPaid, null, new { @class = "customKendoTextBox disabled", @readonly = "readonly", PlaceHolder = "", maxlength = 20, onchange = "ValidateAmountPaid(this.value);" })
                                                 @Html.ValidationMessageFor(model => model.AmountPaid, "", new { @style = "color:red" })
                                             </div>
                                             <div class="col-xs-0 col-md-6 col-sm-6 col-lg-6 col-md-pull-2 col-lg-pull-2">

@@ -98,7 +98,7 @@
     }
     function EditOptions(MemberID, StripeCustomerID, FirstName, LastName, CountryCode, MobileNumber, DOB, Gender, Email, CountryName, StateName, CityName, Zip, Salutation, CountryID, StateID, CityID, IsTwofactorAuthentication, TwoFactorType) {
 
-        $("#MemberID").val(MemberID);
+        $("#MemberId").val(MemberID);
         $("#SelectedMemberName").val(FirstName + ' ' + LastName);
         $("#StripeCustomerID").val(StripeCustomerID);
         var x = MemberID;
@@ -319,7 +319,7 @@
         var MemberRegistrationDetails = {};
         MemberRegistrationDetails.MemberID = $("#hdnMemberID").val();
         MemberRegistrationDetails.MemberName = $("#SelectedMemberName").val();
-        //MemberRegistrationDetails.MemberParentID='@Session["MemberParentID"]';
+        MemberRegistrationDetails.MemberParentID=$("#hdnMemberID").val();
         MemberRegistrationDetails.OrganizationName=document.getElementById("spnSelectedOrganization").innerText;
         MemberRegistrationDetails.OrganizationID = document.getElementById("SpOrganizationID").innerText;
         MemberRegistrationDetails.BillingTypeID = document.getElementById("SpBillingTypeID").innerText;
@@ -334,7 +334,7 @@
         MemberRegistrationDetails.InstallmentAmount = document.getElementById("spnInstallmentAmount").innerText;
         MemberRegistrationDetails.InstallmentFee=document.getElementById("InstallmentFee").innerText;
         MemberRegistrationDetails.Savings=document.getElementById("Savings").innerText;
-        MemberRegistrationDetails.PlanType=$("#hdnFamilyIndividual").val();
+        MemberRegistrationDetails.PlanType="1";
         MemberRegistrationDetails.StripeAccountID = document.getElementById("spnStripeAccountID").innerText;
         MemberRegistrationDetails.CommPPCP=document.getElementById("spnCommPPCP").innerText;
         MemberRegistrationDetails.CommPrimaryMember=document.getElementById("spnCommPrimaryMember").innerText;
@@ -529,7 +529,7 @@
                                                 Clear
                                             </button>
                                             @Html.ValidationMessageFor(model => model.MemberName)
-                                            @Html.Hidden("MemberID")
+                                            @Html.Hidden("MemberId")
                                             @Html.Hidden("SelectedMemberName")
                                             <script type="text/javascript">
                                                 function OnMemberNameSelectChange(e) {
@@ -565,6 +565,52 @@
                 <div class="row">
                     <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
                         @Html.Hidden("RedirectTo", Url.Action("ViewMemberDetails", "Organization"))
+                        @*@(Html.Kendo().Grid<PPCP07302018.Models.Organization.AddMemberDetails>()
+                            .Name("gridMembers")
+                            .Columns(columns =>
+                            {
+                                columns.Bound(e => e.MemberName).Width(200);
+                                columns.Bound(e => e.Email).Width(200);
+                                columns.Bound(e => e.MobileNumber).Width(150);
+                                columns.Bound(p => p.DOB).Title("DOB").Format("{0: MM/dd/yyyy}").Width(120);
+                            })
+                            .Sortable()
+                            .Pageable()
+                            .Scrollable()
+                            .ClientDetailTemplateId("memberDetailtemplate")
+                            .HtmlAttributes(new { style = "height:550px;" })
+                            .DataSource(dataSource => dataSource
+                                .Ajax()
+                                .PageSize(5)
+                                .Read(read => read.Action("OrganizationMembers_Read", "Member"))
+                            )
+                            .Events(events => events.DataBound("dataBound"))
+                        )
+
+                        <script id="memberDetailtemplate" type="text/kendo-tmpl">
+                            @(Html.Kendo().Grid<PPCP07302018.Models.Organization.AddMemberDetails>()
+                                .Name("grid_#=MemberID#") // template expression, to be evaluated in the master context
+                                .Columns(columns =>
+                                {
+                                    columns.Bound(o => o.PlanName).Title("ID").Width(100);
+                                    columns.Bound(p => p.PlanStartDate).Title("Plan Start Date").Format("{0: MM/dd/yyyy}").Width(120);
+                                    columns.Bound(p => p.PlanEndDate).Title("Plan End Date").Format("{0: MM/dd/yyyy}").Width(120);
+                                    // columns.Bound(o => o.ShipName).Width(190);
+                                })
+                                .DataSource(dataSource => dataSource
+                                    .Ajax()
+                                    .PageSize(5)
+                                    .Read(read => read.Action("OrganizationMemberDetail", "Member", new { memberID = "#=MemberID#" }))
+                                )
+                                .Pageable()
+                                .Sortable()
+                                .ToClientTemplate())
+                        </script>
+                        <script>
+                            function dataBound() {
+                                this.expandRow(this.tbody.find("tr.k-master-row").first());
+                            }
+                        </script>*@
                         @(Html.Kendo().Grid<PPCP07302018.Models.Organization.AddMemberDetails>
                                                     ()
                                                     .Name("ViewMemberGrid")
@@ -735,8 +781,8 @@
                                                             $("#Salutation").val(dataItem.Text);
                                                             $("#SalutationID").val(dataItem.Value);
                                                         }
-                                                    </script>
-                                                </div>
+                        </script>
+                    </div>
                                                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                     @Html.Label("Email", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;">*</span><br />
                                                     @Html.TextBoxFor(model => model.Email, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
@@ -963,7 +1009,7 @@
                                 <br />
                                 <div class="row" id="divEnrollPlanSubmitRow" style="display: none">
                                     <div class="col-xs-12 col-md-12 col-sm-12" align="right">
-                                        <button class="button_blue" type="button" id="btnSubmitPlan" title="Submit Plan" style="width: 100px;" value="Submit Plan" onclick="SubmitPlanEnrollment();">
+                                        <button class="button_blue" type="button" id="btnSubmitPlan" title="Submit Plan" style="width: 150px;" value="Submit Plan" onclick="SubmitPlanEnrollment();">
                                             Submit Plan
                                         </button>
                                     </div>

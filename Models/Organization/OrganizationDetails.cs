@@ -597,18 +597,18 @@ namespace PPCP07302018.Models.Organization
         [RegularExpression(@"^\d{4}$", ErrorMessage = "Incorrect Format")]
         public string ZipCode { get; set; }
 
-        [Required(ErrorMessage = "This information is required.")]
-        [RegularExpression(@"^[A-Za-z0-9_@./#&+-]*$", ErrorMessage = "Invalid  Username")]
+        //[Required(ErrorMessage = "This information is required.")]
+        //[RegularExpression(@"^[A-Za-z0-9_@./#&+-]*$", ErrorMessage = "Invalid  Username")]
         public string UserName { get; set; }
 
-        [Required(ErrorMessage = "This information is required.")]
-        [RegularExpression(@"^[A-Za-z0-9_@./#&+-]*$", ErrorMessage = "Invalid  Username")]
+        //[Required(ErrorMessage = "This information is required.")]
+        //[RegularExpression(@"^[A-Za-z0-9_@./#&+-]*$", ErrorMessage = "Invalid  Username")]
         public string ConfirmUserName { get; set; }
 
-        [Required(ErrorMessage = "This information is required.")]
+        //[Required(ErrorMessage = "This information is required.")]
         public string Password { get; set; }
 
-        [Required(ErrorMessage = "This information is required.")]
+        //[Required(ErrorMessage = "This information is required.")]
         public string ConfirmPassword { get; set; }
 
         [Required(ErrorMessage = "This information is required.")]
@@ -616,10 +616,10 @@ namespace PPCP07302018.Models.Organization
 
         public int OrganizationID { get; set; }
 
-        public int RelationshipID { get; set; }
+        public int? RelationshipID { get; set; }
         public string RelationshipName { get; set; }
-        public int Type { get; set; }
-        public bool IsTwofactorAuthentication { get; set; }
+        public int? Type { get; set; }
+        public bool? IsTwofactorAuthentication { get; set; }
         public string PreferredIP { get; set; }
         public int? TwoFactorType { get; set; }
         [Required(ErrorMessage = "This information is required.")]
@@ -639,10 +639,10 @@ namespace PPCP07302018.Models.Organization
         public string CVV { get; set; }
 
         [Required(ErrorMessage = "This Information is required")]
-        public int MM { get; set; }
+        public int? MM { get; set; }
 
         [Required(ErrorMessage = "This Information is required")]
-        public int YY { get; set; }
+        public int? YY { get; set; }
     }
     public class ViewPaymentDetails
     {

@@ -183,6 +183,7 @@ function AddMembeDetails(MemberRegistrationDetails, session, Url) {
     if ($('#chkEnroll').is(":checked") == true) {
         //Added by akhil
         MemberRegistrationDetails.MemberRegistrationType = "ByOrg";
+        MemberRegistrationDetails.StripeCustomerID = $("#StripeCustomerID").val();
         MemberRegistrationDetails.OrganizationName = document.getElementById("spnSelectedOrganization").innerText;
         MemberRegistrationDetails.OrganizationID = document.getElementById("SpOrganizationID").innerText;
         MemberRegistrationDetails.BillingTypeID = document.getElementById("SpBillingTypeID").innerText;
@@ -198,6 +199,7 @@ function AddMembeDetails(MemberRegistrationDetails, session, Url) {
         MemberRegistrationDetails.InstallmentFee = document.getElementById("InstallmentFee").innerText;
         MemberRegistrationDetails.StripeAccountID = document.getElementById("spnStripeAccountID").innerText;
         MemberRegistrationDetails.Savings = document.getElementById("Savings").innerText;
+        MemberRegistrationDetails.CardID = $("#CardID").val();
         MemberRegistrationDetails.CardNumber = $("#CardNumber").val();
         MemberRegistrationDetails.NameOnCard = $("#NameOnCard").val();
         MemberRegistrationDetails.Amount = document.getElementById("spnInstallmentAmount").innerText;
@@ -461,6 +463,142 @@ function CheckMemberExists(FirstName, LastName, Gender, DOB, MobileNumber, Age, 
             ErrorMessage(webMethodName, textStatus);
         },
     });
+}
+
+function GetMemberIfExisting(FirstName, LastName, Gender, DOB, MobileNumber, Age, url) {
+    debugger;
+    var tempResult = 0;
+    var webMethodName = "GetMemberIfExisting";
+    var ParameterNames = new Array();
+    var ParameterValues = new Array();
+    ParameterNames[0] = "FirstName";
+    ParameterValues[0] = FirstName;
+    ParameterNames[1] = "LastName";
+    ParameterValues[1] = LastName;
+    ParameterNames[2] = "Gender";
+    ParameterValues[2] = Gender;
+    ParameterNames[3] = "DOB";
+    ParameterValues[3] = DOB;
+    ParameterNames[4] = "MobileNumber";
+    ParameterValues[4] = MobileNumber;
+    var Url = url + "Member";
+    var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
+    $.ajax({
+        type: "POST",
+        url: Url,
+        data: jsonPostString,
+        dataType: "text",
+        contentType: "application/json",
+        success: function (result) {
+            debugger;
+            var objlist = jQuery.parseJSON(result);
+            var objlist = objlist[0];
+            var jsonResult = "";
+            var jsonResults = ""
+            var OrgId = $("#OrganizationID").val();
+            if (objlist.length == 0) { //new MPP member
+                $("#divMemberCredentials").show();
+                $("#divPlanEnrollment").show();
+                BindingPlansGridBasedOnFilters($("#OrganizationID").val(), "0", "0", "0", "0", "0", url);
+            } else {
+                var sameOrgList = objlist.filter(v => v.OrganizationID == OrgId);
+                //var sameOrgList = $.grep(objlist, function (v) {
+                //    return v.OrganizationID === OrgId;
+                //});
+                if (sameOrgList.length > 0) {
+                    document.getElementById("divErrMessagePopup").style.display = "block";
+                    document.getElementById("spnPopupErrMessage").innerHTML = "Member already exists in your facility. You can try searching the member.";
+                    //document.getElementById("divErrMessagePopup").scrollIntoView();
+                } else {
+                    //Member already exists in MyPhysicianPlan. Can add but no need for credentials
+                    $("#MemberExistsInAnotherOrg").val(true);
+                    $("#StripeCustomerID").val(objlist[0].StripeCustomerID);
+                    $("#divPlanEnrollment").show();
+                    BindingPlansGridBasedOnFilters($("#OrganizationID").val(), "0", "0", "0", "0", "0", url);                    
+                }
+            }
+            //for (var r in objlist) {
+            //    jsonResult += "<input type='radio' name='" + "AccountType" + "' value='" + objlist[r].MemberID + "' onclick='" + "GetMemberID(this.value)" + "' />" +
+            //        "<label for='" + objlist[r].MemberName + "'>" + objlist[r].MemberName + "</label>" + "<br />"
+            //    $("#divMemberDetails").html(jsonResult);
+            //}
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            ErrorMessage(webMethodName, textStatus);
+        },
+    });
+}
+
+function GetStripeCardDetails(StripeCustomerID, url) {
+    debugger;
+    //var ConsultFee = $("#eConsultfee").val();
+    var webMethodName = "GetStripCardDetails";
+    var ParameterNames = new Array();
+    var ParameterValues = new Array();
+    ParameterNames[0] = "CustomerID";
+    ParameterValues[0] = StripeCustomerID;
+    var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
+    var Url = url + "Member";
+    $.ajax({
+        type: 'POST',
+        url: Url,
+        data: jsonPostString,
+        dataType: "text",
+        contentType: "application/json",
+        success: function (data, textStatus, jqXHR) {
+            debugger;
+            var obj = jQuery.parseJSON(data);
+            var TestsList = obj[0];
+            var jsonResult = "";
+            if (TestsList.length != 0) {
+               // $("#TempValue").val(2);                
+                for (var r in TestsList) {
+                    jsonResult += "<input type='radio' name='" + "CardsList" + "' value='" + TestsList[r].Id + "," + TestsList[r].Last4 + "," + TestsList[r].Name + "' onclick='" + "check(this.value)" + "'  />" + "&nbsp;" + TestsList[r].Brand + " **** **** **** " + TestsList[r].Last4 + "&nbsp;&nbsp;&nbsp;&nbsp;" + "<br />" +
+                        "<label for='" + TestsList[r].Name + "'>" + TestsList[r].Name + "</label>" + "<br />" +
+                        "<label for='" + TestsList[r].Name + "'>" + "Expires " + +TestsList[r].ExpirationMonth + "/" + TestsList[r].ExpirationYear + "</label>" + "<br />" +
+                        "<br />"
+                }
+
+                jsonResult += "<input type='radio' name='" + "CardsList" + "' value='" + 0 + "' onclick='" + "check(this.value)" + "'  />" + " Add New Card " + " <br /><br/>";
+               // $("#TextBoxTempValue").val(TestsList[r].Id);
+                document.getElementById("divCardSelect").style.display = "block";
+            }
+            else {
+               // $("#TempValue").val(1);
+                jsonResult += "<input type='radio' name='" + "CardsList" + "' value='" + 0 + "' checked='checked' onclick='" + "check(this.value)" + "'  />" + " Add New Card " + " <br /><br/>";
+                document.getElementById("divCardSelect").style.display = "block";
+                document.getElementById("divbankdetails").style.display = "block";
+            }
+            $("#divCardList").html(jsonResult);
+            if (TestsList.length != 0) {
+                check(TestsList[0].Id + "," + TestsList[0].Last4 + "," + TestsList[0].Name);
+                $("input[name=CardsList][value='" + TestsList[0].Id + "," + TestsList[0].Last4 + "," + TestsList[0].Name + "']").attr('checked', true);
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+        }
+    });
+}
+
+function check(CardsList) {
+    debugger;
+    if (CardsList == 0) {
+        document.getElementById("divbankdetails").style.display = "block";
+        //$("#TempSelectRadio").val("1");
+    }
+    else {
+        //$("#TempSelectRadio").val("2");
+        var arr = CardsList;
+        var arr_val = arr.split(',');
+        $("#CardID").val(arr_val[0]);
+
+        var CardValue = $("#CardID").val();
+        //$("#PaymentDetails_CardID").val(CardsList);
+        //$("#PaymentDetails_CustomerID").val($("#StripeCustomerID").val());
+        //$("#TextBoxTempValue").val(CardsList);
+
+        document.getElementById("divbankdetails").style.display = "none";
+    }
 }
 
 var FilteredPlans;
