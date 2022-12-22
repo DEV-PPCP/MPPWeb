@@ -137,10 +137,11 @@
         MemberRegistrationDetails.MemberID=$("#hdnMemberID").val();//'@Session["MemberID"]';
         MemberRegistrationDetails.LoginMemberID=$("#hdnMemberID").val();
         MemberRegistrationDetails.MemberName= $("#hdnFirstName").val();//'@Session["MemberName"]';
-        MemberRegistrationDetails.MemberParentID=$("#hdnMemberParentID").val();//'@Session["MemberParentID"]';
+        MemberRegistrationDetails.MemberParentID = $("#hdnMemberParentID").val();//'@Session["MemberParentID"]';
+        MemberRegistrationDetails.Email = $("#hdnEmail").val();
         MemberRegistrationDetails.OrganizationName=document.getElementById("spnSelectedOrganization").innerText;
         MemberRegistrationDetails.OrganizationID = document.getElementById("SpOrganizationID").innerText;
-        MemberRegistrationDetails.BillingTypeID = document.getElementById("SpBillingTypeID").innerText;        
+        MemberRegistrationDetails.BillingTypeID = document.getElementById("SpBillingTypeID").innerText;
         MemberRegistrationDetails.ProviderName=document.getElementById("SpProviderName").innerText;
         MemberRegistrationDetails.ProviderID=document.getElementById("SpProviderID").innerText;
         MemberRegistrationDetails.PlanName=document.getElementById("spnSelectedPlan").innerText;
@@ -210,11 +211,12 @@
             return false;
         }
     }
-    function EnrollPlanDetails(Gender,MemberID ,MemberParentID ,FirstName, LastName) {
+    function EnrollPlanDetails(Gender, MemberID, MemberParentID, FirstName, LastName, Email) {
         debugger;
         $("#hdnMemberID").val(MemberID);
         $("#hdnMemberParentID").val(MemberParentID);
         $("#hdnFirstName").val(FirstName);
+        $("#hdnEmail").val(Email);
         $("#hdnGender").val(Gender)
         $("#MemberName").text(FirstName + ' ' + LastName);
         $("#divGridPaymentsPending").hide();
@@ -328,6 +330,7 @@
 @Html.Hidden("hdnMemberID")
 @Html.Hidden("hdnMemberParentID")
 @Html.Hidden("hdnFirstName")
+@Html.Hidden("hdnEmail")
 <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" id="divMain" style="margin-top:0px;">
     <div class="form-group" style="margin-top:10px;">
         <div class="row">
@@ -343,11 +346,12 @@
                                                         columns.Bound(p => p.Age).Title("Age(Year)").Filterable(false).Width(130).Visible(false);
                                                         columns.Bound(p => p.RelationshipName).Title("Member Type").Filterable(false).Width(130);
                                                         columns.Bound(p => p.MobileNumber).Title("Mobile Number").Filterable(false).Width(130);
+                                                        columns.Bound(p => p.Email).Title("Email").Filterable(false).Width(130);
                                                         columns.Bound(p => p.MemberID).Title("MobileNumber").Filterable(false).Width(130).Visible(false);
                                                         columns.Bound(p => p.MemberParentID).Title("MobileNumber").Filterable(false).Width(130).Visible(false);
                                                         // columns.Bound(p => p.OrganizationID).Title("MobileNumber").Filterable(false).Width(130).Visible(false);
                                                         columns.Bound(p => p).ClientTemplate(
-                                                           "<a onclick='EnrollPlanDetails(#=Gender#,#= MemberID #,\"#=MemberParentID#\",\"#=FirstName#\",\"#=LastName#\");' <span style='cursor:pointer'>Enroll Plan</a>").Title("Enroll Plan").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(80);
+                                                           "<a onclick='EnrollPlanDetails(#=Gender#,#= MemberID #,\"#=MemberParentID#\",\"#=FirstName#\",\"#=LastName#\",\"#=Email#\");' <span style='cursor:pointer'>Enroll Plan</a>").Title("Enroll Plan").Width(60).Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(80);
 
 
                                                     })
