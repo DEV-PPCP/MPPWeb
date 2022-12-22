@@ -333,6 +333,15 @@
         });
     });
 
+    function getFormattedDate(date) {
+        date = new Date(date);
+        var year = date.getFullYear();
+        var month = (1 + date.getMonth()).toString().padStart(2, '0');
+        var day = date.getDate().toString().padStart(2, '0');
+
+        return month + '/' + day + '/' + year;
+    }
+
     function ChckOneTime() {
         if ($('#OneTime').is(":checked") == true) {
             $("#spnCheckErrorMessages").hide();
@@ -380,6 +389,9 @@
     function EnrollPlanDetails()
     {
         debugger;
+        var PlanPaymentValidationErr = document.getElementById("PlanPaymentValidation").innerHTML;
+        if (PlanPaymentValidationErr != "")
+                return false;
         var MemberRegistrationDetails =@Html.Raw(Json.Encode(@Model));
         MemberRegistrationDetails.MemberID='@Session["MemberID"]';
         // MemberRegistrationDetails.='@Session["MemberID"]';
@@ -492,13 +504,13 @@
             document.getElementById("SpOrganizationID").innerHTML = dataItem.OrganizationID;
             document.getElementById("SpBillingTypeID").innerHTML = dataItem.BillingTypeID;
             document.getElementById("SpProviderID").innerHTML = dataItem.ProviderID;
-            document.getElementById("spnVisitFee").innerHTML = dataItem.VisitFee;
             document.getElementById("spnEnrollFee").innerHTML = dataItem.EnrollFee;
             document.getElementById("spnDuration").innerHTML = dataItem.PlanTermName;
             document.getElementById("spnPlanType").innerHTML = "Individual";
             document.getElementById("spnEligibility").innerHTML =dataItem.VisitFee+"Y - "+dataItem.ToAge+"Y";
             document.getElementById("spnMonthlyPlanFee").innerHTML =dataItem.Amount;
-            document.getElementById("spnVisitFee").innerHTML =dataItem.VisitFee;
+            document.getElementById("spnVisitFee").innerHTML = dataItem.VisitFee;
+            document.getElementById("spnVisitFee").innerHTML = "In-person visit: $" + dataItem.VisitFee + ", Televisit: $" + dataItem.TeleVisitFee;
             document.getElementById("spnPlanDescription").innerHTML =dataItem.PlanDescription;
             document.getElementById("spnPlanTermMonths").innerHTML =dataItem.PlanTermMonths;
             document.getElementById("spnMemberTermsAndConditions").innerHTML =dataItem.PatientTAndCPath;
@@ -553,8 +565,83 @@
             document.getElementById("PlanPaymentValidation").innerHTML = "";
             var Months=document.getElementById("spnPlanTermMonths").innerHTML;
             AddMonths(Months);
+            OnPlanStartDateChange("PlansPaymentDataBound");
             debugger;
         });
+    }
+
+    function OnPlanStartDateChange(eventName) {
+        debugger;
+        document.getElementById("PlanPaymentValidation").innerHTML = "";
+        var PaymentSchedule = document.getElementById("Paymentschedule").innerText;
+        if (PaymentSchedule != "") {
+            //e.preventDefault();
+            //Check if member already enrolled on this date for selected organization
+            var webMethodName = "CheckMemberPlan";
+            var ParameterNames = new Array();
+            var ParameterValues = new Array();
+            ParameterNames[0] = "OrganizationID";
+            ParameterValues[0] = document.getElementById("SpOrganizationID").innerText;
+            ParameterNames[1] = "MemberID";
+            ParameterValues[1] = $("#SelectedMemberId").val();
+            ParameterNames[2] = "PlanStartDate";
+            ParameterValues[2] = $("#PlanStartDate").val();
+            ParameterNames[3] = "PlanID";
+            ParameterValues[3] = document.getElementById("PlanID").innerHTML
+            var Url = '@ServiceUrl' + "Member";
+            var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
+            $.ajax({
+                type: "POST",
+                url: Url,
+                data: jsonPostString,
+                dataType: "text",
+                contentType: "application/json",
+                success: function (res) {
+                    debugger;
+                    var obj = jQuery.parseJSON(res);
+                    var list = obj[0];
+                    if (list.length == 0) { //no plan found on selected date
+                        if (eventName == "ConfirmPlanSelection") {
+                            $("#SearchPlan").hide();
+                            $("#EnrollPlan").show();
+                            $("#divEnrollPlanSubmitRow").show();
+                        }
+
+                        $("#divValidator").hide();
+
+                        //$('#chkPayNow').is(":checked") == true;
+                        // $('input[name="chkPayNow"]').attr('checked', true);
+                        var Amount = document.getElementById("spnInstalmentAmt").innerText;
+                        var InstalmentAmount = document.getElementById("spnInstalmentFee").innerText;
+                        var EnrollFee = document.getElementById("spnEnrollFee").innerText;
+                        if (PaymentSchedule == "One Time") {
+                           // $("#divinstAmt").hide();
+                            var TotalAmount = 0;
+                            try {
+                                TotalAmount = parseFloat(Amount) + parseFloat(EnrollFee);
+                            } catch (err) {
+
+                            }
+                        }
+                        else {
+                           // $("#divinstAmt").show();
+                            TotalAmount = parseFloat(Amount) + parseFloat(InstalmentAmount) + parseFloat(EnrollFee);
+                        }
+                        $("#AmountPaid").val(TotalAmount);
+                    } else {
+                        $("#divValidator").show();
+                        document.getElementById("PlanPaymentValidation").innerHTML = "Member Plan Exists. Plan Dates: " + getFormattedDate(list[0].PlanStartDate) + " - " + getFormattedDate(list[0].PlanEndDate) + ". Please select a different start date.";
+                        return false;
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                },
+            });
+        }
+        else {
+            $("#divValidator").show();
+            document.getElementById("PlanPaymentValidation").innerHTML = "Please select any payment schedule"; return false;
+        }
     }
 
     function GetEnrollMemberDetails(memberId, firstname, lastname, DOb, Gender, individualFamily)
@@ -1214,7 +1301,7 @@
                                                         });
                                                     }))
                                             <br />
-                                            @Html.Hidden("PlanID")
+                                            @*@Html.Hidden("PlanID")*@
                                             <script type="text/javascript">
                                                 function OnPlanSelectChange(e) {
                                                     debugger;
@@ -1330,12 +1417,19 @@
                                         <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
                                             @Html.Label("Plan start date ", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;"> * </span>
                                             @( Html.Kendo().DatePickerFor(model => model.PlanStartDate).Format("MM/dd/yyyy").Name("PlanStartDate").Value(DateTime.Now)
+                                                .Events(e =>
+                                                {
+                                                      e.Change("OnPlanStartDateChange");
+                                                })
                                                     .HtmlAttributes(new { PlaceHolder = "MM/DD/YYYY", Maxlength = "10", type = "text", onkeydown = "return false;" }))
                                             @Html.ValidationMessageFor(model => model.PlanStartDate, "", new { @style = "color:red" })
                                         </div>
                                         <div class="col-xs-0 col-md-6 col-sm-6 col-lg-6"></div>
                                     </div>
                                     <br />
+                                    <div align="center" id="divValidator" class="row" style="display:none;">
+                                        <span style="color: Red"><span id="PlanPaymentValidation"></span></span>
+                                    </div>
                                     <div class="row">
                                         <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
                                             @(Html.Kendo().Grid<PPCP07302018.Models.Member.MemberDetails> ()
@@ -1463,8 +1557,7 @@
                                     <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6 col-lg-push-1 col-md-push-1">
                                         <span><b>Visit Fee </b></span>
                                         <br />
-                                        <span id="spnVisitFee" style="display:none"></span>
-                                        <span id="spnVisitFee1">In-person visit: $35, Televisit: $25</span>
+                                        <span id="spnVisitFee"></span>
                                     </div>
                                     <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6 col-lg-push-1 col-md-push-1">
                                         <span><b>Enrollment Fee  </b> </span>
@@ -1515,7 +1608,7 @@
                             <div class="row">
                                 <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
                                     @Html.Label("Amount ", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;"> * </span>
-                                    @Html.TextBoxFor(model => model.AmountPaid, null, new { @class = "customKendoTextBox", @readonly = "readonly", PlaceHolder = "", maxlength = 20, onchange = "ValidateAmountPaid(this.value);" })
+                                    @Html.TextBoxFor(model => model.AmountPaid, null, new { @class = "customKendoTextBox disabled", @readonly = "readonly", PlaceHolder = "", maxlength = 20, onchange = "ValidateAmountPaid(this.value);" })
                                     @Html.ValidationMessageFor(model => model.AmountPaid, "", new { @style = "color:red" })
                                 </div>
                                 <div class="col-xs-0 col-md-6 col-sm-6 col-lg-6 col-md-pull-2 col-lg-pull-2">

@@ -323,7 +323,7 @@
                                                         columns.Bound(p => p.PlanName).Title("Plan Name").Width(130);
                                                         //.ClientTemplate("#if (PlanName == '' ) { #" + "<text>No Enrolled Plan</text>" + " # } else { PlanName } #").Filterable(false);
                                                         columns.Bound(p => p.PlanStartDate).Width(100).Title("Plan Start Date").Encoded(true).ClientTemplate("#= PlanStartDate != null ? kendo.toString(kendo.parseDate(PlanStartDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') : '' #").HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
-                                                        columns.Bound(p => p.Duration).Title("Duration(in months)").Width(80).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                        columns.Bound(p => p.Duration).Title("Duration(in months)").Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
                                                         columns.Bound(p => p.OrganizationName).Title("Facility Name").Width(200);
                                                         columns.Bound(p => p.ProviderName).Title("Provider Name").Width(150);
                                                         columns.Bound(p => p.TotalAmount).Title("Plan Fee").Width(70).Format("{0:c0}").HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });

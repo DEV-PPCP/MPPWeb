@@ -88,7 +88,7 @@
         //
     }
 
-    function EditOptions(PlanID, PaymentIntervals, FromAge, ToAge, PlanName, EnrollFee, Amount, VisitFee, EffectiveDate, GenderID, PlanTermName, PlanDescription, PlanType, OrganizationID) {
+    function EditOptions(PlanID, PaymentIntervals, FromAge, ToAge, PlanName, EnrollFee, Amount, VisitFee, TeleVisitFee, EffectiveDate, GenderID, PlanTermName, PlanDescription, PlanType, OrganizationID) {
         debugger;
         $("#divSubscribeGrid").hide();
         $("#divSearchPlans").hide();
@@ -114,7 +114,7 @@
         document.getElementById("spnSelectedPlanType").innerHTML = PlanType;
         document.getElementById("spnEligibility").innerHTML = FromAge + "Y " + "-" + ToAge + "Y";
         document.getElementById("spnEnrollFee").innerHTML = EnrollFee;
-        //document.getElementById("spnVisitFee").innerHTML = VisitFee;
+        document.getElementById("spnVisitFee").innerHTML = "In-person visit: $" + VisitFee + ", Televisit: $" + TeleVisitFee;
         document.getElementById("spnAmount").innerHTML = Amount;
         document.getElementById("spnDuration").innerHTML = PlanTermName;
         //document.getElementById("spnAvailable").innerHTML = GenderID;
@@ -437,7 +437,7 @@
                                     //columns.Bound(p => p.OrganizationTAndCPath).Title("OrganizationTAndCPath").Filterable(false).Visible(false);
                                     columns.Bound(p => p.MemberName).Width(100).ClientTemplate("<a onclick='ViewDetails(#=PlanID#,#=PaymentIntervals#,\"#=FromAge#\",\"#=ToAge#\",\"#=PlanName#\",\"#=EnrollFee#\",\"#=MonthlyFee#\",\"#=VisitFee#\",\"#=EffectiveDate#\",\"#=GenderID#\",\"#=PlanTermName#\",\"#=PlanDescription#\",\"#=PlanType#\",\"#=OrgID#\",\"#=OrganizationTAndCPath#\");' <span style='cursor:pointer'>View</a>").Width(150).Title("Action").Filterable(false);
                                     columns.Bound(p => p).ClientTemplate(
-                              "# if (OrgID== 0) { #" + "<a onclick='EditOptions(#=PlanID#,#=PaymentIntervals#,\"#=FromAge#\",\"#=ToAge#\",\"#=PlanName#\",\"#=EnrollFee#\",\"#=MonthlyFee#\",\"#=VisitFee#\",\"#=EffectiveDate#\",\"#=GenderID#\",\"#=PlanTermName#\",\"#=PlanDescription#\",\"#=PlanType#\",\"#=OrgID#\",\"#=OrganizationTAndCPath#\");' <span style='cursor:pointer'>Subscribe</a>" + "# } else { #" + "<a onclick='UnSubscribed(#=PlanID#,#=MapID#,\"#=PlanName#\",);'<span style='cursor:pointer'>Unsubscribe</a>" + "# } #").Title("Action").Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(150);
+                              "# if (OrgID== 0) { #" + "<a onclick='EditOptions(#=PlanID#,#=PaymentIntervals#,\"#=FromAge#\",\"#=ToAge#\",\"#=PlanName#\",\"#=EnrollFee#\",\"#=MonthlyFee#\",\"#=VisitFee#\",\"#=TeleVisitFee#\",\"#=EffectiveDate#\",\"#=GenderID#\",\"#=PlanTermName#\",\"#=PlanDescription#\",\"#=PlanType#\",\"#=OrgID#\",\"#=OrganizationTAndCPath#\");' <span style='cursor:pointer'>Subscribe</a>" + "# } else { #" + "<a onclick='UnSubscribed(#=PlanID#,#=MapID#,\"#=PlanName#\",);'<span style='cursor:pointer'>Unsubscribe</a>" + "# } #").Title("Action").Filterable(false).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(150);
 
                                 })
                                                     .Scrollable().Sortable()
@@ -620,6 +620,7 @@
                                         $<span id="spnEnrollFee"></span>
                                     </div>
                                 </div>
+                                <br />
                                 <div class="row">
                                     <div class="col-xs-12 col-md-4 col-sm-6 col-lg-4">
                                         <span><b>Visit Fee</b></span>
@@ -642,7 +643,7 @@
                                         <span id="spnAvailable"></span>
                                     </div>
                                 </div>
-
+                                <br />
                                 <div class="row">
 
                                     <div class="col-xs-12 col-md-4 col-sm-6 col-lg-4">
@@ -651,7 +652,7 @@
                                         <span id="spnEffectiveDate"></span>
                                     </div>
 
-                                    <div class="col-xs-12 col-md-2 col-sm-6 col-lg-2">
+                                    <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
                                         <span><b>Plan Description</b></span>
                                         <br />
                                         <span id="spnPlanDecription"></span>

@@ -496,8 +496,18 @@ function GetMemberIfExisting(FirstName, LastName, Gender, DOB, MobileNumber, Age
             var jsonResult = "";
             var jsonResults = ""
             var OrgId = $("#OrganizationID").val();
+            $("#msgMemberExistingInMPP").html("");
+            $("#MemberExistsInAnotherOrg").val(false);
+            $("#divMemberCredentials").hide();
+            $("#divPlanEnrollment").hide();
+            $("#MemberCredentials").hide();
+            $("#EnrollPlan").hide();
+            $("#btnSubmit").hide();
+            $("#PlansGrid").data("kendoGrid").dataSource.data("");
+            $("#PlansPayment").data("kendoGrid").dataSource.data("");
             if (objlist.length == 0) { //new MPP member
                 $("#divMemberCredentials").show();
+                $("#MemberCredentials").show();
                 $("#divPlanEnrollment").show();
                 BindingPlansGridBasedOnFilters($("#OrganizationID").val(), "0", "0", "0", "0", "0", url);
             } else {
@@ -505,13 +515,15 @@ function GetMemberIfExisting(FirstName, LastName, Gender, DOB, MobileNumber, Age
                 //var sameOrgList = $.grep(objlist, function (v) {
                 //    return v.OrganizationID === OrgId;
                 //});
-                if (sameOrgList.length > 0) {
+                if (sameOrgList.length > 0) {                    
                     document.getElementById("divErrMessagePopup").style.display = "block";
                     document.getElementById("spnPopupErrMessage").innerHTML = "Member already exists in your facility. You can try searching the member.";
                     //document.getElementById("divErrMessagePopup").scrollIntoView();
                 } else {
                     //Member already exists in MyPhysicianPlan. Can add but no need for credentials
+                    $("#divMemberCredentials").show();
                     $("#MemberExistsInAnotherOrg").val(true);
+                    $("#msgMemberExistingInMPP").html("Member exists in MyPhysicianPlan. ");
                     $("#StripeCustomerID").val(objlist[0].StripeCustomerID);
                     $("#divPlanEnrollment").show();
                     BindingPlansGridBasedOnFilters($("#OrganizationID").val(), "0", "0", "0", "0", "0", url);                    

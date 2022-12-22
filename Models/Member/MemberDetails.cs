@@ -134,6 +134,7 @@ namespace PPCP07302018.Models.Member
         public string PlanTermName { get; set; }
         public int? PlanTermMonths { get; set; }
         public decimal? VisitFee { get; set; }
+        public decimal? TeleVisitFee { get; set; }
         public decimal? EnrollFee { get; set; }
 
         public int? FromAge { get; set; }

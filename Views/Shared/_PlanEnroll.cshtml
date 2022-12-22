@@ -467,7 +467,7 @@
             document.getElementById("SpOrganizationID").innerHTML = dataItem.OrganizationID;
             document.getElementById("SpBillingTypeID").innerHTML = dataItem.BillingTypeID;
             document.getElementById("SpProviderID").innerHTML = dataItem.ProviderID;
-            document.getElementById("spnVisitFee").innerHTML = dataItem.VisitFee;
+            document.getElementById("spnVisitFee").innerHTML = "In-person visit: $" + dataItem.VisitFee + ", Televisit: $" + dataItem.TeleVisitFee;
             document.getElementById("spnEnrollFee").innerHTML = dataItem.EnrollFee;
             document.getElementById("spnEligibility").innerHTML =dataItem.VisitFee+"Y - "+dataItem.ToAge+"Y";
             document.getElementById("spnDuration").innerHTML = dataItem.PlanTermName;

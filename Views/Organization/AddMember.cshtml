@@ -335,7 +335,7 @@
             document.getElementById("SpOrganizationID").innerHTML = dataItem.OrganizationID;
             document.getElementById("SpBillingTypeID").innerHTML = dataItem.BillingTypeID;
             document.getElementById("SpProviderID").innerHTML = dataItem.ProviderID;
-            document.getElementById("spnVisitFee").innerHTML = dataItem.VisitFee;
+            document.getElementById("spnVisitFee").innerHTML = "In-person visit: $" + dataItem.VisitFee + ", Televisit: $" + dataItem.TeleVisitFee;
             document.getElementById("spnEnrollFee").innerHTML = dataItem.EnrollFee;
             document.getElementById("spnEligibility").innerHTML =dataItem.VisitFee+"Y - "+dataItem.ToAge+"Y";
             document.getElementById("spnDuration").innerHTML = dataItem.PlanTermName;
@@ -878,6 +878,7 @@
                                     </div>
 
                                     <div class="form-group">
+                                        <div class="row" id="msgMemberExistingInMPP" style="color: darkblue"></div>
                                         <div class="row" id="MemberCredentials" style="display:block">
                                             <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
                                                 <div class="row">

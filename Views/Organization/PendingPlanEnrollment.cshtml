@@ -238,7 +238,7 @@
             document.getElementById("SpOrganizationID").innerHTML = dataItem.OrganizationID;
             document.getElementById("SpBillingTypeID").innerHTML = dataItem.BillingTypeID;
             document.getElementById("SpProviderID").innerHTML = dataItem.ProviderID;
-            document.getElementById("spnVisitFee").innerHTML = dataItem.VisitFee;
+            document.getElementById("spnVisitFee").innerHTML = "In-person visit: $" + dataItem.VisitFee + ", Televisit: $" + dataItem.TeleVisitFee;
             document.getElementById("spnEnrollFee").innerHTML = dataItem.EnrollFee;
             document.getElementById("spnEligibility").innerHTML = dataItem.VisitFee + "Y - " + dataItem.ToAge + "Y";
             document.getElementById("spnDuration").innerHTML = dataItem.PlanTermName;
@@ -563,6 +563,7 @@
                                                 <span id="spnVisitFee"></span>
                                             </div>
                                         </div>
+                                        <br />
                                         <div class="row">
                                             <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                                 <span><b>Instalment Amount </b>  </span>
@@ -602,7 +603,7 @@
                                 </div>
                             </div>
                             <br />
-
+                            <br />
                             <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>@Html.CheckBox("chkPayNow", false, new { @disabled = "disabled" }) Pay Now</b></legend>
 
                             <div class="form-group">
@@ -615,6 +616,7 @@
                                             <span style="font-weight:bold; font-size:15px">Card Details :</span>
                                         </div>
                                     </div>
+                                    <br />
                                     <div class="row">
                                         <div class="row">
                                             <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
@@ -626,6 +628,7 @@
                                                 <span id="spnAmountPaid" style="color:red"></span>
                                             </div>
                                         </div>
+                                        <br />
                                         <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
                                             @Html.Label("Card Number", new { style = "font-weight:normal;", @class = "classlabel" })<span style="color: Red;">*</span><br />
                                             @Html.TextBoxFor(model => model.CardNumber, null, new { @class = "customKendoTextBox", PlaceHolder = "", style = "width:100%;", maxlength = 16 })
