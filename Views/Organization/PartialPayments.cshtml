@@ -287,7 +287,7 @@
         MemberRegistrationDetails.OrganizationID=document.getElementById("spnOrganizationID").innerText;
         MemberRegistrationDetails.ProviderName=document.getElementById("spnProviderName").innerText;
         MemberRegistrationDetails.OrganizationName=document.getElementById("spnOrganizationName").innerText;
-        MemberRegistrationDetails.InstallmentAmount=document.getElementById("lblMonthlyFee").innerText;
+        MemberRegistrationDetails.InstallmentAmount = document.getElementById("lblMonthlyFee").innerText.replace("$", "");
         //if ($('#chkPayNow').is(":checked") == true) {
         if($("#TempSelectRadio").val()=="1" || $("#TempSelectRadio").val()==""){
             MemberRegistrationDetails.CardNumber=$("#CardNumber").val();
@@ -797,7 +797,7 @@
                             <div class="row">
                                 <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
                                     @Html.Label("Amount ", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;"> * </span>
-                                    @Html.TextBoxFor(model => model.AmountPaid, null, new { @readonly = "readonly", PlaceHolder = "", maxlength = 20, onchange = "ValidateAmountPaid(this.value);" })
+                                    @Html.TextBoxFor(model => model.AmountPaid, null, new { @class= "customKendoTextBox disabled", @readonly = "readonly", PlaceHolder = "", maxlength = 20, onchange = "ValidateAmountPaid(this.value);" })
                                     @Html.ValidationMessageFor(model => model.AmountPaid, "", new { @style = "color:red" })
                                 </div>
                                 <div class="col-xs-0 col-md-6 col-sm-6 col-lg-6 col-md-pull-2 col-lg-pull-2">

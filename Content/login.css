@@ -98,7 +98,7 @@ span.k-icon.k-i-calendar {
     }
 }
 
-@media only screen and (min-width:1000px) /*style for desktop view*/
+@media only screen and (min-height:660px) /*style for desktop view*/
 {
     .loginFooter {
         bottom: 0;
