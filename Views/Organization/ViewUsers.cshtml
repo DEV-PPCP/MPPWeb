@@ -524,12 +524,12 @@
                                     <div class="row">
                                         <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                             @Html.Label("First Name", new { style = "font-weight:normal;", @class = "" })<br />
-                                            @Html.TextBoxFor(model => model.FirstName, null, new { style = "width:100%;", maxlength = 50 })
+                                            @Html.TextBoxFor(model => model.FirstName, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
                                            
                                         </div>
                                         <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                             @Html.Label("Last Name", new { style = "font-weight:normal;", @class = "" })<br />
-                                            @Html.TextBoxFor(model => model.LastName, null, new { style = "width:100%;", maxlength = 50 })
+                                            @Html.TextBoxFor(model => model.LastName, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
                                            
                                         </div>
                                         <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
@@ -542,7 +542,7 @@
                                         </div>
                                         <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                             @Html.Label("Age", new { style = "font-weight:normal;", @class = "" })<br />
-                                            @Html.TextBoxFor(model => model.Age, null, new { style = "width:100%;", maxlength = 20, disabled = "disabled", @readonly = "readonly" })
+                                            @Html.TextBoxFor(model => model.Age, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 20, disabled = "disabled", @readonly = "readonly" })
                                             
                                         </div>
                                     </div>
@@ -595,14 +595,14 @@
                                         </div>
                                         <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                             @Html.Label("Email", new { style = "font-weight:normal;", @class = "" })<br />
-                                            @Html.TextBoxFor(model => model.Email, null, new { style = "width:100%;", maxlength = 50 })
+                                            @Html.TextBoxFor(model => model.Email, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
                                             
                                         </div>
                                         <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                             @Html.Label("Mobile Number", new { style = "font-weight:normal;", @class = "" })<br />
-                                            @Html.TextBoxFor(model => model.CountryCode, null, new { id = "txtCountry", style = "width:15%;", maxlength = 4 })
+                                            @Html.TextBoxFor(model => model.CountryCode, null, new { @class = "customKendoTextBox", id = "txtCountry", style = "width:15%;", maxlength = 4 })
                                             @Html.Label("-", new { style = "font-weight:normal;", @class = "labelColor" })
-                                            @Html.TextBoxFor(model => model.MobileNumber, null, new { id = "txtMobile", style = "width:75%;", maxlength = 10 })
+                                            @Html.TextBoxFor(model => model.MobileNumber, null, new { @class = "customKendoTextBox", id = "txtMobile", style = "width:75%;", maxlength = 10 })
                                            
                                         </div>
                                     </div>
@@ -727,8 +727,8 @@
                                         </div>
                                         <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                                             @Html.Label("ZIP / Postal Code", new { style = "font-weight:normal;", @class = "classlabel" })<br />
-                                            @Html.TextBoxFor(m => m.Zip, new { style = "width:50%;Height:25px", maxlength = "5" })-
-                                            @Html.TextBoxFor(m => m.ZipCode, new { style = "width:40%;Height:25px", maxlength = "4" })
+                                            @Html.TextBoxFor(m => m.Zip, new { @class = "customKendoTextBox", style = "width:50%;Height:25px", maxlength = "5" })-
+                                            @Html.TextBoxFor(m => m.ZipCode, new { @class = "customKendoTextBox", style = "width:40%;Height:25px", maxlength = "4" })
                                             <br />
                                            
                                            
@@ -793,8 +793,6 @@
     </div>
 
 
-
-</div>
 <script type="text/javascript">
     $(document).ready(function () {
         //veena
