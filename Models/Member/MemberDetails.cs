@@ -8,6 +8,7 @@ namespace PPCP07302018.Models.Member
 {
     public class MemberDetails
     {
+        public bool IsRxRegistration { get; set; }
         public int ReferringMemberId { get; set; }
         public int MemberPlanID { get; set; }
         public int MemberID { get; set; }

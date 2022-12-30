@@ -32,6 +32,12 @@ namespace PPCP07302018
             );
 
             routes.MapRoute(
+                name: "RxRegistration",
+                url: "RxRegistration",
+                defaults: new { controller = "Account", action = "MemberRxRegistration", id = UrlParameter.Optional }
+            );
+
+            routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Member", action = "MemberLogin", id = UrlParameter.Optional }

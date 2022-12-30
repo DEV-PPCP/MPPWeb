@@ -351,5 +351,12 @@ namespace PPCP07302018.Controllers
             model.ReferringMemberId = id;
             return RedirectToAction("MemberRegistration", "Member", model);
         }
+
+        public ActionResult MemberRxRegistration()
+        {
+            Models.Member.MemberDetails model = new Models.Member.MemberDetails();
+            model.IsRxRegistration = true;
+            return RedirectToAction("MemberRegistration", "Member", model);
+        }
     }
 }
