@@ -8,7 +8,7 @@ namespace PPCP07302018.Models.Member
 {
     public class MemberDetails
     {
-
+        public int ReferringMemberId { get; set; }
         public int MemberPlanID { get; set; }
         public int MemberID { get; set; }
 

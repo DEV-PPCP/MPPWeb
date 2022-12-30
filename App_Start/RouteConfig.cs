@@ -26,6 +26,12 @@ namespace PPCP07302018
            );
 
             routes.MapRoute(
+                name: "Referral",
+                url: "Referral/{id}",
+                defaults: new { controller = "Account", action = "MemberReferralRegistration", id = UrlParameter.Optional }
+            );
+
+            routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Member", action = "MemberLogin", id = UrlParameter.Optional }
