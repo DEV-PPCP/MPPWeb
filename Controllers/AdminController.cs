@@ -2419,6 +2419,666 @@ shapeFooter, PageNumbers
 
             return File(fileContents, contentType, fileName);
         }
+
+        public JsonResult GenerateBillingReport(string ToDate, string FromDate, string OrganizationID)
+        {
+            int OrgId = string.IsNullOrEmpty(OrganizationID) ? 0 : Convert.ToInt32(OrganizationID);
+            DataAccessLayer.ServiceCall<PPCP07302018.Models.Organization.RptBillingDetails> objcall = new DataAccessLayer.ServiceCall<PPCP07302018.Models.Organization.RptBillingDetails>();
+            PPCP07302018.Models.Member.ServiceData ServiceData = new PPCP07302018.Models.Member.ServiceData();
+            string[] ParameterName = new string[] { "FromDate", "ToDate", "OrganziationID" };//, "ProviderName"
+            string[] ParameterValue = new string[] { FromDate, ToDate, OrgId.ToString() };//,"" 
+            ServiceData.ParameterName = ParameterName;
+            ServiceData.ParameterValue = ParameterValue;
+            ServiceData.WebMethodName = "GetBillingReport";
+            List<PPCP07302018.Models.Organization.RptBillingDetails> List = objcall.CallServices(Convert.ToInt32(0), "GetBillingReport", ServiceData);
+
+
+            Telerik.Reporting.ReportBook rptbook = new Telerik.Reporting.ReportBook();
+            Telerik.Reporting.PageHeaderSection pageHeaderSection = new Telerik.Reporting.PageHeaderSection();
+            Telerik.Reporting.PageFooterSection pageFooterSection = new Telerik.Reporting.PageFooterSection();
+            Telerik.Reporting.Report rptirDCS = new Telerik.Reporting.Report();
+            Telerik.Reporting.DetailSection detail = new Telerik.Reporting.DetailSection();
+            #region Header
+            Telerik.Reporting.Shape shape1 = new Telerik.Reporting.Shape();
+            shape1 = new Telerik.Reporting.Shape();
+            Telerik.Reporting.Shape shapeFooter = new Telerik.Reporting.Shape();
+            shapeFooter = new Telerik.Reporting.Shape();
+            Telerik.Reporting.HtmlTextBox txtHeading = new Telerik.Reporting.HtmlTextBox();
+            txtHeading = new Telerik.Reporting.HtmlTextBox();
+            Telerik.Reporting.HtmlTextBox FeatureDate = new Telerik.Reporting.HtmlTextBox();
+            FeatureDate = new Telerik.Reporting.HtmlTextBox();
+            Telerik.Reporting.HtmlTextBox OrganizationName = new Telerik.Reporting.HtmlTextBox();
+            OrganizationName = new Telerik.Reporting.HtmlTextBox();
+            Telerik.Reporting.HtmlTextBox DoctorName = new Telerik.Reporting.HtmlTextBox();
+            DoctorName = new Telerik.Reporting.HtmlTextBox();
+            Telerik.Reporting.PictureBox picLogo = new Telerik.Reporting.PictureBox();
+            picLogo.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.607537258118391037), Telerik.Reporting.Drawing.Unit.Inch(0.5));
+            picLogo.MimeType = "";
+            picLogo.Name = "pictureBox2";
+            picLogo.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.016246293783187866D), Telerik.Reporting.Drawing.Unit.Inch(0.69996066689491272D));
+            picLogo.Sizing = Telerik.Reporting.Drawing.ImageSizeMode.Stretch;
+            // picLogo.Value = LogoPath; //img;
+            picLogo.Style.BorderStyle.Default = Telerik.Reporting.Drawing.BorderType.None;
+
+            txtHeading.Name = "Heading";
+            txtHeading.Value = "<strong>Billing Details</strong>";
+            txtHeading.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(7.6D), Telerik.Reporting.Drawing.Unit.Pixel(20));
+            txtHeading.Style.Font.Bold = true;
+            txtHeading.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Pixel(14);
+            txtHeading.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Center;
+            txtHeading.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.4D), Telerik.Reporting.Drawing.Unit.Inch(0.4D));
+            FeatureDate.Name = "FeatureDate";
+            FeatureDate.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Center;
+            FeatureDate.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(7.6D), Telerik.Reporting.Drawing.Unit.Pixel(14));
+            FeatureDate.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.4D), Telerik.Reporting.Drawing.Unit.Inch(txtHeading.Bottom.Value));
+            FeatureDate.Visible = false;
+            shape1.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.2D), Telerik.Reporting.Drawing.Unit.Inch(txtHeading.Bottom.Value));
+            shape1.Name = "shape1";
+            shape1.ShapeType = new Telerik.Reporting.Drawing.Shapes.LineShape(Telerik.Reporting.Drawing.Shapes.LineDirection.EW);
+            shape1.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(9.5D), Telerik.Reporting.Drawing.Unit.Inch(0.0520833320915699D));
+            shape1.Stretch = true;
+            shape1.Style.Font.Bold = true;
+            shape1.Style.LineWidth = Telerik.Reporting.Drawing.Unit.Point(1D);
+            shape1.Visible = true;
+            pageHeaderSection.Height = Telerik.Reporting.Drawing.Unit.Inch(0.7);
+            // pageHeaderSection.PrintOnFirstPage = true;
+            // pageHeaderSection.PrintOnLastPage = false;
+            pageHeaderSection.Items.AddRange(new Telerik.Reporting.ReportItemBase[] {
+txtHeading,shape1
+});
+            pageHeaderSection.Name = "pageHeaderSection";
+            #endregion
+            #region Report
+            try
+            {
+                //string ToDate = System.DateTime.Now.ToString("MM/dd/yyyy");
+                //DateTime Todate = Convert.ToDateTime(ToDate);
+                //DateTime todate = Todate.AddMonths(-1);
+                //string FromDate = todate.ToString("MM/dd/yyyy");
+                //  string OrganizationID = Session["OrganizationID"].ToString();
+
+
+                double bottom = 0.0;
+                if (List.Count > 0)
+                {
+                    #region Detailed
+                    DataTable dt = ToDataTable(List);
+                    DataTable dtNew = new DataTable();
+
+                    Telerik.Reporting.Table tablej = new Telerik.Reporting.Table();
+                    tablej = new Telerik.Reporting.Table();
+                    Telerik.Reporting.ObjectDataSource objectDataSource = new Telerik.Reporting.ObjectDataSource();
+                    Telerik.Reporting.HtmlTextBox htmlTextBox11j = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBox12j = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBox13j = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBox14j = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBox15j = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBox16j = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBox17j = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBox18j = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBox19j = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBox20j = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBox21j = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBox22j = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBox23j = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBoxPaymentdateV = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBoxPaymentdateH = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBoxStatusV = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBoxStatusH = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBoxSummary = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBoxTotalAmount = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBoxNetAmount = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBoxCommissionFee = new Telerik.Reporting.HtmlTextBox();
+
+
+
+                    Telerik.Reporting.HtmlTextBox htmlTextBoxInpersonAmount = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBoxInpersonAmountH = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBoxInpersonPaidAmount = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBoxInpersonPaidAmountH = new Telerik.Reporting.HtmlTextBox();
+
+                    Telerik.Reporting.HtmlTextBox htmlTextBox11 = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBox12 = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBox13 = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBox14 = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBox15 = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBox16 = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBox17 = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBox18 = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBox19 = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBox20 = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBox21 = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBox22 = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.HtmlTextBox htmlTextBox23 = new Telerik.Reporting.HtmlTextBox();
+                    Telerik.Reporting.TableGroup tableGroup1jj = new Telerik.Reporting.TableGroup();
+                    Telerik.Reporting.TableGroup tableGroup2jj = new Telerik.Reporting.TableGroup();
+                    Telerik.Reporting.TableGroup tableGroup3jj = new Telerik.Reporting.TableGroup();
+                    Telerik.Reporting.TableGroup tableGroup4jj = new Telerik.Reporting.TableGroup();
+                    Telerik.Reporting.TableGroup tableGroup5jj = new Telerik.Reporting.TableGroup();
+                    Telerik.Reporting.TableGroup tableGroup6jj = new Telerik.Reporting.TableGroup();
+                    Telerik.Reporting.TableGroup tableGroup7jj = new Telerik.Reporting.TableGroup();
+                    Telerik.Reporting.TableGroup tableGroup8jj = new Telerik.Reporting.TableGroup();
+                    Telerik.Reporting.TableGroup tableGroup9jj = new Telerik.Reporting.TableGroup();
+                    Telerik.Reporting.TableGroup tableGroup10jj = new Telerik.Reporting.TableGroup();
+                    Telerik.Reporting.TableGroup tableGroup11jj = new Telerik.Reporting.TableGroup();
+                    Telerik.Reporting.TableGroup tableGroup12jj = new Telerik.Reporting.TableGroup();
+                    Telerik.Reporting.TableGroup tableGroup13jj = new Telerik.Reporting.TableGroup();
+
+                    Telerik.Reporting.TableGroup tableGroup59jj = new Telerik.Reporting.TableGroup();
+                    Telerik.Reporting.TableGroup tableGroup58jj = new Telerik.Reporting.TableGroup();
+
+                    tablej.Body.Columns.Add(new Telerik.Reporting.TableBodyColumn(Telerik.Reporting.Drawing.Unit.Inch(1.0000005960464478D)));
+                    tablej.Body.Columns.Add(new Telerik.Reporting.TableBodyColumn(Telerik.Reporting.Drawing.Unit.Inch(0.7000005960464478D)));
+                    tablej.Body.Columns.Add(new Telerik.Reporting.TableBodyColumn(Telerik.Reporting.Drawing.Unit.Inch(1.2000005960464478D)));
+                    tablej.Body.Columns.Add(new Telerik.Reporting.TableBodyColumn(Telerik.Reporting.Drawing.Unit.Inch(1.2000065565109253D)));
+                    tablej.Body.Columns.Add(new Telerik.Reporting.TableBodyColumn(Telerik.Reporting.Drawing.Unit.Inch(0.7000005960464478D)));
+                    tablej.Body.Columns.Add(new Telerik.Reporting.TableBodyColumn(Telerik.Reporting.Drawing.Unit.Inch(0.7000005960464478D)));
+                    tablej.Body.Columns.Add(new Telerik.Reporting.TableBodyColumn(Telerik.Reporting.Drawing.Unit.Inch(0.9000005960464478D)));
+                    tablej.Body.Columns.Add(new Telerik.Reporting.TableBodyColumn(Telerik.Reporting.Drawing.Unit.Inch(0.7000005960464478D)));
+                    tablej.Body.Columns.Add(new Telerik.Reporting.TableBodyColumn(Telerik.Reporting.Drawing.Unit.Inch(0.7000005960464478D)));
+                    tablej.Body.Columns.Add(new Telerik.Reporting.TableBodyColumn(Telerik.Reporting.Drawing.Unit.Inch(0.7000005960464478D)));
+                    tablej.Body.Columns.Add(new Telerik.Reporting.TableBodyColumn(Telerik.Reporting.Drawing.Unit.Inch(0.7000005960464478D)));
+                    //tablej.Body.Columns.Add(new Telerik.Reporting.TableBodyColumn(Telerik.Reporting.Drawing.Unit.Inch(0.7000005960464478D)));
+
+                    tablej.Body.Rows.Add(new Telerik.Reporting.TableBodyRow(Telerik.Reporting.Drawing.Unit.Inch(0.3D)));
+                    tablej.Body.SetCellContent(0, 0, htmlTextBox11);
+                    tablej.Body.SetCellContent(0, 1, htmlTextBox12);
+                    tablej.Body.SetCellContent(0, 2, htmlTextBox13);
+                    tablej.Body.SetCellContent(0, 3, htmlTextBox14);
+                    tablej.Body.SetCellContent(0, 4, htmlTextBox15);
+                    tablej.Body.SetCellContent(0, 5, htmlTextBox16);
+                    tablej.Body.SetCellContent(0, 6, htmlTextBox17);
+                    tablej.Body.SetCellContent(0, 7, htmlTextBox18);
+                    tablej.Body.SetCellContent(0, 8, htmlTextBoxPaymentdateV);
+                    tablej.Body.SetCellContent(0, 9, htmlTextBoxStatusV);
+                    tablej.Body.SetCellContent(0, 10, htmlTextBoxInpersonAmount);
+                    //tablej.Body.SetCellContent(0, 11, htmlTextBoxInpersonPaidAmount);
+
+                    tableGroup1jj.Name = "tableGroup1";
+                    tableGroup1jj.ReportItem = htmlTextBox11j;
+                    tableGroup2jj.Name = "tableGroup2";
+                    tableGroup2jj.ReportItem = htmlTextBox12j;
+                    tableGroup3jj.Name = "tableGroup3";
+                    tableGroup3jj.ReportItem = htmlTextBox13j;
+                    tableGroup4jj.Name = "tableGroup4";
+                    tableGroup4jj.ReportItem = htmlTextBox14j;
+                    tableGroup5jj.Name = "tableGroup13";
+                    tableGroup5jj.ReportItem = htmlTextBox15j;
+                    tableGroup6jj.Name = "tableGroup5";
+                    tableGroup6jj.ReportItem = htmlTextBox16j;
+                    tableGroup7jj.Name = "tableGroup6";
+                    tableGroup7jj.ReportItem = htmlTextBox17j;
+                    tableGroup8jj.Name = "tableGroup7";
+                    tableGroup8jj.ReportItem = htmlTextBox18j;
+                    tableGroup9jj.Name = "tableGroup8";
+                    tableGroup9jj.ReportItem = htmlTextBoxPaymentdateH;
+                    tableGroup10jj.Name = "tableGroup9";
+                    tableGroup10jj.ReportItem = htmlTextBoxStatusH;
+
+                    tableGroup59jj.Name = "tableGroup59jj";
+                    tableGroup59jj.ReportItem = htmlTextBoxInpersonAmountH;
+
+                    //tableGroup58jj.Name = "tableGroup58jj";
+                    //tableGroup58jj.ReportItem = htmlTextBoxInpersonPaidAmountH;
+
+                    tablej.ColumnGroups.Add(tableGroup1jj);
+                    tablej.ColumnGroups.Add(tableGroup2jj);
+                    tablej.ColumnGroups.Add(tableGroup3jj);
+                    tablej.ColumnGroups.Add(tableGroup4jj);
+                    tablej.ColumnGroups.Add(tableGroup5jj);
+                    tablej.ColumnGroups.Add(tableGroup6jj);
+                    tablej.ColumnGroups.Add(tableGroup7jj);
+                    tablej.ColumnGroups.Add(tableGroup8jj);
+                    tablej.ColumnGroups.Add(tableGroup9jj);
+                    tablej.ColumnGroups.Add(tableGroup10jj);
+                    tablej.ColumnGroups.Add(tableGroup59jj);
+                    //tablej.ColumnGroups.Add(tableGroup58jj);
+                    tablej.Items.AddRange(new Telerik.Reporting.ReportItemBase[] {
+htmlTextBox11,
+htmlTextBox12,
+htmlTextBox13,
+htmlTextBox14,
+htmlTextBox15,
+htmlTextBox16,
+htmlTextBox17,
+htmlTextBox18,
+htmlTextBox11j,
+htmlTextBox12j,
+htmlTextBox13j,
+htmlTextBox14j,
+htmlTextBox15j,
+htmlTextBox16j,
+htmlTextBox17j,
+htmlTextBox18j,
+htmlTextBoxPaymentdateV,
+htmlTextBoxPaymentdateH,
+htmlTextBoxStatusV,
+htmlTextBoxStatusH,
+htmlTextBoxInpersonAmount,
+htmlTextBoxInpersonAmountH,
+//htmlTextBoxInpersonPaidAmount,
+//htmlTextBoxInpersonPaidAmountH
+});
+                    tablej.Name = "tablej";
+                    tableGroup12jj.Groupings.Add(new Telerik.Reporting.Grouping(null));
+                    tableGroup12jj.Name = "detailTableGroup";
+                    tablej.RowGroups.Add(tableGroup12jj);
+                    tablej.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(7.5500009536743164D), Telerik.Reporting.Drawing.Unit.Inch(1D));
+                    tablej.Style.BorderStyle.Default = Telerik.Reporting.Drawing.BorderType.Solid;
+                    tablej.Style.BorderWidth.Default = Telerik.Reporting.Drawing.Unit.Inch(0.00900000D);
+                    objectDataSource.DataMember = "GetPaymentsView";
+                    objectDataSource.DataSource = dt;
+                    objectDataSource.Name = "objectDataSource";
+                    tablej.DataSource = objectDataSource;
+                    tablej.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.2D), Telerik.Reporting.Drawing.Unit.Inch(bottom + 0.1));
+                    tablej.KeepTogether = false;
+                    bottom = tablej.Bottom.Value;
+                    htmlTextBox11.Name = "htmlTextBox11";
+                    htmlTextBox11.Style.BorderStyle.Default = Telerik.Reporting.Drawing.BorderType.Solid;
+                    htmlTextBox11.Style.BorderStyle.Right = Telerik.Reporting.Drawing.BorderType.None;
+                    htmlTextBox11.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
+                    htmlTextBox11.Style.VerticalAlign = Telerik.Reporting.Drawing.VerticalAlign.Middle;
+                    htmlTextBox11.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.0D), Telerik.Reporting.Drawing.Unit.Inch(0.3D));
+                    htmlTextBox11.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                    htmlTextBox11.StyleName = "";
+                    htmlTextBox11.Value = "&nbsp;{Fields.MemberName}";
+                    htmlTextBox11.Style.Padding.Right = Telerik.Reporting.Drawing.Unit.Inch(0.05D);
+                    htmlTextBox11.Style.BorderWidth.Default = Telerik.Reporting.Drawing.Unit.Inch(0.00900000D);
+
+                    htmlTextBox11j.Name = "htmlTextBoxValue1";
+                    htmlTextBox11j.Style.BorderStyle.Default = Telerik.Reporting.Drawing.BorderType.Solid;
+                    htmlTextBox11j.Style.BorderStyle.Right = Telerik.Reporting.Drawing.BorderType.None;
+                    htmlTextBox11j.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
+                    htmlTextBox11j.Style.VerticalAlign = Telerik.Reporting.Drawing.VerticalAlign.Middle;
+                    htmlTextBox11j.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.0D), Telerik.Reporting.Drawing.Unit.Inch(0.3D));
+                    htmlTextBox11j.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                    htmlTextBox11j.StyleName = "";
+                    htmlTextBox11j.Value = "<strong>Member Name</strong>";
+                    htmlTextBox11j.Style.Padding.Left = Telerik.Reporting.Drawing.Unit.Inch(0.05D);
+                    htmlTextBox11j.Style.BorderWidth.Default = Telerik.Reporting.Drawing.Unit.Inch(0.00900000D);
+
+                    htmlTextBox12.Name = "htmlTextBox12";
+                    htmlTextBox12.Style.BorderStyle.Default = Telerik.Reporting.Drawing.BorderType.Solid;
+                    htmlTextBox12.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
+                    htmlTextBox12.Style.VerticalAlign = Telerik.Reporting.Drawing.VerticalAlign.Middle;
+                    htmlTextBox12.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.7d), Telerik.Reporting.Drawing.Unit.Inch(0.3D));
+                    htmlTextBox12.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                    htmlTextBox12.StyleName = "";
+                    htmlTextBox12.Value = "{Fields.DOB}";
+                    htmlTextBox12.Style.Padding.Left = Telerik.Reporting.Drawing.Unit.Inch(0.05D);
+                    htmlTextBox12.Style.BorderWidth.Default = Telerik.Reporting.Drawing.Unit.Inch(0.00900000D);
+
+                    htmlTextBox12j.Name = "htmlTextBoxValue2";
+                    htmlTextBox12j.Style.BorderStyle.Default = Telerik.Reporting.Drawing.BorderType.Solid;
+                    htmlTextBox12j.Style.VerticalAlign = Telerik.Reporting.Drawing.VerticalAlign.Middle;
+                    htmlTextBox12j.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.7D), Telerik.Reporting.Drawing.Unit.Inch(0.3D));
+                    htmlTextBox12j.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                    htmlTextBox12j.StyleName = "";
+                    htmlTextBox12j.Value = "<strong>DOB</strong>";
+                    htmlTextBox12j.Style.Padding.Left = Telerik.Reporting.Drawing.Unit.Inch(0.05D);
+                    htmlTextBox12j.Style.BorderWidth.Default = Telerik.Reporting.Drawing.Unit.Inch(0.00900000D);
+
+                    htmlTextBox13.Name = "htmlTextBox13";
+                    htmlTextBox13.Style.BorderStyle.Default = Telerik.Reporting.Drawing.BorderType.Solid;
+                    htmlTextBox13.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
+                    htmlTextBox13.Style.VerticalAlign = Telerik.Reporting.Drawing.VerticalAlign.Middle;
+                    htmlTextBox13.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.2000005960464478D), Telerik.Reporting.Drawing.Unit.Inch(0.3D));
+                    htmlTextBox13.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                    htmlTextBox13.StyleName = "";
+                    htmlTextBox13.Value = "&nbsp;{Fields.OrganizationName}";
+                    htmlTextBox13.Style.Padding.Left = Telerik.Reporting.Drawing.Unit.Inch(0.05D);
+                    htmlTextBox13.Style.BorderWidth.Default = Telerik.Reporting.Drawing.Unit.Inch(0.00900000D);
+                    htmlTextBox13j.Name = "htmlTextBoxValue3";
+                    htmlTextBox13j.Style.BorderStyle.Default = Telerik.Reporting.Drawing.BorderType.Solid;
+                    htmlTextBox13j.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
+                    htmlTextBox13j.Style.VerticalAlign = Telerik.Reporting.Drawing.VerticalAlign.Middle;
+                    htmlTextBox13j.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.2000005960464478D), Telerik.Reporting.Drawing.Unit.Inch(0.3D));
+                    htmlTextBox13j.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                    htmlTextBox13j.StyleName = "";
+                    htmlTextBox13j.Value = "<strong>&nbsp;Organization Name</strong>";
+                    htmlTextBox13j.Style.BorderWidth.Default = Telerik.Reporting.Drawing.Unit.Inch(0.00900000D);
+
+                    htmlTextBox14.Name = "htmlTextBox14";
+                    htmlTextBox14.Style.BorderStyle.Default = Telerik.Reporting.Drawing.BorderType.Solid;
+                    htmlTextBox14.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
+                    htmlTextBox14.Style.VerticalAlign = Telerik.Reporting.Drawing.VerticalAlign.Middle;
+                    htmlTextBox14.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.2D), Telerik.Reporting.Drawing.Unit.Inch(0.3D));
+                    htmlTextBox14.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                    htmlTextBox14.StyleName = "";
+                    htmlTextBox14.Value = "{Fields.ProviderName}";
+                    htmlTextBox14.Style.Padding.Left = Telerik.Reporting.Drawing.Unit.Inch(0.05D);
+                    htmlTextBox14.Style.BorderWidth.Default = Telerik.Reporting.Drawing.Unit.Inch(0.00900000D);
+
+                    htmlTextBox14j.Name = "htmlTextBoxValue4";
+                    htmlTextBox14j.Style.BorderStyle.Default = Telerik.Reporting.Drawing.BorderType.Solid;
+                    htmlTextBox14j.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
+                    htmlTextBox14j.Style.VerticalAlign = Telerik.Reporting.Drawing.VerticalAlign.Middle;
+                    htmlTextBox14j.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.2D), Telerik.Reporting.Drawing.Unit.Inch(0.3D));
+                    htmlTextBox14j.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                    htmlTextBox14j.StyleName = "";
+                    htmlTextBox14j.Value = "<strong>&nbsp;PCP Name</strong>";
+                    htmlTextBox14j.Style.BorderWidth.Default = Telerik.Reporting.Drawing.Unit.Inch(0.00900000D);
+
+                    htmlTextBox15.Name = "htmlTextBox22";
+                    htmlTextBox15.Style.BorderStyle.Default = Telerik.Reporting.Drawing.BorderType.Solid;
+                    htmlTextBox15.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
+                    htmlTextBox15.Style.VerticalAlign = Telerik.Reporting.Drawing.VerticalAlign.Middle;
+                    htmlTextBox15.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.7D), Telerik.Reporting.Drawing.Unit.Inch(0.3D));
+                    htmlTextBox15.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                    htmlTextBox15.StyleName = "";
+                    htmlTextBox15.Value = "{Fields.PlanStartDate}";
+                    htmlTextBox15.Style.Padding.Left = Telerik.Reporting.Drawing.Unit.Inch(0.05D);
+                    htmlTextBox15.Style.BorderWidth.Default = Telerik.Reporting.Drawing.Unit.Inch(0.00900000D);
+
+                    htmlTextBox15j.Name = "htmlTextBox15j";
+                    htmlTextBox15j.Style.BorderStyle.Default = Telerik.Reporting.Drawing.BorderType.Solid;
+                    htmlTextBox15j.Style.BorderStyle.Right = Telerik.Reporting.Drawing.BorderType.None;
+                    htmlTextBox15j.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
+                    htmlTextBox15j.Style.VerticalAlign = Telerik.Reporting.Drawing.VerticalAlign.Middle;
+                    htmlTextBox15j.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.7D), Telerik.Reporting.Drawing.Unit.Inch(0.3D));
+                    htmlTextBox15j.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                    htmlTextBox15j.StyleName = "";
+                    htmlTextBox15j.Value = "<strong>&nbsp;Start Date</strong>";
+                    htmlTextBox15j.Style.BorderWidth.Default = Telerik.Reporting.Drawing.Unit.Inch(0.00900000D);
+
+                    htmlTextBox16.Name = "htmlTextBox16";
+                    htmlTextBox16.Style.BorderStyle.Default = Telerik.Reporting.Drawing.BorderType.Solid;
+                    htmlTextBox16.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
+                    htmlTextBox16.Style.VerticalAlign = Telerik.Reporting.Drawing.VerticalAlign.Middle;
+                    htmlTextBox16.Style.BorderStyle.Right = Telerik.Reporting.Drawing.BorderType.None;
+                    htmlTextBox16.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.7D), Telerik.Reporting.Drawing.Unit.Inch(0.3D));
+                    htmlTextBox16.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                    htmlTextBox16.StyleName = "";
+                    htmlTextBox16.Value = "{Fields.PlanEnddate}";
+                    htmlTextBox16.Style.Padding.Left = Telerik.Reporting.Drawing.Unit.Inch(0.05D);
+                    htmlTextBox19.Style.BorderWidth.Default = Telerik.Reporting.Drawing.Unit.Inch(0.00900000D);
+                    htmlTextBox16j.Name = "htmlTextBoxValue9";
+                    htmlTextBox16j.Style.BorderStyle.Default = Telerik.Reporting.Drawing.BorderType.Solid;
+                    htmlTextBox16j.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
+                    htmlTextBox16j.Style.VerticalAlign = Telerik.Reporting.Drawing.VerticalAlign.Middle;
+                    htmlTextBox16j.Style.BorderStyle.Right = Telerik.Reporting.Drawing.BorderType.None;
+                    htmlTextBox16j.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.7D), Telerik.Reporting.Drawing.Unit.Inch(0.3D));
+                    htmlTextBox16j.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                    htmlTextBox16j.StyleName = "";
+                    htmlTextBox16j.Value = "<strong>&nbsp;End Date</strong>";
+                    htmlTextBox16j.Style.BorderWidth.Default = Telerik.Reporting.Drawing.Unit.Inch(0.00900000D);
+
+                    htmlTextBox17.Name = "htmlTextBox17";
+                    htmlTextBox17.Style.BorderStyle.Default = Telerik.Reporting.Drawing.BorderType.Solid;
+                    htmlTextBox17.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
+                    htmlTextBox17.Style.VerticalAlign = Telerik.Reporting.Drawing.VerticalAlign.Middle;
+                    htmlTextBox17.Style.BorderStyle.Right = Telerik.Reporting.Drawing.BorderType.None;
+                    htmlTextBox17.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.9D), Telerik.Reporting.Drawing.Unit.Inch(0.3D));
+                    htmlTextBox17.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                    htmlTextBox17.StyleName = "";
+                    htmlTextBox17.Value = "{Fields.TotalTeleVisitAmount}";
+                    htmlTextBox17.Style.Padding.Left = Telerik.Reporting.Drawing.Unit.Inch(0.05D);
+                    htmlTextBox17.Style.BorderWidth.Default = Telerik.Reporting.Drawing.Unit.Inch(0.00900000D);
+
+                    htmlTextBox17j.Name = "htmlTextBox17j";
+                    htmlTextBox17j.Style.BorderStyle.Default = Telerik.Reporting.Drawing.BorderType.Solid;
+                    htmlTextBox17j.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
+                    htmlTextBox17j.Style.VerticalAlign = Telerik.Reporting.Drawing.VerticalAlign.Middle;
+                    htmlTextBox17j.Style.BorderStyle.Right = Telerik.Reporting.Drawing.BorderType.None;
+                    htmlTextBox17j.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.9D), Telerik.Reporting.Drawing.Unit.Inch(0.3D));
+                    htmlTextBox17j.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                    htmlTextBox17j.StyleName = "";
+                    htmlTextBox17j.Value = "<strong>&nbsp;Plan Fee($)</strong>";
+                    htmlTextBox17j.Style.BorderWidth.Default = Telerik.Reporting.Drawing.Unit.Inch(0.00900000D);
+
+                    htmlTextBox18.Name = "htmlTextBox18";
+                    htmlTextBox18.Style.BorderStyle.Default = Telerik.Reporting.Drawing.BorderType.Solid;
+                    htmlTextBox18.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
+                    htmlTextBox18.Style.VerticalAlign = Telerik.Reporting.Drawing.VerticalAlign.Middle;
+                    htmlTextBox18.Style.BorderStyle.Right = Telerik.Reporting.Drawing.BorderType.None;
+                    htmlTextBox18.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.7D), Telerik.Reporting.Drawing.Unit.Inch(0.3D));
+                    htmlTextBox18.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                    htmlTextBox18.StyleName = "";
+                    htmlTextBox18.Value = "{Fields.TeleVisitPaidAmount}";
+                    htmlTextBox18.Style.Padding.Left = Telerik.Reporting.Drawing.Unit.Inch(0.05D);
+                    htmlTextBox18.Style.BorderWidth.Default = Telerik.Reporting.Drawing.Unit.Inch(0.00900000D);
+                    htmlTextBox18j.Name = "htmlTextBoxValue23";
+                    htmlTextBox18j.Style.BorderStyle.Default = Telerik.Reporting.Drawing.BorderType.Solid;
+                    htmlTextBox18j.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
+                    htmlTextBox18j.Style.VerticalAlign = Telerik.Reporting.Drawing.VerticalAlign.Middle;
+                    htmlTextBox18j.Style.BorderStyle.Right = Telerik.Reporting.Drawing.BorderType.None;
+                    htmlTextBox18j.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.7D), Telerik.Reporting.Drawing.Unit.Inch(0.3D));
+                    htmlTextBox18j.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                    htmlTextBox18j.StyleName = "";
+                    htmlTextBox18j.Value = "<strong>&nbsp;TeleVisit($)</strong>";
+                    htmlTextBox18j.Style.BorderWidth.Default = Telerik.Reporting.Drawing.Unit.Inch(0.00900000D);
+
+
+                    htmlTextBoxPaymentdateV.Name = "htmlTextBoxPaymentdateV";
+                    htmlTextBoxPaymentdateV.Style.BorderStyle.Default = Telerik.Reporting.Drawing.BorderType.Solid;
+                    htmlTextBoxPaymentdateV.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
+                    htmlTextBoxPaymentdateV.Style.VerticalAlign = Telerik.Reporting.Drawing.VerticalAlign.Middle;
+                    htmlTextBoxPaymentdateV.Style.BorderStyle.Right = Telerik.Reporting.Drawing.BorderType.None;
+                    htmlTextBoxPaymentdateV.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.7D), Telerik.Reporting.Drawing.Unit.Inch(0.3D));
+                    htmlTextBoxPaymentdateV.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                    htmlTextBoxPaymentdateV.StyleName = "";
+                    htmlTextBoxPaymentdateV.Value = "{Fields.TeleVisitCount}";
+                    htmlTextBoxPaymentdateV.Style.Padding.Left = Telerik.Reporting.Drawing.Unit.Inch(0.05D);
+                    htmlTextBoxPaymentdateV.Style.BorderWidth.Default = Telerik.Reporting.Drawing.Unit.Inch(0.00900000D);
+                    htmlTextBoxPaymentdateH.Name = "htmlTextBoxPaymentdateH";
+                    htmlTextBoxPaymentdateH.Style.BorderStyle.Default = Telerik.Reporting.Drawing.BorderType.Solid;
+                    htmlTextBoxPaymentdateH.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
+                    htmlTextBoxPaymentdateH.Style.VerticalAlign = Telerik.Reporting.Drawing.VerticalAlign.Middle;
+                    htmlTextBoxPaymentdateH.Style.BorderStyle.Right = Telerik.Reporting.Drawing.BorderType.None;
+                    htmlTextBoxPaymentdateH.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.7D), Telerik.Reporting.Drawing.Unit.Inch(0.3D));
+                    htmlTextBoxPaymentdateH.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                    htmlTextBoxPaymentdateH.StyleName = "";
+                    htmlTextBoxPaymentdateH.Value = "<strong>&nbsp;Visit Count</strong>";
+                    htmlTextBoxPaymentdateH.Style.BorderWidth.Default = Telerik.Reporting.Drawing.Unit.Inch(0.00900000D);
+
+                    htmlTextBoxStatusV.Name = "htmlTextBoxStatusV";
+                    htmlTextBoxStatusV.Style.BorderStyle.Default = Telerik.Reporting.Drawing.BorderType.Solid;
+                    htmlTextBoxStatusV.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
+                    htmlTextBoxStatusV.Style.VerticalAlign = Telerik.Reporting.Drawing.VerticalAlign.Middle;
+                    htmlTextBoxStatusV.Style.BorderStyle.Right = Telerik.Reporting.Drawing.BorderType.None;
+                    htmlTextBoxStatusV.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.7D), Telerik.Reporting.Drawing.Unit.Inch(0.3D));
+                    htmlTextBoxStatusV.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                    htmlTextBoxStatusV.StyleName = "";
+                    htmlTextBoxStatusV.Value = "{Fields.InPersonPaidAmount}";
+                    htmlTextBoxStatusV.Style.Padding.Left = Telerik.Reporting.Drawing.Unit.Inch(0.05D);
+                    htmlTextBoxStatusV.Style.BorderWidth.Default = Telerik.Reporting.Drawing.Unit.Inch(0.00900000D);
+                    htmlTextBoxStatusH.Name = "htmlTextBoxStatusH";
+                    htmlTextBoxStatusH.Style.BorderStyle.Default = Telerik.Reporting.Drawing.BorderType.Solid;
+                    htmlTextBoxStatusH.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
+                    htmlTextBoxStatusH.Style.VerticalAlign = Telerik.Reporting.Drawing.VerticalAlign.Middle;
+                    htmlTextBoxStatusH.Style.BorderStyle.Right = Telerik.Reporting.Drawing.BorderType.None;
+                    htmlTextBoxStatusH.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.7D), Telerik.Reporting.Drawing.Unit.Inch(0.3D));
+                    htmlTextBoxStatusH.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                    htmlTextBoxStatusH.StyleName = "";
+                    htmlTextBoxStatusH.Value = "<strong>&nbsp;InPerson Amount($)</strong>";
+                    htmlTextBoxStatusH.Style.BorderWidth.Default = Telerik.Reporting.Drawing.Unit.Inch(0.00900000D);
+
+                    htmlTextBoxInpersonAmount.Name = "htmlTextBoxInpersonAmount";
+                    htmlTextBoxInpersonAmount.Style.BorderStyle.Default = Telerik.Reporting.Drawing.BorderType.Solid;
+                    htmlTextBoxInpersonAmount.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
+                    htmlTextBoxInpersonAmount.Style.VerticalAlign = Telerik.Reporting.Drawing.VerticalAlign.Middle;
+                    htmlTextBoxInpersonAmount.Style.BorderStyle.Right = Telerik.Reporting.Drawing.BorderType.None;
+                    htmlTextBoxInpersonAmount.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.7D), Telerik.Reporting.Drawing.Unit.Inch(0.3D));
+                    htmlTextBoxInpersonAmount.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                    htmlTextBoxInpersonAmount.StyleName = "";
+                    htmlTextBoxInpersonAmount.Value = "{Fields.InPersonCount}";
+                    htmlTextBoxInpersonAmount.Style.Padding.Left = Telerik.Reporting.Drawing.Unit.Inch(0.05D);
+                    htmlTextBoxInpersonAmount.Style.BorderWidth.Default = Telerik.Reporting.Drawing.Unit.Inch(0.00900000D);
+                    htmlTextBoxInpersonAmountH.Name = "htmlTextBoxInpersonAmountH";
+                    htmlTextBoxInpersonAmountH.Style.BorderStyle.Default = Telerik.Reporting.Drawing.BorderType.Solid;
+                    htmlTextBoxInpersonAmountH.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
+                    htmlTextBoxInpersonAmountH.Style.VerticalAlign = Telerik.Reporting.Drawing.VerticalAlign.Middle;
+                    htmlTextBoxInpersonAmountH.Style.BorderStyle.Right = Telerik.Reporting.Drawing.BorderType.None;
+                    htmlTextBoxInpersonAmountH.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.7D), Telerik.Reporting.Drawing.Unit.Inch(0.3D));
+                    htmlTextBoxInpersonAmountH.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                    htmlTextBoxInpersonAmountH.StyleName = "";
+                    htmlTextBoxInpersonAmountH.Value = "<strong>&nbsp;Visit Count</strong>";
+                    htmlTextBoxInpersonAmountH.Style.BorderWidth.Default = Telerik.Reporting.Drawing.Unit.Inch(0.00900000D);
+
+
+                    //htmlTextBoxInpersonPaidAmount.Name = "htmlTextBoxInpersonPaidAmount";
+                    //htmlTextBoxInpersonPaidAmount.Style.BorderStyle.Default = Telerik.Reporting.Drawing.BorderType.Solid;
+                    //htmlTextBoxInpersonPaidAmount.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
+                    //htmlTextBoxInpersonPaidAmount.Style.VerticalAlign = Telerik.Reporting.Drawing.VerticalAlign.Middle;
+                    //htmlTextBoxInpersonPaidAmount.Style.BorderStyle.Right = Telerik.Reporting.Drawing.BorderType.None;
+                    //htmlTextBoxInpersonPaidAmount.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.7D), Telerik.Reporting.Drawing.Unit.Inch(0.3D));
+                    //htmlTextBoxInpersonPaidAmount.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                    //htmlTextBoxInpersonPaidAmount.StyleName = "";
+                    //htmlTextBoxInpersonPaidAmount.Value = "{Fields.InPersonPaidAmount}";
+                    //htmlTextBoxInpersonPaidAmount.Style.Padding.Left = Telerik.Reporting.Drawing.Unit.Inch(0.05D);
+                    //htmlTextBoxInpersonPaidAmount.Style.BorderWidth.Default = Telerik.Reporting.Drawing.Unit.Inch(0.00900000D);
+                    //htmlTextBoxInpersonPaidAmountH.Name = "htmlTextBoxInpersonPaidAmountH";
+                    //htmlTextBoxInpersonPaidAmountH.Style.BorderStyle.Default = Telerik.Reporting.Drawing.BorderType.Solid;
+                    //htmlTextBoxInpersonPaidAmountH.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Left;
+                    //htmlTextBoxInpersonPaidAmountH.Style.VerticalAlign = Telerik.Reporting.Drawing.VerticalAlign.Middle;
+                    //htmlTextBoxInpersonPaidAmountH.Style.BorderStyle.Right = Telerik.Reporting.Drawing.BorderType.None;
+                    //htmlTextBoxInpersonPaidAmountH.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.7D), Telerik.Reporting.Drawing.Unit.Inch(0.3D));
+                    //htmlTextBoxInpersonPaidAmountH.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(9D);
+                    //htmlTextBoxInpersonPaidAmountH.StyleName = "";
+                    //htmlTextBoxInpersonPaidAmountH.Value = "<strong>&nbsp;</strong>";
+                    //htmlTextBoxInpersonPaidAmountH.Style.BorderWidth.Default = Telerik.Reporting.Drawing.Unit.Inch(0.00900000D);
+
+                    detail.Items.AddRange(new Telerik.Reporting.ReportItemBase[] {
+tablej,
+});
+                    detail.Height = Telerik.Reporting.Drawing.Unit.Inch(6.88199608039855957D);
+                    detail.PageBreak = Telerik.Reporting.PageBreak.None;
+                    detail.Name = "Billing Details";
+
+                    #endregion
+                }
+                else
+                {
+                    Telerik.Reporting.HtmlTextBox htmlTextErrorMessageDisplay = new Telerik.Reporting.HtmlTextBox();
+                    htmlTextErrorMessageDisplay = new Telerik.Reporting.HtmlTextBox();
+                    htmlTextErrorMessageDisplay.Style.Color = System.Drawing.Color.Black;
+                    htmlTextErrorMessageDisplay.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(2D), Telerik.Reporting.Drawing.Unit.Inch(0.4220028698444367D));
+                    htmlTextErrorMessageDisplay.Name = "htmlTextBoxErrorMessage";
+                    htmlTextErrorMessageDisplay.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(3.5D), Telerik.Reporting.Drawing.Unit.Inch(0.18749986588954926D));
+                    htmlTextErrorMessageDisplay.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(8.5D);
+                    htmlTextErrorMessageDisplay.StyleName = "";
+                    htmlTextErrorMessageDisplay.Value = "<strong>No matching records found.</strong>";
+                    detail.Items.AddRange(new Telerik.Reporting.ReportItemBase[] {
+htmlTextErrorMessageDisplay,
+});
+                }
+            }
+            catch (Exception ex)
+            {
+                #region Exception
+                // ErrorLog Err = new ErrorLog();
+                // //Trace the error in the method
+                // System.Diagnostics.StackTrace trace = new System.Diagnostics.StackTrace();
+                // string str = trace.GetFrame(0).GetMethod().ReflectedType.FullName;
+                // Err.ErrorsEntry(ex.ToString(), ex.Message, ex.GetHashCode(), str, trace.GetFrame(0).GetMethod().Name);
+                #endregion
+            }
+            #endregion
+            #region Footer
+            Telerik.Reporting.TextBox txtGeneratedby = new Telerik.Reporting.TextBox();
+            Telerik.Reporting.TextBox txtGeneratedColon = new Telerik.Reporting.TextBox();
+            Telerik.Reporting.TextBox txtGeneratedByValue = new Telerik.Reporting.TextBox();
+            Telerik.Reporting.TextBox txtGeneratedDatefooter = new Telerik.Reporting.TextBox();
+            Telerik.Reporting.TextBox txtGeneratedDateColon = new Telerik.Reporting.TextBox();
+            Telerik.Reporting.TextBox txtGenerateddateValue = new Telerik.Reporting.TextBox();
+            Telerik.Reporting.TextBox PageNumbers = new Telerik.Reporting.TextBox();
+            txtGeneratedby = new Telerik.Reporting.TextBox();
+            txtGeneratedColon = new Telerik.Reporting.TextBox();
+            txtGeneratedByValue = new Telerik.Reporting.TextBox();
+            txtGeneratedDatefooter = new Telerik.Reporting.TextBox();
+            txtGeneratedDateColon = new Telerik.Reporting.TextBox();
+            txtGenerateddateValue = new Telerik.Reporting.TextBox();
+            txtGeneratedby.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.8400000333786011D), Telerik.Reporting.Drawing.Unit.Inch(0.449842643737793D));
+            txtGeneratedby.Name = "Generated By";
+            txtGeneratedby.Value = "Generated By";
+            txtGeneratedby.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.562502384185791D), Telerik.Reporting.Drawing.Unit.Inch(0.15000000596046448D));
+            txtGeneratedColon.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(1.90761510848999D), Telerik.Reporting.Drawing.Unit.Inch(0.449842643737793D));
+            txtGeneratedColon.Name = ":";
+            txtGeneratedColon.Value = ":";
+            txtGeneratedColon.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.562502384185791D), Telerik.Reporting.Drawing.Unit.Inch(0.15000000596046448D));
+            txtGeneratedByValue.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(1.9600000333786011D), Telerik.Reporting.Drawing.Unit.Inch(0.449842643737793D));
+            txtGeneratedByValue.Name = "Generated By";
+            txtGeneratedByValue.Value = Convert.ToString(Session["LastName"]) + " " + Convert.ToString(Session["FirstName"]);
+            txtGeneratedByValue.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.562502384185791D), Telerik.Reporting.Drawing.Unit.Inch(0.15000000596046448D));
+            txtGeneratedDatefooter.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.8400000333786011D), Telerik.Reporting.Drawing.Unit.Inch(0.649842643737793D));
+            txtGeneratedDatefooter.Name = "Generated Date";
+            txtGeneratedDatefooter.Value = "Generated Date";
+            txtGeneratedDatefooter.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.562502384185791D), Telerik.Reporting.Drawing.Unit.Inch(0.15000000596046448D));
+            txtGeneratedDateColon.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(1.90761510848999D), Telerik.Reporting.Drawing.Unit.Inch(0.649842643737793D));
+            txtGeneratedDateColon.Name = ":";
+            txtGeneratedDateColon.Value = ":";
+            txtGeneratedDateColon.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.562502384185791D), Telerik.Reporting.Drawing.Unit.Inch(0.15000000596046448D));
+            txtGenerateddateValue.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(1.9600000333786011D), Telerik.Reporting.Drawing.Unit.Inch(0.649842643737793D));
+            txtGenerateddateValue.Name = "Generated Date";
+            txtGenerateddateValue.Value = System.DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt");
+            txtGenerateddateValue.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.562502384185791D), Telerik.Reporting.Drawing.Unit.Inch(0.15000000596046448D));
+            PageNumbers.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(6.5D), Telerik.Reporting.Drawing.Unit.Inch(0.649842643737793D));
+            PageNumbers.Name = "PageNumbers";
+            PageNumbers.Value = "Page { PageNumber} of {PageCount}";
+            PageNumbers.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2D), Telerik.Reporting.Drawing.Unit.Inch(0.15000000596046448D));
+            shapeFooter.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0.4000000333786011D), Telerik.Reporting.Drawing.Unit.Inch(txtGeneratedby.Top.Value - 0.15000000596046448D));
+            shapeFooter.Name = "shapeFooter";
+            shapeFooter.ShapeType = new Telerik.Reporting.Drawing.Shapes.LineShape(Telerik.Reporting.Drawing.Shapes.LineDirection.EW);
+            shapeFooter.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(9.5D), Telerik.Reporting.Drawing.Unit.Inch(0.0520833320915699D));
+            shapeFooter.Stretch = true;
+            shapeFooter.Style.Font.Bold = true;
+            shapeFooter.Style.LineWidth = Telerik.Reporting.Drawing.Unit.Point(1D);
+            pageFooterSection.PrintOnFirstPage = true;
+            pageFooterSection.PrintOnLastPage = true;
+            pageFooterSection.Items.AddRange(new Telerik.Reporting.ReportItemBase[] {
+shapeFooter, PageNumbers
+});//txtGeneratedby ,txtGeneratedColon,txtGeneratedByValue,txtGeneratedDatefooter,txtGeneratedDateColon,txtGenerateddateValue,
+            pageFooterSection.Height = Telerik.Reporting.Drawing.Unit.Inch(1.02);
+            pageFooterSection.Name = "pageFooterSection";
+            #endregion
+            rptirDCS.Items.AddRange(new Telerik.Reporting.ReportItemBase[] { pageHeaderSection, detail, pageFooterSection });//
+            rptirDCS.Name = "Members Report";
+            rptirDCS.PageSettings.Margins = new Telerik.Reporting.Drawing.MarginsU(Telerik.Reporting.Drawing.Unit.Inch(0D), Telerik.Reporting.Drawing.Unit.Inch(0D), Telerik.Reporting.Drawing.Unit.Inch(0D), Telerik.Reporting.Drawing.Unit.Inch(0D));
+            rptirDCS.PageSettings.PaperKind = System.Drawing.Printing.PaperKind.A4Plus;
+            //rptirDCS.Width = Telerik.Reporting.Drawing.Unit.Inch(9.587535572052002D);
+            rptirDCS.PageSettings.Landscape = true;
+            rptbook.Reports.Add(rptirDCS);
+            ReportProcessor reportProcessor = new ReportProcessor();
+            RenderingResult result = reportProcessor.RenderReport("PDF", rptbook, null);
+            rptbook.DocumentName = "Members Report";
+            string fileName = rptbook.DocumentName + "." + result.Extension;
+            //save documents in path
+            string LabPath = DownloadDocumentPath;
+            if (!Directory.Exists(LabPath))
+            {
+                if (!Directory.Exists(LabPath)) Directory.CreateDirectory(LabPath);
+            }
+            List<PPCP07302018.Models.Organization.UploadLabResults> files = new List<PPCP07302018.Models.Organization.UploadLabResults>();
+            if (fileName != null)
+            {
+
+                // Some browsers send file names with full path.
+                // We are only interested in the file name.                  
+                PPCP07302018.Models.Organization.UploadLabResults objCommunicationAttachment = new PPCP07302018.Models.Organization.UploadLabResults();
+                objCommunicationAttachment.Uploadresults.DocumentName = fileName;
+                objCommunicationAttachment.Uploadresults.InsertedDate = System.DateTime.Today.ToString("dd/MM/yyyy");
+                string PhyPath = DateTime.Now.ToString("ddMMyyyyhhmmss");
+                string DocumentPath = Path.Combine(LabPath, PhyPath);
+                //System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(DocumentPath);
+                //if (!di.Exists) di.Create();
+                System.IO.FileStream fs;
+                fs = new FileStream(DocumentPath + fileName, FileMode.Append);
+                fs.Write(result.DocumentBytes, 0, result.DocumentBytes.Length);
+                objCommunicationAttachment.Uploadresults.DocumentPath = fs.Name;
+                TempData["FileName"] = fs.Name;
+                // objCommunicationAttachment.Uploadresults.Type = Convert.ToInt32(Utils.GlobalFunctions.AttachmentType.DoctorAttachments);
+                //objCommunicationAttachment.Uploadresults.ModuleType = Convert.ToInt32(Utils.GlobalFunctions.ModuleType.eConsultation);
+                objCommunicationAttachment.Uploadresults.AttachmentDate = DateTime.Now;//Convert.ToDateTime(testdone);
+                fs.Close();
+                files.Add(objCommunicationAttachment);
+                TempData["UploadedFilesLabResults1"] = files;
+            }
+
+            return Json(files, JsonRequestBehavior.AllowGet);
+
+
+        }
+
         #endregion
     }
 }

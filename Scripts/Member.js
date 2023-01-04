@@ -812,7 +812,11 @@ function MembeDetails(MemberRegistrationDetails, session, Url, CurrentMonth) {
     MemberRegistrationDetails.CommPrimaryMember = document.getElementById("spnCommPrimaryMember").innerText;
     MemberRegistrationDetails.Duration = document.getElementById("spnDuration").innerText;
     MemberRegistrationDetails.EnrollFee = document.getElementById("spnEnrollFee").innerText;
-    var tAmount =parseInt(document.getElementById("spnPlanAmount").innerText) + parseInt(MemberRegistrationDetails.InstallmentFee) +parseInt(MemberRegistrationDetails.EnrollFee);
+    var tAmount = parseInt(document.getElementById("spnPlanAmount").innerText) + parseInt(MemberRegistrationDetails.InstallmentFee) + parseInt(MemberRegistrationDetails.EnrollFee);
+
+    //Referral Changes - get from Plan; set Discount to New member discount based on Plan
+    MemberRegistrationDetails.Discount = 20;
+    tAmount = tAmount - parseInt(MemberRegistrationDetails.Discount);
   
     MemberRegistrationDetails.TotalAmount = tAmount;
     var amountpaid = $("#AmountPaid").val();

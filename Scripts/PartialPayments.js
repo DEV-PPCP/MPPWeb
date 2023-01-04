@@ -57,7 +57,7 @@ function GetPlanDetails(MemberPlanCode, URl) {
             document.getElementById("lblTerm").innerHTML = PlansList[0].NoofInstallments;
             document.getElementById("lblPlanStartDate").innerHTML = PlansList[0].PStartDate;
             document.getElementById("lbl_PlanEndDateValue").innerHTML = PlansList[0].PEndDate;
-            document.getElementById("lblVisitFee").innerHTML = PlansList[0].VisitFee;
+            document.getElementById("lblVisitFee").innerHTML = "In-person visit: $" + PlansList[0].VisitFee + ", Televisit: $" + PlansList[0].TeleVisitFee;// PlansList[0].VisitFee;
             document.getElementById("lblEnrollFee").innerHTML = PlansList[0].EnrollFee;
             document.getElementById("lblMonthlyFee").innerHTML = PlansList[0].InstallmentAmount;
             document.getElementById("lbl_NoOfAddMem").innerHTML = PlansList.length;
@@ -86,6 +86,7 @@ function GetPlanDetails(MemberPlanCode, URl) {
             
             document.getElementById("lbl_PaidAmount").innerHTML = PlansList[0].AmountPaid;
             document.getElementById("lblPendingAmount").innerHTML = PlansList[0].DueAmount;
+            document.getElementById("lblDiscount").innerHTML = PlansList[0].Discount;
             document.getElementById("spnPlan_code").innerHTML = PlansList[0].Plan_Code;
             document.getElementById("spnPlanID").innerHTML = PlansList[0].PlanID;
             document.getElementById("spnStripeAccountID").innerHTML = PlansList[0].AccountID;

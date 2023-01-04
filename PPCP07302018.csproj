@@ -281,6 +281,7 @@
     <Compile Include="Models\Provider\Provider.cs" />
     <Compile Include="Models\Provider\ProviderLogin.cs" />
     <Compile Include="Models\Provider\ProviderRegistration.cs" />
+    <Compile Include="Models\Referral.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Utils\GlobalFunctions.cs" />
@@ -1375,6 +1376,9 @@
     <Content Include="Views\Admin\EditPlans.cshtml" />
     <Content Include="Views\Shared\_Plans.cshtml" />
     <Content Include="Views\Shared\_PlanEnroll.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Member\ReferralSummary.cshtml" />
+    <Content Include="Views\Member\Referral.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

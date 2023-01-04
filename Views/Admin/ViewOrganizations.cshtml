@@ -215,7 +215,7 @@
                                                     columns.Bound(p => p.StateName).Title("StateName").Filterable(false).Width(130).Visible(true);
                                                     columns.Bound(p => p.CityName).Title("CityName").Filterable(false).Width(120).Visible(true);
                                                     columns.Bound(p => p.Zip).Title("Zip").Filterable(false).Width(120).Visible(true);
-
+                                                    columns.Bound(p => p.BillingType).Title("Billing Type").Filterable(false).Width(120).Visible(true);
                                                     columns.Bound(p => p).ClientTemplate(
                                                         "<a onclick='ConvertBillingType(#=OrganizationID#);' <span style='cursor:pointer'>Convert Billing Type</a>").Title("Action").Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
                                                 })

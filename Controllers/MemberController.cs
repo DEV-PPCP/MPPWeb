@@ -23,6 +23,7 @@ using Telerik.Web;
 using PPCP07302018.Models.Admin;
 using Kendo.Mvc.UI;
 using Kendo.Mvc.Extensions;
+using PPCP07302018.Models;
 
 namespace PPCP07302018.Controllers
 {
@@ -1792,6 +1793,59 @@ namespace PPCP07302018.Controllers
                 //.Where(order => order.EmployeeID == employeeID)
                 .ToDataSourceResult(request));
         }
+
+        #region Referral
+
+        public ActionResult ReferralSummary()
+        {
+            DataAccessLayer.ServiceCall<ReferralSummary> objcall = new DataAccessLayer.ServiceCall<ReferralSummary>();
+            ServiceData ServiceData = new ServiceData();
+            string[] ParameterName = new string[] { "MemberID" };
+            string[] ParameterValue = new string[] { Session["MemberID"].ToString(), "0" };
+            ServiceData.ParameterName = ParameterName;
+            ServiceData.ParameterValue = ParameterValue;
+            ServiceData.WebMethodName = "GetReferralSummary";
+            List<ReferralSummary> list = objcall.CallService(Convert.ToInt32(0), "GetReferralSummary", ServiceData);
+
+            ReferralSummary model = new ReferralSummary();
+            model = list.First();
+            return View(model);
+        }
+
+        public ActionResult ReferralSummary_Read([DataSourceRequest] DataSourceRequest request)
+        {
+            DataAccessLayer.ServiceCall<Referral> objcall = new DataAccessLayer.ServiceCall<Referral>();
+            ServiceData ServiceData = new ServiceData();
+            string[] ParameterName = new string[] { "MemberID" };
+            string[] ParameterValue = new string[] { Session["MemberID"].ToString(), "0" };
+            ServiceData.ParameterName = ParameterName;
+            ServiceData.ParameterValue = ParameterValue;
+            ServiceData.WebMethodName = "GetReferralSummaryList";
+            List<Referral> list = objcall.CallService(Convert.ToInt32(0), "GetReferralSummaryList", ServiceData);
+
+            return Json(list.ToDataSourceResult(request));
+        }
+
+        public ActionResult Referral()
+        {
+            return View();
+        }
+
+        public ActionResult ReferralList_Read([DataSourceRequest] DataSourceRequest request)
+        {
+            DataAccessLayer.ServiceCall<Referral> objcall = new DataAccessLayer.ServiceCall<Referral>();
+            ServiceData ServiceData = new ServiceData();
+            string[] ParameterName = new string[] { "MemberID" };
+            string[] ParameterValue = new string[] { Session["MemberID"].ToString(), "0" };
+            ServiceData.ParameterName = ParameterName;
+            ServiceData.ParameterValue = ParameterValue;
+            ServiceData.WebMethodName = "GetReferralList";
+            List<Referral> list = objcall.CallService(Convert.ToInt32(0), "GetReferralList", ServiceData);
+
+            return Json(list.ToDataSourceResult(request));
+        }
+
+        #endregion
     }
 }
 

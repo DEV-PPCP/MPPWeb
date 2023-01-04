@@ -799,7 +799,7 @@
         ValidateUserNames(Username,'@ServiceUrl');
     }
     function ValidateAmountPaid(AmountPaid){
-        ValidateAmountPaids(AmountPaid);
+        //ValidateAmountPaids(AmountPaid);
     }
     function onDataBound() {
         var grid = this;
@@ -1858,7 +1858,7 @@
                                                 <div class="row">
                                                     <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
                                                         @Html.Label("Amount", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;"> * </span>$
-                                                        @Html.TextBoxFor(model => model.AmountPaid, null, new { @class = "k-textbox disabled", @readonly = "readonly", PlaceHolder = "", maxlength = 20, onchange = "ValidateAmountPaid(this.value);" })
+                                                        @Html.TextBoxFor(model => model.AmountPaid, null, new { @class = "k-textbox ", PlaceHolder = "", maxlength = 20, onchange = "ValidateAmountPaid(this.value);" })
                                                         @Html.ValidationMessageFor(model => model.AmountPaid, "", new { @style = "color:red" })
                                                     </div>
                                                     <div class="col-xs-0 col-md-6 col-sm-6 col-lg-6 col-md-pull-2 col-lg-pull-2">

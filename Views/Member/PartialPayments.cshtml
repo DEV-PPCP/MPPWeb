@@ -91,7 +91,7 @@
         document.getElementById("divErrMessagePopup").style.display = "none";
     }
 
-    function GetEnrollMemberDetails(MemberPlanInstallmentID ,MemberPlanID ,PaymentAmount ,InstallmentAmount ,PaymentDate1 ,PaidAmount ,PaymentStatus ,PaymentDueDate ,PaymentDetailsID ){
+    function GetEnrollMemberDetails(MemberPlanInstallmentID, MemberPlanID, PaymentAmount, InstallmentAmount, PaymentDate1, PaidAmount, PointsAmount, PaymentStatus ,PaymentDueDate ,PaymentDetailsID ){
         debugger;
         var amount="";
         var jsModel={};
@@ -104,7 +104,10 @@
         jsModel.PaidAmount=PaidAmount;
         jsModel.PaymentStatus=PaymentStatus;
         jsModel.PaymentDueDate=PaymentDueDate;
-        jsModel.PaymentDetailsID=PaymentDetailsID;
+        jsModel.PaymentDetailsID = PaymentDetailsID;
+        if (PointsAmount == "null")
+            PointsAmount = 0;
+        jsModel.PointsAmount = PointsAmount;
 
         $.ajax({
             cache: false,
@@ -117,7 +120,7 @@
                 debugger;
                 var amount=0;
                 for(var r in data){
-                    amount=amount+data[r].PaymentAmount+data[r].InstallmentAmount;
+                    amount = amount + data[r].PaymentAmount + data[r].InstallmentAmount - data[r].PointsAmount;
                 }
                 $("#AmountPaid").val(amount);
 
@@ -412,7 +415,7 @@
 
                         </td>
                         <td id="Td12" style="width: 200Px">
-                            <span ID="lblEnrollFee" Font-Bold="True"></span>
+                            $<span ID="lblEnrollFee" Font-Bold="True"></span>
                         </td>
                     </tr>
                     <tr>
@@ -421,7 +424,7 @@
 
                         </td>
                         <td id="Td14">
-                            <span ID="lblMonthlyFee" Font-Bold="True"></span>
+                            $<span ID="lblMonthlyFee" Font-Bold="True"></span>
                         </td>
                         <td>
                             Additional Member Installment Amount
@@ -444,7 +447,7 @@
 
                         </td>
                         <td id="Td20">
-                            <span ID="lblPlanAmount" Font-Bold="True"></span>
+                            $<span ID="lblPlanAmount" Font-Bold="True"></span>
                         </td>
                     </tr>
                     <tr>
@@ -453,26 +456,34 @@
 
                         </td>
                         <td>
-                            <span ID="lbl_PaidAmount" Font-Bold="true"></span>
+                            $<span ID="lbl_PaidAmount" Font-Bold="true"></span>
                         </td>
                         <td id="Td17">
                             Installment Fee
 
                         </td>
                         <td id="Td18">
-                            <span ID="lblTransactionFee" Font-Bold="True"></span>
-                        </td>
-                        <td id="Td19" width="35%"  style="display:none;">
-                            DueAmount
-
-                        </td>
-                        <td id="Td20"  style="display:none;">
-                            <span ID="lblPendingAmount" Font-Bold="True"></span>
+                            $<span ID="lblTransactionFee" Font-Bold="True"></span>
                         </td>
                     </tr>
                     <tr>
-                       
-                        <td id="Td21" width="35%"  style="display:none;">
+                        <td id="Td19" width="35%" style="display:none;">
+                            DueAmount
+
+                        </td>
+                        <td id="Td20" style="display:none;">
+                            <span ID="lblPendingAmount" Font-Bold="True"></span>
+                        </td>
+                        <td id="Td21" width="35%">
+                            Discount
+                        </td>
+                        <td id="Td22">
+                            $<span ID="lblDiscount" Font-Bold="True"></span>
+                        </td>
+                    </tr>
+                    <tr>
+
+                        <td id="Td21" width="35%" style="display:none;">
                             Tax (%)
 
                         </td>
@@ -508,9 +519,10 @@
                                                     {
                                                         columns.Bound(p => p.MemberPlanInstallmentID).Title("Payment Amount").Filterable(false).Width(100).Visible(false);
                                                         columns.Bound(p => p.MemberPlanID).Title("Payment Amount").Filterable(false).Width(100).Visible(false);
-                                                        columns.Bound(p => p).ClientTemplate("# if (PaymentStatus != 'Paid') { #" + "<a onclick=\"GetEnrollMemberDetails('#= MemberPlanInstallmentID #','#= MemberPlanID #','#= PaymentAmount #','#= InstallmentAmount #','#= PaymentDate1 #','#= PaidAmount #','#= PaymentStatus #','#= PaymentDueDate #','#= PaymentDetailsID #')\"> <span style='cursor:pointer'><input type='checkbox' value='#= InstallmentAmount #' id='check'></a>" + "# } else { #" + "<input type='checkbox' value='#= InstallmentAmount #' id='check' disabled='disabled'>" + "# } #").Title("Select").Width(50).Filterable(false);
+                                                        columns.Bound(p => p).ClientTemplate("# if (PaymentStatus != 'Paid') { #" + "<a onclick=\"GetEnrollMemberDetails('#= MemberPlanInstallmentID #','#= MemberPlanID #','#= PaymentAmount #','#= InstallmentAmount #','#= PaymentDate1 #','#= PaidAmount #','#= PointsAmount #','#= PaymentStatus #','#= PaymentDueDate #','#= PaymentDetailsID #')\"> <span style='cursor:pointer'><input type='checkbox' value='#= InstallmentAmount #' id='check'></a>" + "# } else { #" + "<input type='checkbox' value='#= InstallmentAmount #' id='check' disabled='disabled'>" + "# } #").Title("Select").Width(50).Filterable(false);
                                                         columns.Bound(p => p.PaymentAmount).Title("Payment Amount").Filterable(false).Width(100);
                                                         columns.Bound(p => p.InstallmentAmount).Title("Installment Fee").Filterable(false).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                        columns.Bound(p => p.PointsAmount).Title("Referral Discount").Filterable(false).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
                                                         //columns.Bound(p => p.PaymentDate).Title("Payment Date").Filterable(false).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
                                                         columns.Bound(p => p.PaymentDate1).Title("Payment Date").Filterable(false).Width(100);
                                                         columns.Bound(p => p.PaidAmount).Title("Paid Amount").Filterable(false).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
@@ -589,7 +601,7 @@
                                                                         @Html.Label("Card Number", new { style = "font-weight:normal;", @class = "classlabel" })
                                                                         <span style="color: Red;">*</span>
                                                                         <br />
-                                                                        @Html.TextBoxFor(model => model.CardNumber, null, new { PlaceHolder = "", style = "width:100%;", maxlength = 16 })
+                                                                        @Html.TextBoxFor(model => model.CardNumber, null, new { @class = "customKendoTextBox", PlaceHolder = "", style = "width:100%;", maxlength = 16 })
                                                                         <br />
                                                                         <span id="spnCardNumber" style="color:red"></span>
                                                                         @Html.ValidationMessageFor(model => model.CardNumber, "", new { @style = "color:red" })
@@ -599,7 +611,7 @@
                                                                         @Html.Label("Name On Card", new { style = "font-weight:normal;", @class = "classlabel" })
                                                                         <span style="color: Red;">*</span>
                                                                         <br />
-                                                                        @Html.TextBoxFor(model => model.NameOnCard, null, new { PlaceHolder = "", style = "width:100%;", maxlength = 50 })
+                                                                        @Html.TextBoxFor(model => model.NameOnCard, null, new { @class = "customKendoTextBox", PlaceHolder = "", style = "width:100%;", maxlength = 50 })
                                                                         <br />
                                                                         <span id="spnNameOnCard" style="color:red"></span>
                                                                         @Html.ValidationMessageFor(model => model.NameOnCard, "", new { @style = "color:red" })
@@ -659,7 +671,7 @@
                                                                         @Html.Label("CVV", new { style = "font-weight:normal;", @class = "classlabel" })
                                                                         <span style="color: Red;">*</span>
                                                                         <br />
-                                                                        @Html.TextBoxFor(model => model.CVV, null, new { PlaceHolder = "", style = "width:30%;", maxlength = 3 })
+                                                                        @Html.TextBoxFor(model => model.CVV, null, new { @class = "customKendoTextBox", PlaceHolder = "", style = "width:30%;", maxlength = 3 })
                                                                         <br />
                                                                         <span id="spnCVV" style="color:red"></span>
                                                                         @Html.ValidationMessageFor(model => model.CVV, "", new { @style = "color:red" })

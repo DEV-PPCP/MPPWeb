@@ -1,0 +1,244 @@
+﻿@model PPCP07302018.Models.Referral
+@using Kendo.Mvc.UI
+@{
+    ViewBag.Title = "ViewMember";
+    Layout = "~/Views/Shared/BaseMaster.cshtml";
+    var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
+}
+<script src="~/Scripts/Common.js"></script>
+
+<div class="pageheading_bar" align="center">
+    <b>Referral</b>
+</div>
+
+<div class="Panel_bg" id="divMainPlanEnroll">
+    <div class="row Panel_bg_Sub">
+        <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Referrals</b></legend>
+        <div class="row">
+            <div align="right" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <button id="btnAddReferral" type="button" title="Add Referral" style="width: 150px;" class="button_blue" value="AddClaim" onclick="AddReferral();">
+                    Add Referral
+                </button>
+            </div>
+        </div>
+        <div id="formStatus"></div>
+        <div id="divAddReferral">
+            <div class="row">
+                <div class="col-xs-12 col-md-4 col-sm-4 col-lg-4">
+                    @Html.Label("Referral First Name ", new { style = "font-weight:bold;", @class = "" })
+                    @Html.TextBoxFor(model => model.FirstName, null, new { @class = "customKendoTextBox", style = "width:100%;" })
+                </div>
+                <div class="col-xs-12 col-md-4 col-sm-4 col-lg-4">
+                    @Html.Label("Referral Last Name ", new { style = "font-weight:bold;", @class = "" })
+                    @Html.TextBoxFor(model => model.LastName, null, new { @class = "customKendoTextBox", style = "width:100%;" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-md-4 col-sm-4 col-lg-4">
+                    @Html.Label("Mobile Number ", new { style = "font-weight:bold;", @class = "" })
+                    @Html.TextBoxFor(model => model.MobileNumber, null, new { @class = "customKendoTextBox", style = "width:100%;" })
+                </div>
+                <div class="col-xs-12 col-md-4 col-sm-4 col-lg-4">
+                    @Html.Label("Email", new { style = "font-weight:bold;", @class = "" })
+                    @Html.TextBoxFor(model => model.Email, null, new { @class = "customKendoTextBox", style = "width:100%;" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-md-8 col-sm-8 col-lg-8">
+                    @Html.Label("Message ", new { style = "font-weight:bold;", @class = "" })
+                    @Html.TextAreaFor(model => model.Message, 6, 100, new { @class = "customKendoTextBox", style = "width:100%; height 20px;", maxlength = 500, rows = "3", cols="100" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-md-4 col-sm-4 col-lg-4">
+                    <span id="errReferral" style="color:red"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div align="right" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <button type="button" title="Save Referral" style="width: 150px;" class="button_blue" value="AddClaim" onclick="SaveReferral();">
+                        Save Referral
+                    </button>
+                    <button type="button" title="Cancel Referral" style="width: 150px;" class="button_blue" value="AddClaim" onclick="CancelReferral();">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                @(Html.Kendo().Grid<PPCP07302018.Models.Referral> ()
+                    .Name("ReferralListGrid")
+                    //.Events(e => e.DataBound("onDataBound"))
+                    .Columns(columns =>
+                    {
+                    columns.Bound(p => p.FirstName).Title("Referral Name").ClientTemplate(" #: FirstName # #: LastName #").Width(150);
+                    columns.Bound(p => p.ReferralDate).Title("Referral Date").Width(100).ClientTemplate("#= ReferralJoinedDate != null ? kendo.toString(kendo.parseDate(ReferralJoinedDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') : '' #");
+                    columns.Bound(p => p.MobileNumber).Title("Mobile Number").Width(100);
+                    columns.Bound(p => p.Email).Title("Email").Width(200);
+                    columns.Bound(p => p.ReferralJoinedDate).Title("Joined").Width(100).ClientTemplate("#= ReferralJoinedDate != null ? 'Yes' : 'No' #");
+                    columns.Bound(p => p.ReferralJoinedDate).Title("Joined On").Width(100).ClientTemplate("#= ReferralJoinedDate != null ? kendo.toString(kendo.parseDate(ReferralJoinedDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') : '' #");
+                    columns.Bound(p => p.PlanName).Title("Plan").Width(100);
+                    columns.Bound(p => p.Points).Title("Points").Width(100);
+                    columns.Bound(p => p.PointsEarnedDate).Title("Status").Width(100).ClientTemplate("#= PointsEarnedDate != null ? 'Earned' : 'Pending' #");
+                    columns.Bound(p => p).ClientTemplate("# if (Email != '') { #" + "<a onclick='ResendReferralEmail(#=Id#);' <span style='cursor:pointer'>Resend Email</a>" + "# } else { #" + "" + "#}#").Title("").Width(110);
+                    columns.Bound(p => p).ClientTemplate("# if (MobileNumber != '') { #" + "<a onclick='ResendReferralText(#=Id#);' <span style='cursor:pointer'>Resend Text</a>" + "# } else { #" + "" + "#}#").Title("").Width(110);
+
+                    })
+                    .Scrollable(s => s.Height("auto"))
+                    //.Pageable()
+                    .AutoBind(true)
+                    .HtmlAttributes(new { style = " height: 300px" })
+                    .Selectable()
+                    .DataSource(dataSource => dataSource
+                        .Ajax()
+                        //.PageSize(5)
+                        .Read(read => read.Action("ReferralList_Read", "Member"))
+                    )
+                )
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#divAddReferral").hide();
+    });
+
+    function AddReferral() {
+        $("#divAddReferral").show();
+        $("#btnAddReferral").hide();
+        clearReferral();
+    }
+
+    function CancelReferral() {
+        $("#divAddReferral").hide();
+        $("#btnAddReferral").show();
+    }
+
+    function ResendReferralEmail(Id) {
+        var webMethodName = "ResendReferralEmail";
+        var ParameterNames = new Array();
+        var ParameterValues = new Array();
+        ParameterNames[0] = "MemberID";
+        ParameterValues[0] = '@Session["MemberID"]';
+        ParameterNames[1] = "Id";
+        ParameterValues[1] = Id;
+        var Url = '@ServiceUrl' + "Member";
+        var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
+
+        $.ajax({
+            type: "POST",
+            url: Url,
+            data: jsonPostString,
+            dataType: "json",
+            contentType: "application/json",
+            success: function (result) {
+                debugger;
+               // var d = JSON.parse(res);
+                var d = result[0];
+                if (d.ResultID == 1) {
+                    $("#formStatus").html("Referral Email has been sent. ").addClass("bg-success").css({ "font-size": "large", "font-weight": "bold" }).show().delay(5000).fadeOut();
+                    $("#ReferralListGrid").data("kendoGrid").dataSource.read();
+                } else {
+                    $("#formStatus").html("There was an error sending the email. ").addClass("bg-danger").css({ "font-size": "large", "font-weight": "bold" }).show();
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+            },
+        });
+    }
+
+    function ResendReferralText(Id) {
+        var webMethodName = "ResendReferralText";
+        var ParameterNames = new Array();
+        var ParameterValues = new Array();
+        ParameterNames[0] = "MemberID";
+        ParameterValues[0] = '@Session["MemberID"]';
+        ParameterNames[1] = "Id";
+        ParameterValues[1] = Id;
+        var Url = '@ServiceUrl' + "Member";
+        var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
+
+        $.ajax({
+            type: "POST",
+            url: Url,
+            data: jsonPostString,
+            dataType: "json",
+            contentType: "application/json",
+            success: function (result) {
+                debugger;
+                var d = result[0];
+                if (d.ResultID == 1) {
+                    $("#formStatus").html("Referral Text has been sent. ").addClass("bg-success").css({ "font-size": "large", "font-weight": "bold" }).show().delay(5000).fadeOut();
+                    $("#ReferralListGrid").data("kendoGrid").dataSource.read();
+                } else {
+                    $("#formStatus").html("There was an error sending the text. ").addClass("bg-danger").css({ "font-size": "large", "font-weight": "bold" }).show();
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+            },
+        });
+    }
+
+    function clearReferral() {
+        $("#FirstName").val("");
+        $("#LastName").val("");
+        $("#MobileNumber").val("");
+        $("#Email").val("");
+        $("#Message").val("From " + '@Session["MemberName"]' + ": I am using MyPhysicianPlan and I highly recommend you signing up to save money on health care.");
+    }
+
+    function SaveReferral() {
+        $("#errReferral").html("");
+
+        if ($("#MobileNumber").val() == "" && $("#Email").val() == "") {
+            $("#errReferral").html("Mobile Number or Email is required");
+            return false;
+        };
+
+        var webMethodName = "SaveReferral";
+        var ParameterNames = new Array();
+        var ParameterValues = new Array();
+        ParameterNames[0] = "FirstName";
+        ParameterValues[0] = $("#FirstName").val();
+        ParameterNames[1] = "LastName";
+        ParameterValues[1] = $("#LastName").val();
+        ParameterNames[2] = "MobileNumber";
+        ParameterValues[2] = $("#MobileNumber").val();
+        ParameterNames[3] = "Email";
+        ParameterValues[3] = $("#Email").val();
+        ParameterNames[4] = "Message";
+        ParameterValues[4] = $("#Message").val();
+        ParameterNames[5] = "MemberID";
+        ParameterValues[5] = '@Session["MemberID"]';
+        var Url = '@ServiceUrl' + "Member";
+        var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
+
+        $("<div class='loadingSpinner'></div>").appendTo($("#divMainMemberDetails"));
+        $.ajax({
+            type: "POST",
+            url: Url,
+            data: jsonPostString,
+            dataType: "json",
+            contentType: "application/json",
+            success: function (result) {
+                debugger;
+                var d = result[0];
+                if (d.ResultID == 1) {
+                    $("#formStatus").html("Referral has been sent a message and link to signup. ").addClass("bg-success").css({ "font-size": "large", "font-weight": "bold" }).show().delay(5000).fadeOut();
+                    CancelReferral();
+                    $("#ReferralListGrid").data("kendoGrid").dataSource.read();
+                } else {
+                    $("#formStatus").html("There was an error saving the referral. ").addClass("bg-danger").css({ "font-size": "large", "font-weight": "bold" }).show();
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+            },
+        });
+    }
+
+</script>

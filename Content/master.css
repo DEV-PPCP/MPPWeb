@@ -587,3 +587,11 @@ a.download {
     background: linear-gradient(to bottom, #FFBF00 14%,#FFBF00 47%,#FFBF00 79%); /* W3C */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='##FFBF00', endColorstr='##FFBF00',GradientType=0 ); /* IE6-9 */
 }
+
+.k-grid .k-grid-header .k-header .k-link {
+    height: auto;
+}
+
+.k-grid .k-grid-header .k-header {
+    white-space: normal;
+}

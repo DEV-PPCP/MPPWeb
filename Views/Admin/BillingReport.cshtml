@@ -1,10 +1,161 @@
-﻿@using Kendo.Mvc.UI
+﻿@model PPCP07302018.Models.Organization.RptBillingDetails
+@using Kendo.Mvc.UI
 @{
     ViewBag.Title = "Payments Report";
     Layout = "~/Views/Shared/WUCAdminLeftMenu.cshtml";
     var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
 }
 
+<script>
+    function btnDownLoad() {
+        if ($("#FromDate").val() == "" || $("#FromDate").val() == null) {
+            document.getElementById("spnOrganiizationerror").innerHTML = "Please select From Date";
+            return false;
+        } else document.getElementById("spnOrganiizationerror").innerHTML = "";
+        if ($("#ToDate").val() == "" || $("#ToDate").val() == null) {
+            document.getElementById("spnOrganiizationerror").innerHTML = "Please select To Date";
+            return false;
+        } else document.getElementById("spnOrganiizationerror").innerHTML = "";
+        $("<div class='loadingSpinner'></div>").appendTo($("#divMainRegistration"));
+        $.ajax({
+            type: "GET",
+            url: "GenerateBillingReport",
+            data: { ToDate: $("#ToDate").val(), FromDate: $("#FromDate").val(), OrganizationID: $("#OrganizationID").val() },
+            contentType: 'application/json',
+            dataType: "json",
+            success: function (data) {
+                debugger;
+                $("#divMainRegistration").find(".loadingSpinner:first").remove();
+                var filename = data[0].Uploadresults.DocumentPath;
+                if (filename.indexOf(".pdf") > 0) {
+                    imgs = data[0].Uploadresults.DocumentPath;
+                    displayPrescription(imgs);
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+            },
+        });
+    }
+    var displayPrescription = function (base64Data) {
+        debugger;
+        // checking for file is pdf or image
+        if (base64Data.indexOf(".pdf") > 0) {
+            var imag = "<iframe  width='1000px' height='600px' "
+                + "src='" + "/Utils/PDFHandler.ashx?FilePath="
+                + base64Data + "'></iframe>";
+        }
+        else if (base64Data.indexOf(".PDF") > 0) {
+            var imag = "<iframe  width='1000px' height='600px' "
+                + "src='" + "/Utils/PDFHandler.ashx?FilePath="
+                + base64Data + "'></iframe>";
+        }
+        else {
+
+            var imag = "<img "
+                + "src='" + "data:image/jpg;base64,"
+                + base64Data + "'/>";
+        }
+
+        $("#divpdfviewprescriptionpopup").show();
+        $("#divImagePrescription").html(imag);
+    };
+</script>
 <div class="pageheading_bar" align="center">
     <b>Billing Report</b>
+</div>
+<div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" id="divBillingReport" style="margin-top:0px;">
+    <div class="Panel_bg">
+        <div class="form-group">
+            <fieldset id="fsBillingReport" style="display:block">
+                <div class="form-group" style="display:none">
+                    <div id="dvSearchFilterHeader" style="cursor: pointer;" onclick="CollapsiblePanels(document.getElementById('dvSearchFilterHeader'),document.getElementById('dvSearchFilter'));"
+                         class="PanelTopBar">
+                        <span id="4_lblSearchPat" style="font-size:15px;font-weight:normal;color: White;">Search</span>
+                        <div style="float: right; margin-top: -5px; color: White; padding: 5px 5px 0 0">
+                        </div>
+                        <div id="arrow" class="ArrowClose"></div>
+                    </div>
+                </div>
+                <div id="dvSearchFilter" style="display: block;">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                            @( Html.Label("From", new { style = "font-weight:normal;" }))<span style="color: Red;">*</span><br />
+                            @( Html.Kendo().DatePicker().Format("MM/dd/yyyy").Name("FromDate").Value("")
+       .Max(DateTime.Today).HtmlAttributes(new { PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text" }))<br />
+                            <span style="color: Red"><span id="Span3"></span></span>
+                        </div>
+                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                            @( Html.Label("To", new { style = "font-weight:normal;" }))<span style="color: Red;">*</span><br />
+                            @( Html.Kendo().DatePicker().Format("MM/dd/yyyy").Name("ToDate").Value("").Max(DateTime.Today).HtmlAttributes(new { PlaceHolder = "MM/DD/YYYY", style = "width:100%;", Maxlength = "10", type = "text" }))<br />
+                            <span style="color: Red">
+                                <span id="Span7"></span>
+                            </span>
+                        </div>
+                        <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                            @Html.Label("Organization Name", new { style = "font-weight:normal;", @class = "" })<br />
+                            @(Html.Kendo().AutoCompleteFor(model => model.OrganizationName)
+                                                    .Name("OrganizationNames")
+                                                    .Placeholder("Select Organization...")
+                                                    .HtmlAttributes(new { style = "width:100%;" })
+                                                    .DataTextField("OrganizationName")
+                                                    .Events(events =>
+                                                    {
+
+                                                    })
+                                                    .DataSource(source =>
+                                                    {
+                                                        source.Read(read =>
+                                                        {
+                                                        });
+                                                    }))
+                            <br />
+                            @Html.Hidden("OrganizationID")
+                            @Html.HiddenFor(m => m.OrganizationID)
+
+                            <script type="text/javascript">
+                                function OnOrganizationSelectChange(e) {
+                                    var dataItem = this.dataItem(e.item.index());
+                                    $("#OrganizationName").val(dataItem.OrganizationName);
+                                    $("#OrganizationID").val(dataItem.OrganizationID);
+
+                                }
+                            </script>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div align="center">
+                            <span id="spnOrganiizationerror" style="color:red"></span><br />
+                            <button type="button" id="btnSearch" title="Search" style="width: 100px;" class="button_blue" value="Search" onclick="btnDownLoad()">
+                                @*onclick="btnDownLoad()"*@
+                                Generate
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="divpdfviewprescriptionpopup" style="display: none; align-content:center;">
+                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+
+                        <div style="border: Solid 1px #33CCEE; width: 100%;">
+                            <div id="divotherpdfview"></div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-md-12 col-sm-12 ">
+                                    <div id="divImagePrescription" style="height: 643px; width: 100%; ">
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="divbtnrereshOK" align="center" style="display:none">
+                                <button type="button" id="btnSuccess" onclick="OkPDFFile();" class="button_Sky_blue"
+                                        style="width: 70px;">
+                                    Ok
+                                </button>
+
+                            </div>
+                        </div>
+                        @*</div>*@
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
 </div>

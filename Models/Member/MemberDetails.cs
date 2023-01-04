@@ -117,6 +117,7 @@ namespace PPCP07302018.Models.Member
         public decimal? Amount { get; set; }
         public decimal? AmountPaid { get; set; }
         public decimal DueAmount { get; set; }
+        public decimal Discount { get; set; }
         public string Status { get; set; }
         public string Duration { get; set; }
         public int RelationshipID { get; set; }
@@ -619,6 +620,7 @@ namespace PPCP07302018.Models.Member
         public Nullable<System.DateTime> PaymentDueDate { get; set; }
         public Nullable<decimal> PaymentAmount { get; set; }
         public Nullable<decimal> InstallmentAmount { get; set; }
+        public Nullable<decimal> PointsAmount { get; set; }
         public Nullable<System.DateTime> PaymentDate { get; set; }
         
         public Nullable<decimal> PaidAmount { get; set; }
