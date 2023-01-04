@@ -212,6 +212,7 @@
                                 TotalAmount = parseFloat(Amount) + parseFloat(InstalmentAmount) + parseFloat(EnrollFee);
                             }
                             $("#AmountPaid").val(TotalAmount);
+                            $("#hdnAmountPaid").val(TotalAmount);
                         } else {
                             $("#divValidator").show();
                             document.getElementById("PlanPaymentValidation").innerHTML = "Member Plan Exists. Plan Dates: " + getFormattedDate(list[0].PlanStartDate) + " - " + getFormattedDate(list[0].PlanEndDate) + ". Please select a different start date.";
@@ -233,6 +234,25 @@
             $("#EnrollPlan").hide();
             $("#divGetEnroll").show();
         });
+        $("#chkUsePoints").click(function () {
+            debugger;
+            if ($('#chkUsePoints').is(":checked") == true) {
+                var PointsinDollar = parseInt($("#spnPointsEarned").text()) / 100;
+                var AmountAfterPoints = 0;
+                if (PointsinDollar > parseInt($("#hdnAmountPaid").val())) {
+                    AmountAfterPoints = 0;
+                    $("#PointsUsed").text(parseInt($("#hdnAmountPaid").val()) * 100);
+                } else {
+                    AmountAfterPoints = parseInt($("#hdnAmountPaid").val()) - (parseInt($("#spnPointsEarned").text()) / 100);
+                    $("#PointsUsed").text($("#spnPointsEarned").text());
+                }
+                $("#AmountPaid").val(AmountAfterPoints);
+            } else {
+                $("#AmountPaid").val($("#hdnAmountPaid").val());
+                $("#PointsUsed").text(0);
+            }
+        });
+
         $("#chkPayNow").click(function () {
             if ($('#chkPayNow').is(":checked") == true) {
                 var  TotalAmount=0;
@@ -416,6 +436,9 @@
         MemberRegistrationDetails.CommPPCP=document.getElementById("spnCommPPCP").innerText;
         MemberRegistrationDetails.CommPrimaryMember=document.getElementById("spnCommPrimaryMember").innerText;
         MemberRegistrationDetails.EnrollFee = document.getElementById("spnEnrollFee").innerText;
+        MemberRegistrationDetails.PointsUsed = document.getElementById("PointsUsed").innerText;
+        MemberRegistrationDetails.Discount = parseInt(document.getElementById("PointsUsed").innerText) / 100;
+
         var amountpaid="";
         if ($('#chkPayNow').is(":checked") == true) {
             if($("#TempSelectRadio").val()=="1" || $("#TempSelectRadio").val()==""){
@@ -438,7 +461,8 @@
             MemberRegistrationDetails.AmountPaid=$("#AmountPaid").val();
         }
         //  var tAmount=document.getElementById("spnPlanAmount").innerText;
-        var tAmount =parseInt(document.getElementById("spnPlanAmount").innerText) + parseInt(MemberRegistrationDetails.InstallmentFee) +parseInt(MemberRegistrationDetails.EnrollFee);
+        var tAmount = parseInt(document.getElementById("spnPlanAmount").innerText) + parseInt(MemberRegistrationDetails.InstallmentFee)
+            + parseInt(MemberRegistrationDetails.EnrollFee); // - parseInt(MemberRegistrationDetails.PointsUsed);
 
         MemberRegistrationDetails.TotalAmount=tAmount;
         if(amountpaid=="")
@@ -628,6 +652,7 @@
                             TotalAmount = parseFloat(Amount) + parseFloat(InstalmentAmount) + parseFloat(EnrollFee);
                         }
                         $("#AmountPaid").val(TotalAmount);
+                        $("#hdnAmountPaid").val(TotalAmount);
                     } else {
                         $("#divValidator").show();
                         document.getElementById("PlanPaymentValidation").innerHTML = "Member Plan Exists. Plan Dates: " + getFormattedDate(list[0].PlanStartDate) + " - " + getFormattedDate(list[0].PlanEndDate) + ". Please select a different start date.";
@@ -1008,6 +1033,7 @@
                                     <div>
                                         <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12" id="divIndividual" style="display: block; padding-left: 60px; width: 500px; padding-top: 5px;">
                                             @Html.Hidden("SelectedMemberId")
+                                            @Html.Hidden("hdnPointsEarned")
                                             @(Html.Kendo().Grid<PPCP07302018.Models.Member.MemberDetails>
                                                     ()
                                                     .Name("IndividualsMemberGrid")
@@ -1610,6 +1636,11 @@
                                     @Html.Label("Amount ", new { style = "font-weight:normal;", @class = "" })<span style="color: Red;"> * </span>
                                     @Html.TextBoxFor(model => model.AmountPaid, null, new { @class = "customKendoTextBox disabled", @readonly = "readonly", PlaceHolder = "", maxlength = 20, onchange = "ValidateAmountPaid(this.value);" })
                                     @Html.ValidationMessageFor(model => model.AmountPaid, "", new { @style = "color:red" })
+                                    @Html.Hidden("hdnAmountPaid")
+                                </div>
+                                <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
+                                    @Html.CheckBox("chkUsePoints", false, new { })&nbsp;<b>Use Points (Available - <span id="spnPointsEarned"></span>)</b><br />
+                                    &nbsp;&nbsp;&nbsp;<b>Points Used: </b><span id="PointsUsed"></span>
                                 </div>
                                 <div class="col-xs-0 col-md-6 col-sm-6 col-lg-6 col-md-pull-2 col-lg-pull-2">
                                     <span id="spnAmountPaid" style="color:red"></span>

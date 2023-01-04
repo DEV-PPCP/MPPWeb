@@ -10,6 +10,8 @@ namespace PPCP07302018.Models.Member
     {
         public bool IsRxRegistration { get; set; }
         public int ReferringMemberId { get; set; }
+        public int PointsEarned { get; set; }
+        public int PointsUsed { get; set; }
         public int MemberPlanID { get; set; }
         public int MemberID { get; set; }
 
@@ -319,6 +321,7 @@ namespace PPCP07302018.Models.Member
         public string ProviderName { get; set; }
         public string OrganizationName { get; set; }
         public decimal InstallmentAmount { get; set; }
+        public int PointsUsed { get; set; }
     }
 
     public class MemberPlansDetails

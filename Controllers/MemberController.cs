@@ -239,6 +239,8 @@ namespace PPCP07302018.Controllers
                         objmember.CommPPCP = modelParameter.CommPPCP;
                         objmember.CommPrimaryMember = modelParameter.CommPrimaryMember;
                         objmember.EnrollFee = modelParameter.EnrollFee;
+                        objmember.Discount = modelParameter.Discount;
+                        objmember.PointsUsed = modelParameter.PointsUsed;
                         MemberDetails.Add(objmember);
                     }
                 }

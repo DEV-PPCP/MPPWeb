@@ -528,6 +528,8 @@ function GetFamilyDetails(MemberParentID, Url) {
             
             $("#IndividualsMemberGrid").data("kendoGrid").dataSource.data(PlansList);
             $("#FamilyMemberGrid").data("kendoGrid").dataSource.data(PlansList);
+            $("#hdnPointsEarned").val(PlansList[0].PointsEarned);
+            $("#spnPointsEarned").text(PlansList[0].PointsEarned);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
         },

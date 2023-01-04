@@ -63,6 +63,7 @@ function GetPlanDetails(MemberPlanCode, URl) {
             document.getElementById("lbl_NoOfAddMem").innerHTML = PlansList.length;
             document.getElementById("lblPlanAmount").innerHTML = PlansList[0].TotalAmount;
             document.getElementById("lblTransactionFee").innerHTML = PlansList[0].InstallmentFee;
+            document.getElementById("spnPointsEarned").innerHTML = PlansList[0].PointsEarned;
             
             var Amount = document.getElementById("lblMonthlyFee").innerText;
 
