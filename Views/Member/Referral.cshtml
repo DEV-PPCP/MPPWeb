@@ -82,8 +82,8 @@
                     columns.Bound(p => p.PlanName).Title("Plan").Width(100);
                     columns.Bound(p => p.Points).Title("Points").Width(100);
                     columns.Bound(p => p.PointsEarnedDate).Title("Status").Width(100).ClientTemplate("#= PointsEarnedDate != null ? 'Earned' : 'Pending' #");
-                    columns.Bound(p => p).ClientTemplate("# if (Email != '') { #" + "<a onclick='ResendReferralEmail(#=Id#);' <span style='cursor:pointer'>Resend Email</a>" + "# } else { #" + "" + "#}#").Title("").Width(110);
-                    columns.Bound(p => p).ClientTemplate("# if (MobileNumber != '') { #" + "<a onclick='ResendReferralText(#=Id#);' <span style='cursor:pointer'>Resend Text</a>" + "# } else { #" + "" + "#}#").Title("").Width(110);
+                    columns.Bound(p => p).ClientTemplate("# if (Email != '' && PointsEarnedDate == null) { #" + "<a onclick='ResendReferralEmail(#=Id#);' <span style='cursor:pointer'>Resend Email</a>" + "# } else { #" + "" + "#}#").Title("").Width(110);
+                    columns.Bound(p => p).ClientTemplate("# if (MobileNumber != '' && PointsEarnedDate == null) { #" + "<a onclick='ResendReferralText(#=Id#);' <span style='cursor:pointer'>Resend Text</a>" + "# } else { #" + "" + "#}#").Title("").Width(110);
 
                     })
                     .Scrollable(s => s.Height("auto"))

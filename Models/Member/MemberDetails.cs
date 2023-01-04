@@ -87,6 +87,8 @@ namespace PPCP07302018.Models.Member
         public string PlanName { get; set; }
         public string ProviderAddress { get; set; }
         public int PlanID { get; set; }
+        public int ReferringMemberPoints { get; set; }
+        public int NewMemberPoints { get; set; }
         public string Specialization { get; set; }
         [Required(ErrorMessage = "This information is required.")]
         public DateTime PlanStartDate { get; set; }

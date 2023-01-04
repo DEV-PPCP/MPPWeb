@@ -132,6 +132,7 @@ function GetIpAddress() {
 }
 //Add Member Details by veena
 function AddMembeDetails(MemberRegistrationDetails, session, Url) {
+    MemberRegistrationDetails.ReferringMemberId = $("#ReferringMemberId").val();
     MemberRegistrationDetails.MemberID = $("#hdnMemberID").val();
     MemberRegistrationDetails.FirstName = $("#FirstName").val();
     MemberRegistrationDetails.LastName = $("#LastName").val();
@@ -213,7 +214,11 @@ function AddMembeDetails(MemberRegistrationDetails, session, Url) {
         MemberRegistrationDetails.MemberType = "1";
         // var tAmount = document.getElementById("spnPlanAmount").innerText;
         var tAmount = parseInt(document.getElementById("spnPlanAmount").innerText) + parseInt(MemberRegistrationDetails.InstallmentFee) + parseInt(MemberRegistrationDetails.EnrollFee);
-      
+
+        //Referral Changes - get from Plan; set Discount to 
+        MemberRegistrationDetails.Discount = document.getElementById("spnDiscount").innerText;
+        tAmount = tAmount - parseInt(MemberRegistrationDetails.Discount);
+
         MemberRegistrationDetails.TotalAmount = tAmount;
         var amountpaid = $("#AmountPaid").val();
         MemberRegistrationDetails.AmountPaid = $("#AmountPaid").val();
@@ -372,6 +377,47 @@ function AddMemberRegistrationWebApiService(data, Url) {
             }
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
+        },
+    });
+}
+
+function apiValidateReferringMemberCardId(ReferringMemberCardId, Url) {
+    debugger;
+    var webMethodName = "ValidateReferringMemberCardId";
+    var ParameterNames = new Array();
+    var ParameterValues = new Array();
+    ParameterNames[0] = "ReferringMemberCardId";
+    ParameterValues[0] = ReferringMemberCardId;
+    var Url = Url + "Member";
+    var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
+    $.ajax({
+        type: "POST",
+        url: Url,
+        data: jsonPostString,
+        dataType: "json",
+        contentType: "application/json",
+        success: function (result) {
+            debugger;
+            //var obj = jQuery.parseJSON(result);
+            var PlansList = result[0];
+            if (PlansList.length > 0) {
+                $("#ReferringMemberId").val(PlansList[0].MemberID);
+                document.getElementById("spnReferringMemberCardId").innerHTML = "";
+
+                //set discount if plan selected and referral added later
+                if ($("#ReferringMemberId").val() != "" && document.getElementById("spnReferringMemberCardId").innerHTML == "" && $("#spnNewMemberPoints").val() != "") {
+                    document.getElementById("spnDiscount").innerHTML = parseInt($("#spnNewMemberPoints").val(), 10) / parseInt(100, 10);
+                    var TotalAmount = parseFloat($("#AmountPaid").val()) - parseFloat(document.getElementById("spnDiscount").innerHTML);
+                    $("#AmountPaid").val(TotalAmount);
+                } else {
+                    document.getElementById("spnDiscount").innerHTML = parseInt(0);
+                }     
+            } else {
+                document.getElementById("spnReferringMemberCardId").innerHTML = "Referring Card Id incorrect"; return false;
+            }
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+
         },
     });
 }

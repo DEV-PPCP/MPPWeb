@@ -344,7 +344,7 @@
             document.getElementById("spnPlanDescription").innerHTML =dataItem.PlanDescription;
             document.getElementById("spnPlanTermMonths").innerHTML =dataItem.PlanTermMonths;
             document.getElementById("spnCommPPCP").innerHTML = dataItem.CommPPCP;
-            document.getElementById("spnCommPrimaryMember").innerHTML = dataItem.CommPrimaryMember;
+            document.getElementById("spnCommPrimaryMember").innerHTML = dataItem.CommPrimaryMember;            
             //To get selected Plan payment information
             var OrganizationID = dataItem.OrganizationID;
             var ProviderID = dataItem.ProviderID;
@@ -377,6 +377,13 @@
             document.getElementById("spnPlanAmount").innerHTML = dataItem.TotalAmount;
             document.getElementById("spnStripeAccountID").innerHTML = dataItem.AccountID;
             document.getElementById("spnInstalmentFee").innerHTML = dataItem.InstallmentFee;
+            $("#spnNewMemberPoints").val(dataItem.NewMemberPoints);
+
+            if ($("#ReferringMemberId").val() != "" && document.getElementById("spnReferringMemberCardId").innerHTML == "") {               
+                document.getElementById("spnDiscount").innerHTML = parseInt(dataItem.NewMemberPoints, 10) / parseInt(100, 10);
+            } else {
+                document.getElementById("spnDiscount").innerHTML = parseInt(0);
+            }     
 
             $('#chkPayNow').is(":checked") == true;
             $('input[name="chkPayNow"]').attr('checked', true);
@@ -400,6 +407,10 @@
             }catch(err){
 
             }
+
+            if ($("#ReferringMemberId").val() != "" && document.getElementById("spnReferringMemberCardId").innerHTML == "") {
+                TotalAmount = parseFloat(TotalAmount) - parseFloat(document.getElementById("spnDiscount").innerHTML);
+            } 
 
             $("#AmountPaid").val(TotalAmount);
             $("#divCarddetails").show();
@@ -477,6 +488,12 @@
         }
         else {
             document.getElementById("PasswordErrorMsg").innerHTML = "Password and Confirm Password should be Match.";
+        }
+    }
+    function ValidateReferringMemberCardId(ReferringMemberCardId) {
+        debugger;
+        if (ReferringMemberCardId != "") {
+            apiValidateReferringMemberCardId(ReferringMemberCardId,'@ServiceUrl');
         }
     }
     function ValidateUserName(UserName) {
@@ -872,6 +889,30 @@
                                 <div class="row Panel_bg_Sub" id="divMemberCredentials" style="display: none;">
                                     <div class="row">
                                         <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Referring Member</b>:</legend>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row" style="display:block">
+                                            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                                <div class="row">
+                                                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                                        <div class="row">
+                                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                @Html.Label("Referring Member Card #", new { style = "font-weight:normal;", @class = "" })<br />
+                                                                @Html.TextBox("ReferringMemberCardId", "", new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 25, onchange = "ValidateReferringMemberCardId(this.value);" })
+                                                                <span id="spnReferringMemberCardId" style="color:red"></span>
+                                                                @Html.Hidden("ReferringMemberId")
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
                                             @*@Html.CheckBox("chkMemberCredentials", false)&nbsp;*@
                                             <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Member Credentials</b>:</legend>
                                         </div>
@@ -1192,6 +1233,12 @@
                                                                     <span><b>Installment Fee  </b> </span>
                                                                     <br />
                                                                     <span id="spnInstalmentFee"></span>
+                                                                </div>
+                                                                <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                    <span><b>Referral Discount</b> </span>
+                                                                    <br />
+                                                                    <span id="spnDiscount"></span>
+                                                                    @Html.Hidden("spnNewMemberPoints")
                                                                 </div>
                                                                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3" style="display:none;">
                                                                     <span><b>Terms (No. of payments)</b></span>

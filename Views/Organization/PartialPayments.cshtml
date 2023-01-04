@@ -132,7 +132,7 @@
         });
     }
 
-    function GetEnrollMemberDetails(MemberPlanInstallmentID ,MemberPlanID ,PaymentAmount ,InstallmentAmount ,PaymentDate1 ,PaidAmount ,PaymentStatus ,PaymentDueDate ,PaymentDetailsID ){
+    function GetEnrollMemberDetails(MemberPlanInstallmentID, MemberPlanID, PaymentAmount, InstallmentAmount, PaymentDate1, PaidAmount, PointsAmount, PaymentStatus ,PaymentDueDate ,PaymentDetailsID ){
         debugger;
         var amount="";
         var jsModel={};
@@ -145,7 +145,11 @@
         jsModel.PaidAmount=PaidAmount;
         jsModel.PaymentStatus=PaymentStatus;
         jsModel.PaymentDueDate=PaymentDueDate;
-        jsModel.PaymentDetailsID=PaymentDetailsID;
+        jsModel.PaymentDetailsID = PaymentDetailsID;
+        jsModel.PaymentDetailsID = PaymentDetailsID;
+        if (PointsAmount == "null")
+            PointsAmount = 0;
+        jsModel.PointsAmount = PointsAmount;
 
         $.ajax({
             cache: false,
@@ -158,7 +162,7 @@
                 debugger;
                 var amount=0;
                 for(var r in data){
-                    amount=amount+data[r].PaymentAmount+data[r].InstallmentAmount;
+                    amount = amount + data[r].PaymentAmount + data[r].InstallmentAmount - data[r].PointsAmount;
                 }
                 $("#AmountPaid").val(amount);
                 // var obj = jQuery.parseJSON(data);
@@ -380,12 +384,12 @@
                 document.getElementById("lblTerm").innerHTML = PlansList[0].NoofInstallments;
                 document.getElementById("lblPlanStartDate").innerHTML = PlansList[0].PStartDate;
                 document.getElementById("lbl_PlanEndDateValue").innerHTML = PlansList[0].PEndDate;
-                document.getElementById("lblVisitFee").innerHTML = '$' + PlansList[0].VisitFee;
-                document.getElementById("lblEnrollFee").innerHTML = '$' + PlansList[0].EnrollFee;
-                document.getElementById("lblMonthlyFee").innerHTML = '$' + PlansList[0].InstallmentAmount;
+                document.getElementById("lblVisitFee").innerHTML = "In-person visit: $" + PlansList[0].VisitFee + ", Televisit: $" + PlansList[0].TeleVisitFee;//  '$' + PlansList[0].VisitFee;
+                document.getElementById("lblEnrollFee").innerHTML = PlansList[0].EnrollFee;
+                document.getElementById("lblMonthlyFee").innerHTML = PlansList[0].InstallmentAmount;
                 document.getElementById("lbl_NoOfAddMem").innerHTML = PlansList.length;
-                document.getElementById("lblPlanAmount").innerHTML = '$' + PlansList[0].TotalAmount;
-                document.getElementById("lblTransactionFee").innerHTML = '$' + PlansList[0].InstallmentFee;
+                document.getElementById("lblPlanAmount").innerHTML = PlansList[0].TotalAmount;
+                document.getElementById("lblTransactionFee").innerHTML = PlansList[0].InstallmentFee;
                 var Amount = document.getElementById("lblMonthlyFee").innerText;
 
                 //$("#Amount").val(PlansList[0].AmountPaid);
@@ -409,6 +413,7 @@
 
                 document.getElementById("lbl_PaidAmount").innerHTML = '$' + PlansList[0].AmountPaid;
                 document.getElementById("lblPendingAmount").innerHTML = '$' + PlansList[0].DueAmount;
+                document.getElementById("lblDiscount").innerHTML = PlansList[0].Discount;
                 document.getElementById("spnPlan_code").innerHTML = PlansList[0].Plan_Code;
                 document.getElementById("spnPlanID").innerHTML = PlansList[0].PlanID;
                 document.getElementById("spnStripeAccountID").innerHTML = PlansList[0].AccountID;
@@ -649,7 +654,7 @@
 
                         </td>
                         <td id="Td12" style="width: 325px">
-                            <span ID="lblEnrollFee" Font-Bold="True"></span>
+                            $<span ID="lblEnrollFee" Font-Bold="True"></span>
                         </td>
                     </tr>
                     <tr>
@@ -658,7 +663,7 @@
 
                         </td>
                         <td id="Td14">
-                            <span ID="lblMonthlyFee" Font-Bold="True"></span>
+                            $<span ID="lblMonthlyFee" Font-Bold="True"></span>
                         </td>
                         <td>
                             Additional Member Installment Amount
@@ -681,7 +686,7 @@
 
                         </td>
                         <td id="Td20">
-                            <span ID="lblPlanAmount" Font-Bold="True"></span>
+                            $<span ID="lblPlanAmount" Font-Bold="True"></span>
                         </td>
                     </tr>
                     <tr>
@@ -706,7 +711,7 @@
 
                         </td>
                         <td id="Td18">
-                            <span ID="lblTransactionFee" Font-Bold="True"></span>
+                            $<span ID="lblTransactionFee" Font-Bold="True"></span>
                         </td>
                         <td id="Td21">
                             Tax (%)
@@ -732,6 +737,14 @@
                             <span ID="spnOrganizationName" Font-Bold="True" style="display:none;"></span>
                         </td>
                     </tr>
+                    <tr>
+                        <td id="Td19">
+                            Discount
+                        </td>
+                        <td id="Td20">
+                            <span ID="lblDiscount" Font-Bold="True"></span>
+                        </td>
+                    </tr>
                 </table>
             </div>
 
@@ -751,12 +764,13 @@
                                                     {
                                                         columns.Bound(p => p.MemberPlanInstallmentID).Title("Payment Amount").Filterable(false).Width(100).Visible(false);
                                                         columns.Bound(p => p.MemberPlanID).Title("Payment Amount").Filterable(false).Width(100).Visible(false);
-                                                        columns.Bound(p => p).ClientTemplate("# if (PaymentStatus != 'Paid') { #" + "<a onclick=\"GetEnrollMemberDetails('#= MemberPlanInstallmentID #','#= MemberPlanID #','#= PaymentAmount #','#= InstallmentAmount #','#= PaymentDate1 #','#= PaidAmount #','#= PaymentStatus #','#= PaymentDueDate #','#= PaymentDetailsID #')\"> <span style='cursor:pointer'><input type='checkbox' value='#= InstallmentAmount #' id='check'></a>" + "# } else { #" + "<input type='checkbox' value='#= InstallmentAmount #' id='check' disabled='disabled'>" + "# } #").Title("Select").Width(50).Filterable(false);
+                                                        columns.Bound(p => p).ClientTemplate("# if (PaymentStatus != 'Paid') { #" + "<a onclick=\"GetEnrollMemberDetails('#= MemberPlanInstallmentID #','#= MemberPlanID #','#= PaymentAmount #','#= InstallmentAmount #','#= PaymentDate1 #','#= PaidAmount #','#= PointsAmount #','#= PaymentStatus #','#= PaymentDueDate #','#= PaymentDetailsID #')\"> <span style='cursor:pointer'><input type='checkbox' value='#= InstallmentAmount #' id='check'></a>" + "# } else { #" + "<input type='checkbox' value='#= InstallmentAmount #' id='check' disabled='disabled'>" + "# } #").Title("Select").Width(50).Filterable(false);
                                                         columns.Bound(p => p.PaymentAmount).Title("Payment Amount").Filterable(false).Width(100);
                                                         columns.Bound(p => p.InstallmentAmount).Title("Installment Amount").Filterable(false).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
-                                                       // columns.Bound(p => p.PaymentDate).ClientTemplate("#= kendo.toString(kendo.parseDate(PaymentDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') #").Title("Payment Date").Filterable(false).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                        columns.Bound(p => p.PointsAmount).Title("Referral Discount").Filterable(false).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                        // columns.Bound(p => p.PaymentDate).ClientTemplate("#= kendo.toString(kendo.parseDate(PaymentDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') #").Title("Payment Date").Filterable(false).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
                                                         columns.Bound(p => p.PaymentDate1).Title("Payment Date").Filterable(false).Width(100);
-                                                       // columns.Bound(p => p.Paymentdate1).ClientTemplate("# if (PaymentDate != 'NULL') { #" + "#= kendo.toString(kendo.parseDate(PaymentDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "')#" + "# } #").Title("Payment Date1").Width(50).Filterable(false);
+                                                        // columns.Bound(p => p.Paymentdate1).ClientTemplate("# if (PaymentDate != 'NULL') { #" + "#= kendo.toString(kendo.parseDate(PaymentDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "')#" + "# } #").Title("Payment Date1").Width(50).Filterable(false);
                                                         columns.Bound(p => p.PaidAmount).Title("Paid Amount").Filterable(false).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
                                                         columns.Bound(p => p.PaymentStatus).Title("Payment Status").Filterable(false).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
                                                         columns.Bound(p => p.PaymentDueDate).Title("Payment DueDate").ClientTemplate("#= kendo.toString(kendo.parseDate(PaymentDueDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') #").Filterable(false).Width(100).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
@@ -833,7 +847,7 @@
                                                                         @Html.Label("Card Number", new { style = "font-weight:normal;", @class = "classlabel" })
                                                                         <span style="color: Red;">*</span>
                                                                         <br />
-                                                                        @Html.TextBoxFor(model => model.CardNumber, null, new { PlaceHolder = "", style = "width:100%;", maxlength = 16 })
+                                                                        @Html.TextBoxFor(model => model.CardNumber, null, new { @class = "customKendoTextBox", PlaceHolder = "", style = "width:100%;", maxlength = 16 })
                                                                         <br />
                                                                         <span id="spnCardNumber" style="color:red"></span>
                                                                         @Html.ValidationMessageFor(model => model.CardNumber, "", new { @style = "color:red" })
@@ -843,7 +857,7 @@
                                                                         @Html.Label("Name On Card", new { style = "font-weight:normal;", @class = "classlabel" })
                                                                         <span style="color: Red;">*</span>
                                                                         <br />
-                                                                        @Html.TextBoxFor(model => model.NameOnCard, null, new { PlaceHolder = "", style = "width:100%;", maxlength = 50 })
+                                                                        @Html.TextBoxFor(model => model.NameOnCard, null, new { @class = "customKendoTextBox", PlaceHolder = "", style = "width:100%;", maxlength = 50 })
                                                                         <br />
                                                                         <span id="spnNameOnCard" style="color:red"></span>
                                                                         @Html.ValidationMessageFor(model => model.NameOnCard, "", new { @style = "color:red" })
@@ -903,7 +917,7 @@
                                                                         @Html.Label("CVV", new { style = "font-weight:normal;", @class = "classlabel" })
                                                                         <span style="color: Red;">*</span>
                                                                         <br />
-                                                                        @Html.TextBoxFor(model => model.CVV, null, new { PlaceHolder = "", style = "width:30%;", maxlength = 3 })
+                                                                        @Html.TextBoxFor(model => model.CVV, null, new { @class = "customKendoTextBox", PlaceHolder = "", style = "width:30%;", maxlength = 3 })
                                                                         <br />
                                                                         <span id="spnCVV" style="color:red"></span>
                                                                         @Html.ValidationMessageFor(model => model.CVV, "", new { @style = "color:red" })

@@ -814,7 +814,7 @@ function MembeDetails(MemberRegistrationDetails, session, Url, CurrentMonth) {
     MemberRegistrationDetails.EnrollFee = document.getElementById("spnEnrollFee").innerText;
     var tAmount = parseInt(document.getElementById("spnPlanAmount").innerText) + parseInt(MemberRegistrationDetails.InstallmentFee) + parseInt(MemberRegistrationDetails.EnrollFee);
 
-    //Referral Changes - get from Plan; set Discount to New member discount based on Plan
+    //Referral Changes - get from Plan; set Discount to 
     MemberRegistrationDetails.Discount = 20;
     tAmount = tAmount - parseInt(MemberRegistrationDetails.Discount);
   
