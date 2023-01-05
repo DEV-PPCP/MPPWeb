@@ -139,7 +139,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
-                                                            <input class="button_blue" type="button" name="submit" value="Login" onclick="ValidateCredentials()">
+                                                            <input id="btnLogin" class="button_blue" type="button" name="submit" value="Login" onclick="ValidateCredentials()">
                                                             <br />
                                                             <a href='@Url.Action("ForgotCredentials", "Account")' style="text-align:center;color:saddlebrown;">Forgot Credentials?</a><br />
                                                             @switch (Model.LoginType)
@@ -264,7 +264,11 @@
             jsModel = {};
             var LoginModel = @Html.Raw(Json.Encode(Model));
             jsModel.UserName = username
-            jsModel.Password=password;
+            jsModel.Password = password;
+            $(this).prop("disabled", true);
+            $("#btnLogin").css('color', 'red');
+            $("#btnLogin").hide();
+            sleep(5000);
             $.ajax({
                 url: '@Url.Action("ValidateCredentials", "Account")',
                 data: jsModel,
@@ -272,6 +276,7 @@
                 contentType: 'application/json',
                 success: function (result) {
                     debugger;
+                    $(this).prop("disabled", false);
                     if (result.returnString == "1") {
                         switch (result.roleType) {
                             case "MPP":
@@ -316,6 +321,11 @@
                     location.reload();
                 }
             });
+        }
+        function sleep(miliseconds) {
+            var currentTime = new Date().getTime();
+            while (currentTime + miliseconds >= new Date().getTime()) {
+            }
         }
     </script>
 

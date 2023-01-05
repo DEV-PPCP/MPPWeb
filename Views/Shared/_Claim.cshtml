@@ -326,7 +326,8 @@
                 <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
                     @Html.Label("Date of Service", new { style = "font-weight:normal;", @class = "" })<br />
                     @( Html.Kendo().DatePickerFor(model => model.DateOfService).Format("MM/dd/yyyy")
-                        .Value(DateTime.Today).Max(DateTime.Today)
+                        //.Value(DateTime.Today)
+                        .Max(DateTime.Today)
                         .Events(e =>
                         {
                             e.Change("DateOfServiceChange");
@@ -950,6 +951,8 @@
                 var ClaimSaveResult = obj[0].ClaimSaveResult;
                 if(ClaimSaveResult != "") {
                     $("#errorDetail").html(ClaimSaveResult);
+                    var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?mode=edit&VisitId=' + obj[0].VisitId;
+                    window.history.pushState({ path: newurl }, '', newurl);
                 } else {
                     //location.reload();
                     var getUrl = window.location.href.split('?')[0];
