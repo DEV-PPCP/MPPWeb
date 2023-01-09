@@ -12,6 +12,7 @@ namespace PPCP07302018.Models
         public int PointsPending { get; set; }
         public int AvailableToUse { get; set; }
         public int PointsUsed { get; set; }
+        public int PointsCashed { get; set; }
         public string MemberReferralLink { get; set; }
     }
 
@@ -35,5 +36,18 @@ namespace PPCP07302018.Models
         public string PlanName { get; set; }
         public int Points { get; set; }
         public DateTime? PointsEarnedDate { get; set; }
+    }
+
+    public class ReferralCheck
+    {
+        public int Id { get; set; }
+        public int MemberID { get; set; }
+        public string MemberName { get; set; }
+        public string MemberAddress { get; set; }
+        public string MemberCardID { get; set; }
+        public DateTime? RequestDate { get; set; }
+        public int Points { get; set; }
+        public string Status { get; set; }
+
     }
 }

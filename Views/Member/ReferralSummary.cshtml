@@ -6,6 +6,7 @@
     Layout = "~/Views/Shared/BaseMaster.cshtml";
     var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
 }
+<script src="~/Scripts/Common.js"></script>
 <div class="pageheading_bar" align="center">
     <b>Referral Summary</b>
 </div>
@@ -13,32 +14,40 @@
 <div class="Panel_bg" id="divMainPlanEnroll">
     <div class="row Panel_bg_Sub">
         <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Referral Summary</b></legend>
-        <div class="row">
-            <div class="col-xs-12 col-md-4 col-sm-4 col-lg-4">
-                @Html.Label("Total Points: ", new { style = "font-weight:bold;", @class = "" }) @Model.TotalPoints
-            </div>
-            <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
-                @Html.Label("Points Available to use: ", new { style = "font-weight:bold;", @class = "" }) @Model.AvailableToUse
-            </div>
-        </div>
+        <div class="row"><div id="formStatus"></div></div>
         <div class="row">
             <div class="col-xs-12 col-md-4 col-sm-4 col-lg-4">
                 @Html.Label("Points Earned: ", new { style = "font-weight:bold;", @class = "" }) @Model.PointsEarned
             </div>
-            <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
-                @Html.Label("Points Used: ", new { style = "font-weight:bold;", @class = "" }) @Model.PointsUsed
-            </div>
+            @*<div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
+                @Html.Label("Total Points: ", new { style = "font-weight:bold;", @class = "" }) @Model.TotalPoints
+            </div>*@
         </div>
         <div class="row">
             <div class="col-xs-12 col-md-4 col-sm-4 col-lg-4">
+                @Html.Label("Points Used: ", new { style = "font-weight:bold;", @class = "" }) <span class="PointsUsed">@Model.PointsUsed</span>
+            </div>
+            @*<div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
                 @Html.Label("Points Pending: ", new { style = "font-weight:bold;", @class = "" }) @Model.PointsPending
+            </div>*@
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-md-4 col-sm-4 col-lg-4">
+                @Html.Label("Points Available to use: ", new { style = "font-weight:bold;", @class = "" }) <span class="AvailableToUse">@Model.AvailableToUse</span>
+            </div>
+            <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6" id="divCheckRequest">
+                @if (Model.AvailableToUse > 1900)
+                {
+                    <a href="#" onclick='RequestCheck(@Model.PointsUsed, @Model.AvailableToUse);' style="color: #0000EE;">Request Check Payment ($@(Model.AvailableToUse/100))</a><br />
+                    <span @*style="color: blue"*@>A service fee of $3 will be deducted from the check.</span>
+                }
             </div>
         </div>
         <hr />
         <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Referral Link</b></legend>
         <div class="row">
             <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
-                @Model.MemberReferralLink 
+                @Model.MemberReferralLink
             </div>
         </div>
         <hr />
@@ -71,3 +80,60 @@
         </div>
     </div>
 </div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+    });
+
+    var oPointsUsed, oAvailableToUse;
+    function RequestCheck(PointsUsed, AvailableToUse) {
+        oPointsUsed = PointsUsed;
+        oAvailableToUse = AvailableToUse;
+        $("#popupConfirmation").show();
+        $("#confirmType").val("RequestCheck")
+        $("#lblconfirmMessage").html("Are you sure you want to request a check to me mailed to you?");
+    }
+
+    function confirmPopUpYes() {
+        if ($("#confirmType").val() == "RequestCheck") {
+            RequestCheckEmail();
+            $("#popupConfirmation").hide();
+        }
+    }
+
+    function RequestCheckEmail() {
+        var webMethodName = "RequestReferralCheck";
+        var ParameterNames = new Array();
+        var ParameterValues = new Array();
+        ParameterNames[0] = "MemberID";
+        ParameterValues[0] = '@Session["MemberID"]';
+        var Url = '@ServiceUrl' + "Member";
+        var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
+
+        $.ajax({
+            type: "POST",
+            url: Url,
+            data: jsonPostString,
+            dataType: "json",
+            contentType: "application/json",
+            success: function (result) {
+                debugger;
+               // var d = JSON.parse(res);
+                var d = result[0];
+                if (d.ResultID == 1) {
+                    $("#formStatus").html("A request for Check Point reimbursement has been sent. ").addClass("bg-success").css({ "font-size": "large", "font-weight": "bold" }).show().delay(5000).fadeOut();
+                    var pu = parseInt(oPointsUsed) + parseInt(oAvailableToUse);
+                    $(".PointsUsed").text(pu);
+                    $(".AvailableToUse").text("0");
+                    $("#divCheckRequest").hide();
+                } else {
+                    $("#formStatus").html("There was an error sending the request. ").addClass("bg-danger").css({ "font-size": "large", "font-weight": "bold" }).show();
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+            },
+        });
+    }
+</script>

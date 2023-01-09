@@ -3087,7 +3087,17 @@ shapeFooter, PageNumbers
 
         public ActionResult ReferralSummary()
         {
+            DataAccessLayer.ServiceCall<ReferralSummary> objcall = new DataAccessLayer.ServiceCall<ReferralSummary>();
+            PPCP07302018.Models.Member.ServiceData ServiceData = new PPCP07302018.Models.Member.ServiceData();
+            string[] ParameterName = new string[] { "MemberID" };
+            string[] ParameterValue = new string[] { "0" };
+            ServiceData.ParameterName = ParameterName;
+            ServiceData.ParameterValue = ParameterValue;
+            ServiceData.WebMethodName = "GetReferralSummary";
+            List<ReferralSummary> list = objcall.CallService(Convert.ToInt32(0), "GetReferralSummary", ServiceData);
+
             ReferralSummary model = new ReferralSummary();
+            model = list.First();
             return View(model);
         }
 
@@ -3101,6 +3111,20 @@ shapeFooter, PageNumbers
             ServiceData.ParameterValue = ParameterValue;
             ServiceData.WebMethodName = "GetReferralSummaryList";
             List<Referral> list = objcall.CallService(Convert.ToInt32(0), "GetReferralSummaryList", ServiceData);
+
+            return Json(list.ToDataSourceResult(request));
+        }
+
+        public ActionResult ReferralCheckRequests_Read([DataSourceRequest] DataSourceRequest request)
+        {
+            DataAccessLayer.ServiceCall<ReferralCheck> objcall = new DataAccessLayer.ServiceCall<ReferralCheck>();
+            PPCP07302018.Models.Member.ServiceData ServiceData = new PPCP07302018.Models.Member.ServiceData();
+            string[] ParameterName = new string[] { "MemberID" };
+            string[] ParameterValue = new string[] { "0" };
+            ServiceData.ParameterName = ParameterName;
+            ServiceData.ParameterValue = ParameterValue;
+            ServiceData.WebMethodName = "GetReferralCheckRequests";
+            List<ReferralCheck> list = objcall.CallService(Convert.ToInt32(0), "GetReferralCheckRequests", ServiceData);
 
             return Json(list.ToDataSourceResult(request));
         }

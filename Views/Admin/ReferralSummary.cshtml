@@ -6,6 +6,8 @@
     Layout = "~/Views/Shared/WUCAdminLeftMenu.cshtml";
     var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
 }
+<script src="~/Scripts/Common.js"></script>
+
 <div class="pageheading_bar" align="center">
     <b>Referral Summary</b>
 </div>
@@ -13,23 +15,52 @@
 <div class="Panel_bg" id="divMainPlanEnroll">
     <div class="row Panel_bg_Sub">
         <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Referral Summary</b></legend>
-        @*<div class="row">
+        <div class="row">
             <div class="col-xs-12 col-md-4 col-sm-4 col-lg-4">
-                @Html.Label("Total Points: ", new { style = "font-weight:bold;", @class = "" }) @Model.TotalPoints
+                @Html.Label("Total Points Earned by members: ", new { style = "font-weight:bold;", @class = "" }) @Model.PointsEarned
             </div>
         </div>
         <div class="row">
             <div class="col-xs-12 col-md-4 col-sm-4 col-lg-4">
-                @Html.Label("Points Earned: ", new { style = "font-weight:bold;", @class = "" }) @Model.PointsEarned
+                @Html.Label("Points Used: ", new { style = "font-weight:bold;", @class = "" }) @Model.PointsUsed
             </div>
         </div>
         <div class="row">
             <div class="col-xs-12 col-md-4 col-sm-4 col-lg-4">
-                @Html.Label("Points Pending: ", new { style = "font-weight:bold;", @class = "" }) @Model.PointsPending
+                @Html.Label("Points Cashed (Mailed): ", new { style = "font-weight:bold;", @class = "" }) @Model.PointsCashed
             </div>
         </div>
-        <hr />*@
+        <br /><br />
+        <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Referral Check Requests</b></legend>
+        <div class="row">
+            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                @(Html.Kendo().Grid<PPCP07302018.Models.ReferralCheck> ()
+                    .Name("ReferralCheckGrid")
+                    //.Events(e => e.DataBound("onDataBound"))
+                    .Columns(columns =>
+                    {
+                        columns.Bound(p => p.MemberName).Title("Member Name").Width(150);
+                        columns.Bound(p => p.MemberAddress).Title("Address").Width(250);
+                        columns.Bound(p => p.RequestDate).Title("Joined On").Width(100).ClientTemplate("#= RequestDate != null ? kendo.toString(kendo.parseDate(RequestDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') : '' #");
+                        columns.Bound(p => p.Points).Title("Points").Width(100);
+                        columns.Bound(p => p).ClientTemplate("<a onclick='CheckMailed(#=Id#);' <span style='cursor:pointer; color: blue'>Check Mailed</a>").Title("").Width(110);
+                    })
+                    .Scrollable(s => s.Height("auto"))
+                    //.Pageable()
+                    .AutoBind(true)
+                    .HtmlAttributes(new { style = " height: 200px" })
+                    .Selectable()
+                    .DataSource(dataSource => dataSource
+                        .Ajax()
+                        //.PageSize(5)
+                        .Read(read => read.Action("ReferralCheckRequests_Read", "Admin"))
+                    )
+                )
+            </div>
+        </div>
 
+        <br /><br />
+        <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Referrals</b></legend>
         <div class="row">
             <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
                 @(Html.Kendo().Grid<PPCP07302018.Models.Referral> ()
@@ -42,7 +73,7 @@
                         columns.Bound(p => p.ReferralJoinedDate).Title("Joined On").Width(100).ClientTemplate("#= ReferralJoinedDate != null ? kendo.toString(kendo.parseDate(ReferralJoinedDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') : '' #");
                         columns.Bound(p => p.PlanName).Title("Plan").Width(100);
                         columns.Bound(p => p.Points).Title("Points").Width(100);
-                        columns.Bound(p => p.PointsEarnedDate).Title("Status").Width(100).ClientTemplate("#= PointsEarnedDate != null ? 'Earned' : 'Pending' #");
+                        //columns.Bound(p => p.PointsEarnedDate).Title("Status").Width(100).ClientTemplate("#= PointsEarnedDate != null ? 'Earned' : 'Pending' #");
                     })
                     .Scrollable(s => s.Height("auto"))
                     //.Pageable()
@@ -60,3 +91,39 @@
     </div>
 </div>
 
+<script type="text/javascript">
+    $(document).ready(function () {
+
+    });
+
+    function CheckMailed(Id) {
+        var webMethodName = "ReferralCheckMailed";
+        var ParameterNames = new Array();
+        var ParameterValues = new Array();
+        ParameterNames[0] = "Id";
+        ParameterValues[0] = Id;
+        var Url = '@ServiceUrl' + "Member";
+        var jsonPostString = setJsonParameter(ParameterNames, ParameterValues, webMethodName);
+
+        $.ajax({
+            type: "POST",
+            url: Url,
+            data: jsonPostString,
+            dataType: "json",
+            contentType: "application/json",
+            success: function (result) {
+                debugger;
+               // var d = JSON.parse(res);
+                var d = result[0];
+                if (d.ResultID == 1) {
+                    //$("#formStatus").html("Status updated.").addClass("bg-success").css({ "font-size": "large", "font-weight": "bold" }).show().delay(5000).fadeOut();
+                    $("#ReferralCheckGrid").data("kendoGrid").dataSource.read();
+                } else {
+                    $("#formStatus").html("There was an error sending the request. ").addClass("bg-danger").css({ "font-size": "large", "font-weight": "bold" }).show();
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+            },
+        });
+    }
+</script>

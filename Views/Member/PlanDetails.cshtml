@@ -329,6 +329,7 @@
                                                         columns.Bound(p => p.TotalAmount).Title("Plan Fee").Width(70).Format("{0:c0}").HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
                                                         columns.Bound(p => p.Status).Title("Payment Status").Width(80).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
                                                         columns.Bound(p => p.AmountPaid).Title("Amount Paid").Width(70).Format("{0:c0}").HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
+                                                        columns.Bound(p => p.Discount).Title("Referral Discount/ Points Used").Width(100).Format("{0:c0}").HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
                                                         // columns.Bound(p => p.Plan_Code).Title("Amount Paid").Filterable(false).Width(100).Visible(false);
                                                         columns.Bound(p => p).Width(100).ClientTemplate("# if (TotalAmount != AmountPaid) { #" + "<a onclick='MakePayment(#=Plan_Code#,\"#=MemberPlanID#\");' <span style='cursor:pointer'>Make Payment</a>" + "# } else { #" + "" + "# } #").Title("Make Payment").HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" });
 

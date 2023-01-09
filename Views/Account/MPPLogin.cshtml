@@ -265,10 +265,10 @@
             var LoginModel = @Html.Raw(Json.Encode(Model));
             jsModel.UserName = username
             jsModel.Password = password;
-            $(this).prop("disabled", true);
-            $("#btnLogin").css('color', 'red');
-            $("#btnLogin").hide();
-            sleep(5000);
+            //$(this).prop("disabled", true);
+            //$("#btnLogin").css('color', 'red');
+            //$("#btnLogin").hide();
+            //sleep(5000);
             $.ajax({
                 url: '@Url.Action("ValidateCredentials", "Account")',
                 data: jsModel,
