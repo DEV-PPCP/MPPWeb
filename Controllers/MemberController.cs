@@ -1803,7 +1803,7 @@ namespace PPCP07302018.Controllers
             DataAccessLayer.ServiceCall<ReferralSummary> objcall = new DataAccessLayer.ServiceCall<ReferralSummary>();
             ServiceData ServiceData = new ServiceData();
             string[] ParameterName = new string[] { "MemberID" };
-            string[] ParameterValue = new string[] { Session["MemberID"].ToString(), "0" };
+            string[] ParameterValue = new string[] { Session["MemberID"].ToString() };
             ServiceData.ParameterName = ParameterName;
             ServiceData.ParameterValue = ParameterValue;
             ServiceData.WebMethodName = "GetReferralSummary";
@@ -1819,7 +1819,7 @@ namespace PPCP07302018.Controllers
             DataAccessLayer.ServiceCall<Referral> objcall = new DataAccessLayer.ServiceCall<Referral>();
             ServiceData ServiceData = new ServiceData();
             string[] ParameterName = new string[] { "MemberID" };
-            string[] ParameterValue = new string[] { Session["MemberID"].ToString(), "0" };
+            string[] ParameterValue = new string[] { Session["MemberID"].ToString() };
             ServiceData.ParameterName = ParameterName;
             ServiceData.ParameterValue = ParameterValue;
             ServiceData.WebMethodName = "GetReferralSummaryList";

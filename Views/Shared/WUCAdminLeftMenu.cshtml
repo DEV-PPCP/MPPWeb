@@ -104,15 +104,38 @@
                                                 </td>
                                             </tr>
                                             @*<tr>
-                                                <td>
-                                                    <span class="glyphicon glyphicon-list-alt"></span>
-                                                    <a id="liClaimSubmission" class="Organization_Color" href='@Url.Action("ClaimSubmissionAdd", "Admin")' ;> Claim Submission</a>
-                                                </td>
-                                            </tr>*@
+                            <td>
+                                <span class="glyphicon glyphicon-list-alt"></span>
+                                <a id="liClaimSubmission" class="Organization_Color" href='@Url.Action("ClaimSubmissionAdd", "Admin")' ;> Claim Submission</a>
+                            </td>
+                        </tr>*@
                                             <tr>
                                                 <td>
                                                     <span class="glyphicon glyphicon-list-alt"></span>
                                                     <a id="liBillingReport" class="Organization_Color" href='@Url.Action("BillingReport", "Admin")' ;> Billing Report</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseReferral">
+                                        <h4 class="panel-title">
+                                            <span class="glyphicon glyphicon-th">
+                                            </span> Referrals
+                                        </h4>
+                                    </a>
+                                </div>
+                                <div id="collapseReferral" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <table class="table">
+                                            <tr>
+                                                <td>
+                                                    <span class="glyphicon glyphicon-dashboard"></span>
+                                                    <a id="liReferralSummary" class="Organization_Color" href='@Url.Action("ReferralSummary", "Admin")' ;> Referral Dashboard</a>
                                                 </td>
                                             </tr>
                                         </table>
@@ -144,104 +167,36 @@
                             </div>
 
                             @*<div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseAccount">
-                                        <h4 class="panel-title">
-                                            <span class="glyphicon glyphicon-cog">
-                                            </span> Account
-                                        </h4>
-                                    </a>
-                                </div>
-                                <div id="collapseAccount" class="panel-collapse collapse">
-                                    <div class="panel-body">
-                                        <table class="table">
-                                            <tr>
-                                                <td>
-                                                    <span class="glyphicon glyphicon-globe"></span>
-                                                    <a id="liViewUsers" class="Organization_Color" href='@Url.Action("ViewUsers", "Admin")' ;> Users</a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <span class="glyphicon glyphicon-lock"></span>
-                                                    <a id="liChangePassword" class="Organization_Color" href='@Url.Action("ChangePassword", "Admin")' ;> Change Password</a>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>*@
+            <div class="panel-heading">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseAccount">
+                    <h4 class="panel-title">
+                        <span class="glyphicon glyphicon-cog">
+                        </span> Account
+                    </h4>
+                </a>
+            </div>
+            <div id="collapseAccount" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <table class="table">
+                        <tr>
+                            <td>
+                                <span class="glyphicon glyphicon-globe"></span>
+                                <a id="liViewUsers" class="Organization_Color" href='@Url.Action("ViewUsers", "Admin")' ;> Users</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="glyphicon glyphicon-lock"></span>
+                                <a id="liChangePassword" class="Organization_Color" href='@Url.Action("ChangePassword", "Admin")' ;> Change Password</a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>*@
 
                         </div>
                     </div>
-                    @*<ul class="list-unstyled components">
-
-                            <li class="list-unstyled" style="display:none">
-                                <ul class="list-unstyled" style="height:auto;margin-bottom:3px;font-size:16px;">
-                                    <li><a id="liAddPlans" class="Organization_Color" href='@Url.Action("AddPlans", "Admin")' ;>Add Plans</a></li>
-                                </ul>
-                            </li>
-                            <li class="list-unstyled">
-                                <ul class="list-unstyled" style="height:auto;margin-bottom:3px;font-size:16px;">
-                                    <li><a id="liViewPlans" class="Organization_Color" href='@Url.Action("ViewPlans", "Admin")' ;>View Plans</a></li>
-                                </ul>
-                            </li>
-                            <li class="list-unstyled">
-                                <ul class="list-unstyled" style="height:auto;margin-bottom:3px;font-size:16px;">
-                                    <li><a id="liMemberList" class="Organization_Color" href='@Url.Action("AdminMemberList", "Admin")' ;>Member List</a></li>
-                                </ul>
-                            </li>
-                            <li class="list-unstyled">
-                                <ul class="list-unstyled" style="height:auto;margin-bottom:3px;font-size:16px;">
-                                    <li><a id="liMemberReport" class="Organization_Color" href='@Url.Action("AdminMemberReport", "Admin")' ;>Members Report</a></li>
-                                </ul>
-                            </li>
-                            <li class="list-unstyled" style="display:none">
-                                <ul class="list-unstyled" style="height:auto;margin-bottom:3px;font-size:16px;">
-                                    <li><a id="liPaymentsdashboard" class="Organization_Color" href='@Url.Action("AdminViewPaymentDetails", "Admin")' ;>Payments Dashboard</a></li>
-                                </ul>
-                            </li>
-                            <li class="list-unstyled" style="display:none">
-                                <ul class="list-unstyled" style="height:auto;margin-bottom:3px;font-size:16px;">
-                                    <li><a id="liPaymentsReport" class="Organization_Color" href='@Url.Action("AdminPaymentsReport", "Admin")' ;>Payments Report</a></li>
-                                </ul>
-                            </li>
-                            <li class="list-unstyled" style="display:none">
-                                <ul class="list-unstyled" style="height:auto;margin-bottom:3px;font-size:16px;">
-                                    <li><a id="liPaymentsTransactionReport" class="Organization_Color" href='@Url.Action("AdminPaymentsTransactionReport", "Admin")' ;>Payments Transaction Report</a></li>
-                                </ul>
-                            </li>
-                            <li class="list-unstyled" style="display:none">
-                                <ul class="list-unstyled" style="height:auto;margin-bottom:3px;font-size:16px;">
-                                    <li><a id="liWithdrawPlans" class="Organization_Color" href='@Url.Action("WithdrawPlans", "Admin")' ;>Withdraw Plans</a></li>
-                                </ul>
-                            </li>
-                            <li class="list-unstyled" style="display:none">
-                                <ul class="list-unstyled" style="height:auto;margin-bottom:3px;font-size:16px;">
-                                    <li><a id="liSubscribePlans" class="Organization_Color" href='@Url.Action("SubscribePlans", "Admin")' ;>Subscribe Plans</a></li>
-                                </ul>
-                            </li>
-                            <li class="list-unstyled" style="display:none">
-                                <ul class="list-unstyled" style="height:auto;margin-bottom:3px;font-size:16px;">
-                                    <li><a id="liViewOrganizations" class="Organization_Color" href='@Url.Action("ViewOrganizations", "Admin")' ;>View Organizations</a></li>
-                                </ul>
-                            </li>
-                            <li class="list-unstyled">
-                                <ul class="list-unstyled" style="height:auto;margin-bottom:3px;font-size:16px;">
-                                    <li><a id="liViewProviders" class="Organization_Color" href='@Url.Action("ViewProviders", "Admin")' ;>View Providers</a></li>
-                                </ul>
-                            </li>
-                            <li class="list-unstyled" style="display:none">
-                                <ul class="list-unstyled" style="height:auto;margin-bottom:3px;font-size:16px;">
-                                    <li><a id="liDiabledOrganizations" class="Organization_Color" href='@Url.Action("DiabledOrganizations", "Admin")' ;>Disabled Organizations</a></li>
-                                </ul>
-                            </li>
-                            <li class="list-unstyled" style="display:none">
-                                <ul class="list-unstyled" style="height:auto;margin-bottom:3px;font-size:16px;">
-                                    <li><a id="liTermsAndConditions" class="Organization_Color" href='@Url.Action("TermsAndConditions", "Admin")' ;>Terms & Condition</a></li>
-                                </ul>
-                            </li>
-                        </ul>*@
                 </nav1>
 
 
@@ -344,6 +299,14 @@
             $("#collapseBilling").addClass("in");
             $("#liBillingReport").removeClass("Organization_Color");
             $("#liBillingReport").addClass("stripePanel");
+        }
+
+        //Referrral
+        if (currentURL.includes("Admin/ReferralSummary")) {
+            $('div[id^="collapse"]').removeClass("in");
+            $("#collapseReferral").addClass("in");
+            $("#liReferralSummary").removeClass("Organization_Color");
+            $("#liReferralSummary").addClass("stripePanel");
         }
 
         //Reports

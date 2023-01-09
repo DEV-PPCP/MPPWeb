@@ -18,7 +18,8 @@ namespace PPCP07302018.Models
     public class Referral
     {
         public int Id { get; set; }
-        public int MemberID { get; set; }   
+        public int MemberID { get; set; }
+        public string MemberName { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string MobileNumber { get; set; }

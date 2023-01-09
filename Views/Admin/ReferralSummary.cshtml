@@ -3,7 +3,7 @@
 
 @{
     ViewBag.Title = "Referral Summary";
-    Layout = "~/Views/Shared/BaseMaster.cshtml";
+    Layout = "~/Views/Shared/WUCAdminLeftMenu.cshtml";
     var ServiceUrl = (System.Configuration.ConfigurationManager.AppSettings["ServiceUrl"].ToString());
 }
 <div class="pageheading_bar" align="center">
@@ -13,20 +13,14 @@
 <div class="Panel_bg" id="divMainPlanEnroll">
     <div class="row Panel_bg_Sub">
         <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Referral Summary</b></legend>
-        <div class="row">
+        @*<div class="row">
             <div class="col-xs-12 col-md-4 col-sm-4 col-lg-4">
                 @Html.Label("Total Points: ", new { style = "font-weight:bold;", @class = "" }) @Model.TotalPoints
-            </div>
-            <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
-                @Html.Label("Points Available to use: ", new { style = "font-weight:bold;", @class = "" }) @Model.AvailableToUse
             </div>
         </div>
         <div class="row">
             <div class="col-xs-12 col-md-4 col-sm-4 col-lg-4">
                 @Html.Label("Points Earned: ", new { style = "font-weight:bold;", @class = "" }) @Model.PointsEarned
-            </div>
-            <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
-                @Html.Label("Points Used: ", new { style = "font-weight:bold;", @class = "" }) @Model.PointsUsed
             </div>
         </div>
         <div class="row">
@@ -34,14 +28,7 @@
                 @Html.Label("Points Pending: ", new { style = "font-weight:bold;", @class = "" }) @Model.PointsPending
             </div>
         </div>
-        <hr />
-        <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Referral Link</b></legend>
-        <div class="row">
-            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
-                @Model.MemberReferralLink 
-            </div>
-        </div>
-        <hr />
+        <hr />*@
 
         <div class="row">
             <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
@@ -50,6 +37,7 @@
                     //.Events(e => e.DataBound("onDataBound"))
                     .Columns(columns =>
                     {
+                        columns.Bound(p => p.MemberName).Title("Member Name").Width(150);
                         columns.Bound(p => p.FirstName).Title("Referral Name").ClientTemplate(" #: FirstName # #: LastName #").Width(150);
                         columns.Bound(p => p.ReferralJoinedDate).Title("Joined On").Width(100).ClientTemplate("#= ReferralJoinedDate != null ? kendo.toString(kendo.parseDate(ReferralJoinedDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') : '' #");
                         columns.Bound(p => p.PlanName).Title("Plan").Width(100);
@@ -64,10 +52,11 @@
                     .DataSource(dataSource => dataSource
                         .Ajax()
                         //.PageSize(5)
-                        .Read(read => read.Action("ReferralSummary_Read", "Member"))
+                        .Read(read => read.Action("ReferralSummary_Read", "Admin"))
                     )
                 )
             </div>
         </div>
     </div>
 </div>
+

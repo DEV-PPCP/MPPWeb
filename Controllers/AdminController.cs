@@ -1,4 +1,6 @@
 ﻿using Iph.Utilities;
+using Kendo.Mvc.Extensions;
+using Kendo.Mvc.UI;
 using Newtonsoft.Json;
 using PPCP07302018.Controllers.Session;
 using PPCP07302018.DataAccessLayer;
@@ -3077,6 +3079,30 @@ shapeFooter, PageNumbers
             return Json(files, JsonRequestBehavior.AllowGet);
 
 
+        }
+
+        #endregion
+
+        #region Referral
+
+        public ActionResult ReferralSummary()
+        {
+            ReferralSummary model = new ReferralSummary();
+            return View(model);
+        }
+
+        public ActionResult ReferralSummary_Read([DataSourceRequest] DataSourceRequest request)
+        {
+            DataAccessLayer.ServiceCall<Referral> objcall = new DataAccessLayer.ServiceCall<Referral>();
+            PPCP07302018.Models.Member.ServiceData ServiceData = new PPCP07302018.Models.Member.ServiceData();
+            string[] ParameterName = new string[] { "MemberID" };
+            string[] ParameterValue = new string[] { "0" };
+            ServiceData.ParameterName = ParameterName;
+            ServiceData.ParameterValue = ParameterValue;
+            ServiceData.WebMethodName = "GetReferralSummaryList";
+            List<Referral> list = objcall.CallService(Convert.ToInt32(0), "GetReferralSummaryList", ServiceData);
+
+            return Json(list.ToDataSourceResult(request));
         }
 
         #endregion
