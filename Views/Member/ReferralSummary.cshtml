@@ -33,12 +33,17 @@
         </div>
         <div class="row">
             <div class="col-xs-12 col-md-4 col-sm-4 col-lg-4">
+                @Html.Label("Points Cashed: ", new { style = "font-weight:bold;", @class = "" }) <span class="PointsCashed">@Model.PointsCashed</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-md-4 col-sm-4 col-lg-4">
                 @Html.Label("Points Available to use: ", new { style = "font-weight:bold;", @class = "" }) <span class="AvailableToUse">@Model.AvailableToUse</span>
             </div>
             <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6" id="divCheckRequest">
-                @if (Model.AvailableToUse > 1900)
+                @if (Model.AvailableToUse > 900)
                 {
-                    <a href="#" onclick='RequestCheck(@Model.PointsUsed, @Model.AvailableToUse);' style="color: #0000EE;">Request Check Payment ($@(Model.AvailableToUse/100))</a><br />
+                    <a href="#" onclick='RequestCheck(@Model.PointsCashed, @Model.AvailableToUse);' style="color: #0000EE;">Request Check Payment ($@(Model.AvailableToUse/100))</a><br />
                     <span @*style="color: blue"*@>A service fee of $3 will be deducted from the check.</span>
                 }
             </div>
@@ -87,9 +92,9 @@
 
     });
 
-    var oPointsUsed, oAvailableToUse;
-    function RequestCheck(PointsUsed, AvailableToUse) {
-        oPointsUsed = PointsUsed;
+    var oPointsCashed, oAvailableToUse;
+    function RequestCheck(PointsCashed, AvailableToUse) {
+        oPointsCashed = PointsCashed;
         oAvailableToUse = AvailableToUse;
         $("#popupConfirmation").show();
         $("#confirmType").val("RequestCheck")
@@ -124,8 +129,9 @@
                 var d = result[0];
                 if (d.ResultID == 1) {
                     $("#formStatus").html("A request for Check Point reimbursement has been sent. ").addClass("bg-success").css({ "font-size": "large", "font-weight": "bold" }).show().delay(5000).fadeOut();
-                    var pu = parseInt(oPointsUsed) + parseInt(oAvailableToUse);
-                    $(".PointsUsed").text(pu);
+                    var pu = parseInt(oPointsCashed) + parseInt(oAvailableToUse);
+                   // $(".PointsUsed").text(pu);
+                    $(".PointsCashed").text(pu);
                     $(".AvailableToUse").text("0");
                     $("#divCheckRequest").hide();
                 } else {

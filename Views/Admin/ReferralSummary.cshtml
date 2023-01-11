@@ -41,19 +41,48 @@
                     {
                         columns.Bound(p => p.MemberName).Title("Member Name").Width(150);
                         columns.Bound(p => p.MemberAddress).Title("Address").Width(250);
-                        columns.Bound(p => p.RequestDate).Title("Joined On").Width(100).ClientTemplate("#= RequestDate != null ? kendo.toString(kendo.parseDate(RequestDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') : '' #");
+                        columns.Bound(p => p.RequestDate).Title("Request Date").Width(100).ClientTemplate("#= RequestDate != null ? kendo.toString(kendo.parseDate(RequestDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') : '' #");
                         columns.Bound(p => p.Points).Title("Points").Width(100);
                         columns.Bound(p => p).ClientTemplate("<a onclick='CheckMailed(#=Id#);' <span style='cursor:pointer; color: blue'>Check Mailed</a>").Title("").Width(110);
                     })
                     .Scrollable(s => s.Height("auto"))
+                    .HtmlAttributes(new { style = " max-height: 200px" })
                     //.Pageable()
                     .AutoBind(true)
-                    .HtmlAttributes(new { style = " height: 200px" })
                     .Selectable()
                     .DataSource(dataSource => dataSource
                         .Ajax()
                         //.PageSize(5)
                         .Read(read => read.Action("ReferralCheckRequests_Read", "Admin"))
+                    )
+                )
+            </div>
+        </div>
+
+        <br /><br />
+        <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Referral Checks Issued</b></legend>
+        <div class="row">
+            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                @(Html.Kendo().Grid<PPCP07302018.Models.ReferralCheck> ()
+                    .Name("ReferralCheckIssuedGrid")
+                    //.Events(e => e.DataBound("onDataBound"))
+                    .Columns(columns =>
+                    {
+                        columns.Bound(p => p.MemberName).Title("Member Name").Width(150);
+                        columns.Bound(p => p.MemberAddress).Title("Address").Width(250);
+                        columns.Bound(p => p.RequestDate).Title("Request Date").Width(100).ClientTemplate("#= RequestDate != null ? kendo.toString(kendo.parseDate(RequestDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') : '' #");
+                        columns.Bound(p => p.Points).Title("Points").Width(100);
+                        columns.Bound(p => p.CheckSentDate).Title("Mailed Date").Width(100).ClientTemplate("#= CheckSentDate != null ? kendo.toString(kendo.parseDate(CheckSentDate,'yyyy-MM-dd'), '" + "MM/dd/yyyy" + "') : '' #");
+                    })
+                    .Scrollable(s => s.Height("auto"))
+                    .HtmlAttributes(new { style = " max-height: 200px" })
+                    //.Pageable()
+                    .AutoBind(true)
+                    .Selectable()
+                    .DataSource(dataSource => dataSource
+                        .Ajax()
+                        //.PageSize(5)
+                        .Read(read => read.Action("ReferralChecksIssued_Read", "Admin"))
                     )
                 )
             </div>

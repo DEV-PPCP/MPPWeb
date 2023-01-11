@@ -90,34 +90,6 @@
                             </div>
                             <div class="panel panel-default">
                                 <div class="panel-heading">
-                                    <a data-toggle="collapse" @*data-parent="#accordion"*@ href="#collapseAccount">
-                                        <h4 class="panel-title">
-                                            <span class="glyphicon glyphicon-cog">
-                                            </span> Account
-                                        </h4>
-                                    </a>
-                                </div>
-                                <div id="collapseAccount" class="panel-collapse collapse in">
-                                    <div class="panel-body">
-                                        <table class="table">
-                                            <tr>
-                                                <td>
-                                                    <span class="glyphicon glyphicon-globe"></span>
-                                                    <a id="liFamilyMember" class="Organization_Color" href='@Url.Action("FamilyMember", "Member")' ;> Family Members</a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <span class="glyphicon glyphicon-lock"></span>
-                                                    <a id="liChangePassword" class="Organization_Color" href='@Url.Action("ChangePassword", "Member")' ;> Change Password</a>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
                                     <a data-toggle="collapse" href="#collapseReferral">
                                         <h4 class="panel-title">
                                             <span class="glyphicon glyphicon-th">
@@ -144,6 +116,35 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <a data-toggle="collapse" @*data-parent="#accordion"*@ href="#collapseAccount">
+                                        <h4 class="panel-title">
+                                            <span class="glyphicon glyphicon-cog">
+                                            </span> Account
+                                        </h4>
+                                    </a>
+                                </div>
+                                <div id="collapseAccount" class="panel-collapse collapse in">
+                                    <div class="panel-body">
+                                        <table class="table">
+                                            <tr>
+                                                <td>
+                                                    <span class="glyphicon glyphicon-globe"></span>
+                                                    <a id="liFamilyMember" class="Organization_Color" href='@Url.Action("FamilyMember", "Member")' ;> Family Members</a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <span class="glyphicon glyphicon-lock"></span>
+                                                    <a id="liChangePassword" class="Organization_Color" href='@Url.Action("ChangePassword", "Member")' ;> Change Password</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
                             @if (Session["IsTermsNeeded"].ToString() == "True")
                             {
                                 <div class="panel panel-default">

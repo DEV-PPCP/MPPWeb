@@ -3129,6 +3129,20 @@ shapeFooter, PageNumbers
             return Json(list.ToDataSourceResult(request));
         }
 
+        public ActionResult ReferralChecksIssued_Read([DataSourceRequest] DataSourceRequest request)
+        {
+            DataAccessLayer.ServiceCall<ReferralCheck> objcall = new DataAccessLayer.ServiceCall<ReferralCheck>();
+            PPCP07302018.Models.Member.ServiceData ServiceData = new PPCP07302018.Models.Member.ServiceData();
+            string[] ParameterName = new string[] { "MemberID" };
+            string[] ParameterValue = new string[] { "0" };
+            ServiceData.ParameterName = ParameterName;
+            ServiceData.ParameterValue = ParameterValue;
+            ServiceData.WebMethodName = "GetReferralChecksIssued";
+            List<ReferralCheck> list = objcall.CallService(Convert.ToInt32(0), "GetReferralChecksIssued", ServiceData);
+
+            return Json(list.ToDataSourceResult(request));
+        }
+
         #endregion
     }
 }

@@ -877,6 +877,29 @@
                 @Html.ValidationMessageFor(m => m.ZipCode)*@
                                                 </div>
                                             </div>
+                                            <div class="row">
+                                                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                                    <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Referring Member</b>:</legend>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="row" style="display:block">
+                                                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                                        <div class="row">
+                                                            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                                                                <div class="row">
+                                                                    <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
+                                                                        @Html.Label("Referring Member Card #", new { style = "font-weight:normal;", @class = "" })<br />
+                                                                        @Html.TextBox("ReferringMemberCardId", "", new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 25, onchange = "ValidateReferringMemberCardId(this.value);" })
+                                                                        <span id="spnReferringMemberCardId" style="color:red"></span>
+                                                                        @Html.Hidden("ReferringMemberId")
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="row" style="margin-top: 10px;">
                                                 <button class="button_blue" type="button" id="btnAddMemberNext" onclick="btnAddMemberNextClick();" title="Next" style="width: 100px; float: right;" value="Next">
                                                     Next
@@ -887,29 +910,7 @@
                                 </fieldset>
                                 <br />
                                 <div class="row Panel_bg_Sub" id="divMemberCredentials" style="display: none;">
-                                    <div class="row">
-                                        <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
-                                            <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Referring Member</b>:</legend>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="row" style="display:block">
-                                            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
-                                                <div class="row">
-                                                    <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
-                                                        <div class="row">
-                                                            <div class="col-xs-12 col-md-3 col-sm-6 col-lg-3">
-                                                                @Html.Label("Referring Member Card #", new { style = "font-weight:normal;", @class = "" })<br />
-                                                                @Html.TextBox("ReferringMemberCardId", "", new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 25, onchange = "ValidateReferringMemberCardId(this.value);" })
-                                                                <span id="spnReferringMemberCardId" style="color:red"></span>
-                                                                @Html.Hidden("ReferringMemberId")
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    
 
                                     <div class="row">
                                         <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">

@@ -48,6 +48,7 @@ namespace PPCP07302018.Models
         public DateTime? RequestDate { get; set; }
         public int Points { get; set; }
         public string Status { get; set; }
+        public DateTime? CheckSentDate { get; set; }
 
     }
 }
