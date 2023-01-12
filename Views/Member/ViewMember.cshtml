@@ -198,6 +198,7 @@
             MemberRegistrationDetails.Email = $("#Email").val();
             MemberRegistrationDetails.CountryCode = $("#CountryCode").val();
             MemberRegistrationDetails.MobileNumber = $("#MobileNumber").val();
+            MemberRegistrationDetails.Address = $("#Address").val();
             MemberRegistrationDetails.CountryID = $("#CountryID").val();
             MemberRegistrationDetails.CountryName = $("#CountryName").val();
             MemberRegistrationDetails.StateID = $("#StateID").val();
@@ -572,6 +573,13 @@
                                                             @Html.TextBoxFor(model => model.MobileNumber, null, new { @class = "customKendoTextBox", style = "width:75%;", maxlength = 10 })
                                                             @*@Html.ValidationMessageFor(model => model.CountryCode, "", new { @style = "color:red" })
                                                                 @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @style = "color:red" })*@
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6">
+                                                            @Html.Label("Address", new { style = "font-weight:normal;", @class = "" })<br />
+                                                            @Html.TextBoxFor(model => model.Address, null, new { @class = "customKendoTextBox", style = "width:100%;", maxlength = 50 })
+                                                            @*@Html.ValidationMessageFor(model => model.Email, "", new { @style = "color:red" })*@
                                                         </div>
                                                     </div>
                                                     <div class="row">

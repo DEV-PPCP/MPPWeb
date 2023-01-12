@@ -14,6 +14,8 @@ namespace PPCP07302018.Models
         public int PointsUsed { get; set; }
         public int PointsCashed { get; set; }
         public string MemberReferralLink { get; set; }
+        public string MemberAddress { get; set; }
+        public int ReferralCheckMinPoints { get; set; }
     }
 
     public class Referral

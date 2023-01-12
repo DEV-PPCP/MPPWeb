@@ -1650,6 +1650,7 @@ namespace PPCP07302018.Controllers
                 model.CountryName = List[0].CountryName;
                 model.SalutationID = List[0].SalutationID;
                 model.Salutation = List[0].Salutation;
+                model.Address = List[0].Address;
                 model.StateID = List[0].StateID;
                 model.StateName = List[0].StateName;
                 model.CityName = List[0].CityName;

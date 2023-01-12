@@ -492,6 +492,7 @@
     }
     function ValidateReferringMemberCardId(ReferringMemberCardId) {
         debugger;
+        document.getElementById("spnReferringMemberCardId").innerHTML = "";
         if (ReferringMemberCardId != "") {
             apiValidateReferringMemberCardId(ReferringMemberCardId,'@ServiceUrl');
         }
@@ -877,6 +878,7 @@
                 @Html.ValidationMessageFor(m => m.ZipCode)*@
                                                 </div>
                                             </div>
+                                            <br />
                                             <div class="row">
                                                 <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
                                                     <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Referring Member</b>:</legend>

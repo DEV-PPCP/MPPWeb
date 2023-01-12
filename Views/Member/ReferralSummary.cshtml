@@ -13,6 +13,14 @@
 
 <div class="Panel_bg" id="divMainPlanEnroll">
     <div class="row Panel_bg_Sub">
+        <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Referral Link</b></legend>
+        <div class="row">
+            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                @Model.MemberReferralLink
+            </div>
+        </div>
+        <br/><br />
+
         <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Referral Summary</b></legend>
         <div class="row"><div id="formStatus"></div></div>
         <div class="row">
@@ -40,19 +48,15 @@
             <div class="col-xs-12 col-md-4 col-sm-4 col-lg-4">
                 @Html.Label("Points Available to use: ", new { style = "font-weight:bold;", @class = "" }) <span class="AvailableToUse">@Model.AvailableToUse</span>
             </div>
-            <div class="col-xs-12 col-md-6 col-sm-6 col-lg-6" id="divCheckRequest">
-                @if (Model.AvailableToUse > 900)
+            <div class="col-xs-12 col-md-8 col-sm-8 col-lg-8" id="divCheckRequest">
+                @if (Model.AvailableToUse > Model.ReferralCheckMinPoints)
                 {
                     <a href="#" onclick='RequestCheck(@Model.PointsCashed, @Model.AvailableToUse);' style="color: #0000EE;">Request Check Payment ($@(Model.AvailableToUse/100))</a><br />
-                    <span @*style="color: blue"*@>A service fee of $3 will be deducted from the check.</span>
+                    <span style="font-size: small; font-style:italic">
+                        A service fee of $3 will be deducted from the check.<br />
+                        Mailing Address: @Model.MemberAddress <br />(Please update your mailing address if incorrect. This can be done using the Family Members Page.)
+                    </span>
                 }
-            </div>
-        </div>
-        <hr />
-        <legend class="Legendtxtcolor" style="float: left; font-size: 14px;"><b>Referral Link</b></legend>
-        <div class="row">
-            <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
-                @Model.MemberReferralLink
             </div>
         </div>
         <hr />
